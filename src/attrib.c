@@ -1049,15 +1049,15 @@ void PragmaDeclaration::semantic(Scope *sc)
             {
                 char* p = (char*)((StringExp *)e)->string;
 
-                while(*p != 0 && (*p == '_' || *p == '@' || isalnum(*p)))
+                while(*p != 0 && isprint(*p))
                     ++p;
 
-                if (p == (char*)((StringExp *)e)->string)
+                if (!*p && p == (char*)((StringExp *)e)->string)
                     error("cannot use a zero length string");
                 else if (!*p)
                     ((Declaration*)decl->data[0])->pmangle = (char*)((StringExp *)e)->string;
                 else
-                    error("invalid character in mangle string '%c'", *p);
+                    error("invalid character in mangle string '%c' (0x%X)", *p, *p);
             }
         }
     }

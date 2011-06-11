@@ -90,6 +90,8 @@ char *Declaration::mangle()
 #if __DMC__
     __out(result)
     {
+        if (!pmangle)
+        {
         int len = strlen(result);
 
         assert(len > 0);
@@ -99,6 +101,7 @@ char *Declaration::mangle()
             assert(result[i] == '_' ||
                    result[i] == '@' ||
                    isalnum(result[i]) || result[i] & 0x80);
+        }
         }
     }
     __body
