@@ -1030,6 +1030,37 @@ void PragmaDeclaration::semantic(Scope *sc)
     {
     }
 #endif // TARGET_NET
+    else if (ident == Lexer::idPool("mangle"))
+    {
+        if (!args || args->dim != 1)
+            error("string argument required");
+        else if (!decl || decl->dim != 1)
+            error("must apply to a single declaration");
+        else if (!(((Dsymbol*)decl->data[0])->isDeclaration()))
+            error("declaration expected, not '%s'", ((Dsymbol*)decl->data[0])->toChars());
+        else
+        {
+            Expression* e = (Expression *)args->data[0];
+            e = e->semantic(sc);
+            e = e->optimize(WANTvalue);
+            if (e->op != TOKstring || ((StringExp *)e)->sz != 1)
+                error("string expected, not '%s'", e->toChars());
+            else
+            {
+                char* p = (char*)((StringExp *)e)->string;
+
+                while(*p != 0 && (*p == '_' || *p == '@' || isalnum(*p)))
+                    ++p;
+
+                if (p == (char*)((StringExp *)e)->string)
+                    error("cannot use a zero length string");
+                else if (!*p)
+                    ((Declaration*)decl->data[0])->pmangle = (char*)((StringExp *)e)->string;
+                else
+                    error("invalid character in mangle string '%c'", *p);
+            }
+        }
+    }
     else if (global.params.ignoreUnsupportedPragmas)
     {
         if (global.params.verbose)

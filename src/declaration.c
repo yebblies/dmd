@@ -35,6 +35,7 @@ Declaration::Declaration(Identifier *id)
     linkage = LINKdefault;
     inuse = 0;
     sem = SemanticStart;
+    pmangle = NULL;
 }
 
 void Declaration::semantic(Scope *sc)

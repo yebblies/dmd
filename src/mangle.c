@@ -104,6 +104,9 @@ char *Declaration::mangle()
     __body
 #endif
     {
+        if (pmangle)
+            return pmangle;
+
         //printf("Declaration::mangle(this = %p, '%s', parent = '%s', linkage = %d)\n", this, toChars(), parent ? parent->toChars() : "null", linkage);
         if (!parent || parent->isModule() || linkage == LINKcpp) // if at global scope
         {
