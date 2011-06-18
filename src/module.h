@@ -114,7 +114,7 @@ struct Module : Package
     Module(char *arg, Identifier *ident, int doDocComment, int doHdrGen);
     ~Module();
 
-    static Module *load(Loc loc, Array *packages, Identifier *ident);
+    static Module *load(Loc loc, Array *packages, Identifier *ident, Import *imp);
 
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     void toJsonBuffer(OutBuffer *buf);

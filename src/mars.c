@@ -277,6 +277,7 @@ Usage:\n\
   --help         print help\n\
   -Ipath         where to look for imports\n\
   -ignore        ignore unsupported pragmas\n\
+  -ih=libname    set import handler lib\n\
   -inline        do function inlining\n\
   -Jpath         where to look for string imports\n\
   -Llinkerflag   pass linkerflag to link\n\
@@ -757,6 +758,28 @@ int main(int argc, char *argv[])
                     goto Lnoarg;
                 }
             }
+#ifdef _WIN32
+            else if (memcmp(p + 1, "ih=", 3) == 0)
+            {
+                if (global.params.importreslib)
+                    error("-ih specified more than once");
+                else
+                {
+                    global.params.importreslib = p+4;
+                    HMODULE mod = LoadLibrary(global.params.importreslib);
+                    if (!mod)
+                        error("import resolution plugin not found (%s)", global.params.importreslib);
+                    else
+                    {
+                        global.params.importhandler = (char* __cdecl (*)(char*, char*, char*, char*))
+                            GetProcAddress(mod, "_importhandler");
+                        
+                        if (!global.params.importhandler)
+                            error("invalid import handler library '%s'", global.params.importreslib);
+                    }
+                }
+            }
+#endif
             else
             {
              Lerror:

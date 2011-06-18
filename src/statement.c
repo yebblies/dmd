@@ -2607,8 +2607,8 @@ Statement *PragmaStatement::syntaxCopy()
 
 Statement *PragmaStatement::semantic(Scope *sc)
 {   // Should be merged with PragmaDeclaration
-    //printf("PragmaStatement::semantic() %s\n", toChars());
-    //printf("body = %p\n", body);
+    printf("PragmaStatement::semantic() %s\n", toChars());
+    printf("body = %p\n", body);
     if (ident == Id::msg)
     {
         if (args)

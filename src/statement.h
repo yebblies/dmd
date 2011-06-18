@@ -49,6 +49,7 @@ struct CaseStatement;
 struct DefaultStatement;
 struct HdrGenState;
 struct InterState;
+struct ImportStatement;
 
 enum TOK;
 
@@ -122,6 +123,7 @@ struct Statement : Object
     virtual IfStatement *isIfStatement() { return NULL; }
     virtual CaseStatement *isCaseStatement() { return NULL; }
     virtual DefaultStatement *isDefaultStatement() { return NULL; }
+    virtual ImportStatement *isImportStatement() { return NULL; }
 };
 
 struct PeelStatement : Statement
@@ -864,6 +866,8 @@ struct ImportStatement : Statement
     Expression *doInline(InlineDoState *ids);
 
     void toIR(IRState *irs);
+    
+    ImportStatement *isImportStatement() { return this; }
 };
 
 #endif /* DMD_STATEMENT_H */

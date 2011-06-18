@@ -3873,6 +3873,7 @@ Statement *Parser::parseStatement(int flags)
                 args = parseArguments();        // pragma(identifier, args...);
             else
                 check(TOKrparen);               // pragma(identifier);
+
             if (token.value == TOKsemicolon)
             {   nextToken();
                 body = NULL;

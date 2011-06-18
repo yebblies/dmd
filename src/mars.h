@@ -224,7 +224,12 @@ struct Param
     char *resfile;
     char *exefile;
     char *mapfile;
+    
+    // Import resolution
+    char* importreslib;
+    char* __cdecl (*importhandler)(char*, char*, char*, char*);
 };
+
 
 struct Global
 {

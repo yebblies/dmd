@@ -26,9 +26,11 @@
 #include "module.h"
 #include "parse.h"
 #include "template.h"
+#include "import.h"
 #if TARGET_NET
  #include "frontend.net/pragma.h"
 #endif
+
 
 extern void obj_includelib(const char *name);
 void obj_startaddress(Symbol *s);
@@ -1030,6 +1032,36 @@ void PragmaDeclaration::semantic(Scope *sc)
     {
     }
 #endif // TARGET_NET
+    else if (ident == Id::libversion)
+    {
+        if (!args || args->dim > 3)
+            error("expected: pragma(libversion, provider, version, sha1)");
+        else if (!decl || decl->dim != 1)
+            error("must apply to a single import statement");
+        else if (!((Dsymbol*)decl->data[0])->isImport())
+            error("must apply to a single import statement");
+        else
+        {
+            char* xargs[3] = { NULL, NULL, NULL };
+            for(int i = 0; i < args->dim; ++i)
+            {
+                Expression *e = (Expression *)args->data[i];
+                e = e->semantic(sc)->optimize(WANTvalue);
+                if (e->op != TOKstring || ((StringExp *)e)->sz != 1)
+                    error("String exprected as argument %d, not '%s'", i+1, e->toChars());
+                else
+                    xargs[i] = (char*)((StringExp *)e)->string;
+            }
+            if (!global.errors)
+            {
+                Import* imp = (Import*)decl->data[0];
+                imp->provider = xargs[0];
+                imp->verstring = xargs[1];
+                imp->sha1 = xargs[2];
+                //printf("%s %s %s %s\n", imp->toChars(), xargs[0], xargs[1], xargs[2]);
+            }
+        }
+    }
     else if (global.params.ignoreUnsupportedPragmas)
     {
         if (global.params.verbose)

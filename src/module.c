@@ -260,12 +260,12 @@ const char *Module::kind()
     return "module";
 }
 
-Module *Module::load(Loc loc, Array *packages, Identifier *ident)
+Module *Module::load(Loc loc, Array *packages, Identifier *ident, Import *imp)
 {   Module *m;
     char *filename;
 
-    //printf("Module::load(ident = '%s')\n", ident->toChars());
-
+    //printf("Module::load(ident = '%s') %s\n", ident->toChars());
+    
     // Build module filename by turning:
     //  foo.bar.baz
     // into:
@@ -307,10 +307,8 @@ Module *Module::load(Loc loc, Array *packages, Identifier *ident)
     else if (FileName::exists(sd))
         result = sd;
     else if (FileName::absolute(filename))
-        ;
-    else if (!global.path)
-        ;
-    else
+        result = filename;
+    else if (global.path)
     {
         for (size_t i = 0; i < global.path->dim; i++)
         {
@@ -329,6 +327,8 @@ Module *Module::load(Loc loc, Array *packages, Identifier *ident)
             mem.free(n);
         }
     }
+    if (!result && global.params.importhandler)
+        result = global.params.importhandler(imp->toChars(), imp->provider, imp->verstring, imp->sha1);
     if (result)
         m->srcfile = new File(result);
 

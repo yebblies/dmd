@@ -37,6 +37,9 @@ Import::Import(Loc loc, Array *packages, Identifier *id, Identifier *aliasId,
     this->isstatic = isstatic;
     pkg = NULL;
     mod = NULL;
+    provider = NULL;
+    verstring = NULL;
+    sha1 = NULL;
 
     if (aliasId)
         this->ident = aliasId;
@@ -102,7 +105,7 @@ void Import::load(Scope *sc)
     if (!mod)
     {
         // Load module
-        mod = Module::load(loc, packages, id);
+        mod = Module::load(loc, packages, id, this);
         dst->insert(id, mod);           // id may be different from mod->ident,
                                         // if so then insert alias
         if (!mod->importedFrom)
@@ -376,3 +379,17 @@ void Import::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
     buf->writenl();
 }
 
+char *Import::toChars()
+{
+    OutBuffer buf;
+    
+    if (packages)
+    for(int i = 0; i < packages->dim; ++i)
+    {
+        buf.writestring(((Identifier*)packages->data[i])->toChars());
+        buf.writeByte('.');
+    }
+    buf.writestring(id->toChars());
+    buf.writeByte(0);
+    return (char*)buf.extractData();
+}

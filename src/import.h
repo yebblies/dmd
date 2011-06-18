@@ -16,6 +16,7 @@
 #endif /* __DMC__ */
 
 #include "dsymbol.h"
+#include "identifier.h"
 
 
 struct Identifier;
@@ -41,6 +42,10 @@ struct Import : Dsymbol
 
     Module *mod;
     Package *pkg;               // leftmost package/module
+    
+    char* provider;
+    char* verstring;
+    char* sha1;
 
     Import(Loc loc, Array *packages, Identifier *id, Identifier *aliasId,
         int isstatic);
@@ -59,6 +64,8 @@ struct Import : Dsymbol
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 
     Import *isImport() { return this; }
+    
+    char *toChars();
 };
 
 #endif /* DMD_IMPORT_H */
