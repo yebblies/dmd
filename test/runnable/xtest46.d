@@ -3496,6 +3496,18 @@ void test5799()
 
 /***************************************************/
 
+
+void test3133()
+{
+    short[2] x = [1,2];
+    int[1] y = cast(int[1])x;
+
+    short[1] z = [1];
+    static assert(!__traits(compiles, y = cast(int[1])z));
+}
+
+/***************************************************/
+
 int main()
 {
     test1();
@@ -3624,6 +3636,7 @@ int main()
     test123();
     test124();
     test125();
+    test3133();
 
     test127();
     test128();
