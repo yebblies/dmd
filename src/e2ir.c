@@ -3101,8 +3101,8 @@ elem *CatAssignExp::toElem(IRState *irs)
             elength = el_bin(OPmin, TYsize_t, elength, el_long(TYsize_t, 1));
             elength = el_bin(OPmul, TYsize_t, elength, el_long(TYsize_t, this->e2->type->size()));
             eptr = el_bin(OPadd, TYnptr, eptr, elength);
-            eptr = el_una(OPind, e2->Ety, eptr);
-            elem *eeq = el_bin(OPeq, e2->Ety, eptr, e2);
+            elem *ederef = el_una(OPind, e2->Ety, eptr);
+            elem *eeq = el_bin(OPeq, e2->Ety, ederef, e2);
 
             if (tybasic(e2->Ety) == TYstruct)
             {
@@ -3115,7 +3115,15 @@ elem *CatAssignExp::toElem(IRState *irs)
                 eeq->Ejty = eeq->Ety = TYstruct;
                 eeq->ET = tb1n->toCtype();
             }
-
+#if DMDV2
+            StructDeclaration *sd = needsPostblit(tb2);
+            if (sd)
+            {   FuncDeclaration *fd = sd->postblit;
+                elem *ec = el_copytree(eptr);
+                ec = callfunc(loc, irs, 1, Type::tvoid, ec, sd->type->pointerTo(), fd, fd->type, NULL, NULL);
+                eeq = el_bin(OPcomma, ec->Ety, eeq, ec);
+            }
+#endif
             e = el_combine(e2x, e);
             e = el_combine(e, eeq);
             e = el_combine(e, el_var(stmp));
