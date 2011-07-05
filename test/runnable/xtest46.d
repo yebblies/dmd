@@ -3192,6 +3192,27 @@ pure int test4031()
  
 /***************************************************/
 
+void test1891()
+{
+    struct C {
+        char[8] x = "helloabc";
+    }
+
+    int main()
+    {
+        C* a = new C;
+        C*[] b;
+        b ~= new C;
+
+        auto g = a ~ b;
+        assert(g[0] && g[1] && g[0].x == g[1].x);
+
+        return 0;
+    }
+}
+
+/***************************************************/
+
 int main()
 {
     test1();
@@ -3353,6 +3374,7 @@ int main()
     test4258();
     test4963();
     test4031();
+    test1891();
 
     printf("Success\n");
     return 0;
