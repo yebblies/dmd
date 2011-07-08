@@ -188,6 +188,7 @@ void Type::init()
     sizeTy[Tenum] = sizeof(TypeEnum);
     sizeTy[Ttypedef] = sizeof(TypeTypedef);
     sizeTy[Tstruct] = sizeof(TypeStruct);
+    sizeTy[Tclasstype] = sizeof(TypeClassType);
     sizeTy[Tclass] = sizeof(TypeClass);
     sizeTy[Ttuple] = sizeof(TypeTuple);
     sizeTy[Tslice] = sizeof(TypeSlice);
@@ -201,7 +202,8 @@ void Type::init()
     mangleChar[Treference] = 'R';
     mangleChar[Tfunction] = 'F';
     mangleChar[Tident] = 'I';
-    mangleChar[Tclass] = 'C';
+    mangleChar[Tclasstype] = 'C';
+    mangleChar[Tclass] = 'X';
     mangleChar[Tstruct] = 'S';
     mangleChar[Tenum] = 'E';
     mangleChar[Ttypedef] = 'T';
@@ -1935,11 +1937,15 @@ Identifier *Type::getTypeInfoIdent(int internal)
     char *name;
     int len;
 
-    if (internal)
+    if (internal && ty == Tclass)
+        buf.writeByte(mangleChar[Tclasstype]);
+    else if (internal)
     {   buf.writeByte(mangleChar[ty]);
         if (ty == Tarray)
             buf.writeByte(mangleChar[((TypeArray *)this)->next->ty]);
     }
+    else if (ty == Tclass)
+        ((TypeClassType*)nextOf())->toDecoBufferx(&buf, 0);
     else
         toDecoBuffer(&buf);
     len = buf.offset;
@@ -5173,9 +5179,12 @@ int TypeFunction::callMatch(Expression *ethis, Expressions *args, int flag)
     {   Type *t = ethis->type;
         if (t->toBasetype()->ty == Tpointer)
             t = t->toBasetype()->nextOf();      // change struct* to struct
-        if (t->mod != mod)
+        int tmod = t->mod;
+        if (t->toBasetype()->ty == Tclass)
+            tmod = t->nextOf()->mod;
+        if (tmod != mod)
         {
-            if (MODimplicitConv(t->mod, mod))
+            if (MODimplicitConv(tmod, mod))
                 match = MATCHconst;
             else
                 return MATCHnomatch;
@@ -7356,19 +7365,53 @@ MATCH TypeStruct::constConv(Type *to)
 }
 
 
-/***************************** TypeClass *****************************/
+/***************************** TypeClassType *****************************/
 
-TypeClass::TypeClass(ClassDeclaration *sym)
-        : Type(Tclass)
+TypeClassType::TypeClassType(ClassDeclaration *sym)
+        : Type(Tclasstype)
 {
     this->sym = sym;
 }
 
-char *TypeClass::toChars()
+void TypeClassType::toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod)
 {
-    if (mod)
-        return Type::toChars();
-    return (char *)sym->toPrettyChars();
+    if (mod != this->mod)
+    {   toCBuffer3(buf, hgs, mod);
+        return;
+    }
+    buf->writestring(sym->toChars());
+}
+
+void TypeClassType::toDecoBuffer(OutBuffer *buf, int flag)
+{
+    toDecoBufferx(buf, flag);
+    buf->writestring("##classtype");
+}
+
+void TypeClassType::toDecoBufferx(OutBuffer *buf, int flag)
+{
+    const char *name = sym->mangle();
+    Type::toDecoBuffer(buf, flag);
+    buf->printf("%s", name);
+}
+
+/***************************** TypeClass *****************************/
+
+TypeClass::TypeClass(Type *type)
+        : TypeNext(Tclass, type)
+{
+    this->sym = sym;
+    if (type->ty == Tclasstype)
+        this->sym = ((TypeClassType *)type)->sym;
+}
+
+char *TypeClass::toChars()
+{   OutBuffer *buf;
+    HdrGenState hgs;
+
+    buf = new OutBuffer();
+    toCBuffer2(buf, &hgs, 0);
+    return buf->toChars();
 }
 
 Type *TypeClass::syntaxCopy()
@@ -7378,10 +7421,32 @@ Type *TypeClass::syntaxCopy()
 
 Type *TypeClass::semantic(Loc loc, Scope *sc)
 {
-    //printf("TypeClass::semantic(%s)\n", sym->toChars());
+    //printf("TypeClass::semantic %d %d %s\n", mod, next->mod, deco ? deco : "null");
     if (deco)
         return this;
-    //printf("\t%s\n", merge()->deco);
+
+    //printf("ty: %d nty: %d mod: %d nmod %d\n", ty, next->ty, mod, next->mod);
+    next = next->semantic(loc, sc);
+    //next = next->mutableOf();
+    //transitive();
+
+    if (next->ty == Tclass)
+    {
+        return (new TypeClass(next->nextOf()))->addMod(mod)->semantic(loc, sc);
+        //next = next->mutableOf()->addMod(mod);
+        //return next->semantic(loc, sc);
+    }
+    next->addMod(mod);
+    if (next->ty != Tclasstype)
+    {
+        if (sc->parameterSpecialization)
+            return this;
+        printf("%s %d\n", next->toChars(), next->ty);
+        error(loc, "ref suffix is only valid for class types, not '%s'", next->toChars());
+        return terror;
+    }
+
+    sym = ((TypeClassType *)next)->sym;
     return merge();
 }
 
@@ -7397,10 +7462,10 @@ Dsymbol *TypeClass::toDsymbol(Scope *sc)
 
 void TypeClass::toDecoBuffer(OutBuffer *buf, int flag)
 {
-    const char *name = sym->mangle();
+    if (mod != next->mod)
+        Type::toDecoBuffer(buf, flag);
+    ((TypeClassType*)next)->toDecoBufferx(buf, flag);
     //printf("TypeClass::toDecoBuffer('%s' flag=%d mod=%x) = '%s'\n", toChars(), flag, mod, name);
-    Type::toDecoBuffer(buf, flag);
-    buf->printf("%s", name);
 }
 
 void TypeClass::toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod)
@@ -7409,7 +7474,9 @@ void TypeClass::toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod)
     {   toCBuffer3(buf, hgs, mod);
         return;
     }
-    buf->writestring(sym->toChars());
+    next->toCBuffer2(buf, hgs, this->mod);
+    if (this->mod != next->mod)
+        buf->writestring("ref");
 }
 
 Expression *TypeClass::dotExp(Scope *sc, Expression *e, Identifier *ident)
@@ -7727,10 +7794,14 @@ int TypeClass::isBaseOf(Type *t, int *poffset)
     }
     return 0;
 }
-
-MATCH TypeClass::implicitConvTo(Type *to)
+ClassDeclaration *TypeClassType::isClassHandle()
 {
-    //printf("TypeClass::implicitConvTo(to = '%s') %s\n", to->toChars(), toChars());
+    return sym;
+}
+
+MATCH TypeClassType::implicitConvTo(Type *to)
+{
+    //printf("TypeClassType::implicitConvTo(to = '%s') %s\n", to->toChars(), toChars());
     MATCH m = constConv(to);
     if (m != MATCHnomatch)
         return m;
@@ -7741,13 +7812,6 @@ MATCH TypeClass::implicitConvTo(Type *to)
         return MATCHconvert;
     }
 
-    if (global.params.Dversion == 1)
-    {
-        // Allow conversion to (void *)
-        if (to->ty == Tpointer && ((TypePointer *)to)->next->ty == Tvoid)
-            return MATCHconvert;
-    }
-
     m = MATCHnomatch;
     if (sym->aliasthis)
         m = aliasthisConvTo(sym, this, to);
@@ -7755,12 +7819,46 @@ MATCH TypeClass::implicitConvTo(Type *to)
     return m;
 }
 
+MATCH TypeClass::implicitConvTo(Type *to)
+{
+    if (equals(to))
+        return MATCHexact;
+    if (to->ty == Tclass)
+    {
+        TypeClass *tc = (TypeClass *)to;
+        
+        if (!MODimplicitConv(next->mod, tc->next->mod))
+            return MATCHnomatch;
+        
+        MATCH m = next->constConv(tc->next);
+        if (m != MATCHnomatch)
+        {
+            if (m == MATCHexact && mod != to->mod)
+                m = MATCHconst;
+            return m;
+        }
+    }
+    return MATCHnomatch;
+}
+
+MATCH TypeClassType::constConv(Type *to)
+{
+    if (equals(to))
+        return MATCHexact;
+    if (to->ty == Tclasstype && sym == ((TypeClassType *)to)->sym &&
+        MODimplicitConv(mod, to->mod))
+        return MATCHconst;
+    return MATCHnomatch;
+}
+
 MATCH TypeClass::constConv(Type *to)
 {
     if (equals(to))
         return MATCHexact;
-    if (ty == to->ty && sym == ((TypeClass *)to)->sym &&
-        MODimplicitConv(mod, to->mod))
+    if (to->ty == Tclass &&
+        sym == ((TypeClass *)to)->sym &&
+        MODimplicitConv(mod, to->mod) &&
+        MODimplicitConv(next->mod, to->nextOf()->mod))
         return MATCHconst;
     return MATCHnomatch;
 }

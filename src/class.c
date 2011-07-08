@@ -54,7 +54,7 @@ ClassDeclaration::ClassDeclaration(Loc loc, Identifier *id, BaseClasses *basecla
     //printf("ClassDeclaration(%s), dim = %d\n", id->toChars(), this->baseclasses->dim);
 
     // For forward references
-    type = new TypeClass(this);
+    type = (new TypeClassType(this))->classOf();
     handle = type;
 
     staticCtor = NULL;

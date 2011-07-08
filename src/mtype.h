@@ -60,6 +60,7 @@ enum ENUMTY
     Treference,
     Tfunction,
     Tident,
+    Tclasstype,
     Tclass,
     Tstruct,
 
@@ -822,11 +823,11 @@ struct TypeTypedef : Type
     type *toCParamtype();
 };
 
-struct TypeClass : Type
+struct TypeClass : TypeNext
 {
     ClassDeclaration *sym;
 
-    TypeClass(ClassDeclaration *sym);
+    TypeClass(Type *type);
     d_uns64 size(Loc loc);
     char *toChars();
     Type *syntaxCopy();
@@ -858,6 +859,27 @@ struct TypeClass : Type
     type *toCtype();
 
     Symbol *toSymbol();
+};
+
+struct TypeClassType : Type
+{
+    ClassDeclaration *sym;
+
+    TypeClassType(ClassDeclaration *sym);
+    void toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod);
+    void toDecoBuffer(OutBuffer *buf, int flag);
+    void toDecoBufferx(OutBuffer *buf, int flag);
+    MATCH deduceType(Scope *sc, Type *tparam, TemplateParameters *parameters, Objects *dedtypes);
+    ClassDeclaration *isClassHandle();
+    MATCH implicitConvTo(Type *to);
+    MATCH constConv(Type *to);
+    
+    TypeClass *classOf()
+    {
+        TypeClass *c = new TypeClass(this);
+        c->mod = mod;
+        return c;
+    }
 };
 
 struct TypeTuple : Type

@@ -56,9 +56,9 @@ template c(T : const(Object)ref) {
 }
 
 static assert(c!(Object));
-static assert(c!(const(Object))); // FIXME: should not match (const ref)
+static assert(!is(c!(const(Object)))); // xFIXME: should not match (const ref)
 static assert(c!(const(Object)ref));
-static assert(c!(immutable(Object))); // FIXME: should not match (immutable ref)
+static assert(!is(c!(immutable(Object)))); // xFIXME: should not match (immutable ref)
 static assert(c!(immutable(Object)ref));
 static assert(!is(typeof(c!(shared(Object))))); // no match
 static assert(!is(typeof(c!(shared(Object)ref)))); // no match
@@ -81,14 +81,17 @@ static assert(cp!(shared(int)*)); // FIXME: should not match
 template d(T : U ref, U) {
     alias U d;
 }
+template x(T : U *, U) {
+    alias U x;
+}
 
 static assert(is(d!(Object) == Object));
-static assert(!is(d!(const(Object)))); // no match (const ref)
-static assert(is(d!(const(Object)ref) == const(Object)ref));
-static assert(!is(d!(immutable(Object)))); // no match (immutable ref)
-static assert(is(d!(immutable(Object)ref) == immutable(Object)ref));
-static assert(!is(d!(shared(Object)))); // no match (shared ref)
-static assert(is(d!(shared(Object)ref) == shared(Object)ref));
+static assert(is(d!(const(Object)))); // no match (const ref)
+static assert(is(d!(const(Object)ref) == const(Object)));
+static assert(is(d!(immutable(Object)))); // no match (immutable ref)
+static assert(is(d!(immutable(Object)ref) == immutable(Object)));
+static assert(is(d!(shared(Object)) == shared(Object))); // no match (shared ref)
+static assert(is(d!(shared(Object)ref) == shared(Object)));
 
 static assert(!is(d!(int))); // no match: 'ref' prevents matching non-class
 
@@ -109,13 +112,13 @@ template e(T : const(U), U) {
     alias U e;
 }
 
-static assert(is(e!(Object) == Object));
+static assert(is(e!(Object) == const(Object)ref));
 static assert(is(e!(const(Object)) == const(Object)ref)); // FIXME: should == Object
 static assert(is(e!(const(Object)ref) == const(Object)ref)); // FIXME: should == Object
 static assert(is(e!(immutable(Object)) == immutable(Object)ref)); // FIXME: should == Object
 static assert(is(e!(immutable(Object)ref) == immutable(Object)ref)); // FIXME: should == Object
-static assert(!is(e!(shared(Object)))); // no match
-static assert(!is(e!(shared(Object)ref))); // no match
+static assert(is(e!(shared(Object)) == shared(const(Object)ref))); // no match
+static assert(is(e!(shared(Object)ref) == shared(const(Object))ref)); // no match
 
 template ep(T : const(U*), U) {
     alias U ep;
@@ -135,10 +138,10 @@ template f(T : const(U)ref, U) {
 }
 
 static assert(is(f!(Object) == Object));
-static assert(!is(f!(const(Object)))); // no match (const ref)
-static assert(is(f!(const(Object)ref) == const(Object)ref)); // FIXME: should == Object
-static assert(!is(f!(immutable(Object)))); // no match (immutable ref)
-static assert(is(f!(immutable(Object)ref) == immutable(Object)ref)); // FIXME: should == Object
+static assert(is(f!(const(Object)) == Object)); // no match (const ref)
+static assert(is(f!(const(Object)ref) == Object)); // FIXME: should == Object
+static assert(is(f!(immutable(Object)) == Object)); // no match (immutable ref)
+static assert(is(f!(immutable(Object)ref) == Object)); // FIXME: should == Object
 static assert(!is(f!(shared(Object)))); // no match
 static assert(!is(f!(shared(Object)ref))); // no match
 

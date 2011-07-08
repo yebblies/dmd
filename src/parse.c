@@ -2405,6 +2405,13 @@ Type *Parser::parseBasicType2(Type *t)
                 nextToken();
                 continue;
 
+            case TOKref:
+                if (t->ty == Tclass)
+                    error("multiple ref suffixes");
+                t = new TypeClass(t);
+                nextToken();
+                continue;
+
             case TOKlbracket:
                 // Handle []. Make sure things like
                 //     int[3][1] a;
@@ -4493,6 +4500,7 @@ int Parser::isDeclarator(Token **pt, int *haveId, enum TOK endtok)
         {
             case TOKmul:
             //case TOKand:
+            case TOKref:
                 t = peek(t);
                 continue;
 

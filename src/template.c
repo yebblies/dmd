@@ -1825,6 +1825,14 @@ MATCH Type::deduceType(Scope *sc, Type *tparam, TemplateParameters *parameters,
             goto Lnomatch;
         Type *tt = this;
         Type *at = (Type *)dedtypes->data[i];
+        
+        if (tt->ty == Tclasstype)
+        {
+            printf("tt: %s %d %s %d %d %d\n", tt->toChars(), tt->mod, tparam->toChars(), tparam->mod, tt->ty, tparam->ty);
+            tt = new TypeClass(tt);
+            printf("add %d\n", mod);
+            tt->addMod(mod);
+        }
 
         // 7*7 == 49 cases
 
@@ -1968,6 +1976,10 @@ MATCH Type::deduceType(Scope *sc, Type *tparam, TemplateParameters *parameters,
         if (tt->equals(at))
             goto Lexact;
         else if (tt->ty == Tclass && at->ty == Tclass)
+        {
+            return tt->implicitConvTo(at);
+        }
+        else if (tt->ty == Tclasstype && at->ty == Tclasstype)
         {
             return tt->implicitConvTo(at);
         }
@@ -2607,7 +2619,132 @@ void deduceBaseClassParameters(BaseClass *b,
 MATCH TypeClass::deduceType(Scope *sc, Type *tparam, TemplateParameters *parameters, Objects *dedtypes)
 {
     //printf("TypeClass::deduceType(this = %s)\n", toChars());
+    //printf("%s -> %s %d %d %d %d\n", toChars(), tparam->toChars(), mod, next->mod, tparam->mod, tparam->nextOf()->mod);
+    if (tparam->ty == Tclass)// && mod != next->mod)
+    {
+        TypeClass *tc = (TypeClass *)tparam;
+        printf("%s -> %s %d %d %d %d\n", toChars(), tparam->toChars(), mod, next->mod, tc->mod, tc->next->mod);
+        printf("1");
+        
+        // manufacture a new TypeClass that's essentially just the TypeClassType wrapped (with same mod)
+        // then recurse on that.
+        
+        if (equals(tc))
+        {
+            printf("exact\n\n");
+            return MATCHexact;
+        }
+        else if (tc->next->ty != Tident)
+        {
+            printf("z\n");
+            return implicitConvTo(tc);
+        }
+        else if (mod != tc->mod && MODimplicitConv(next->mod, MODmerge(next->mod, tc->mod)) && MODmerge(mod, tc->mod) != mod)
+        { // add outer
+            printf("ab\n");
+            return (new TypeClass(next->mutableOf()->addMod(MODmerge(next->mod, tc->mod))))->addMod(MODmerge(mod, tc->mod))->deduceType(sc, tc, parameters, dedtypes);
+        }
+        else if (mod != tc->mod && MODimplicitConv(next->mod, MODmerge(next->mod, tc->mod)))
+        { // remove outer
+            printf("ac\n");
+            return (new TypeClass(next->mutableOf()->addMod(MODmerge(next->mod, tc->mod))))->addMod(tc->mod)->deduceType(sc, tc, parameters, dedtypes);
+        }
+        else if (next->mod != tc->next->mod && tc->next->mod && MODimplicitConv(next->mod, MODmerge(next->mod, tc->next->mod)) && MODmerge(next->mod, tc->next->mod) != next->mod)
+        { // add inner
+            printf("aa\n");
+            return (new TypeClass(next->mutableOf()->addMod(MODmerge(next->mod, tc->next->mod))))->addMod(mod)->deduceType(sc, tc, parameters, dedtypes);
+        }
+        else if (tc->mod == mod && tc->next->mod == next->mod)
+        { // a(b(O)ref) -> a(b(U)ref)
+            printf("f\n");
+            return (new TypeClass(next->mutableOf()))->deduceType(sc, tc->next->mutableOf(), parameters, dedtypes);
+        }
+        else if (tc->mod == mod)
+        {
+            printf("h\n");
+            return (new TypeClass(next))->addMod(next->mod)->deduceType(sc, tc->next, parameters, dedtypes);
+        }
+        else if (mod != tc->mod)
+        {
+            printf("g\n");
+            return (new TypeClass(next))->addMod(tc->mod)->deduceType(sc, tc, parameters, dedtypes);
+        }
+        else if ((tc->mod || tc->next->mod) && MODimplicitConv(mod, MODmerge(mod, tc->mod)) && MODimplicitConv(next->mod, MODmerge(next->mod, tc->next->mod)))
+        { // if the whole thing converts
+            printf("x\n");
+            
+            Type * newnext = next->mutableOf()->addMod(MODmerge(next->mod, tc->next->mod));
+            printf("%d+%d -> %d\n", next->mod, tc->next->mod, newnext->mod);
+            Type *newthis = (new TypeClass(newnext))->addMod(MODmerge(mod, tc->mod));
+            printf("%d+%d -> %d\n", mod, MODmerge(mod, tc->mod), newthis->mod);
+            
+            MATCH m = newthis->deduceType(sc, tc, parameters, dedtypes);
+            
+            //MATCH m = (new TypeClass(next->addMod(tc->next->mod)))->addMod(MODmerge(mod, tc->mod))->deduceType(sc, tc, parameters, dedtypes);
+            if (m == MATCHexact)
+                return MATCHconst;
+            return m;
+        }
+        else if (mod == tc->mod)
+        { // of the form x(O) -> y(U), remove from both
+            printf("y\n");
+            return (new TypeClass(next))->addMod(next->mod)->deduceType(sc, tc->next, parameters, dedtypes);
+        }
+        else if (mod & tc->mod)
+        { // x(y(z(O)ref)) -> x(a(b(O)ref)), remove outer mod
+            printf("a\n");
+            return (new TypeClass(next))->addMod(mod & ~(mod & tc->mod))->deduceType(sc, (new TypeClass(tc->next))->addMod(tc->mod & ~(mod & tc->mod)), parameters, dedtypes);
+        }
+        else if (tc->next->ty == Tident && tc->mod == 0)
+        {
+            printf("b\n");
+            return (new TypeClass(next))->deduceType(sc, (new TypeClass(tc->next)), parameters, dedtypes);
+        }
+        else if (tc->next->ty == Tident && MODimplicitConv(mod, MODmerge(mod, tc->mod)))
+        {
+            printf("c\n");
+            return addMod(tc->mod)->deduceType(sc, tparam, parameters, dedtypes);
+        }
+        else if (implicitConvTo(tc))
+        {
+            printf("d\n\n");
+            return MATCHconvert;
+        }
+        printf("e\n\n");
+        return MATCHnomatch;
+        assert(0);
+    }
+    else if (tparam->ty == Tident)
+    {
+        printf("%s -> ident %s %d %d %d\n", toChars(), tparam->toChars(), mod, next->mod, tparam->mod);
+        printf("2");
+        //__asm int 3;
+        if (mod & tparam->mod)
+        {
+            printf("a\n");
+            return (new TypeClass(next))->addMod(mod & ~(mod & tparam->mod))->deduceType(sc, tparam->mutableOf()->addMod(tparam->mod & ~(mod & tparam->mod)), parameters, dedtypes);
+        }
+        else if (tparam->mod && MODimplicitConv(mod, MODmerge(tparam->mod, mod)))
+        {
+            printf("b\n");
+            return mutableOf()->addMod(MODmerge(mod, tparam->mod))->deduceType(sc, tparam, parameters, dedtypes);
+        }
+        else
+        {
+            printf("c\n\n");
+            return Type::deduceType(sc, tparam, parameters, dedtypes);
+        }
+    }
+    printf("%s\n", tparam->toChars());
+    assert(0);
+    return MATCHnomatch;
+}
 
+MATCH TypeClassType::deduceType(Scope *sc, Type *tparam, TemplateParameters *parameters, Objects *dedtypes)
+{
+    printf("fail");
+    assert(0);
+    printf("TypeClassType::deduceType(this = %s)\n", toChars());
     /* If this class is a template class, and we're matching
      * it against a template instance, convert the class type
      * to a template instance, too, and try again.
@@ -2690,13 +2827,13 @@ MATCH TypeClass::deduceType(Scope *sc, Type *tparam, TemplateParameters *paramet
     }
 
     // Extra check
-    if (tparam && tparam->ty == Tclass)
+    if (tparam && tparam->ty == Tclasstype)
     {
-        TypeClass *tp = (TypeClass *)tparam;
+        TypeClassType *tp = (TypeClassType *)tparam;
 
         //printf("\t%d\n", (MATCH) implicitConvTo(tp));
         return implicitConvTo(tp);
-    }
+    }//__asm int 3;
     return Type::deduceType(sc, tparam, parameters, dedtypes);
 }
 
