@@ -1183,19 +1183,19 @@ void test56()
     string a = "abcd";
     string r;
 
-    r = a.idup.reverse;
+    r = a.dup.reverse.idup;
     writefln(r);
     assert(r == "dcba");
 
     a = "a\u1235\u1234c";
     writefln(a);
-    r = a.idup.reverse;
+    r = a.dup.reverse.idup;
     writefln(r);
     assert(r == "c\u1234\u1235a");
 
     a = "ab\u1234c";
     writefln(a);
-    r = a.idup.reverse;
+    r = a.dup.reverse.idup;
     writefln(r);
     assert(r == "c\u1234ba");
 }
@@ -1213,19 +1213,19 @@ void test57()
     wstring a = "abcd";
     wstring r;
 
-    r = a.idup.reverse;
+    r = a.dup.reverse.idup;
     writefln(r);
     assert(r == "dcba");
 
     a = "a\U00012356\U00012346c";
     writefln(a);
-    r = a.idup.reverse;
+    r = a.dup.reverse.idup;
     writefln(r);
     assert(r == "c\U00012346\U00012356a");
 
     a = "ab\U00012345c";
     writefln(a);
-    r = a.idup.reverse;
+    r = a.dup.reverse.idup;
     writefln(r);
     assert(r == "c\U00012345ba");
 
