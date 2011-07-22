@@ -3178,6 +3178,16 @@ static assert(!is(typeof(Bar4258.init += 1)));
 static assert(!is(typeof(1 + Baz4258.init)));
 
 /***************************************************/
+// 1471
+
+void test1471()
+{
+	int n;
+	string bar = "BOOM"[n..$-1];
+	assert(bar == "BOO");
+}
+
+/***************************************************/
 
 void test4963()
 {
@@ -3297,7 +3307,19 @@ S5046!(p, T) makeS5046(alias p, T)()
 } 
  
 /***************************************************/ 
+// 6335
 
+struct S6335
+{
+    const int value;
+    this()(int n){ value = n; }
+}
+void test6335()
+{
+    S6335 s = S6335(10);
+}
+
+/***************************************************/ 
 
 int main()
 {
@@ -3464,6 +3486,8 @@ int main()
     test6230();
     test6264();
     test5046();
+    test1471();
+    test6335();
 
     printf("Success\n");
     return 0;
