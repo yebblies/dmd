@@ -2779,7 +2779,7 @@ int FuncDeclaration::addPreInvariant()
     return (ad &&
             //ad->isClassDeclaration() &&
             global.params.useInvariants &&
-            (protection == PROTpublic || protection == PROTexport) &&
+            (protection == PROTprotected || protection == PROTpublic || protection == PROTexport) &&
             !naked &&
             ident != Id::cpctor);
 }
@@ -2791,7 +2791,7 @@ int FuncDeclaration::addPostInvariant()
             ad->inv &&
             //ad->isClassDeclaration() &&
             global.params.useInvariants &&
-            (protection == PROTpublic || protection == PROTexport) &&
+            (protection == PROTprotected || protection == PROTpublic || protection == PROTexport) &&
             !naked &&
             ident != Id::cpctor);
 }
