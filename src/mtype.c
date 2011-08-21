@@ -2056,6 +2056,13 @@ uinteger_t Type::sizemask()
     return m;
 }
 
+
+void Type::stripDefaultArgs()
+{
+    assert(0);
+}
+
+
 /* ============================= TypeError =========================== */
 
 TypeError::TypeError()
@@ -2068,6 +2075,7 @@ void TypeError::toCBuffer(OutBuffer *buf, Identifier *ident, HdrGenState *hgs)
     buf->writestring("_error_");
 }
 
+Type *TypeError::syntaxCopy() { return this; }
 d_uns64 TypeError::size(Loc loc) { return 1; }
 Expression *TypeError::getProperty(Loc loc, Identifier *ident) { return new ErrorExp(); }
 Expression *TypeError::dotExp(Scope *sc, Expression *e, Identifier *ident) { return new ErrorExp(); }
@@ -4318,6 +4326,15 @@ int TypePointer::hasPointers()
     return TRUE;
 }
 
+void TypePointer::stripDefaultArgs()
+{
+    if (next->ty == Tfunction)
+    {
+        next = next->syntaxCopy();
+        next->stripDefaultArgs();
+    }
+}
+
 
 /***************************** TypeReference *****************************/
 
@@ -5335,6 +5352,16 @@ Expression *TypeFunction::defaultInit(Loc loc)
     return new ErrorExp();
 }
 
+void TypeFunction::stripDefaultArgs()
+{
+    size_t nparams = Parameter::dim(parameters);
+    for (size_t i = 0; i < nparams; ++i)
+    {
+        Parameter *p = Parameter::getNth(parameters, i);
+        p->defaultArg = NULL;
+    }
+}
+
 /***************************** TypeDelegate *****************************/
 
 TypeDelegate::TypeDelegate(Type *t)
@@ -5469,6 +5496,11 @@ int TypeDelegate::hasPointers()
     return TRUE;
 }
 
+void TypeDelegate::stripDefaultArgs()
+{
+    next = next->syntaxCopy();
+    next->stripDefaultArgs();
+}
 
 
 /***************************** TypeQualified *****************************/
