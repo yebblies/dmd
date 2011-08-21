@@ -388,6 +388,7 @@ enum MATCH
     MATCHnomatch,       // no match
     MATCHconvert,       // match with conversions
 #if DMDV2
+    MATCHpoly,          // match with a polysemous type
     MATCHconst,         // match with conversion to const
 #endif
     MATCHexact          // exact match
