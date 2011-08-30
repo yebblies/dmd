@@ -3946,6 +3946,12 @@ StructDeclaration *TypeAArray::getImpl()
     // Do it lazily
     if (!impl)
     {
+        ClassDeclaration *object = ClassDeclaration::object;
+
+        assert(object);
+        if (!sc) sc = object->parent->scope;
+        assert(sc);
+
         Type *index = this->index;
         Type *next = this->next;
         if (index->reliesOnTident() || next->reliesOnTident())
