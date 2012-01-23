@@ -356,6 +356,8 @@ Symbol *FuncDeclaration::toSymbol()
             func_t *f = s->Sfunc;
             if (isVirtual())
                 f->Fflags |= Fvirtual;
+            else if (forceNonVirtual)
+                ;
             else if (isMember2())
                 f->Fflags |= Fstatic;
             f->Fstartline.Slinnum = loc.linnum;

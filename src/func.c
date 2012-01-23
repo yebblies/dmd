@@ -89,6 +89,7 @@ FuncDeclaration::FuncDeclaration(Loc loc, Loc endloc, Identifier *id, StorageCla
     builtin = BUILTINunknown;
     tookAddressOf = 0;
     flags = 0;
+    forceNonVirtual = 0;
 #endif
 }
 
@@ -443,6 +444,13 @@ void FuncDeclaration::semantic(Scope *sc)
         switch (vi)
         {
             case -1:
+                // Final functions that don't override anything are not virtual
+                if (isFinal())
+                {
+                    forceNonVirtual = 1;
+                    goto Ldone;
+                }
+
                 /* Didn't find one, so
                  * This is an 'introducing' function which gets a new
                  * slot in the vtbl[].
@@ -2675,7 +2683,7 @@ int FuncDeclaration::isVirtual()
     return isMember() &&
         !(isStatic() || protection == PROTprivate || protection == PROTpackage) &&
         p->isClassDeclaration() &&
-        !(p->isInterfaceDeclaration() && isFinal());
+        !(p->isInterfaceDeclaration() && isFinal()) && !forceNonVirtual;
 }
 
 // Determine if a function is pedantically virtual
