@@ -412,6 +412,15 @@ Symbol *FuncDeclaration::toSymbol()
                         ::type *tc = cd->type->toCtype();
                         s->Sscope = tc->Tnext->Ttag;
                     }
+                    else
+                    {
+                        StructDeclaration *sd = parent->isStructDeclaration();
+                        if (sd)
+                        {
+                            s->Sscope = sd->toSymbol();
+                        }
+                    }
+
                     break;
                 }
                 default:

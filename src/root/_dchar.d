@@ -1,4 +1,5 @@
-imodule root._dchar;
+
+module root._dchar;
 
 import core.stdc.string;
 extern(C) nothrow @system pure
@@ -29,13 +30,10 @@ struct Dchar
         { return cast(_dchar *).memchr(p, c, count); }
     static _dchar *cpy(_dchar *s1, _dchar *s2) { return strcpy(s1, s2); }
     static _dchar *str(_dchar *s1, _dchar *s2) { return strstr(s1, s2); }
-    static hash_t calcHash(const _dchar *str, size_t len) { return Dchar__calcHash(str, len); }
+    static hash_t calcHash(const _dchar *str, size_t len);
 
     // Case insensitive versions
     static int icmp(_dchar *s1, _dchar *s2) { return stricmp(s1, s2); }
     static int memicmp(const _dchar *s1, const _dchar *s2, int n_dchars) { return .memicmp(s1, s2, n_dchars); }
-    static hash_t icalcHash(const _dchar *str, size_t len) { return Dchar__icalcHash(str, len); }
+    static hash_t icalcHash(const _dchar *str, size_t len);
 };
-
-extern(C++) extern hash_t Dchar__icalcHash(const _dchar *str, size_t len);
-extern(C++) extern hash_t Dchar__calcHash(const _dchar *str, size_t len);
