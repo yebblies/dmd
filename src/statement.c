@@ -533,7 +533,7 @@ Statement *CompoundStatement::semantic(Scope *sc)
                          * As:
                          *      s;
                          *      try { s1; s2; }
-                         *      catch (Object __o)
+                         *      catch (_Object __o)
                          *      { sexception; throw __o; }
                          */
                         Statements *a = new Statements();
@@ -3186,7 +3186,7 @@ Statement *CaseStatement::semantic(Scope *sc)
     return this;
 }
 
-int CaseStatement::compare(Object *obj)
+int CaseStatement::compare(_Object *obj)
 {
     // Sort cases so we can do an efficient lookup
     CaseStatement *cs2 = (CaseStatement *)(obj);
@@ -4081,7 +4081,7 @@ Statement *SynchronizedStatement::semantic(Scope *sc)
         {   /* Cast the interface to an object, as the object has the monitor,
              * not the interface.
              */
-            Type *t = new TypeIdentifier(0, Id::Object);
+            Type *t = new TypeIdentifier(0, Id::_Object);
 
             t = t->semantic(0, sc);
             exp = new CastExp(loc, exp, t);
@@ -4376,10 +4376,10 @@ int TryCatchStatement::blockExit(bool mustNotThrow)
 
         catchresult |= c->blockExit(mustNotThrow);
 
-        /* If we're catching Object, then there is no throwing
+        /* If we're catching _Object, then there is no throwing
          */
         Identifier *id = c->type->toBasetype()->isClassHandle()->ident;
-        if (id == Id::Object || id == Id::Throwable || id == Id::Exception)
+        if (id == Id::_Object || id == Id::Throwable || id == Id::Exception)
         {
             result &= ~BEthrow;
         }

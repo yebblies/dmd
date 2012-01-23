@@ -173,53 +173,53 @@ void warning(const char *format, ...)
     fflush(stdout);
 }
 
-/****************************** Object ********************************/
+/****************************** _Object ********************************/
 
-int Object::equals(Object *o)
+int _Object::equals(_Object *o)
 {
     return o == this;
 }
 
-hash_t Object::hashCode()
+hash_t _Object::hashCode()
 {
     return (hash_t) this;
 }
 
-int Object::compare(Object *obj)
+int _Object::compare(_Object *obj)
 {
     return this - obj;
 }
 
-void Object::print()
+void _Object::print()
 {
     printf("%s %p\n", toChars(), this);
 }
 
-char *Object::toChars()
+char *_Object::toChars()
 {
-    return (char *)"Object";
+    return (char *)"_Object";
 }
 
-dchar *Object::toDchars()
+dchar *_Object::toDchars()
 {
 #if M_UNICODE
-    return L"Object";
+    return L"_Object";
 #else
     return toChars();
 #endif
 }
 
-int Object::dyncast()
+int _Object::dyncast()
 {
     return 0;
 }
 
-void Object::toBuffer(OutBuffer *b)
+void _Object::toBuffer(OutBuffer *b)
 {
-    b->writestring("Object");
+    b->writestring("_Object");
 }
 
-void Object::mark()
+void _Object::mark()
 {
 }
 
@@ -293,12 +293,12 @@ unsigned String::len()
     return strlen(str);
 }
 
-int String::equals(Object *obj)
+int String::equals(_Object *obj)
 {
     return strcmp(str,((String *)obj)->str) == 0;
 }
 
-int String::compare(Object *obj)
+int String::compare(_Object *obj)
 {
     return strcmp(str,((String *)obj)->str);
 }
@@ -476,7 +476,7 @@ hash_t FileName::hashCode()
 #endif
 }
 
-int FileName::compare(Object *obj)
+int FileName::compare(_Object *obj)
 {
     return compare(str, ((FileName *)obj)->str);
 }
@@ -490,7 +490,7 @@ int FileName::compare(const char *name1, const char *name2)
 #endif
 }
 
-int FileName::equals(Object *obj)
+int FileName::equals(_Object *obj)
 {
     return compare(obj) == 0;
 }
@@ -1769,7 +1769,7 @@ void OutBuffer::write(OutBuffer *buf)
     }
 }
 
-void OutBuffer::write(Object *obj)
+void OutBuffer::write(_Object *obj)
 {
     if (obj)
     {

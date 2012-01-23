@@ -99,7 +99,7 @@ elem *callfunc(Loc loc,
     if (t->ty == Tdelegate)
     {
         // A delegate consists of:
-        //      { Object *this; Function *funcptr; }
+        //      { _Object *this; Function *funcptr; }
         assert(!fd);
         assert(t->nextOf()->ty == Tfunction);
         tf = (TypeFunction *)(t->nextOf());
@@ -1214,7 +1214,7 @@ elem *Dsymbol_toElem(Dsymbol *s, IRState *irs)
     else if ((td = s->isTupleDeclaration()) != NULL)
     {
         for (size_t i = 0; i < td->objects->dim; i++)
-        {   Object *o = td->objects->tdata()[i];
+        {   _Object *o = td->objects->tdata()[i];
             if (o->dyncast() == DYNCAST_EXPRESSION)
             {   Expression *eo = (Expression *)o;
                 if (eo->op == TOKdsymbol)

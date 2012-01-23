@@ -195,7 +195,7 @@ char *Array::toChars()
     len = 2;
     for (u = 0; u < dim; u++)
     {
-        buf[u] = ((Object *)data[u])->toChars();
+        buf[u] = ((_Object *)data[u])->toChars();
         len += strlen(buf[u]) + 1;
     }
     str = (char *)mem.malloc(len);
@@ -232,8 +232,8 @@ int
 #endif
         Array_sort_compare(const void *x, const void *y)
 {
-    Object *ox = *(Object **)x;
-    Object *oy = *(Object **)y;
+    _Object *ox = *(_Object **)x;
+    _Object *oy = *(_Object **)y;
 
     return ox->compare(oy);
 }
@@ -242,7 +242,7 @@ void Array::sort()
 {
     if (dim)
     {
-        qsort(data, dim, sizeof(Object *), Array_sort_compare);
+        qsort(data, dim, sizeof(_Object *), Array_sort_compare);
     }
 }
 

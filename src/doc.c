@@ -966,7 +966,7 @@ void ClassDeclaration::toDocBuffer(OutBuffer *buf)
 
             if (bc->protection == PROTprivate)
                 continue;
-            if (bc->base && bc->base->ident == Id::Object)
+            if (bc->base && bc->base->ident == Id::_Object)
                 continue;
 
             if (any)

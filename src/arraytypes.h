@@ -30,7 +30,7 @@ typedef ArrayBase<struct ClassDeclaration> ClassDeclarations;
 
 typedef ArrayBase<struct Dsymbol> Dsymbols;
 
-typedef ArrayBase<struct Object> Objects;
+typedef ArrayBase<struct _Object> Objects;
 
 typedef ArrayBase<struct FuncDeclaration> FuncDeclarations;
 

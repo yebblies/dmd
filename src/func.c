@@ -1735,7 +1735,7 @@ VarDeclaration *FuncDeclaration::declareThis(Scope *sc, AggregateDeclaration *ad
     return NULL;
 }
 
-int FuncDeclaration::equals(Object *o)
+int FuncDeclaration::equals(_Object *o)
 {
     if (this == o)
         return TRUE;

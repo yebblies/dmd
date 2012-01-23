@@ -178,7 +178,7 @@ ClassDeclaration::ClassDeclaration(Loc loc, Identifier *id, BaseClasses *basecla
 #endif
         }
 
-        if (id == Id::Object)
+        if (id == Id::_Object)
         {   if (object)
                 object->error("%s", msg);
             object = this;
@@ -297,8 +297,8 @@ void ClassDeclaration::semantic(Scope *sc)
         isdeprecated = 1;
     }
 
-    if (sc->linkage == LINKcpp)
-        error("cannot create C++ classes");
+//    if (sc->linkage == LINKcpp)
+//        error("cannot create C++ classes");
 
     // Expand any tuples in baseclasses[]
     for (size_t i = 0; i < baseclasses->dim; )
@@ -457,10 +457,10 @@ void ClassDeclaration::semantic(Scope *sc)
 
 
     // If no base class, and this is not an Object, use Object as base class
-    if (!baseClass && ident != Id::Object)
+    if (!baseClass && ident != Id::_Object)
     {
         // BUG: what if Object is redefined in an inner scope?
-        Type *tbase = new TypeIdentifier(0, Id::Object);
+        Type *tbase = new TypeIdentifier(0, Id::_Object);
         BaseClass *b;
         TypeClass *tc;
         Type *bt;
@@ -875,7 +875,7 @@ int ClassDeclaration::isBaseOf(ClassDeclaration *cd, int *poffset)
 int ClassDeclaration::isBaseInfoComplete()
 {
     if (!baseClass)
-        return ident == Id::Object;
+        return ident == Id::_Object;
     for (size_t i = 0; i < baseclasses->dim; i++)
     {   BaseClass *b = baseclasses->tdata()[i];
         if (!b->base || !b->base->isBaseInfoComplete())

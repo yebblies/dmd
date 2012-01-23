@@ -657,7 +657,7 @@ void ClassDeclaration::toObjFile(int multiobj)
         {
             assert(j < b->vtbl.dim);
 #if 0
-            Object *o = b->vtbl.tdata()[j];
+            _Object *o = b->vtbl.tdata()[j];
             if (o)
             {
                 printf("o = %p\n", o);
@@ -958,7 +958,7 @@ void InterfaceDeclaration::toObjFile(int multiobj)
             char[] name;                // class name
             void *[] vtbl;
             Interface[] interfaces;
-            Object *base;               // base class
+            _Object *base;               // base class
             void *destructor;
             void *invariant;            // class invariant
             uint flags;

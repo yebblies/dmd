@@ -109,7 +109,7 @@ enum PASS
     PASSobj,            // toObjFile() run
 };
 
-struct Dsymbol : Object
+struct Dsymbol : _Object
 {
     Identifier *ident;
     Identifier *c_ident;
@@ -124,7 +124,7 @@ struct Dsymbol : Object
     Dsymbol(Identifier *);
     char *toChars();
     char *locToChars();
-    int equals(Object *o);
+    int equals(_Object *o);
     int isAnonymous();
     void error(Loc loc, const char *format, ...);
     void error(const char *format, ...);
@@ -326,7 +326,7 @@ struct OverloadSet : Dsymbol
 
 // Table of Dsymbol's
 
-struct DsymbolTable : Object
+struct DsymbolTable : _Object
 {
     AA *tab;
 

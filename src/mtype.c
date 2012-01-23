@@ -147,7 +147,7 @@ Type *Type::syntaxCopy()
     return this;
 }
 
-int Type::equals(Object *o)
+int Type::equals(_Object *o)
 {   Type *t;
 
     t = (Type *)o;
@@ -3638,7 +3638,7 @@ void TypeSArray::resolve(Loc loc, Scope *sc, Expression **pe, Type **pt, Dsymbol
             {   error(loc, "tuple index %ju exceeds length %u", d, td->objects->dim);
                 goto Ldefault;
             }
-            Object *o = td->objects->tdata()[(size_t)d];
+            _Object *o = td->objects->tdata()[(size_t)d];
             if (o->dyncast() == DYNCAST_DSYMBOL)
             {
                 *ps = (Dsymbol *)o;
@@ -3698,7 +3698,7 @@ Type *TypeSArray::semantic(Loc loc, Scope *sc)
         {   error(loc, "tuple index %ju exceeds %u", d, sd->objects->dim);
             return Type::terror;
         }
-        Object *o = sd->objects->tdata()[(size_t)d];
+        _Object *o = sd->objects->tdata()[(size_t)d];
         if (o->dyncast() != DYNCAST_TYPE)
         {   error(loc, "%s is not a type", toChars());
             return Type::terror;
@@ -8388,7 +8388,7 @@ Type *TypeTuple::semantic(Loc loc, Scope *sc)
     return this;
 }
 
-int TypeTuple::equals(Object *o)
+int TypeTuple::equals(_Object *o)
 {   Type *t;
 
     t = (Type *)o;
