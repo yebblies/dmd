@@ -960,6 +960,11 @@ void FuncDeclaration::toObjFile(int multiobj)
         stests.push(s);
     }
 
+    if (linkage == LINKcpp && parent->isStructDeclaration())
+    {
+        s->Sscope = parent->isStructDeclaration()->toSymbol();
+    }
+
     if (global.errors)
         return;
 

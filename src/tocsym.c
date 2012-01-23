@@ -509,6 +509,15 @@ Classsym *fake_classsym(Identifier *id)
     return scc;
 }
 
+Symbol *StructDeclaration::toSymbol()
+{
+    if (!csym)
+    {
+        csym = fake_classsym(ident);
+    }
+    return csym;
+}
+
 /*************************************
  * Create the "ClassInfo" symbol
  */
