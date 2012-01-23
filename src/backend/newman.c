@@ -509,9 +509,11 @@ char *cpp_mangle(symbol *s)
         mangle.argi = 0;
         mangle.np = mangle.buf;
         mangle.buf[BUFIDMAX + 1] = 0x55;
+        //static int x = 0;
+        //if (x == 83) __asm int 3;
         cpp_decorated_name(s);
         *mangle.np = 0;                 // 0-terminate cpp_name[]
-        //dbg_printf("cpp_mangle() = '%s'\n", mangle.buf);
+        //printf("%d\t%s\n", x++, mangle.buf);
         assert(strlen(mangle.buf) <= BUFIDMAX);
         assert(mangle.buf[BUFIDMAX + 1] == 0x55);
         return mangle.buf;

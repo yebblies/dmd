@@ -84,7 +84,7 @@ class _Object
      * Marks pointers for garbage collector by calling mem.mark() for all pointers into heap.
      */
     /*virtual*/         // not used, disable for now
-        void mark();
+    final void mark();
 };
 
 extern(C++)
