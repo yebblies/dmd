@@ -127,7 +127,7 @@ void err_abort(int status, const char *msg)
     exit(EXIT_FAILURE);
 }
 
-struct FileData
+class FileData
 {
     File *file;
     int result;
@@ -264,7 +264,7 @@ void *startthread(void *p)
 
 #include "root.h"
 
-struct FileData
+class FileData
 {
     File *file;
     int result;

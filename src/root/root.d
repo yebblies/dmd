@@ -72,7 +72,7 @@ class _Object
 
     char *toChars();
     _dchar *toDchars();
-    void toBuffer(OutBuffer *buf);
+    void toBuffer(OutBuffer buf);
 
     /**
      * Used as a replacement for dynamic_cast. Returns a unique number
@@ -383,9 +383,9 @@ class Bits : _Object
     uint allocdim;
     uint *data;
 
+final:
     this();
     ~this();
-final:
     void mark();
 
     void resize(uint bitdim);

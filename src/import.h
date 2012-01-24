@@ -20,7 +20,7 @@
 
 struct Identifier;
 struct Scope;
-struct OutBuffer;
+class OutBuffer;
 struct Module;
 struct Package;
 struct AliasDeclaration;

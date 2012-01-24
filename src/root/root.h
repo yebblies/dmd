@@ -62,11 +62,11 @@ longlong randomx();
  * Root of our class library.
  */
 
-struct OutBuffer;
+class OutBuffer;
 
 // Can't include arraytypes.h here, need to declare these directly.
-template <typename TYPE> struct ArrayBase;
-typedef ArrayBase<struct File> Files;
+template <typename TYPE> class ArrayBase;
+typedef ArrayBase<class File> Files;
 typedef ArrayBase<char> Strings;
 
 
