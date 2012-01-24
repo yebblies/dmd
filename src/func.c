@@ -445,9 +445,11 @@ void FuncDeclaration::semantic(Scope *sc)
         {
             case -1:
                 // Final functions that don't override anything are not virtual
-                if (isFinal())
+                // Only do this for C++ functions as they only use single inheritance
+                if (linkage == LINKcpp && isFinal())
                 {
                     forceNonVirtual = 1;
+                    //printf("forcing %s non-virtual\n", toPrettyChars());
                     goto Ldone;
                 }
 
@@ -510,7 +512,7 @@ void FuncDeclaration::semantic(Scope *sc)
                     if (fdc->parent->isClassDeclaration())
                         break;
                     if (!this->parent->isClassDeclaration()
-#if !BREAKABI
+#if 1 || !BREAKABI
                         && !isDtorDeclaration()
 #endif
 #if DMDV2
@@ -3349,12 +3351,13 @@ void DtorDeclaration::semantic(Scope *sc)
     else if (ident == Id::dtor && semanticRun < PASSsemantic)
         ad->dtors.push(this);
 
-    if (!type)
-        type = new TypeFunction(NULL, Type::tvoid, FALSE, LINKd);
-
     sc = sc->push();
     sc->stc &= ~STCstatic;              // not a static destructor
-    sc->linkage = LINKd;
+    if (sc->linkage != LINKcpp)
+        sc->linkage = LINKd;
+
+    if (!type)
+        type = new TypeFunction(NULL, Type::tvoid, FALSE, sc->linkage);
 
     FuncDeclaration::semantic(sc);
 
@@ -3391,7 +3394,7 @@ int DtorDeclaration::isVirtual()
     /* This should be FALSE so that dtor's don't get put into the vtbl[],
      * but doing so will require recompiling everything.
      */
-#if BREAKABI
+#if BREAKABI && 0
     return FALSE;
 #else
     return FuncDeclaration::isVirtual();

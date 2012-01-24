@@ -344,6 +344,7 @@ Symbol *FuncDeclaration::toSymbol()
         id = mangle();
 #endif
         //printf("FuncDeclaration::toSymbol(%s %s)\n", kind(), toChars());
+        //printf("linkage = %d\n\n", linkage);
         //printf("\tid = '%s'\n", id);
         //printf("\ttype = %s\n", type->toChars());
         s = symbol_calloc(id);
@@ -356,7 +357,7 @@ Symbol *FuncDeclaration::toSymbol()
             func_t *f = s->Sfunc;
             if (isVirtual())
                 f->Fflags |= Fvirtual;
-            else if (forceNonVirtual)
+            else if (forceNonVirtual || isCtorDeclaration())
                 ;
             else if (isMember2())
                 f->Fflags |= Fstatic;
@@ -422,6 +423,11 @@ Symbol *FuncDeclaration::toSymbol()
                             s->Sscope = sd->toSymbol();
                         }
                     }
+
+                    if (isCtorDeclaration())
+                        s->Sfunc->Fflags |= Fctor;
+                    if (isDtorDeclaration())
+                        s->Sfunc->Fflags |= Fdtor;
 
                     break;
                 }

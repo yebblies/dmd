@@ -510,7 +510,7 @@ char *cpp_mangle(symbol *s)
         mangle.np = mangle.buf;
         mangle.buf[BUFIDMAX + 1] = 0x55;
         //static int x = 0;
-        //if (x == 83) __asm int 3;
+        //if (x == 46) __asm int 3;
         cpp_decorated_name(s);
         *mangle.np = 0;                 // 0-terminate cpp_name[]
         //printf("%d\t%s\n", x++, mangle.buf);
@@ -1621,6 +1621,22 @@ STATIC void cpp_symbol_name(symbol *s)
         {   // operator_name ::= '?' operator_code
             //CHAR('?');                        // already there
             STR(p);
+            return;
+        }
+    }
+#endif
+#if MARS
+    // Write special functions specially
+    if (tyfunc(s->Stype->Tty) && s->Sfunc)
+    {
+        if (s->Sfunc->Fflags & Fctor)
+        {
+            cpp_zname(cpp_name_ct);
+            return;
+        }
+        else if (s->Sfunc->Fflags & Fdtor)
+        {
+            cpp_zname(cpp_name_dt);
             return;
         }
     }

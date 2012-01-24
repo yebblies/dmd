@@ -383,9 +383,9 @@ class Bits : _Object
     uint allocdim;
     uint *data;
 
-final:
     this();
     ~this();
+final:
     void mark();
 
     void resize(uint bitdim);
