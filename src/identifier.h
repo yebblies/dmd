@@ -17,16 +17,16 @@
 
 #include "root.h"
 
-struct Identifier : Object
+struct Identifier : _Object
 {
     int value;
     const char *string;
     unsigned len;
 
     Identifier(const char *string, int value);
-    int equals(Object *o);
+    int equals(_Object *o);
     hash_t hashCode();
-    int compare(Object *o);
+    int compare(_Object *o);
     void print();
     char *toChars();
     char *toHChars();

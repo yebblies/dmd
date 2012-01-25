@@ -196,7 +196,7 @@ Expression *TraitsExp::semantic(Scope *sc)
 
         if (dim != 1)
             goto Ldimerror;
-        Object *o = args->tdata()[0];
+        _Object *o = args->tdata()[0];
         Dsymbol *s = getDsymbol(o);
         if (!s || !s->ident)
         {
@@ -210,7 +210,7 @@ Expression *TraitsExp::semantic(Scope *sc)
     {
         if (dim != 1)
             goto Ldimerror;
-        Object *o = args->tdata()[0];
+        _Object *o = args->tdata()[0];
         Dsymbol *s = getDsymbol(o);
         if (s)
             s = s->toParent();
@@ -231,7 +231,7 @@ Expression *TraitsExp::semantic(Scope *sc)
     {
         if (dim != 2)
             goto Ldimerror;
-        Object *o = args->tdata()[0];
+        _Object *o = args->tdata()[0];
         Expression *e = isExpression(args->tdata()[1]);
         if (!e)
         {   error("expression expected as second argument of __traits %s", ident->toChars());
@@ -336,7 +336,7 @@ Expression *TraitsExp::semantic(Scope *sc)
     {
         if (dim != 1)
             goto Ldimerror;
-        Object *o = args->tdata()[0];
+        _Object *o = args->tdata()[0];
         Dsymbol *s = getDsymbol(o);
         ClassDeclaration *cd;
         if (!s || (cd = s->isClassDeclaration()) == NULL)
@@ -350,7 +350,7 @@ Expression *TraitsExp::semantic(Scope *sc)
     {
         if (dim != 1)
             goto Ldimerror;
-        Object *o = args->tdata()[0];
+        _Object *o = args->tdata()[0];
         Dsymbol *s = getDsymbol(o);
         ScopeDsymbol *sd;
         if (!s)
@@ -447,7 +447,7 @@ Expression *TraitsExp::semantic(Scope *sc)
             goto Lfalse;
 
         for (size_t i = 0; i < dim; i++)
-        {   Object *o = args->tdata()[i];
+        {   _Object *o = args->tdata()[i];
             Expression *e;
 
             unsigned errors = global.startGagging();
@@ -484,8 +484,8 @@ Expression *TraitsExp::semantic(Scope *sc)
         if (dim != 2)
             goto Ldimerror;
         TemplateInstance::semanticTiargs(loc, sc, args, 0);
-        Object *o1 = args->tdata()[0];
-        Object *o2 = args->tdata()[1];
+        _Object *o1 = args->tdata()[0];
+        _Object *o2 = args->tdata()[1];
         Dsymbol *s1 = getDsymbol(o1);
         Dsymbol *s2 = getDsymbol(o2);
 

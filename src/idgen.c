@@ -29,7 +29,7 @@ struct Msgtable
 Msgtable msgtable[] =
 {
     { "IUnknown" },
-    { "Object" },
+    { "_Object", "Object" },
     { "object" },
     { "max" },
     { "min" },

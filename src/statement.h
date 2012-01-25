@@ -80,7 +80,7 @@ enum BE
     BEany = (BEfallthru | BEthrow | BEreturn | BEgoto | BEhalt),
 };
 
-struct Statement : Object
+struct Statement : _Object
 {
     Loc loc;
 
@@ -510,7 +510,7 @@ struct CaseStatement : Statement
     CaseStatement(Loc loc, Expression *exp, Statement *s);
     Statement *syntaxCopy();
     Statement *semantic(Scope *sc);
-    int compare(Object *obj);
+    int compare(_Object *obj);
     int usesEH();
     int blockExit(bool mustNotThrow);
     int comeFrom();
@@ -708,7 +708,7 @@ struct TryCatchStatement : Statement
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct Catch : Object
+struct Catch : _Object
 {
     Loc loc;
     Type *type;

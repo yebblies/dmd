@@ -331,8 +331,8 @@ extern "C" int acompare(const void *e1,const void *e2)
 int __cdecl acompare(const void *e1,const void *e2)
 #endif
 {
-    Object *o1 = *(Object **)e1;
-    Object *o2 = *(Object **)e2;
+    _Object *o1 = *(_Object **)e1;
+    _Object *o2 = *(_Object **)e2;
 
     return o1->compare(o2);
 }

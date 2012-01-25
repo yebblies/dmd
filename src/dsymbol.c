@@ -60,7 +60,7 @@ Dsymbol::Dsymbol(Identifier *ident)
     this->scope = NULL;
 }
 
-int Dsymbol::equals(Object *o)
+int Dsymbol::equals(_Object *o)
 {   Dsymbol *s;
 
     if (this == o)

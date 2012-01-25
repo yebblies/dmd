@@ -1785,7 +1785,7 @@ IntegerExp::IntegerExp(dinteger_t value)
     this->value = value;
 }
 
-int IntegerExp::equals(Object *o)
+int IntegerExp::equals(_Object *o)
 {   IntegerExp *ne;
 
     if (this == o ||
@@ -2160,7 +2160,7 @@ int RealEquals(real_t x1, real_t x2)
         memcmp(&x1, &x2, REALSIZE - REALPAD) == 0;
 }
 
-int RealExp::equals(Object *o)
+int RealExp::equals(_Object *o)
 {   RealExp *ne;
 
     if (this == o ||
@@ -2357,7 +2357,7 @@ complex_t ComplexExp::toComplex()
     return value;
 }
 
-int ComplexExp::equals(Object *o)
+int ComplexExp::equals(_Object *o)
 {   ComplexExp *ne;
 
     if (this == o ||
@@ -3017,7 +3017,7 @@ NullExp::NullExp(Loc loc, Type *type)
     this->type = type;
 }
 
-int NullExp::equals(Object *o)
+int NullExp::equals(_Object *o)
 {
     if (o && o->dyncast() == DYNCAST_EXPRESSION)
     {   Expression *e = (Expression *)o;
@@ -3108,7 +3108,7 @@ Expression *StringExp::syntaxCopy()
 }
 #endif
 
-int StringExp::equals(Object *o)
+int StringExp::equals(_Object *o)
 {
     //printf("StringExp::equals('%s') %s\n", o->toChars(), toChars());
     if (o && o->dyncast() == DYNCAST_EXPRESSION)
@@ -3282,7 +3282,7 @@ StringExp *StringExp::toUTF8(Scope *sc)
     return this;
 }
 
-int StringExp::compare(Object *obj)
+int StringExp::compare(_Object *obj)
 {
     //printf("StringExp::compare()\n");
     // Used to sort case statement expressions so we can do an efficient lookup
@@ -4628,7 +4628,7 @@ VarExp::VarExp(Loc loc, Declaration *var, int hasOverloads)
     this->type = var->type;
 }
 
-int VarExp::equals(Object *o)
+int VarExp::equals(_Object *o)
 {   VarExp *ne;
 
     if (this == o ||
@@ -4806,7 +4806,7 @@ TupleExp::TupleExp(Loc loc, TupleDeclaration *tup)
 
     exps->reserve(tup->objects->dim);
     for (size_t i = 0; i < tup->objects->dim; i++)
-    {   Object *o = tup->objects->tdata()[i];
+    {   _Object *o = tup->objects->tdata()[i];
         if (o->dyncast() == DYNCAST_EXPRESSION)
         {
             Expression *e = (Expression *)o;
@@ -4833,7 +4833,7 @@ TupleExp::TupleExp(Loc loc, TupleDeclaration *tup)
     }
 }
 
-int TupleExp::equals(Object *o)
+int TupleExp::equals(_Object *o)
 {
     if (this == o)
         return 1;
@@ -5251,7 +5251,7 @@ void DeclarationExp::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
  *      typeid(int)
  */
 
-TypeidExp::TypeidExp(Loc loc, Object *o)
+TypeidExp::TypeidExp(Loc loc, _Object *o)
     : Expression(loc, TOKtypeid, sizeof(TypeidExp))
 {
     this->obj = o;
@@ -5354,7 +5354,7 @@ void TraitsExp::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
         for (size_t i = 0; i < args->dim; i++)
         {
             buf->writeByte(',');
-            Object *oarg = args->tdata()[i];
+            _Object *oarg = args->tdata()[i];
             ObjectToCBuffer(buf, hgs, oarg);
         }
     }
@@ -6593,7 +6593,7 @@ Expression *DotVarExp::semantic(Scope *sc)
 
             exps->reserve(tup->objects->dim);
             for (size_t i = 0; i < tup->objects->dim; i++)
-            {   Object *o = tup->objects->tdata()[i];
+            {   _Object *o = tup->objects->tdata()[i];
                 if (o->dyncast() != DYNCAST_EXPRESSION)
                 {
                     error("%s is not an expression", o->toChars());

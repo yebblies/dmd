@@ -30,12 +30,12 @@ hash_t Identifier::hashCode()
     return String::calcHash(string);
 }
 
-int Identifier::equals(Object *o)
+int Identifier::equals(_Object *o)
 {
     return this == o || memcmp(string,o->toChars(),len+1) == 0;
 }
 
-int Identifier::compare(Object *o)
+int Identifier::compare(_Object *o)
 {
     return memcmp(string, o->toChars(), len + 1);
 }
