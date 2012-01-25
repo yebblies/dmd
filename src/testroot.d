@@ -74,4 +74,5 @@ void main()
     testlstring();
     testObject();
     testThread();
+    writeln("All passed");
 }

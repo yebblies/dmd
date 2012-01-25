@@ -106,7 +106,7 @@ struct Module : Package
 
     Macro *macrotable;          // document comment macros
     Escape *escapetable;        // document comment escapes
-    bool safe;                  // TRUE if module is marked as 'safe'
+    bool _safe;                  // TRUE if module is marked as 'safe'
 
     size_t nameoffset;          // offset of module name from start of ModuleInfo
     size_t namelen;             // length of module name in characters
@@ -184,9 +184,9 @@ struct ModuleDeclaration
 {
     Identifier *id;
     Identifiers *packages;            // array of Identifier's representing packages
-    bool safe;
+    bool _safe;
 
-    ModuleDeclaration(Identifiers *packages, Identifier *id, bool safe);
+    ModuleDeclaration(Identifiers *packages, Identifier *id, bool _safe);
 
     char *toChars();
 };

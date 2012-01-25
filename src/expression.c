@@ -680,7 +680,7 @@ Type *functionParameters(Loc loc, Scope *sc, TypeFunction *tf,
     {
         TemplateInstance *spec = isSpeculativeFunction(fd);
         int olderrs = global.errors;
-        fd->semantic3(fd->scope);
+        fd->semantic3(fd->_scope);
         // Update the template instantiation with the number
         // of errors which occured.
         if (spec && global.errors != olderrs)
@@ -2653,8 +2653,8 @@ Lagain:
     {
         //printf("Identifier '%s' is a variable, type '%s'\n", toChars(), v->type->toChars());
         if (!type)
-        {   if ((!v->type || !v->type->deco) && v->scope)
-                v->semantic(v->scope);
+        {   if ((!v->type || !v->type->deco) && v->_scope)
+                v->semantic(v->_scope);
             type = v->type;
             if (!v->type)
             {   error("forward reference of %s %s", v->kind(), v->toChars());
@@ -2690,15 +2690,15 @@ Lagain:
     if (f)
     {   //printf("'%s' is a function\n", f->toChars());
 
-        if (!f->originalType && f->scope)       // semantic not yet run
-            f->semantic(f->scope);
+        if (!f->originalType && f->_scope)       // semantic not yet run
+            f->semantic(f->_scope);
 
         // if inferring return type, sematic3 needs to be run
-        if (f->inferRetType && f->scope && f->type && !f->type->nextOf())
+        if (f->inferRetType && f->_scope && f->type && !f->type->nextOf())
         {
             TemplateInstance *spec = isSpeculativeFunction(f);
             int olderrs = global.errors;
-            f->semantic3(f->scope);
+            f->semantic3(f->_scope);
             // Update the template instantiation with the number
             // of errors which occured.
             if (spec && global.errors != olderrs)
@@ -3769,15 +3769,15 @@ Expression *StructLiteralExp::semantic(Scope *sc)
                     {   error("cannot make expression out of initializer for %s", v->toChars());
                         return new ErrorExp();
                     }
-                    else if (v->scope)
+                    else if (v->_scope)
                     {   // Do deferred semantic analysis
                         Initializer *i2 = v->init->syntaxCopy();
-                        i2 = i2->semantic(v->scope, v->type, WANTinterpret);
+                        i2 = i2->semantic(v->_scope, v->type, WANTinterpret);
                         e = i2->toExpression();
-                        // remove v->scope (see bug 3426)
+                        // remove v->_scope (see bug 3426)
                         // but not if gagged, for we might be called again.
                         if (!global.gag)
-                            v->scope = NULL;
+                            v->_scope = NULL;
                     }
                 }
             }
@@ -4644,7 +4644,7 @@ Expression *VarExp::semantic(Scope *sc)
 #if LOGSEMANTIC
     printf("VarExp::semantic(%s)\n", toChars());
 #endif
-//    if (var->sem == SemanticStart && var->scope)      // if forward referenced
+//    if (var->sem == SemanticStart && var->_scope)      // if forward referenced
 //      var->semantic(sc);
     if (!type)
     {   type = var->type;
@@ -4911,7 +4911,7 @@ FuncExp::FuncExp(Loc loc, FuncLiteralDeclaration *fd, TemplateDeclaration *td)
     this->td = td;
     tok = fd->tok;  // save original kind of function/delegate/(infer)
     tded = NULL;
-    scope = NULL;
+    _scope = NULL;
 }
 
 Expression *FuncExp::syntaxCopy()
@@ -4927,7 +4927,7 @@ Expression *FuncExp::semantic(Scope *sc)
     if (!type || type == Type::tvoid)
     {
         // save for later use
-        scope = sc;
+        _scope = sc;
 
         //printf("td = %p, tded = %p\n", td, tded);
         if (td)
@@ -4999,7 +4999,7 @@ Expression *FuncExp::semantic(Scope *sc)
 Expression *FuncExp::semantic(Scope *sc, Expressions *arguments)
 {
     assert(!tded);
-    assert(!scope);
+    assert(!_scope);
 
     if ((!type || type == Type::tvoid) && td && arguments && arguments->dim)
     {
@@ -5049,8 +5049,8 @@ Expression *FuncExp::inferType(Scope *sc, Type *to)
     //printf("inferType sc = %p, to = %s\n", sc, to->toChars());
     if (!sc)
     {   // used from TypeFunction::callMatch()
-        assert(scope);
-        sc = scope;
+        assert(_scope);
+        sc = _scope;
     }
 
     Expression *e = NULL;

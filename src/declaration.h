@@ -538,7 +538,7 @@ struct FuncDeclaration : Declaration
     Statement *fensure;
     Statement *fbody;
 
-    FuncDeclarations foverrides;        // functions this function overrides
+    FuncDeclarations *foverrides;        // functions this function overrides
     FuncDeclaration *fdrequire;         // function that does the in contract
     FuncDeclaration *fdensure;          // function that does the out contract
 

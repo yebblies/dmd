@@ -357,7 +357,7 @@ void ClassDeclaration::toObjFile(int multiobj)
     if (global.params.symdebug)
         toDebug();
 
-    assert(!scope);     // semantic() should have been run to completion
+    assert(!_scope);     // semantic() should have been run to completion
 
     scclass = SCglobal;
     if (inTemplateInstance())
@@ -787,8 +787,8 @@ void ClassDeclaration::toObjFile(int multiobj)
             // Ensure function has a return value (Bugzilla 4869)
             if (fd->type->ty == Tfunction && !((TypeFunction *)fd->type)->next)
             {
-                assert(fd->scope);
-                fd->semantic3(fd->scope);
+                assert(fd->_scope);
+                fd->semantic3(fd->_scope);
             }
 
             Symbol *s = fd->toSymbol();

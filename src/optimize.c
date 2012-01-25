@@ -47,8 +47,8 @@ Expression *expandVar(int result, VarDeclaration *v)
     Expression *e = NULL;
     if (!v)
         return e;
-    if (!v->originalType && v->scope)   // semantic() not yet run
-        v->semantic (v->scope);
+    if (!v->originalType && v->_scope)   // semantic() not yet run
+        v->semantic (v->_scope);
 
     if (v->isConst() || v->isImmutable() || v->storage_class & STCmanifest)
     {
@@ -100,15 +100,15 @@ Expression *expandVar(int result, VarDeclaration *v)
                     else
                         goto L1;
                 }
-                if (v->scope)
+                if (v->_scope)
                 {
                     v->inuse++;
                     e = ei->syntaxCopy();
-                    e = e->semantic(v->scope);
-                    e = e->implicitCastTo(v->scope, v->type);
+                    e = e->semantic(v->_scope);
+                    e = e->implicitCastTo(v->_scope, v->type);
                     // enabling this line causes test22 in test suite to fail
                     //ei->type = e->type;
-                    v->scope = NULL;
+                    v->_scope = NULL;
                     v->inuse--;
                 }
                 else if (!ei->type)
@@ -153,7 +153,7 @@ Expression *fromConstInitializer(int result, Expression *e1)
     if (e1->op == TOKvar)
     {   VarExp *ve = (VarExp *)e1;
         VarDeclaration *v = ve->var->isVarDeclaration();
-        int fwdref = (v && !v->originalType && v->scope);
+        int fwdref = (v && !v->originalType && v->_scope);
         e = expandVar(result, v);
         if (e)
         {

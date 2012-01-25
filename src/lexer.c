@@ -731,7 +731,7 @@ void Lexer::scan(Token *t)
                     {   unsigned major = 0;
                         unsigned minor = 0;
 
-                        for (const char *p = global.version + 1; 1; p++)
+                        for (const char *p = global._version + 1; 1; p++)
                         {
                             char c = *p;
                             if (isdigit((unsigned char)c))
@@ -1225,7 +1225,7 @@ void Lexer::scan(Token *t)
 
             case '#':
                 p++;
-                pragma();
+                _pragma();
                 continue;
 
             default:
@@ -1924,7 +1924,7 @@ void Lexer::stringPostfix(Token *t)
  */
 
 #if 0
-unsigned Lexer::wchar(unsigned u)
+unsigned Lexer::_wchar(unsigned u)
 {
     unsigned value;
     unsigned n;
@@ -2567,7 +2567,7 @@ done:
  *      #line linnum [filespec]
  */
 
-void Lexer::pragma()
+void Lexer::_pragma()
 {
     Token tok;
     int linnum;

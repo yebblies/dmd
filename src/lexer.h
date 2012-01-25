@@ -299,13 +299,13 @@ struct Lexer
     TOK escapeStringConstant(Token *t, int wide);
     TOK charConstant(Token *t, int wide);
     void stringPostfix(Token *t);
-    unsigned wchar(unsigned u);
+    unsigned _wchar(unsigned u);
     TOK number(Token *t);
     TOK inreal(Token *t);
     void error(const char *format, ...);
     void error(Loc loc, const char *format, ...);
     void verror(Loc loc, const char *format, va_list ap);
-    void pragma();
+    void _pragma();
     unsigned decodeUTF();
     void getDocComment(Token *t, unsigned lineComment);
 

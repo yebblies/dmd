@@ -67,7 +67,7 @@ enum PROT AggregateDeclaration::prot()
 void AggregateDeclaration::semantic2(Scope *sc)
 {
     //printf("AggregateDeclaration::semantic2(%s)\n", toChars());
-    if (scope && members)
+    if (_scope && members)
     {   error("has forward references");
         return;
     }
@@ -117,7 +117,7 @@ unsigned AggregateDeclaration::size(Loc loc)
     //printf("AggregateDeclaration::size() = %d\n", structsize);
     if (!members)
         error(loc, "unknown size");
-    if (sizeok != 1 && scope)
+    if (sizeok != 1 && _scope)
         semantic(NULL);
     if (sizeok != 1)
     {   error(loc, "no size yet for forward reference");
@@ -188,7 +188,7 @@ void AggregateDeclaration::addField(Scope *sc, VarDeclaration *v)
         }
 #endif
 
-        if (ts->sym->sizeok != 1 && ts->sym->scope)
+        if (ts->sym->sizeok != 1 && ts->sym->_scope)
             ts->sym->semantic(NULL);
         if (ts->sym->sizeok != 1)
         {
@@ -342,9 +342,9 @@ void StructDeclaration::semantic(Scope *sc)
         return;
 
     if (symtab)
-    {   if (sizeok == 1 || !scope)
+    {   if (sizeok == 1 || !_scope)
         {   //printf("already completed\n");
-            scope = NULL;
+            _scope = NULL;
             return;             // semantic() already completed
         }
     }
@@ -352,10 +352,10 @@ void StructDeclaration::semantic(Scope *sc)
         symtab = new DsymbolTable();
 
     Scope *scx = NULL;
-    if (scope)
-    {   sc = scope;
-        scx = scope;            // save so we don't make redundant copies
-        scope = NULL;
+    if (_scope)
+    {   sc = _scope;
+        scx = _scope;            // save so we don't make redundant copies
+        _scope = NULL;
     }
 
     unsigned dprogress_save = Module::dprogress;
@@ -490,9 +490,9 @@ void StructDeclaration::semantic(Scope *sc)
         alignsize = 0;
         structalign = 0;
 
-        scope = scx ? scx : new Scope(*sc);
-        scope->setNoFree();
-        scope->module->addDeferredSemantic(this);
+        _scope = scx ? scx : new Scope(*sc);
+        _scope->setNoFree();
+        _scope->module->addDeferredSemantic(this);
 
         Module::dprogress = dprogress_save;
         //printf("\tdeferring %s\n", toChars());
@@ -641,8 +641,8 @@ Dsymbol *StructDeclaration::search(Loc loc, Identifier *ident, int flags)
 {
     //printf("%s.StructDeclaration::search('%s')\n", toChars(), ident->toChars());
 
-    if (scope && !symtab)
-        semantic(scope);
+    if (_scope && !symtab)
+        semantic(_scope);
 
     if (!members || !symtab)
     {

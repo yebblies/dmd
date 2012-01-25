@@ -116,7 +116,7 @@ Type *Type::tstring;
 Type *Type::basic[TMAX];
 unsigned char Type::mangleChar[TMAX];
 unsigned char Type::sizeTy[TMAX];
-StringTable Type::stringtable;
+StringTable *Type::stringtable;
 
 
 Type::Type(TY ty)
@@ -170,7 +170,8 @@ char Type::needThisPrefix()
 
 void Type::init()
 {
-    stringtable.init();
+    stringtable = new StringTable();
+    stringtable->init();
     Lexer::initKeywords();
 
     for (size_t i = 0; i < TMAX; i++)
@@ -1562,7 +1563,7 @@ Type *Type::merge()
         //if (next)
             //next = next->merge();
         toDecoBuffer(&buf);
-        sv = stringtable.update((char *)buf.data, buf.offset);
+        sv = stringtable->update((char *)buf.data, buf.offset);
         if (sv->ptrvalue)
         {   t = (Type *) sv->ptrvalue;
 #ifdef DEBUG
@@ -1594,7 +1595,7 @@ Type *Type::merge2()
     if (!t->deco)
         return t->merge();
 
-    StringValue *sv = stringtable.lookup((char *)t->deco, strlen(t->deco));
+    StringValue *sv = stringtable->lookup((char *)t->deco, strlen(t->deco));
     if (sv && sv->ptrvalue)
     {   t = (Type *) sv->ptrvalue;
         assert(t->deco);
@@ -6215,13 +6216,13 @@ L1:
         {
             if (t->reliesOnTident())
             {
-                if (s->scope)
-                    t = t->semantic(loc, s->scope);
+                if (s->_scope)
+                    t = t->semantic(loc, s->_scope);
                 else
                 {
                     /* Attempt to find correct scope in which to evaluate t.
                      * Not sure if this is right or not, or if we should just
-                     * give forward reference error if s->scope is not set.
+                     * give forward reference error if s->_scope is not set.
                      */
                     for (Scope *scx = sc; 1; scx = scx->enclosing)
                     {
@@ -6853,11 +6854,11 @@ Dsymbol *TypeEnum::toDsymbol(Scope *sc)
 
 Type *TypeEnum::toBasetype()
 {
-    if (sym->scope)
+    if (sym->_scope)
     {   // Enum is forward referenced. We don't need to resolve the whole thing,
         // just the base type
         if (sym->memtype)
-        {   sym->memtype = sym->memtype->semantic(sym->loc, sym->scope);
+        {   sym->memtype = sym->memtype->semantic(sym->loc, sym->_scope);
         }
         else
         {   if (!sym->isAnonymous())
@@ -7047,7 +7048,7 @@ Expression *TypeEnum::defaultInit(Loc loc)
 
 int TypeEnum::isZeroInit(Loc loc)
 {
-    if (!sym->defaultval && sym->scope)
+    if (!sym->defaultval && sym->_scope)
     {   // Enum is forward referenced. We need to resolve the whole thing.
         sym->semantic(NULL);
     }

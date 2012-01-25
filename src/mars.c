@@ -94,7 +94,7 @@ Global::Global()
     "\nMSIL back-end (alpha release) by Cristian L. Vlasceanu and associates.";
 #endif
     ;
-    version = "v2.058";
+    _version = "v2.058";
     global.structalign = 8;
 
     memset(&params, 0, sizeof(Param));
@@ -300,7 +300,7 @@ void usage()
 #endif
     printf("DMD%s D Compiler %s\n%s %s\n",
         sizeof(size_t) == 4 ? "32" : "64",
-        global.version, global.copyright, global.written);
+        global._version, global.copyright, global.written);
     printf("\
 Documentation: http://www.dlang.org/index.html\n\
 Usage:\n\
@@ -395,7 +395,7 @@ int main(int argc, char *argv[])
     const char *inifilename = NULL;
 
 #ifdef DEBUG
-    printf("DMD %s DEBUG\n", global.version);
+    printf("DMD %s DEBUG\n", global._version);
 #endif
 
     unittests();
@@ -998,7 +998,7 @@ int main(int argc, char *argv[])
 
     if (global.params.verbose)
     {   printf("binary    %s\n", argv[0]);
-        printf("version   %s\n", global.version);
+        printf("version   %s\n", global._version);
         printf("config    %s\n", inifilename ? inifilename : "(none)");
     }
 

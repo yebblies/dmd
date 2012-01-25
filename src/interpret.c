@@ -467,7 +467,7 @@ Expression *FuncDeclaration::interpret(InterState *istate, Expressions *argument
     if (semanticRun == PASSsemantic3)
         return EXP_CANT_INTERPRET;
 
-    if (semanticRun < PASSsemantic3 && scope)
+    if (semanticRun < PASSsemantic3 && _scope)
     {
         /* Forward reference - we need to run semantic3 on this function.
          * If errors are gagged, and it's not part of a speculative
@@ -478,7 +478,7 @@ Expression *FuncDeclaration::interpret(InterState *istate, Expressions *argument
         TemplateInstance *spec = isSpeculativeFunction(this);
         if (global.gag && !spec)
             global.gag = 0;
-        semantic3(scope);
+        semantic3(_scope);
         global.gag = oldgag;    // regag errors
 
         // If it is a speculatively-instantiated template, and errors occur,

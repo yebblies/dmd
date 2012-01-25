@@ -44,6 +44,7 @@ FuncDeclaration::FuncDeclaration(Loc loc, Loc endloc, Identifier *id, StorageCla
     this->endloc = endloc;
     fthrows = NULL;
     frequire = NULL;
+    foverrides = new FuncDeclarations();
     fdrequire = NULL;
     fdensure = NULL;
     outId = NULL;
@@ -157,7 +158,7 @@ void FuncDeclaration::semantic(Scope *sc)
 
     unsigned dprogress_save = Module::dprogress;
 
-    foverrides.setDim(0);       // reset in case semantic() is being retried for this function
+    foverrides->setDim(0);       // reset in case semantic() is being retried for this function
 
     storage_class |= sc->stc & ~STCref;
     ad = isThis();
@@ -516,7 +517,7 @@ void FuncDeclaration::semantic(Scope *sc)
 
                 /* Remember which functions this overrides
                  */
-                foverrides.push(fdv);
+                foverrides->push(fdv);
 
                 /* This works by whenever this function is called,
                  * it actually returns tintro, which gets dynamically
@@ -567,7 +568,7 @@ void FuncDeclaration::semantic(Scope *sc)
 
                     /* Remember which functions this overrides
                      */
-                    foverrides.push(fdv);
+                    foverrides->push(fdv);
 
                     if (fdv->tintro)
                         ti = fdv->tintro;
@@ -787,8 +788,8 @@ Ldone:
     /* Save scope for possible later use (if we need the
      * function internals)
      */
-    scope = new Scope(*sc);
-    scope->setNoFree();
+    _scope = new Scope(*sc);
+    _scope->setNoFree();
     return;
 
 Lassignerr:
@@ -852,9 +853,9 @@ void FuncDeclaration::semantic3(Scope *sc)
 
     if (frequire)
     {
-        for (int i = 0; i < foverrides.dim; i++)
+        for (int i = 0; i < foverrides->dim; i++)
         {
-            FuncDeclaration *fdv = foverrides.tdata()[i];
+            FuncDeclaration *fdv = foverrides->tdata()[i];
 
             if (fdv->fbody && !fdv->frequire)
             {
@@ -1819,17 +1820,17 @@ Statement *FuncDeclaration::mergeFrequire(Statement *sf)
      *     a stack local, allocate that local immediately following the exception
      *     handler block, so it is always at the same offset from EBP.
      */
-    for (int i = 0; i < foverrides.dim; i++)
+    for (int i = 0; i < foverrides->dim; i++)
     {
-        FuncDeclaration *fdv = foverrides.tdata()[i];
+        FuncDeclaration *fdv = foverrides->tdata()[i];
 
         /* The semantic pass on the contracts of the overridden functions must
          * be completed before code generation occurs (bug 3602).
          */
         if (fdv->fdrequire && fdv->fdrequire->semanticRun != PASSsemantic3done)
         {
-            assert(fdv->scope);
-            Scope *sc = fdv->scope->push();
+            assert(fdv->_scope);
+            Scope *sc = fdv->_scope->push();
             sc->stc &= ~STCoverride;
             fdv->semantic3(sc);
             sc->pop();
@@ -1874,17 +1875,17 @@ Statement *FuncDeclaration::mergeFensure(Statement *sf)
      * list for the 'this' pointer, something that would need an unknown amount
      * of tweaking of various parts of the compiler that I'd rather leave alone.
      */
-    for (int i = 0; i < foverrides.dim; i++)
+    for (int i = 0; i < foverrides->dim; i++)
     {
-        FuncDeclaration *fdv = foverrides.tdata()[i];
+        FuncDeclaration *fdv = foverrides->tdata()[i];
 
         /* The semantic pass on the contracts of the overridden functions must
          * be completed before code generation occurs (bug 3602 and 5230).
          */
         if (fdv->fdensure && fdv->fdensure->semanticRun != PASSsemantic3done)
         {
-            assert(fdv->scope);
-            Scope *sc = fdv->scope->push();
+            assert(fdv->_scope);
+            Scope *sc = fdv->_scope->push();
             sc->stc &= ~STCoverride;
             fdv->semantic3(sc);
             sc->pop();
@@ -2686,7 +2687,7 @@ int FuncDeclaration::isVirtualMethod()
     if (!isVirtual())
         return 0;
     // If it's a final method, and does not override anything, then it is not virtual
-    if (isFinal() && foverrides.dim == 0)
+    if (isFinal() && foverrides->dim == 0)
     {
         return 0;
     }

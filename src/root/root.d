@@ -12,8 +12,6 @@ module root.root;
 
 import core.stdc.stdarg;
 
-alias size_t hash_t;
-
 import root._dchar;
 
 extern(C++)
@@ -281,6 +279,7 @@ final:
     void write_dchar(uint b);
     void prependbyte(uint b);
     void writeword(uint w);
+    void writewchar(uint w) { writeword(w); }
     void writeUTF16(uint w);
     void write4(uint w);
     void write(OutBuffer buf);

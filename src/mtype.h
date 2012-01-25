@@ -208,7 +208,7 @@ struct Type : _Object
     static Type *basic[TMAX];
     static unsigned char mangleChar[TMAX];
     static unsigned char sizeTy[TMAX];
-    static StringTable stringtable;
+    static StringTable *stringtable;
 
     // These tables are for implicit conversion of binary ops;
     // the indices are the type of operand one, followed by operand two.
