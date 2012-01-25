@@ -361,7 +361,7 @@ hash_t Dchar::calcHash(const dchar *str, size_t len)
 
 #else // ascii
 
-hash_t Dchar__calcHash(const dchar *str, size_t len)
+hash_t Dchar::calcHash(const dchar *str, size_t len)
 {
     hash_t hash = 0;
 
@@ -410,12 +410,7 @@ hash_t Dchar__calcHash(const dchar *str, size_t len)
     }
 }
 
-hash_t Dchar::calcHash(const dchar *str, size_t len)
-{
-    return Dchar__calcHash(str, len);
-}
-
-hash_t Dchar__icalcHash(const dchar *str, size_t len)
+hash_t Dchar::icalcHash(const dchar *str, size_t len)
 {
     hash_t hash = 0;
 
@@ -450,11 +445,6 @@ hash_t Dchar__icalcHash(const dchar *str, size_t len)
                 break;
         }
     }
-}
-
-hash_t Dchar::icalcHash(const dchar *str, size_t len)
-{
-    return Dchar__icalcHash(str, len);
 }
 
 #endif

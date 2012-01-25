@@ -2,7 +2,7 @@
 #ifndef THREAD_H
 #define THREAD_H 1
 
-typedef long ThreadId;
+typedef int ThreadId;
 
 struct Thread
 {

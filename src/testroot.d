@@ -8,6 +8,9 @@ import root.rmem;
 import root.port;
 import root.stringtable;
 import root.root;
+import root.speller;
+import root.async;
+import root.thread;
 
 ////////////////////////////////////////////////////////
 
@@ -49,9 +52,26 @@ void testlstring()
 
 ////////////////////////////////////////////////////////
 
+void testObject()
+{
+    auto o = new _Object();
+    assert(o.toChars()[0..7] == "_Object");
+}
+
+////////////////////////////////////////////////////////
+
+void testThread()
+{
+    //writeln(Thread.getId()); where is getId defined?
+}
+
+////////////////////////////////////////////////////////
+
 void main()
 {
     testaav();
     testdchar();
     testlstring();
+    testObject();
+    testThread();
 }
