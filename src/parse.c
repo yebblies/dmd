@@ -1827,7 +1827,7 @@ TemplateParameters *Parser::parseTemplateParameterList(int flag)
                     tp_ident = token.ident;
                     nextToken();
                 }
-                Object *spec = NULL;
+                _Object *spec = NULL;
                 if (token.value == TOKcolon)    // : Type
                 {
                     nextToken();
@@ -1836,7 +1836,7 @@ TemplateParameters *Parser::parseTemplateParameterList(int flag)
                     else
                         spec = parseCondExp();
                 }
-                Object *def = NULL;
+                _Object *def = NULL;
                 if (token.value == TOKassign)   // = Type
                 {
                     nextToken();
@@ -5327,7 +5327,7 @@ Expression *Parser::parsePrimaryExp()
         {
             nextToken();
             check(TOKlparen, "typeid");
-            Object *o;
+            _Object *o;
             if (isDeclaration(&token, 0, TOKreserved, NULL))
             {   // argument is a type
                 o = parseType();

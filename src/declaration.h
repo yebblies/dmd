@@ -615,7 +615,7 @@ struct FuncDeclaration : Declaration
     // called from semantic3
     void varArgs(Scope *sc, TypeFunction*, VarDeclaration *&, VarDeclaration *&);
     VarDeclaration *declareThis(Scope *sc, AggregateDeclaration *ad);
-    int equals(Object *o);
+    int equals(_Object *o);
 
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     void bodyToCBuffer(OutBuffer *buf, HdrGenState *hgs);

@@ -174,7 +174,7 @@ int Dsymbol_canThrow(Dsymbol *s, bool mustNotThrow)
     else if ((td = s->isTupleDeclaration()) != NULL)
     {
         for (size_t i = 0; i < td->objects->dim; i++)
-        {   Object *o = td->objects->tdata()[i];
+        {   _Object *o = td->objects->tdata()[i];
             if (o->dyncast() == DYNCAST_EXPRESSION)
             {   Expression *eo = (Expression *)o;
                 if (eo->op == TOKdsymbol)

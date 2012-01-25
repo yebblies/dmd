@@ -29,7 +29,7 @@ struct ExpInitializer;
 struct HdrGenState;
 
 
-struct Initializer : Object
+struct Initializer : _Object
 {
     Loc loc;
 

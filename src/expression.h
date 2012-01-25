@@ -91,7 +91,7 @@ enum CtfeGoal
     ctfeNeedNothing   // The return value is not required
 };
 
-struct Expression : Object
+struct Expression : _Object
 {
     Loc loc;                    // file location
     enum TOK op;                // handy to minimize use of dynamic_cast
@@ -199,7 +199,7 @@ struct IntegerExp : Expression
 
     IntegerExp(Loc loc, dinteger_t value, Type *type);
     IntegerExp(dinteger_t value);
-    int equals(Object *o);
+    int equals(_Object *o);
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     char *toChars();
@@ -234,7 +234,7 @@ struct RealExp : Expression
     real_t value;
 
     RealExp(Loc loc, real_t value, Type *type);
-    int equals(Object *o);
+    int equals(_Object *o);
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     char *toChars();
@@ -257,7 +257,7 @@ struct ComplexExp : Expression
     complex_t value;
 
     ComplexExp(Loc loc, complex_t value, Type *type);
-    int equals(Object *o);
+    int equals(_Object *o);
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     char *toChars();
@@ -344,7 +344,7 @@ struct NullExp : Expression
     unsigned char committed;    // !=0 if type is committed
 
     NullExp(Loc loc, Type *t = NULL);
-    int equals(Object *o);
+    int equals(_Object *o);
     Expression *semantic(Scope *sc);
     int isBool(int result);
     int isConst();
@@ -371,7 +371,7 @@ struct StringExp : Expression
     StringExp(Loc loc, void *s, size_t len);
     StringExp(Loc loc, void *s, size_t len, unsigned char postfix);
     //Expression *syntaxCopy();
-    int equals(Object *o);
+    int equals(_Object *o);
     char *toChars();
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -381,7 +381,7 @@ struct StringExp : Expression
     Expression *implicitCastTo(Scope *sc, Type *t);
     MATCH implicitConvTo(Type *t);
     Expression *castTo(Scope *sc, Type *t);
-    int compare(Object *obj);
+    int compare(_Object *obj);
     int isBool(int result);
     int isLvalue();
     Expression *toLvalue(Scope *sc, Expression *e);
@@ -402,7 +402,7 @@ struct TupleExp : Expression
     TupleExp(Loc loc, TupleDeclaration *tup);
     Expression *syntaxCopy();
     int apply(apply_fp_t fp, void *param);
-    int equals(Object *o);
+    int equals(_Object *o);
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     void checkEscape();
@@ -614,7 +614,7 @@ struct SymOffExp : SymbolExp
 struct VarExp : SymbolExp
 {
     VarExp(Loc loc, Declaration *var, int hasOverloads = 0);
-    int equals(Object *o);
+    int equals(_Object *o);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -694,9 +694,9 @@ struct DeclarationExp : Expression
 
 struct TypeidExp : Expression
 {
-    Object *obj;
+    _Object *obj;
 
-    TypeidExp(Loc loc, Object *obj);
+    TypeidExp(Loc loc, _Object *obj);
     Expression *syntaxCopy();
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);

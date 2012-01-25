@@ -159,7 +159,7 @@ Type *TupleDeclaration::getType()
         /* It's only a type tuple if all the Object's are types
          */
         for (size_t i = 0; i < objects->dim; i++)
-        {   Object *o = objects->tdata()[i];
+        {   _Object *o = objects->tdata()[i];
 
             if (o->dyncast() != DYNCAST_TYPE)
             {
@@ -204,7 +204,7 @@ int TupleDeclaration::needThis()
 {
     //printf("TupleDeclaration::needThis(%s)\n", toChars());
     for (size_t i = 0; i < objects->dim; i++)
-    {   Object *o = objects->tdata()[i];
+    {   _Object *o = objects->tdata()[i];
         if (o->dyncast() == DYNCAST_EXPRESSION)
         {   Expression *e = (Expression *)o;
             if (e->op == TOKdsymbol)

@@ -109,7 +109,7 @@ extern int Tsize_t;
 extern int Tptrdiff_t;
 
 
-struct Type : Object
+struct Type : _Object
 {
     TY ty;
     unsigned char mod;  // modifiers MODxxxx
@@ -221,7 +221,7 @@ struct Type : Object
 
     Type(TY ty);
     virtual Type *syntaxCopy();
-    int equals(Object *o);
+    int equals(_Object *o);
     int dyncast() { return DYNCAST_TYPE; } // kludge for template.isType()
     int covariant(Type *t);
     char *toChars();
@@ -910,7 +910,7 @@ struct TypeTuple : Type
     TypeTuple(Type *t1, Type *t2);
     Type *syntaxCopy();
     Type *semantic(Loc loc, Scope *sc);
-    int equals(Object *o);
+    int equals(_Object *o);
     Type *reliesOnTident();
     void toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod);
     void toDecoBuffer(OutBuffer *buf, int flag);
@@ -951,7 +951,7 @@ struct TypeNull : Type
 
 //enum InOut { None, In, Out, InOut, Lazy };
 
-struct Parameter : Object
+struct Parameter : _Object
 {
     //enum InOut inout;
     StorageClass storageClass;

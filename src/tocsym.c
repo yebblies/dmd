@@ -628,7 +628,7 @@ Symbol *TemplateInstance::toSymbol()
         {
             for (size_t i = 0; i < tiargs->dim; i++)
             {
-                Object *o = tiargs->tdata()[i];
+                _Object *o = tiargs->tdata()[i];
                 Type *ta = isType(o);
                 Expression *ea = isExpression(o);
                 Dsymbol *sa = isDsymbol(o);

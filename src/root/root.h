@@ -70,12 +70,12 @@ typedef ArrayBase<struct File> Files;
 typedef ArrayBase<char> Strings;
 
 
-struct Object
+struct _Object
 {
-    Object() { }
-    virtual ~Object() { }
+    _Object() { }
+    virtual ~_Object() { }
 
-    virtual int equals(Object *o);
+    virtual int equals(_Object *o);
 
     /**
      * Returns a hash code, useful for things like building hash tables of Objects.
@@ -86,7 +86,7 @@ struct Object
      * Return <0, ==0, or >0 if this is less than, equal to, or greater than obj.
      * Useful for sorting Objects.
      */
-    virtual int compare(Object *obj);
+    virtual int compare(_Object *obj);
 
     /**
      * Pretty-print an Object. Useful for debugging the old-fashioned way.
@@ -110,7 +110,7 @@ struct Object
         void mark();
 };
 
-struct String : Object
+struct String : _Object
 {
     int ref;                    // != 0 if this is a reference to someone else's string
     char *str;                  // the string itself
@@ -123,8 +123,8 @@ struct String : Object
     static hash_t calcHash(const char *str);
     hash_t hashCode();
     unsigned len();
-    int equals(Object *obj);
-    int compare(Object *obj);
+    int equals(_Object *obj);
+    int compare(_Object *obj);
     char *toChars();
     void print();
     void mark();
@@ -135,9 +135,9 @@ struct FileName : String
     FileName(char *str, int ref);
     FileName(char *path, char *name);
     hash_t hashCode();
-    int equals(Object *obj);
+    int equals(_Object *obj);
     static int equals(const char *name1, const char *name2);
-    int compare(Object *obj);
+    int compare(_Object *obj);
     static int compare(const char *name1, const char *name2);
     static int absolute(const char *name);
     static char *ext(const char *);
@@ -162,7 +162,7 @@ struct FileName : String
     static char *canonicalName(const char *name);
 };
 
-struct File : Object
+struct File : _Object
 {
     int ref;                    // != 0 if this is a reference to someone else's buffer
     unsigned char *buffer;      // data for our file
@@ -267,7 +267,7 @@ struct File : Object
     void remove();              // delete file
 };
 
-struct OutBuffer : Object
+struct OutBuffer : _Object
 {
     unsigned char *data;
     unsigned offset;
@@ -297,7 +297,7 @@ struct OutBuffer : Object
     void writeUTF16(unsigned w);
     void write4(unsigned w);
     void write(OutBuffer *buf);
-    void write(Object *obj);
+    void write(_Object *obj);
     void fill0(unsigned nbytes);
     void align(unsigned size);
     void vprintf(const char *format, va_list args);
@@ -315,7 +315,7 @@ struct OutBuffer : Object
     char *extractString();
 };
 
-struct Array : Object
+struct Array : _Object
 {
     unsigned dim;
     void **data;
@@ -390,7 +390,7 @@ struct ArrayBase : Array
     }
 };
 
-struct Bits : Object
+struct Bits : _Object
 {
     unsigned bitdim;
     unsigned allocdim;
