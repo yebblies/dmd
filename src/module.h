@@ -18,12 +18,12 @@
 #include "root.h"
 #include "dsymbol.h"
 
-struct ModuleInfoDeclaration;
-struct ClassDeclaration;
-struct ModuleDeclaration;
+class ModuleInfoDeclaration;
+class ClassDeclaration;
+class ModuleDeclaration;
 struct Macro;
 struct Escape;
-struct VarDeclaration;
+class VarDeclaration;
 struct Library;
 
 // Back end
@@ -33,8 +33,9 @@ union tree_node; typedef union tree_node elem;
 struct elem;
 #endif
 
-struct Package : ScopeDsymbol
+class Package : ScopeDsymbol
 {
+public:
     Package(Identifier *ident);
     const char *kind();
 
@@ -45,8 +46,9 @@ struct Package : ScopeDsymbol
     virtual void semantic(Scope *sc) { }
 };
 
-struct Module : Package
+class Module : Package
 {
+public:
     static Module *rootModule;
     static DsymbolTable *modules;       // symbol table of all modules
     static Modules amodules;            // array of all modules
@@ -180,8 +182,9 @@ struct Module : Package
 };
 
 
-struct ModuleDeclaration
+class ModuleDeclaration
 {
+public:
     Identifier *id;
     Identifiers *packages;            // array of Identifier's representing packages
     bool _safe;

@@ -55,13 +55,15 @@ struct Section
     virtual void write(DocComment *dc, Scope *sc, Dsymbol *s, OutBuffer *buf);
 };
 
-struct ParamSection : Section
+class ParamSection : Section
 {
+public:
     void write(DocComment *dc, Scope *sc, Dsymbol *s, OutBuffer *buf);
 };
 
-struct MacroSection : Section
+class MacroSection : Section
 {
+public:
     void write(DocComment *dc, Scope *sc, Dsymbol *s, OutBuffer *buf);
 };
 

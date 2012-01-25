@@ -17,36 +17,36 @@
 #include "arraytypes.h"
 #include "intrange.h"
 
-struct Type;
+class Type;
 struct Scope;
-struct TupleDeclaration;
-struct VarDeclaration;
-struct FuncDeclaration;
-struct FuncLiteralDeclaration;
-struct Declaration;
-struct CtorDeclaration;
-struct NewDeclaration;
-struct Dsymbol;
-struct Import;
-struct Module;
-struct ScopeDsymbol;
+class TupleDeclaration;
+class VarDeclaration;
+class FuncDeclaration;
+class FuncLiteralDeclaration;
+class Declaration;
+class CtorDeclaration;
+class NewDeclaration;
+class Dsymbol;
+class Import;
+class Module;
+class ScopeDsymbol;
 struct InlineCostState;
 struct InlineDoState;
 struct InlineScanState;
-struct Expression;
-struct Declaration;
-struct AggregateDeclaration;
-struct StructDeclaration;
-struct TemplateInstance;
-struct TemplateDeclaration;
-struct ClassDeclaration;
+class Expression;
+class Declaration;
+class AggregateDeclaration;
+class StructDeclaration;
+class TemplateInstance;
+class TemplateDeclaration;
+class ClassDeclaration;
 struct HdrGenState;
-struct BinExp;
+class BinExp;
 struct InterState;
 struct Symbol;          // back end symbol
-struct OverloadSet;
-struct Initializer;
-struct StringExp;
+class OverloadSet;
+class Initializer;
+class StringExp;
 
 enum TOK;
 
@@ -91,8 +91,9 @@ enum CtfeGoal
     ctfeNeedNothing   // The return value is not required
 };
 
-struct Expression : _Object
+class Expression : _Object
 {
+public:
     Loc loc;                    // file location
     enum TOK op;                // handy to minimize use of dynamic_cast
     Type *type;                 // !=NULL means that semantic() has been run
@@ -193,8 +194,9 @@ struct Expression : _Object
     virtual dt_t **toDt(dt_t **pdt);
 };
 
-struct IntegerExp : Expression
+class IntegerExp : Expression
 {
+public:
     dinteger_t value;
 
     IntegerExp(Loc loc, dinteger_t value, Type *type);
@@ -219,8 +221,9 @@ struct IntegerExp : Expression
     dt_t **toDt(dt_t **pdt);
 };
 
-struct ErrorExp : IntegerExp
+class ErrorExp : IntegerExp
 {
+public:
     ErrorExp();
 
     Expression *implicitCastTo(Scope *sc, Type *t);
@@ -229,8 +232,9 @@ struct ErrorExp : IntegerExp
     Expression *toLvalue(Scope *sc, Expression *e);
 };
 
-struct RealExp : Expression
+class RealExp : Expression
 {
+public:
     real_t value;
 
     RealExp(Loc loc, real_t value, Type *type);
@@ -252,8 +256,9 @@ struct RealExp : Expression
     dt_t **toDt(dt_t **pdt);
 };
 
-struct ComplexExp : Expression
+class ComplexExp : Expression
 {
+public:
     complex_t value;
 
     ComplexExp(Loc loc, complex_t value, Type *type);
@@ -276,8 +281,9 @@ struct ComplexExp : Expression
     dt_t **toDt(dt_t **pdt);
 };
 
-struct IdentifierExp : Expression
+class IdentifierExp : Expression
 {
+public:
     Identifier *ident;
     Declaration *var;
 
@@ -291,13 +297,15 @@ struct IdentifierExp : Expression
     Expression *toLvalue(Scope *sc, Expression *e);
 };
 
-struct DollarExp : IdentifierExp
+class DollarExp : IdentifierExp
 {
+public:
     DollarExp(Loc loc);
 };
 
-struct DsymbolExp : Expression
+class DsymbolExp : Expression
 {
+public:
     Dsymbol *s;
     int hasOverloads;
 
@@ -310,8 +318,9 @@ struct DsymbolExp : Expression
     Expression *toLvalue(Scope *sc, Expression *e);
 };
 
-struct ThisExp : Expression
+class ThisExp : Expression
 {
+public:
     Declaration *var;
 
     ThisExp(Loc loc);
@@ -329,8 +338,9 @@ struct ThisExp : Expression
     elem *toElem(IRState *irs);
 };
 
-struct SuperExp : ThisExp
+class SuperExp : ThisExp
 {
+public:
     SuperExp(Loc loc);
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
@@ -339,8 +349,9 @@ struct SuperExp : ThisExp
     //Expression *inlineScan(InlineScanState *iss);
 };
 
-struct NullExp : Expression
+class NullExp : Expression
 {
+public:
     unsigned char committed;    // !=0 if type is committed
 
     NullExp(Loc loc, Type *t = NULL);
@@ -358,8 +369,9 @@ struct NullExp : Expression
     dt_t **toDt(dt_t **pdt);
 };
 
-struct StringExp : Expression
+class StringExp : Expression
 {
+public:
     void *string;       // char, wchar, or dchar data
     size_t len;         // number of chars, wchars, or dchars
     unsigned char sz;   // 1: char, 2: wchar, 4: dchar
@@ -394,8 +406,9 @@ struct StringExp : Expression
 
 // Tuple
 
-struct TupleExp : Expression
+class TupleExp : Expression
 {
+public:
     Expressions *exps;
 
     TupleExp(Loc loc, Expressions *exps);
@@ -415,8 +428,9 @@ struct TupleExp : Expression
     Expression *inlineScan(InlineScanState *iss);
 };
 
-struct ArrayLiteralExp : Expression
+class ArrayLiteralExp : Expression
 {
+public:
     Expressions *elements;
     bool ownedByCtfe;   // true = created in CTFE
 
@@ -441,8 +455,9 @@ struct ArrayLiteralExp : Expression
     Expression *inlineScan(InlineScanState *iss);
 };
 
-struct AssocArrayLiteralExp : Expression
+class AssocArrayLiteralExp : Expression
 {
+public:
     Expressions *keys;
     Expressions *values;
     bool ownedByCtfe;   // true = created in CTFE
@@ -465,8 +480,9 @@ struct AssocArrayLiteralExp : Expression
     Expression *inlineScan(InlineScanState *iss);
 };
 
-struct StructLiteralExp : Expression
+class StructLiteralExp : Expression
 {
+public:
     StructDeclaration *sd;      // which aggregate this is for
     Expressions *elements;      // parallels sd->fields[] with
                                 // NULL entries for fields to skip
@@ -501,8 +517,9 @@ struct StructLiteralExp : Expression
 
 Expression *typeDotIdExp(Loc loc, Type *type, Identifier *ident);
 
-struct TypeExp : Expression
+class TypeExp : Expression
 {
+public:
     TypeExp(Loc loc, Type *type);
     Expression *syntaxCopy();
     Expression *semantic(Scope *sc);
@@ -512,8 +529,9 @@ struct TypeExp : Expression
     elem *toElem(IRState *irs);
 };
 
-struct ScopeExp : Expression
+class ScopeExp : Expression
 {
+public:
     ScopeDsymbol *sds;
 
     ScopeExp(Loc loc, ScopeDsymbol *sds);
@@ -523,8 +541,9 @@ struct ScopeExp : Expression
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct TemplateExp : Expression
+class TemplateExp : Expression
 {
+public:
     TemplateDeclaration *td;
 
     TemplateExp(Loc loc, TemplateDeclaration *td);
@@ -532,8 +551,9 @@ struct TemplateExp : Expression
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct NewExp : Expression
+class NewExp : Expression
 {
+public:
     /* thisexp.new(newargs) newtype(arguments)
      */
     Expression *thisexp;        // if !NULL, 'this' for class being allocated
@@ -560,8 +580,9 @@ struct NewExp : Expression
     //Expression *inlineScan(InlineScanState *iss);
 };
 
-struct NewAnonClassExp : Expression
+class NewAnonClassExp : Expression
 {
+public:
     /* thisexp.new(newargs) class baseclasses { } (arguments)
      */
     Expression *thisexp;        // if !NULL, 'this' for class being allocated
@@ -578,8 +599,9 @@ struct NewAnonClassExp : Expression
 };
 
 #if DMDV2
-struct SymbolExp : Expression
+class SymbolExp : Expression
 {
+public:
     Declaration *var;
     int hasOverloads;
 
@@ -591,8 +613,9 @@ struct SymbolExp : Expression
 
 // Offset from symbol
 
-struct SymOffExp : SymbolExp
+class SymOffExp : SymbolExp
 {
+public:
     unsigned offset;
 
     SymOffExp(Loc loc, Declaration *var, unsigned offset, int hasOverloads = 0);
@@ -611,8 +634,9 @@ struct SymOffExp : SymbolExp
 
 // Variable
 
-struct VarExp : SymbolExp
+class VarExp : SymbolExp
 {
+public:
     VarExp(Loc loc, Declaration *var, int hasOverloads = 0);
     int equals(_Object *o);
     Expression *semantic(Scope *sc);
@@ -635,8 +659,9 @@ struct VarExp : SymbolExp
 #if DMDV2
 // Overload Set
 
-struct OverExp : Expression
+class OverExp : Expression
 {
+public:
     OverloadSet *vars;
 
     OverExp(OverloadSet *s);
@@ -647,8 +672,9 @@ struct OverExp : Expression
 
 // Function/Delegate literal
 
-struct FuncExp : Expression
+class FuncExp : Expression
 {
+public:
     FuncLiteralDeclaration *fd;
     TemplateDeclaration *td;
     enum TOK tok;
@@ -676,8 +702,9 @@ struct FuncExp : Expression
 
 // Declaration of a symbol
 
-struct DeclarationExp : Expression
+class DeclarationExp : Expression
 {
+public:
     Dsymbol *declaration;
 
     DeclarationExp(Loc loc, Dsymbol *declaration);
@@ -692,8 +719,9 @@ struct DeclarationExp : Expression
     Expression *inlineScan(InlineScanState *iss);
 };
 
-struct TypeidExp : Expression
+class TypeidExp : Expression
 {
+public:
     _Object *obj;
 
     TypeidExp(Loc loc, _Object *obj);
@@ -703,8 +731,9 @@ struct TypeidExp : Expression
 };
 
 #if DMDV2
-struct TraitsExp : Expression
+class TraitsExp : Expression
 {
+public:
     Identifier *ident;
     Objects *args;
 
@@ -715,8 +744,9 @@ struct TraitsExp : Expression
 };
 #endif
 
-struct HaltExp : Expression
+class HaltExp : Expression
 {
+public:
     HaltExp(Loc loc);
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
@@ -724,8 +754,9 @@ struct HaltExp : Expression
     elem *toElem(IRState *irs);
 };
 
-struct IsExp : Expression
+class IsExp : Expression
 {
+public:
     /* is(targ id tok tspec)
      * is(targ id == tok2)
      */
@@ -745,8 +776,9 @@ struct IsExp : Expression
 
 /****************************************************************/
 
-struct UnaExp : Expression
+class UnaExp : Expression
 {
+public:
     Expression *e1;
 
     UnaExp(Loc loc, enum TOK op, int size, Expression *e1);
@@ -766,8 +798,9 @@ struct UnaExp : Expression
     virtual Expression *op_overload(Scope *sc);
 };
 
-struct BinExp : Expression
+class BinExp : Expression
 {
+public:
     Expression *e1;
     Expression *e2;
 
@@ -802,8 +835,9 @@ struct BinExp : Expression
     elem *toElemBin(IRState *irs, int op);
 };
 
-struct BinAssignExp : BinExp
+class BinAssignExp : BinExp
 {
+public:
     BinAssignExp(Loc loc, enum TOK op, int size, Expression *e1, Expression *e2)
         : BinExp(loc, op, size, e1, e2)
     {
@@ -821,22 +855,25 @@ struct BinAssignExp : BinExp
 
 /****************************************************************/
 
-struct CompileExp : UnaExp
+class CompileExp : UnaExp
 {
+public:
     CompileExp(Loc loc, Expression *e);
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct FileExp : UnaExp
+class FileExp : UnaExp
 {
+public:
     FileExp(Loc loc, Expression *e);
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct AssertExp : UnaExp
+class AssertExp : UnaExp
 {
+public:
     Expression *msg;
 
     AssertExp(Loc loc, Expression *e, Expression *msg = NULL);
@@ -852,8 +889,9 @@ struct AssertExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-struct DotIdExp : UnaExp
+class DotIdExp : UnaExp
 {
+public:
     Identifier *ident;
 
     DotIdExp(Loc loc, Expression *e, Identifier *ident);
@@ -863,16 +901,18 @@ struct DotIdExp : UnaExp
     void dump(int i);
 };
 
-struct DotTemplateExp : UnaExp
+class DotTemplateExp : UnaExp
 {
+public:
     TemplateDeclaration *td;
 
     DotTemplateExp(Loc loc, Expression *e, TemplateDeclaration *td);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct DotVarExp : UnaExp
+class DotVarExp : UnaExp
 {
+public:
     Declaration *var;
     int hasOverloads;
 
@@ -888,8 +928,9 @@ struct DotVarExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-struct DotTemplateInstanceExp : UnaExp
+class DotTemplateInstanceExp : UnaExp
 {
+public:
     TemplateInstance *ti;
 
     DotTemplateInstanceExp(Loc loc, Expression *e, Identifier *name, Objects *tiargs);
@@ -900,8 +941,9 @@ struct DotTemplateInstanceExp : UnaExp
     void dump(int indent);
 };
 
-struct DelegateExp : UnaExp
+class DelegateExp : UnaExp
 {
+public:
     FuncDeclaration *func;
     int hasOverloads;
 
@@ -917,8 +959,9 @@ struct DelegateExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-struct DotTypeExp : UnaExp
+class DotTypeExp : UnaExp
 {
+public:
     Dsymbol *sym;               // symbol that represents a type
 
     DotTypeExp(Loc loc, Expression *e, Dsymbol *sym);
@@ -927,8 +970,9 @@ struct DotTypeExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-struct CallExp : UnaExp
+class CallExp : UnaExp
 {
+public:
     Expressions *arguments;     // function arguments
     FuncDeclaration *f;         // symbol to call
 
@@ -956,8 +1000,9 @@ struct CallExp : UnaExp
     Expression *inlineScan(InlineScanState *iss);
 };
 
-struct AddrExp : UnaExp
+class AddrExp : UnaExp
 {
+public:
     AddrExp(Loc loc, Expression *e);
     Expression *semantic(Scope *sc);
     void checkEscape();
@@ -968,8 +1013,9 @@ struct AddrExp : UnaExp
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
 };
 
-struct PtrExp : UnaExp
+class PtrExp : UnaExp
 {
+public:
     PtrExp(Loc loc, Expression *e);
     PtrExp(Loc loc, Expression *e, Type *t);
     Expression *semantic(Scope *sc);
@@ -986,8 +1032,9 @@ struct PtrExp : UnaExp
     Identifier *opId();
 };
 
-struct NegExp : UnaExp
+class NegExp : UnaExp
 {
+public:
     NegExp(Loc loc, Expression *e);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1002,8 +1049,9 @@ struct NegExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-struct UAddExp : UnaExp
+class UAddExp : UnaExp
 {
+public:
     UAddExp(Loc loc, Expression *e);
     Expression *semantic(Scope *sc);
 
@@ -1011,8 +1059,9 @@ struct UAddExp : UnaExp
     Identifier *opId();
 };
 
-struct ComExp : UnaExp
+class ComExp : UnaExp
 {
+public:
     ComExp(Loc loc, Expression *e);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1027,8 +1076,9 @@ struct ComExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-struct NotExp : UnaExp
+class NotExp : UnaExp
 {
+public:
     NotExp(Loc loc, Expression *e);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1037,8 +1087,9 @@ struct NotExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-struct BoolExp : UnaExp
+class BoolExp : UnaExp
 {
+public:
     BoolExp(Loc loc, Expression *e, Type *type);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1047,8 +1098,9 @@ struct BoolExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-struct DeleteExp : UnaExp
+class DeleteExp : UnaExp
 {
+public:
     DeleteExp(Loc loc, Expression *e);
     Expression *semantic(Scope *sc);
     Expression *checkToBoolean(Scope *sc);
@@ -1056,8 +1108,9 @@ struct DeleteExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-struct CastExp : UnaExp
+class CastExp : UnaExp
 {
+public:
     // Possible to cast to one type while painting to another type
     Type *to;                   // type to cast to
     unsigned mod;               // MODxxxxx
@@ -1081,8 +1134,9 @@ struct CastExp : UnaExp
     Expression *op_overload(Scope *sc);
 };
 
-struct VectorExp : UnaExp
+class VectorExp : UnaExp
 {
+public:
     Type *to;
     unsigned dim;               // number of elements in the vector
 
@@ -1093,8 +1147,9 @@ struct VectorExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-struct SliceExp : UnaExp
+class SliceExp : UnaExp
 {
+public:
     Expression *upr;            // NULL if implicit 0
     Expression *lwr;            // NULL if implicit [length - 1]
     VarDeclaration *lengthVar;
@@ -1121,8 +1176,9 @@ struct SliceExp : UnaExp
     Expression *inlineScan(InlineScanState *iss);
 };
 
-struct ArrayLengthExp : UnaExp
+class ArrayLengthExp : UnaExp
 {
+public:
     ArrayLengthExp(Loc loc, Expression *e1);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1135,8 +1191,9 @@ struct ArrayLengthExp : UnaExp
 
 // e1[a0,a1,a2,a3,...]
 
-struct ArrayExp : UnaExp
+class ArrayExp : UnaExp
 {
+public:
     Expressions *arguments;             // Array of Expression's
     size_t currentDimension;            // for opDollar
     VarDeclaration *lengthVar;
@@ -1159,15 +1216,17 @@ struct ArrayExp : UnaExp
 
 /****************************************************************/
 
-struct DotExp : BinExp
+class DotExp : BinExp
 {
+public:
     DotExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct CommaExp : BinExp
+class CommaExp : BinExp
 {
+public:
     CommaExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     void checkEscape();
@@ -1185,8 +1244,9 @@ struct CommaExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct IndexExp : BinExp
+class IndexExp : BinExp
 {
+public:
     VarDeclaration *lengthVar;
     int modifiable;
 
@@ -1205,8 +1265,9 @@ struct IndexExp : BinExp
 
 /* For both i++ and i--
  */
-struct PostExp : BinExp
+class PostExp : BinExp
 {
+public:
     PostExp(enum TOK op, Loc loc, Expression *e);
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -1217,15 +1278,18 @@ struct PostExp : BinExp
 
 /* For both ++i and --i
  */
-struct PreExp : UnaExp
+class PreExp : UnaExp
 {
+public:
     PreExp(enum TOK op, Loc loc, Expression *e);
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct AssignExp : BinExp
-{   int ismemset;       // !=0 if setting the contents of an array
+class AssignExp : BinExp
+{
+public:
+   int ismemset;       // !=0 if setting the contents of an array
 
     AssignExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
@@ -1237,14 +1301,16 @@ struct AssignExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct ConstructExp : AssignExp
+class ConstructExp : AssignExp
 {
+public:
     ConstructExp(Loc loc, Expression *e1, Expression *e2);
 };
 
 #define ASSIGNEXP(op)   \
-struct op##AssignExp : BinAssignExp                             \
+class op##AssignExp : BinAssignExp                             \
 {                                                               \
+public:                                                         \
     op##AssignExp(Loc loc, Expression *e1, Expression *e2);     \
     Expression *semantic(Scope *sc);                            \
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);                  \
@@ -1280,8 +1346,9 @@ ASSIGNEXP(Cat)
 #undef X
 #undef ASSIGNEXP
 
-struct AddExp : BinExp
+class AddExp : BinExp
 {
+public:
     AddExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1298,8 +1365,9 @@ struct AddExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct MinExp : BinExp
+class MinExp : BinExp
 {
+public:
     MinExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1315,8 +1383,9 @@ struct MinExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct CatExp : BinExp
+class CatExp : BinExp
 {
+public:
     CatExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1329,8 +1398,9 @@ struct CatExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct MulExp : BinExp
+class MulExp : BinExp
 {
+public:
     MulExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1347,8 +1417,9 @@ struct MulExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct DivExp : BinExp
+class DivExp : BinExp
 {
+public:
     DivExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1364,8 +1435,9 @@ struct DivExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct ModExp : BinExp
+class ModExp : BinExp
 {
+public:
     ModExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1382,8 +1454,9 @@ struct ModExp : BinExp
 };
 
 #if DMDV2
-struct PowExp : BinExp
+class PowExp : BinExp
 {
+public:
     PowExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1399,8 +1472,9 @@ struct PowExp : BinExp
 };
 #endif
 
-struct ShlExp : BinExp
+class ShlExp : BinExp
 {
+public:
     ShlExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1414,8 +1488,9 @@ struct ShlExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct ShrExp : BinExp
+class ShrExp : BinExp
 {
+public:
     ShrExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1429,8 +1504,9 @@ struct ShrExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct UshrExp : BinExp
+class UshrExp : BinExp
 {
+public:
     UshrExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1444,8 +1520,9 @@ struct UshrExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct AndExp : BinExp
+class AndExp : BinExp
 {
+public:
     AndExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1462,8 +1539,9 @@ struct AndExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct OrExp : BinExp
+class OrExp : BinExp
 {
+public:
     OrExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1481,8 +1559,9 @@ struct OrExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct XorExp : BinExp
+class XorExp : BinExp
 {
+public:
     XorExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1500,8 +1579,9 @@ struct XorExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct OrOrExp : BinExp
+class OrOrExp : BinExp
 {
+public:
     OrOrExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *checkToBoolean(Scope *sc);
@@ -1511,8 +1591,9 @@ struct OrOrExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct AndAndExp : BinExp
+class AndAndExp : BinExp
 {
+public:
     AndAndExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *checkToBoolean(Scope *sc);
@@ -1522,8 +1603,9 @@ struct AndAndExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct CmpExp : BinExp
+class CmpExp : BinExp
 {
+public:
     CmpExp(enum TOK op, Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1538,8 +1620,9 @@ struct CmpExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct InExp : BinExp
+class InExp : BinExp
 {
+public:
     InExp(Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -1552,8 +1635,9 @@ struct InExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-struct RemoveExp : BinExp
+class RemoveExp : BinExp
 {
+public:
     RemoveExp(Loc loc, Expression *e1, Expression *e2);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
@@ -1562,8 +1646,9 @@ struct RemoveExp : BinExp
 
 // == and !=
 
-struct EqualExp : BinExp
+class EqualExp : BinExp
 {
+public:
     EqualExp(enum TOK op, Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result);
@@ -1580,8 +1665,9 @@ struct EqualExp : BinExp
 
 // === and !===
 
-struct IdentityExp : BinExp
+class IdentityExp : BinExp
 {
+public:
     IdentityExp(enum TOK op, Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
     int isBit();
@@ -1592,8 +1678,9 @@ struct IdentityExp : BinExp
 
 /****************************************************************/
 
-struct CondExp : BinExp
+class CondExp : BinExp
 {
+public:
     Expression *econd;
 
     CondExp(Loc loc, Expression *econd, Expression *e1, Expression *e2);
@@ -1621,23 +1708,26 @@ struct CondExp : BinExp
 #if DMDV2
 /****************************************************************/
 
-struct DefaultInitExp : Expression
+class DefaultInitExp : Expression
 {
+public:
     enum TOK subop;             // which of the derived classes this is
 
     DefaultInitExp(Loc loc, enum TOK subop, int size);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct FileInitExp : DefaultInitExp
+class FileInitExp : DefaultInitExp
 {
+public:
     FileInitExp(Loc loc);
     Expression *semantic(Scope *sc);
     Expression *resolveLoc(Loc loc, Scope *sc);
 };
 
-struct LineInitExp : DefaultInitExp
+class LineInitExp : DefaultInitExp
 {
+public:
     LineInitExp(Loc loc);
     Expression *semantic(Scope *sc);
     Expression *resolveLoc(Loc loc, Scope *sc);

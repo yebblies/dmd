@@ -18,14 +18,16 @@
 #include "root.h"
 #include "dsymbol.h"
 
-struct Identifier;
-struct Type;
-struct Expression;
+class Identifier;
+class Type;
+class Expression;
 struct HdrGenState;
 
 
-struct EnumDeclaration : ScopeDsymbol
-{   /* enum ident : memtype { ... }
+class EnumDeclaration : ScopeDsymbol
+{
+public:
+    /* enum ident : memtype { ... }
      */
     Type *type;                 // the TypeEnum
     Type *memtype;              // type of the members
@@ -71,8 +73,9 @@ struct EnumDeclaration : ScopeDsymbol
 };
 
 
-struct EnumMember : Dsymbol
+class EnumMember : Dsymbol
 {
+public:
     Expression *value;
     Type *type;
 

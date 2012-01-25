@@ -25,8 +25,9 @@ struct TypeInfo
     virtual void swap(void *p1, void *p2) = 0;
 };
 
-struct TypeInfo_Achar : TypeInfo
+class TypeInfo_Achar : TypeInfo
 {
+public:
     const char* toString();
     hash_t getHash(void *p);
     int equals(void *p1, void *p2);
@@ -37,8 +38,9 @@ struct TypeInfo_Achar : TypeInfo
 
 extern TypeInfo_Achar ti_achar;
 
-struct TypeInfo_Pvoid : TypeInfo
+class TypeInfo_Pvoid : TypeInfo
 {
+public:
     const char* toString();
     hash_t getHash(void *p);
     int equals(void *p1, void *p2);

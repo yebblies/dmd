@@ -11,21 +11,22 @@
 #ifndef DMD_DEBCOND_H
 #define DMD_DEBCOND_H
 
-struct Expression;
-struct Identifier;
+class Expression;
+class Identifier;
 class OutBuffer;
-struct Module;
+class Module;
 struct Scope;
-struct ScopeDsymbol;
-struct DebugCondition;
+class ScopeDsymbol;
+class DebugCondition;
 #include "lexer.h" // dmdhg
 enum TOK;
 struct HdrGenState;
 
 int findCondition(Strings *ids, Identifier *ident);
 
-struct Condition
+class Condition
 {
+public:
     Loc loc;
     int inc;            // 0: not computed yet
                         // 1: include
@@ -39,8 +40,9 @@ struct Condition
     virtual DebugCondition *isDebugCondition() { return NULL; }
 };
 
-struct DVCondition : Condition
+class DVCondition : Condition
 {
+public:
     unsigned level;
     Identifier *ident;
     Module *mod;
@@ -50,8 +52,9 @@ struct DVCondition : Condition
     Condition *syntaxCopy();
 };
 
-struct DebugCondition : DVCondition
+class DebugCondition : DVCondition
 {
+public:
     static void setGlobalLevel(unsigned level);
     static void addGlobalIdent(const char *ident);
     static void addPredefinedGlobalIdent(const char *ident);
@@ -63,8 +66,9 @@ struct DebugCondition : DVCondition
     DebugCondition *isDebugCondition() { return this; }
 };
 
-struct VersionCondition : DVCondition
+class VersionCondition : DVCondition
 {
+public:
     static void setGlobalLevel(unsigned level);
     static void checkPredefined(Loc loc, const char *ident);
     static void addGlobalIdent(const char *ident);
@@ -76,8 +80,9 @@ struct VersionCondition : DVCondition
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct StaticIfCondition : Condition
+class StaticIfCondition : Condition
 {
+public:
     Expression *exp;
 
     StaticIfCondition(Loc loc, Expression *exp);
@@ -86,8 +91,9 @@ struct StaticIfCondition : Condition
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct IftypeCondition : Condition
+class IftypeCondition : Condition
 {
+public:
     /* iftype (targ id tok tspec)
      */
     Type *targ;

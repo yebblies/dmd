@@ -127,7 +127,7 @@ class OutBuffer;
 
 // Can't include arraytypes.h here, need to declare these directly.
 template <typename TYPE> class ArrayBase;
-typedef ArrayBase<struct Identifier> Identifiers;
+typedef ArrayBase<class Identifier> Identifiers;
 typedef ArrayBase<char> Strings;
 
 // Put command line switches in here
@@ -336,7 +336,7 @@ typedef long double real_t;
 #include "d-gcc-complex_t.h"
 #endif
 
-struct Module;
+class Module;
 
 //typedef unsigned Loc;         // file location
 struct Loc
@@ -428,7 +428,7 @@ void util_progress();
 #define stdmsg stderr
 #endif
 
-struct Dsymbol;
+class Dsymbol;
 struct Library;
 class File;
 void obj_start(char *srcfile);

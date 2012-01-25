@@ -17,11 +17,12 @@
 
 #include "dsymbol.h"
 
-struct Expression;
+class Expression;
 struct HdrGenState;
 
-struct StaticAssert : Dsymbol
+class StaticAssert : Dsymbol
 {
+public:
     Expression *exp;
     Expression *msg;
 

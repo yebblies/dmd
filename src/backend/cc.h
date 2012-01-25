@@ -182,10 +182,10 @@ struct token_t;
 struct PARAM;
 typedef struct PARAM param_t;
 struct block;
-struct Classsym;
-struct Nspacesym;
+class Classsym;
+class Nspacesym;
 struct Outbuffer;
-struct Aliassym;
+class Aliassym;
 struct dt_t;
 typedef struct TYPE type;
 typedef struct Symbol symbol;
@@ -374,9 +374,9 @@ typedef enum SC enum_SC;
  */
 
 #if MARS
-struct ClassDeclaration;
-struct Declaration;
-struct Module;
+class ClassDeclaration;
+class Declaration;
+class Module;
 #endif
 
 struct Blockx
@@ -1307,16 +1307,16 @@ struct Symbol
 
 // Class, struct or union
 
-struct Classsym : Symbol { };
+class Classsym : Symbol { };
 
 // Namespace Symbol
-struct Nspacesym : Symbol { };
+class Nspacesym : Symbol { };
 
 // Alias for another Symbol
-struct Aliassym : Symbol { };
+class Aliassym : Symbol { };
 
 // Function symbol
-//struct Funcsym : Symbol { };
+//class Funcsym : Symbol { };
 
 // Determine if this Symbol is stored in a COMDAT
 #if MARS

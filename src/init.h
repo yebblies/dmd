@@ -16,21 +16,22 @@
 #include "mars.h"
 #include "arraytypes.h"
 
-struct Identifier;
-struct Expression;
+class Identifier;
+class Expression;
 struct Scope;
-struct Type;
+class Type;
 struct dt_t;
-struct AggregateDeclaration;
-struct VoidInitializer;
-struct StructInitializer;
-struct ArrayInitializer;
-struct ExpInitializer;
+class AggregateDeclaration;
+class VoidInitializer;
+class StructInitializer;
+class ArrayInitializer;
+class ExpInitializer;
 struct HdrGenState;
 
 
-struct Initializer : _Object
+class Initializer : _Object
 {
+public:
     Loc loc;
 
     Initializer(Loc loc);
@@ -52,8 +53,9 @@ struct Initializer : _Object
     virtual ExpInitializer  *isExpInitializer()  { return NULL; }
 };
 
-struct VoidInitializer : Initializer
+class VoidInitializer : Initializer
 {
+public:
     Type *type;         // type that this will initialize to
 
     VoidInitializer(Loc loc);
@@ -67,8 +69,9 @@ struct VoidInitializer : Initializer
     virtual VoidInitializer *isVoidInitializer() { return this; }
 };
 
-struct StructInitializer : Initializer
+class StructInitializer : Initializer
 {
+public:
     Identifiers field;  // of Identifier *'s
     Initializers value; // parallel array of Initializer *'s
 
@@ -87,8 +90,9 @@ struct StructInitializer : Initializer
     StructInitializer *isStructInitializer() { return this; }
 };
 
-struct ArrayInitializer : Initializer
+class ArrayInitializer : Initializer
 {
+public:
     Expressions index;  // indices
     Initializers value; // of Initializer *'s
     unsigned dim;       // length of array being initialized
@@ -111,8 +115,9 @@ struct ArrayInitializer : Initializer
     ArrayInitializer *isArrayInitializer() { return this; }
 };
 
-struct ExpInitializer : Initializer
+class ExpInitializer : Initializer
 {
+public:
     Expression *exp;
 
     ExpInitializer(Loc loc, Expression *exp);

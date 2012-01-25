@@ -116,7 +116,7 @@ Type *Type::tstring;
 Type *Type::basic[TMAX];
 unsigned char Type::mangleChar[TMAX];
 unsigned char Type::sizeTy[TMAX];
-StringTable *Type::stringtable;
+StringTable Type::stringtable;
 
 
 Type::Type(TY ty)
@@ -170,8 +170,7 @@ char Type::needThisPrefix()
 
 void Type::init()
 {
-    stringtable = new StringTable();
-    stringtable->init();
+    stringtable.init();
     Lexer::initKeywords();
 
     for (size_t i = 0; i < TMAX; i++)
@@ -1563,7 +1562,7 @@ Type *Type::merge()
         //if (next)
             //next = next->merge();
         toDecoBuffer(&buf);
-        sv = stringtable->update((char *)buf.data, buf.offset);
+        sv = stringtable.update((char *)buf.data, buf.offset);
         if (sv->ptrvalue)
         {   t = (Type *) sv->ptrvalue;
 #ifdef DEBUG
@@ -1595,7 +1594,7 @@ Type *Type::merge2()
     if (!t->deco)
         return t->merge();
 
-    StringValue *sv = stringtable->lookup((char *)t->deco, strlen(t->deco));
+    StringValue *sv = stringtable.lookup((char *)t->deco, strlen(t->deco));
     if (sv && sv->ptrvalue)
     {   t = (Type *) sv->ptrvalue;
         assert(t->deco);

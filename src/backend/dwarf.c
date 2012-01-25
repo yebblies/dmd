@@ -344,8 +344,9 @@ struct Abuf
     size_t length;
 };
 
-struct TypeInfo_Abuf : TypeInfo
+class TypeInfo_Abuf : TypeInfo
 {
+public:
     const char* toString();
     hash_t getHash(void *p);
     int equals(void *p1, void *p2);
@@ -1407,8 +1408,9 @@ struct Atype
     size_t end;
 };
 
-struct TypeInfo_Atype : TypeInfo
+class TypeInfo_Atype : TypeInfo
 {
+public:
     const char* toString();
     hash_t getHash(void *p);
     int equals(void *p1, void *p2);
@@ -2424,8 +2426,9 @@ struct Adata
     size_t end;
 };
 
-struct TypeInfo_Adata : TypeInfo
+class TypeInfo_Adata : TypeInfo
 {
+public:
     const char* toString();
     hash_t getHash(void *p);
     int equals(void *p1, void *p2);

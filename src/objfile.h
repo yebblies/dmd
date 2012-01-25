@@ -14,8 +14,9 @@ enum ObjFormat
         ELF
 };
 
-struct ObjFile : File
+class ObjFile : File
 {
+public:
     ObjFile(FileName *);
     ~ObjFile();
 

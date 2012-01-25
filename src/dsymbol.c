@@ -1331,8 +1331,7 @@ Dsymbol *ArrayScopeSymbol::search(Loc loc, Identifier *ident, int flags)
 DsymbolTable::DsymbolTable()
 {
 #if STRINGTABLE
-    tab = new StringTable;
-    tab->init();
+    tab.init();
 #else
     tab = NULL;
 #endif

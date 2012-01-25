@@ -21,59 +21,59 @@
 #include "mars.h"
 #include "arraytypes.h"
 
-struct Identifier;
+class Identifier;
 struct Scope;
-struct DsymbolTable;
-struct Declaration;
-struct ThisDeclaration;
-struct TupleDeclaration;
-struct TypedefDeclaration;
-struct AliasDeclaration;
-struct AggregateDeclaration;
-struct EnumDeclaration;
-struct ClassDeclaration;
-struct InterfaceDeclaration;
-struct StructDeclaration;
-struct UnionDeclaration;
-struct FuncDeclaration;
-struct FuncAliasDeclaration;
-struct FuncLiteralDeclaration;
-struct CtorDeclaration;
-struct PostBlitDeclaration;
-struct DtorDeclaration;
-struct StaticCtorDeclaration;
-struct StaticDtorDeclaration;
-struct SharedStaticCtorDeclaration;
-struct SharedStaticDtorDeclaration;
-struct InvariantDeclaration;
-struct UnitTestDeclaration;
-struct NewDeclaration;
-struct VarDeclaration;
-struct AttribDeclaration;
+class DsymbolTable;
+class Declaration;
+class ThisDeclaration;
+class TupleDeclaration;
+class TypedefDeclaration;
+class AliasDeclaration;
+class AggregateDeclaration;
+class EnumDeclaration;
+class ClassDeclaration;
+class InterfaceDeclaration;
+class StructDeclaration;
+class UnionDeclaration;
+class FuncDeclaration;
+class FuncAliasDeclaration;
+class FuncLiteralDeclaration;
+class CtorDeclaration;
+class PostBlitDeclaration;
+class DtorDeclaration;
+class StaticCtorDeclaration;
+class StaticDtorDeclaration;
+class SharedStaticCtorDeclaration;
+class SharedStaticDtorDeclaration;
+class InvariantDeclaration;
+class UnitTestDeclaration;
+class NewDeclaration;
+class VarDeclaration;
+class AttribDeclaration;
 struct Symbol;
-struct Package;
-struct Module;
-struct Import;
-struct Type;
-struct TypeTuple;
-struct WithStatement;
-struct LabelDsymbol;
-struct ScopeDsymbol;
-struct TemplateDeclaration;
-struct TemplateInstance;
-struct TemplateMixin;
-struct EnumMember;
-struct ScopeDsymbol;
-struct WithScopeSymbol;
-struct ArrayScopeSymbol;
-struct SymbolDeclaration;
-struct Expression;
-struct DeleteDeclaration;
+class Package;
+class Module;
+class Import;
+class Type;
+class TypeTuple;
+class WithStatement;
+class LabelDsymbol;
+class ScopeDsymbol;
+class TemplateDeclaration;
+class TemplateInstance;
+class TemplateMixin;
+class EnumMember;
+class ScopeDsymbol;
+class WithScopeSymbol;
+class ArrayScopeSymbol;
+class SymbolDeclaration;
+class Expression;
+class DeleteDeclaration;
 struct HdrGenState;
-struct OverloadSet;
+class OverloadSet;
 struct AA;
 #if TARGET_NET
-struct PragmaScope;
+class PragmaScope;
 #endif
 #if IN_GCC
 union tree_node;
@@ -83,7 +83,7 @@ struct TYPE;
 #endif
 
 // Back end
-struct Classsym;
+class Classsym;
 
 enum PROT
 {
@@ -109,8 +109,9 @@ enum PASS
     PASSobj,            // toObjFile() run
 };
 
-struct Dsymbol : _Object
+class Dsymbol : _Object
 {
+public:
     Identifier *ident;
     Identifier *c_ident;
     Dsymbol *parent;
@@ -248,8 +249,9 @@ struct Dsymbol : _Object
 
 // Dsymbol that generates a scope
 
-struct ScopeDsymbol : Dsymbol
+class ScopeDsymbol : Dsymbol
 {
+public:
     Dsymbols *members;          // all Dsymbol's in this scope
     DsymbolTable *symtab;       // members[] sorted into table
 
@@ -283,8 +285,9 @@ struct ScopeDsymbol : Dsymbol
 
 // With statement scope
 
-struct WithScopeSymbol : ScopeDsymbol
+class WithScopeSymbol : ScopeDsymbol
 {
+public:
     WithStatement *withstate;
 
     WithScopeSymbol(WithStatement *withstate);
@@ -295,8 +298,9 @@ struct WithScopeSymbol : ScopeDsymbol
 
 // Array Index/Slice scope
 
-struct ArrayScopeSymbol : ScopeDsymbol
+class ArrayScopeSymbol : ScopeDsymbol
 {
+public:
     Expression *exp;    // IndexExp or SliceExp
     TypeTuple *type;    // for tuple[length]
     TupleDeclaration *td;       // for tuples of objects
@@ -313,8 +317,9 @@ struct ArrayScopeSymbol : ScopeDsymbol
 // Overload Sets
 
 #if DMDV2
-struct OverloadSet : Dsymbol
+class OverloadSet : Dsymbol
 {
+public:
     Dsymbols a;         // array of Dsymbols
 
     OverloadSet();
@@ -326,8 +331,9 @@ struct OverloadSet : Dsymbol
 
 // Table of Dsymbol's
 
-struct DsymbolTable : _Object
+class DsymbolTable : _Object
 {
+public:
     AA *tab;
 
     DsymbolTable();
