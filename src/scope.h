@@ -14,21 +14,21 @@
 #pragma once
 #endif
 
-struct Dsymbol;
-struct ScopeDsymbol;
-struct Identifier;
-struct Module;
-struct Statement;
-struct SwitchStatement;
-struct TryFinallyStatement;
-struct LabelStatement;
-struct ForeachStatement;
-struct ClassDeclaration;
-struct AggregateDeclaration;
-struct AnonymousAggregateDeclaration;
-struct FuncDeclaration;
+class Dsymbol;
+class ScopeDsymbol;
+class Identifier;
+class Module;
+class Statement;
+class SwitchStatement;
+class TryFinallyStatement;
+class LabelStatement;
+class ForeachStatement;
+class ClassDeclaration;
+class AggregateDeclaration;
+class AnonymousAggregateDeclaration;
+class FuncDeclaration;
 struct DocComment;
-struct TemplateInstance;
+class TemplateInstance;
 
 #if __GNUC__
 // Requires a full definition for PROT and LINK

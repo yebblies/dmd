@@ -182,10 +182,10 @@ struct token_t;
 struct PARAM;
 typedef struct PARAM param_t;
 struct block;
-struct Classsym;
-struct Nspacesym;
+class Classsym;
+class Nspacesym;
 struct Outbuffer;
-struct Aliassym;
+class Aliassym;
 struct dt_t;
 typedef struct TYPE type;
 typedef struct Symbol symbol;
@@ -374,9 +374,9 @@ typedef enum SC enum_SC;
  */
 
 #if MARS
-struct ClassDeclaration;
-struct Declaration;
-struct Module;
+class ClassDeclaration;
+class Declaration;
+class Module;
 #endif
 
 struct Blockx

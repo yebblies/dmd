@@ -17,12 +17,12 @@
 
 #include "dsymbol.h"
 
-struct Expression;
-struct Statement;
-struct LabelDsymbol;
-struct Initializer;
-struct Module;
-struct Condition;
+class Expression;
+class Statement;
+class LabelDsymbol;
+class Initializer;
+class Module;
+class Condition;
 struct HdrGenState;
 
 /**************************************************************/
@@ -61,8 +61,9 @@ public:
     int cvMember(unsigned char *p);
 };
 
-struct StorageClassDeclaration: AttribDeclaration
+class StorageClassDeclaration : AttribDeclaration
 {
+public:
     StorageClass stc;
 
     StorageClassDeclaration(StorageClass stc, Dsymbols *decl);

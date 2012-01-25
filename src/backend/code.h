@@ -15,8 +15,8 @@ extern "C" {
 #endif
 
 #if MARS
-struct LabelDsymbol;
-struct Declaration;
+class LabelDsymbol;
+class Declaration;
 #endif
 
 #define CNIL ((code *) NULL)

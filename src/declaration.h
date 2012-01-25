@@ -19,17 +19,16 @@
 #include "lexer.h"
 #include "mtype.h"
 
-struct Expression;
-struct Statement;
-struct LabelDsymbol;
-struct Initializer;
-struct Module;
+class Expression;
+class Statement;
+class LabelDsymbol;
+class Initializer;
+class Module;
 struct InlineScanState;
-struct ForeachStatement;
-struct FuncDeclaration;
-struct ExpInitializer;
-struct StructDeclaration;
-struct TupleType;
+class ForeachStatement;
+class FuncDeclaration;
+class ExpInitializer;
+class StructDeclaration;
 struct InterState;
 struct IRState;
 

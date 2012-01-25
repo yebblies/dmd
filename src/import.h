@@ -18,12 +18,12 @@
 #include "dsymbol.h"
 
 
-struct Identifier;
+class Identifier;
 struct Scope;
 class OutBuffer;
-struct Module;
-struct Package;
-struct AliasDeclaration;
+class Module;
+class Package;
+class AliasDeclaration;
 struct HdrGenState;
 
 class Import : Dsymbol

@@ -18,12 +18,12 @@
 #include "root.h"
 #include "dsymbol.h"
 
-struct ModuleInfoDeclaration;
-struct ClassDeclaration;
-struct ModuleDeclaration;
+class ModuleInfoDeclaration;
+class ClassDeclaration;
+class ModuleDeclaration;
 struct Macro;
 struct Escape;
-struct VarDeclaration;
+class VarDeclaration;
 struct Library;
 
 // Back end
@@ -182,8 +182,9 @@ public:
 };
 
 
-struct ModuleDeclaration
+class ModuleDeclaration
 {
+public:
     Identifier *id;
     Identifiers *packages;            // array of Identifier's representing packages
     bool _safe;

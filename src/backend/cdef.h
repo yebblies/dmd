@@ -871,7 +871,7 @@ typedef struct Configv
     int errmax;                 // max error count
 } Configv;
 
-struct Classsym;
+class Classsym;
 struct Symbol;
 struct LIST;
 struct elem;

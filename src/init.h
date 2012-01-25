@@ -16,16 +16,16 @@
 #include "mars.h"
 #include "arraytypes.h"
 
-struct Identifier;
-struct Expression;
+class Identifier;
+class Expression;
 struct Scope;
-struct Type;
+class Type;
 struct dt_t;
-struct AggregateDeclaration;
-struct VoidInitializer;
-struct StructInitializer;
-struct ArrayInitializer;
-struct ExpInitializer;
+class AggregateDeclaration;
+class VoidInitializer;
+class StructInitializer;
+class ArrayInitializer;
+class ExpInitializer;
 struct HdrGenState;
 
 

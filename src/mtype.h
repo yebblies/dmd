@@ -22,23 +22,23 @@
 #include "expression.h"
 
 struct Scope;
-struct Identifier;
-struct Expression;
-struct StructDeclaration;
-struct ClassDeclaration;
-struct VarDeclaration;
-struct EnumDeclaration;
-struct TypedefDeclaration;
-struct TypeInfoDeclaration;
-struct Dsymbol;
-struct TemplateInstance;
+class Identifier;
+class Expression;
+class StructDeclaration;
+class ClassDeclaration;
+class VarDeclaration;
+class EnumDeclaration;
+class TypedefDeclaration;
+class TypeInfoDeclaration;
+class Dsymbol;
+class TemplateInstance;
 struct CppMangleState;
-struct TemplateDeclaration;
+class TemplateDeclaration;
 enum LINK;
 
-struct TypeBasic;
+class TypeBasic;
 struct HdrGenState;
-struct Parameter;
+class Parameter;
 
 // Back end
 #if IN_GCC
@@ -48,7 +48,7 @@ typedef TYPE type;
 typedef struct TYPE type;
 #endif
 struct Symbol;
-struct TypeTuple;
+class TypeTuple;
 
 enum ENUMTY
 {
@@ -209,7 +209,7 @@ public:
     static Type *basic[TMAX];
     static unsigned char mangleChar[TMAX];
     static unsigned char sizeTy[TMAX];
-    static StringTable *stringtable;
+    static StringTable stringtable;
 
     // These tables are for implicit conversion of binary ops;
     // the indices are the type of operand one, followed by operand two.

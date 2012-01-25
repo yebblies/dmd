@@ -18,9 +18,9 @@
 #include "root.h"
 #include "dsymbol.h"
 
-struct Identifier;
-struct Type;
-struct Expression;
+class Identifier;
+class Type;
+class Expression;
 struct HdrGenState;
 
 

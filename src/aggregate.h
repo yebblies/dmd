@@ -19,19 +19,19 @@
 
 #include "dsymbol.h"
 
-struct Identifier;
-struct Type;
-struct TypeFunction;
-struct Expression;
-struct FuncDeclaration;
-struct CtorDeclaration;
-struct DtorDeclaration;
-struct InvariantDeclaration;
-struct NewDeclaration;
-struct DeleteDeclaration;
-struct InterfaceDeclaration;
-struct TypeInfoClassDeclaration;
-struct VarDeclaration;
+class Identifier;
+class Type;
+class TypeFunction;
+class Expression;
+class FuncDeclaration;
+class CtorDeclaration;
+class DtorDeclaration;
+class InvariantDeclaration;
+class NewDeclaration;
+class DeleteDeclaration;
+class InterfaceDeclaration;
+class TypeInfoClassDeclaration;
+class VarDeclaration;
 struct dt_t;
 
 
@@ -180,8 +180,9 @@ public:
     UnionDeclaration *isUnionDeclaration() { return this; }
 };
 
-struct BaseClass
+class BaseClass
 {
+public:
     Type *type;                         // (before semantic processing)
     enum PROT protection;               // protection for the base interface
 

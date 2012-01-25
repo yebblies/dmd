@@ -11,21 +11,22 @@
 #ifndef DMD_DEBCOND_H
 #define DMD_DEBCOND_H
 
-struct Expression;
-struct Identifier;
+class Expression;
+class Identifier;
 class OutBuffer;
-struct Module;
+class Module;
 struct Scope;
-struct ScopeDsymbol;
-struct DebugCondition;
+class ScopeDsymbol;
+class DebugCondition;
 #include "lexer.h" // dmdhg
 enum TOK;
 struct HdrGenState;
 
 int findCondition(Strings *ids, Identifier *ident);
 
-struct Condition
+class Condition
 {
+public:
     Loc loc;
     int inc;            // 0: not computed yet
                         // 1: include

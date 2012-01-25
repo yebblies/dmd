@@ -21,20 +21,20 @@
 
 
 class OutBuffer;
-struct Identifier;
-struct TemplateInstance;
-struct TemplateParameter;
-struct TemplateTypeParameter;
-struct TemplateThisParameter;
-struct TemplateValueParameter;
-struct TemplateAliasParameter;
-struct TemplateTupleParameter;
-struct Type;
-struct TypeTypeof;
+class Identifier;
+class TemplateInstance;
+class TemplateParameter;
+class TemplateTypeParameter;
+class TemplateThisParameter;
+class TemplateValueParameter;
+class TemplateAliasParameter;
+class TemplateTupleParameter;
+class Type;
+class TypeTypeof;
 struct Scope;
-struct Expression;
-struct AliasDeclaration;
-struct FuncDeclaration;
+class Expression;
+class AliasDeclaration;
+class FuncDeclaration;
 struct HdrGenState;
 enum MATCH;
 
@@ -103,8 +103,9 @@ public:
     void makeParamNamesVisibleInConstraint(Scope *paramscope, Expressions *fargs);
 };
 
-struct TemplateParameter
+class TemplateParameter
 {
+public:
     /* For type-parameter:
      *  template Foo(ident)             // specType is set to NULL
      *  template Foo(ident : specType)

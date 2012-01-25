@@ -17,36 +17,36 @@
 #include "arraytypes.h"
 #include "intrange.h"
 
-struct Type;
+class Type;
 struct Scope;
-struct TupleDeclaration;
-struct VarDeclaration;
-struct FuncDeclaration;
-struct FuncLiteralDeclaration;
-struct Declaration;
-struct CtorDeclaration;
-struct NewDeclaration;
-struct Dsymbol;
-struct Import;
-struct Module;
-struct ScopeDsymbol;
+class TupleDeclaration;
+class VarDeclaration;
+class FuncDeclaration;
+class FuncLiteralDeclaration;
+class Declaration;
+class CtorDeclaration;
+class NewDeclaration;
+class Dsymbol;
+class Import;
+class Module;
+class ScopeDsymbol;
 struct InlineCostState;
 struct InlineDoState;
 struct InlineScanState;
-struct Expression;
-struct Declaration;
-struct AggregateDeclaration;
-struct StructDeclaration;
-struct TemplateInstance;
-struct TemplateDeclaration;
-struct ClassDeclaration;
+class Expression;
+class Declaration;
+class AggregateDeclaration;
+class StructDeclaration;
+class TemplateInstance;
+class TemplateDeclaration;
+class ClassDeclaration;
 struct HdrGenState;
-struct BinExp;
+class BinExp;
 struct InterState;
 struct Symbol;          // back end symbol
-struct OverloadSet;
-struct Initializer;
-struct StringExp;
+class OverloadSet;
+class Initializer;
+class StringExp;
 
 enum TOK;
 
@@ -1308,8 +1308,9 @@ public:
 };
 
 #define ASSIGNEXP(op)   \
-struct op##AssignExp : BinAssignExp                             \
+class op##AssignExp : BinAssignExp                             \
 {                                                               \
+public:                                                         \
     op##AssignExp(Loc loc, Expression *e1, Expression *e2);     \
     Expression *semantic(Scope *sc);                            \
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);                  \
