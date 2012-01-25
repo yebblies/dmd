@@ -90,6 +90,7 @@ FuncDeclaration::FuncDeclaration(Loc loc, Loc endloc, Identifier *id, StorageCla
     builtin = BUILTINunknown;
     tookAddressOf = 0;
     flags = 0;
+    forceNonVirtual = 0;
 #endif
 }
 
@@ -444,6 +445,13 @@ void FuncDeclaration::semantic(Scope *sc)
         switch (vi)
         {
             case -1:
+                // C++ final functions are not virtual if they don't override anything
+                if (linkage == LINKcpp && isFinal())
+                {
+                    forceNonVirtual = 1;
+                    goto Ldone;
+                }
+
                 /* Didn't find one, so
                  * This is an 'introducing' function which gets a new
                  * slot in the vtbl[].
@@ -504,7 +512,7 @@ void FuncDeclaration::semantic(Scope *sc)
                         break;
                     if (!this->parent->isClassDeclaration()
 #if !BREAKABI
-                        && !isDtorDeclaration()
+                        && (!isDtorDeclaration() || linkage == LINKcpp)
 #endif
 #if DMDV2
                         && !isPostBlitDeclaration()
@@ -2676,7 +2684,7 @@ int FuncDeclaration::isVirtual()
     return isMember() &&
         !(isStatic() || protection == PROTprivate || protection == PROTpackage) &&
         p->isClassDeclaration() &&
-        !(p->isInterfaceDeclaration() && isFinal());
+        !(p->isInterfaceDeclaration() && isFinal()) && !forceNonVirtual;
 }
 
 // Determine if a function is pedantically virtual
@@ -3342,12 +3350,13 @@ void DtorDeclaration::semantic(Scope *sc)
     else if (ident == Id::dtor && semanticRun < PASSsemantic)
         ad->dtors.push(this);
 
-    if (!type)
-        type = new TypeFunction(NULL, Type::tvoid, FALSE, LINKd);
-
     sc = sc->push();
     sc->stc &= ~STCstatic;              // not a static destructor
-    sc->linkage = LINKd;
+    if (sc->linkage != LINKcpp)
+        sc->linkage = LINKd;
+
+    if (!type)
+        type = new TypeFunction(NULL, Type::tvoid, FALSE, LINKd);
 
     FuncDeclaration::semantic(sc);
 
@@ -3385,7 +3394,7 @@ int DtorDeclaration::isVirtual()
      * but doing so will require recompiling everything.
      */
 #if BREAKABI
-    return FALSE;
+    return (linkage == LINKcpp) && FuncDeclaration::isVirtual();
 #else
     return FuncDeclaration::isVirtual();
 #endif

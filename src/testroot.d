@@ -55,7 +55,7 @@ void testlstring()
 void testObject()
 {
     auto o = new _Object();
-    assert(o.toChars()[0..7] == "_Object");
+    assert(o.toChars()[0..6] == "Object");
 }
 
 ////////////////////////////////////////////////////////
