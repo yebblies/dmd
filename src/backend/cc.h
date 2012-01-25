@@ -1307,16 +1307,16 @@ struct Symbol
 
 // Class, struct or union
 
-struct Classsym : Symbol { };
+class Classsym : Symbol { };
 
 // Namespace Symbol
-struct Nspacesym : Symbol { };
+class Nspacesym : Symbol { };
 
 // Alias for another Symbol
-struct Aliassym : Symbol { };
+class Aliassym : Symbol { };
 
 // Function symbol
-//struct Funcsym : Symbol { };
+//class Funcsym : Symbol { };
 
 // Determine if this Symbol is stored in a COMDAT
 #if MARS

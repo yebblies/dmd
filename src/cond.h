@@ -39,8 +39,9 @@ struct Condition
     virtual DebugCondition *isDebugCondition() { return NULL; }
 };
 
-struct DVCondition : Condition
+class DVCondition : Condition
 {
+public:
     unsigned level;
     Identifier *ident;
     Module *mod;
@@ -50,8 +51,9 @@ struct DVCondition : Condition
     Condition *syntaxCopy();
 };
 
-struct DebugCondition : DVCondition
+class DebugCondition : DVCondition
 {
+public:
     static void setGlobalLevel(unsigned level);
     static void addGlobalIdent(const char *ident);
     static void addPredefinedGlobalIdent(const char *ident);
@@ -63,8 +65,9 @@ struct DebugCondition : DVCondition
     DebugCondition *isDebugCondition() { return this; }
 };
 
-struct VersionCondition : DVCondition
+class VersionCondition : DVCondition
 {
+public:
     static void setGlobalLevel(unsigned level);
     static void checkPredefined(Loc loc, const char *ident);
     static void addGlobalIdent(const char *ident);
@@ -76,8 +79,9 @@ struct VersionCondition : DVCondition
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct StaticIfCondition : Condition
+class StaticIfCondition : Condition
 {
+public:
     Expression *exp;
 
     StaticIfCondition(Loc loc, Expression *exp);
@@ -86,8 +90,9 @@ struct StaticIfCondition : Condition
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct IftypeCondition : Condition
+class IftypeCondition : Condition
 {
+public:
     /* iftype (targ id tok tspec)
      */
     Type *targ;

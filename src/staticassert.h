@@ -20,8 +20,9 @@
 struct Expression;
 struct HdrGenState;
 
-struct StaticAssert : Dsymbol
+class StaticAssert : Dsymbol
 {
+public:
     Expression *exp;
     Expression *msg;
 

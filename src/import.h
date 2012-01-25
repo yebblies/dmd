@@ -26,8 +26,9 @@ struct Package;
 struct AliasDeclaration;
 struct HdrGenState;
 
-struct Import : Dsymbol
+class Import : Dsymbol
 {
+public:
     Identifiers *packages;      // array of Identifier's representing packages
     Identifier *id;             // module Identifier
     Identifier *aliasId;

@@ -17,8 +17,9 @@
 
 #include "root.h"
 
-struct Identifier : _Object
+class Identifier : _Object
 {
+public:
     int value;
     const char *string;
     unsigned len;

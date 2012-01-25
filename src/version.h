@@ -20,8 +20,9 @@
 class OutBuffer;
 struct HdrGenState;
 
-struct DebugSymbol : Dsymbol
+class DebugSymbol : Dsymbol
 {
+public:
     unsigned level;
 
     DebugSymbol(Loc loc, Identifier *ident);
@@ -34,8 +35,9 @@ struct DebugSymbol : Dsymbol
     const char *kind();
 };
 
-struct VersionSymbol : Dsymbol
+class VersionSymbol : Dsymbol
 {
+public:
     unsigned level;
 
     VersionSymbol(Loc loc, Identifier *ident);

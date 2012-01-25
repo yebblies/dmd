@@ -221,8 +221,9 @@ bool isPointer(Type *t);
 
 // Reference to a class, or an interface. We need this when we
 // point to a base class (we must record what the type is).
-struct ClassReferenceExp : Expression
+class ClassReferenceExp : Expression
 {
+public:
     StructLiteralExp *value;
     ClassReferenceExp(Loc loc, StructLiteralExp *lit, Type *type) : Expression(loc, TOKclassreference, sizeof(ClassReferenceExp))
     {
@@ -296,8 +297,9 @@ int findFieldIndexByName(StructDeclaration *sd, VarDeclaration *v)
 }
 
 // Fake class which holds the thrown exception. Used for implementing exception handling.
-struct ThrownExceptionExp : Expression
+class ThrownExceptionExp : Expression
 {
+public:
     ClassReferenceExp *thrown; // the thing being tossed
     ThrownExceptionExp(Loc loc, ClassReferenceExp *victim) : Expression(loc, TOKthrownexception, sizeof(ThrownExceptionExp))
     {

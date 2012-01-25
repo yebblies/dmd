@@ -109,8 +109,9 @@ enum PASS
     PASSobj,            // toObjFile() run
 };
 
-struct Dsymbol : _Object
+class Dsymbol : _Object
 {
+public:
     Identifier *ident;
     Identifier *c_ident;
     Dsymbol *parent;
@@ -248,8 +249,9 @@ struct Dsymbol : _Object
 
 // Dsymbol that generates a scope
 
-struct ScopeDsymbol : Dsymbol
+class ScopeDsymbol : Dsymbol
 {
+public:
     Dsymbols *members;          // all Dsymbol's in this scope
     DsymbolTable *symtab;       // members[] sorted into table
 
@@ -283,8 +285,9 @@ struct ScopeDsymbol : Dsymbol
 
 // With statement scope
 
-struct WithScopeSymbol : ScopeDsymbol
+class WithScopeSymbol : ScopeDsymbol
 {
+public:
     WithStatement *withstate;
 
     WithScopeSymbol(WithStatement *withstate);
@@ -295,8 +298,9 @@ struct WithScopeSymbol : ScopeDsymbol
 
 // Array Index/Slice scope
 
-struct ArrayScopeSymbol : ScopeDsymbol
+class ArrayScopeSymbol : ScopeDsymbol
 {
+public:
     Expression *exp;    // IndexExp or SliceExp
     TypeTuple *type;    // for tuple[length]
     TupleDeclaration *td;       // for tuples of objects
@@ -313,8 +317,9 @@ struct ArrayScopeSymbol : ScopeDsymbol
 // Overload Sets
 
 #if DMDV2
-struct OverloadSet : Dsymbol
+class OverloadSet : Dsymbol
 {
+public:
     Dsymbols a;         // array of Dsymbols
 
     OverloadSet();
@@ -326,8 +331,9 @@ struct OverloadSet : Dsymbol
 
 // Table of Dsymbol's
 
-struct DsymbolTable : _Object
+class DsymbolTable : _Object
 {
+public:
     AA *tab;
 
     DsymbolTable();

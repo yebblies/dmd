@@ -38,16 +38,18 @@ struct FuncDeclaration;
 struct HdrGenState;
 enum MATCH;
 
-struct Tuple : _Object
+class Tuple : _Object
 {
+public:
     Objects objects;
 
     int dyncast() { return DYNCAST_TUPLE; } // kludge for template.isType()
 };
 
 
-struct TemplateDeclaration : ScopeDsymbol
+class TemplateDeclaration : ScopeDsymbol
 {
+public:
     TemplateParameters *parameters;     // array of TemplateParameter's
 
     TemplateParameters *origParameters; // originals for Ddoc
@@ -151,8 +153,9 @@ struct TemplateParameter
     virtual void *dummyArg() = 0;
 };
 
-struct TemplateTypeParameter : TemplateParameter
+class TemplateTypeParameter : TemplateParameter
 {
+public:
     /* Syntax:
      *  ident : specType = defaultType
      */
@@ -177,8 +180,9 @@ struct TemplateTypeParameter : TemplateParameter
 };
 
 #if DMDV2
-struct TemplateThisParameter : TemplateTypeParameter
+class TemplateThisParameter : TemplateTypeParameter
 {
+public:
     /* Syntax:
      *  this ident : specType = defaultType
      */
@@ -193,8 +197,9 @@ struct TemplateThisParameter : TemplateTypeParameter
 };
 #endif
 
-struct TemplateValueParameter : TemplateParameter
+class TemplateValueParameter : TemplateParameter
 {
+public:
     /* Syntax:
      *  valType ident : specValue = defaultValue
      */
@@ -220,8 +225,9 @@ struct TemplateValueParameter : TemplateParameter
     void *dummyArg();
 };
 
-struct TemplateAliasParameter : TemplateParameter
+class TemplateAliasParameter : TemplateParameter
 {
+public:
     /* Syntax:
      *  specType ident : specAlias = defaultAlias
      */
@@ -247,8 +253,9 @@ struct TemplateAliasParameter : TemplateParameter
     void *dummyArg();
 };
 
-struct TemplateTupleParameter : TemplateParameter
+class TemplateTupleParameter : TemplateParameter
 {
+public:
     /* Syntax:
      *  ident ...
      */
@@ -268,8 +275,9 @@ struct TemplateTupleParameter : TemplateParameter
     void *dummyArg();
 };
 
-struct TemplateInstance : ScopeDsymbol
+class TemplateInstance : ScopeDsymbol
 {
+public:
     /* Given:
      *  foo!(args) =>
      *      name = foo
@@ -338,8 +346,9 @@ struct TemplateInstance : ScopeDsymbol
     AliasDeclaration *isAliasDeclaration();
 };
 
-struct TemplateMixin : TemplateInstance
+class TemplateMixin : TemplateInstance
 {
+public:
     Identifiers *idents;
     Type *tqual;
 

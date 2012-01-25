@@ -33,8 +33,9 @@ union tree_node; typedef union tree_node elem;
 struct elem;
 #endif
 
-struct Package : ScopeDsymbol
+class Package : ScopeDsymbol
 {
+public:
     Package(Identifier *ident);
     const char *kind();
 
@@ -45,8 +46,9 @@ struct Package : ScopeDsymbol
     virtual void semantic(Scope *sc) { }
 };
 
-struct Module : Package
+class Module : Package
 {
+public:
     static Module *rootModule;
     static DsymbolTable *modules;       // symbol table of all modules
     static Modules amodules;            // array of all modules

@@ -35,8 +35,9 @@ struct VarDeclaration;
 struct dt_t;
 
 
-struct AggregateDeclaration : ScopeDsymbol
+class AggregateDeclaration : ScopeDsymbol
 {
+public:
     Type *type;
     StorageClass storage_class;
     enum PROT protection;
@@ -112,8 +113,9 @@ struct AggregateDeclaration : ScopeDsymbol
     AggregateDeclaration *isAggregateDeclaration() { return this; }
 };
 
-struct AnonymousAggregateDeclaration : AggregateDeclaration
+class AnonymousAggregateDeclaration : AggregateDeclaration
 {
+public:
     AnonymousAggregateDeclaration()
         : AggregateDeclaration(0, NULL)
     {
@@ -122,8 +124,9 @@ struct AnonymousAggregateDeclaration : AggregateDeclaration
     AnonymousAggregateDeclaration *isAnonymousAggregateDeclaration() { return this; }
 };
 
-struct StructDeclaration : AggregateDeclaration
+class StructDeclaration : AggregateDeclaration
 {
+public:
     int zeroInit;               // !=0 if initialize with 0 fill
 #if DMDV2
     int hasIdentityAssign;      // !=0 if has identity opAssign
@@ -167,8 +170,9 @@ struct StructDeclaration : AggregateDeclaration
     StructDeclaration *isStructDeclaration() { return this; }
 };
 
-struct UnionDeclaration : StructDeclaration
+class UnionDeclaration : StructDeclaration
 {
+public:
     UnionDeclaration(Loc loc, Identifier *id);
     Dsymbol *syntaxCopy(Dsymbol *s);
     const char *kind();
@@ -204,8 +208,9 @@ struct BaseClass
 #define CLASSINFO_SIZE  (0x3C+12+4)     // value of ClassInfo.size
 #endif
 
-struct ClassDeclaration : AggregateDeclaration
+class ClassDeclaration : AggregateDeclaration
 {
+public:
     static ClassDeclaration *object;
     static ClassDeclaration *classinfo;
     static ClassDeclaration *throwable;
@@ -292,8 +297,9 @@ struct ClassDeclaration : AggregateDeclaration
     ClassDeclaration *isClassDeclaration() { return (ClassDeclaration *)this; }
 };
 
-struct InterfaceDeclaration : ClassDeclaration
+class InterfaceDeclaration : ClassDeclaration
 {
+public:
 #if DMDV2
     int cpp;                            // !=0 if this is a C++ interface
 #endif

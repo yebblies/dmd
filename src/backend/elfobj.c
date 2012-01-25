@@ -131,8 +131,9 @@ AArray *section_names_hashtable;
 
 /* ====================== Cached Strings in section_names ================= */
 
-struct TypeInfo_Idxstr : TypeInfo
+class TypeInfo_Idxstr : TypeInfo
 {
+public:
     const char* toString();
     hash_t getHash(void *p);
     int equals(void *p1, void *p2);

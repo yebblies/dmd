@@ -27,8 +27,9 @@ struct HdrGenState;
 
 /**************************************************************/
 
-struct AttribDeclaration : Dsymbol
+class AttribDeclaration : Dsymbol
 {
+public:
     Dsymbols *decl;     // array of Dsymbol's
 
     AttribDeclaration(Dsymbols *decl);
@@ -74,8 +75,9 @@ struct StorageClassDeclaration: AttribDeclaration
     static void stcToCBuffer(OutBuffer *buf, StorageClass stc);
 };
 
-struct LinkDeclaration : AttribDeclaration
+class LinkDeclaration : AttribDeclaration
 {
+public:
     enum LINK linkage;
 
     LinkDeclaration(enum LINK p, Dsymbols *decl);
@@ -87,8 +89,9 @@ struct LinkDeclaration : AttribDeclaration
     char *toChars();
 };
 
-struct ProtDeclaration : AttribDeclaration
+class ProtDeclaration : AttribDeclaration
 {
+public:
     enum PROT protection;
 
     ProtDeclaration(enum PROT p, Dsymbols *decl);
@@ -101,8 +104,9 @@ struct ProtDeclaration : AttribDeclaration
     static void protectionToCBuffer(OutBuffer *buf, enum PROT protection);
 };
 
-struct AlignDeclaration : AttribDeclaration
+class AlignDeclaration : AttribDeclaration
 {
+public:
     unsigned salign;
 
     AlignDeclaration(unsigned sa, Dsymbols *decl);
@@ -112,8 +116,9 @@ struct AlignDeclaration : AttribDeclaration
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct AnonDeclaration : AttribDeclaration
+class AnonDeclaration : AttribDeclaration
 {
+public:
     int isunion;
     int sem;                    // 1 if successful semantic()
 
@@ -124,8 +129,9 @@ struct AnonDeclaration : AttribDeclaration
     const char *kind();
 };
 
-struct PragmaDeclaration : AttribDeclaration
+class PragmaDeclaration : AttribDeclaration
 {
+public:
     Expressions *args;          // array of Expression's
 
     PragmaDeclaration(Loc loc, Identifier *ident, Expressions *args, Dsymbols *decl);
@@ -138,8 +144,9 @@ struct PragmaDeclaration : AttribDeclaration
     void toObjFile(int multiobj);                       // compile to .obj file
 };
 
-struct ConditionalDeclaration : AttribDeclaration
+class ConditionalDeclaration : AttribDeclaration
 {
+public:
     Condition *condition;
     Dsymbols *elsedecl; // array of Dsymbol's for else block
 
@@ -155,8 +162,9 @@ struct ConditionalDeclaration : AttribDeclaration
     void setScope(Scope *sc);
 };
 
-struct StaticIfDeclaration : ConditionalDeclaration
+class StaticIfDeclaration : ConditionalDeclaration
 {
+public:
     ScopeDsymbol *sd;
     int addisdone;
 
@@ -171,8 +179,9 @@ struct StaticIfDeclaration : ConditionalDeclaration
 
 // Mixin declarations
 
-struct CompileDeclaration : AttribDeclaration
+class CompileDeclaration : AttribDeclaration
 {
+public:
     Expression *exp;
 
     ScopeDsymbol *sd;

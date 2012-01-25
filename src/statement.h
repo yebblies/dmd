@@ -80,8 +80,9 @@ enum BE
     BEany = (BEfallthru | BEthrow | BEreturn | BEgoto | BEhalt),
 };
 
-struct Statement : _Object
+class Statement : _Object
 {
+public:
     Loc loc;
 
     Statement(Loc loc);
@@ -127,16 +128,18 @@ struct Statement : _Object
     virtual LabelStatement *isLabelStatement() { return NULL; }
 };
 
-struct PeelStatement : Statement
+class PeelStatement : Statement
 {
+public:
     Statement *s;
 
     PeelStatement(Statement *s);
     Statement *semantic(Scope *sc);
 };
 
-struct ExpStatement : Statement
+class ExpStatement : Statement
 {
+public:
     Expression *exp;
 
     ExpStatement(Loc loc, Expression *exp);
@@ -159,8 +162,9 @@ struct ExpStatement : Statement
     ExpStatement *isExpStatement() { return this; }
 };
 
-struct DtorExpStatement : ExpStatement
+class DtorExpStatement : ExpStatement
 {
+public:
     /* Wraps an expression that is the destruction of 'var'
      */
 
@@ -171,8 +175,9 @@ struct DtorExpStatement : ExpStatement
     void toIR(IRState *irs);
 };
 
-struct CompileStatement : Statement
+class CompileStatement : Statement
 {
+public:
     Expression *exp;
 
     CompileStatement(Loc loc, Expression *exp);
@@ -183,8 +188,9 @@ struct CompileStatement : Statement
     int blockExit(bool mustNotThrow);
 };
 
-struct CompoundStatement : Statement
+class CompoundStatement : Statement
 {
+public:
     Statements *statements;
 
     CompoundStatement(Loc loc, Statements *s);
@@ -212,8 +218,9 @@ struct CompoundStatement : Statement
     CompoundStatement *isCompoundStatement() { return this; }
 };
 
-struct CompoundDeclarationStatement : CompoundStatement
+class CompoundDeclarationStatement : CompoundStatement
 {
+public:
     CompoundDeclarationStatement(Loc loc, Statements *s);
     Statement *syntaxCopy();
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
@@ -222,8 +229,9 @@ struct CompoundDeclarationStatement : CompoundStatement
 /* The purpose of this is so that continue will go to the next
  * of the statements, and break will go to the end of the statements.
  */
-struct UnrolledLoopStatement : Statement
+class UnrolledLoopStatement : Statement
 {
+public:
     Statements *statements;
 
     UnrolledLoopStatement(Loc loc, Statements *statements);
@@ -245,8 +253,9 @@ struct UnrolledLoopStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct ScopeStatement : Statement
+class ScopeStatement : Statement
 {
+public:
     Statement *statement;
 
     ScopeStatement(Loc loc, Statement *s);
@@ -270,8 +279,9 @@ struct ScopeStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct WhileStatement : Statement
+class WhileStatement : Statement
 {
+public:
     Expression *condition;
     Statement *body;
 
@@ -291,8 +301,9 @@ struct WhileStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct DoStatement : Statement
+class DoStatement : Statement
 {
+public:
     Statement *body;
     Expression *condition;
 
@@ -312,8 +323,9 @@ struct DoStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct ForStatement : Statement
+class ForStatement : Statement
 {
+public:
     Statement *init;
     Expression *condition;
     Expression *increment;
@@ -338,8 +350,9 @@ struct ForStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct ForeachStatement : Statement
+class ForeachStatement : Statement
 {
+public:
     enum TOK op;                // TOKforeach or TOKforeach_reverse
     Parameters *arguments;      // array of Parameter*'s
     Expression *aggr;
@@ -373,8 +386,9 @@ struct ForeachStatement : Statement
 };
 
 #if DMDV2
-struct ForeachRangeStatement : Statement
+class ForeachRangeStatement : Statement
 {
+public:
     enum TOK op;                // TOKforeach or TOKforeach_reverse
     Parameter *arg;             // loop index variable
     Expression *lwr;
@@ -401,8 +415,9 @@ struct ForeachRangeStatement : Statement
 };
 #endif
 
-struct IfStatement : Statement
+class IfStatement : Statement
 {
+public:
     Parameter *arg;
     Expression *condition;
     Statement *ifbody;
@@ -427,8 +442,9 @@ struct IfStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct ConditionalStatement : Statement
+class ConditionalStatement : Statement
 {
+public:
     Condition *condition;
     Statement *ifbody;
     Statement *elsebody;
@@ -443,8 +459,9 @@ struct ConditionalStatement : Statement
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct PragmaStatement : Statement
+class PragmaStatement : Statement
 {
+public:
     Identifier *ident;
     Expressions *args;          // array of Expression's
     Statement *body;
@@ -460,8 +477,9 @@ struct PragmaStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct StaticAssertStatement : Statement
+class StaticAssertStatement : Statement
 {
+public:
     StaticAssert *sa;
 
     StaticAssertStatement(StaticAssert *sa);
@@ -472,8 +490,9 @@ struct StaticAssertStatement : Statement
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct SwitchStatement : Statement
+class SwitchStatement : Statement
 {
+public:
     Expression *condition;
     Statement *body;
     bool isFinal;
@@ -499,8 +518,9 @@ struct SwitchStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct CaseStatement : Statement
+class CaseStatement : Statement
 {
+public:
     Expression *exp;
     Statement *statement;
 
@@ -525,8 +545,9 @@ struct CaseStatement : Statement
 
 #if DMDV2
 
-struct CaseRangeStatement : Statement
+class CaseRangeStatement : Statement
 {
+public:
     Expression *first;
     Expression *last;
     Statement *statement;
@@ -539,8 +560,9 @@ struct CaseRangeStatement : Statement
 
 #endif
 
-struct DefaultStatement : Statement
+class DefaultStatement : Statement
 {
+public:
     Statement *statement;
 #if IN_GCC
     block *cblock;      // back end: label for the block
@@ -561,8 +583,9 @@ struct DefaultStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct GotoDefaultStatement : Statement
+class GotoDefaultStatement : Statement
 {
+public:
     SwitchStatement *sw;
 
     GotoDefaultStatement(Loc loc);
@@ -575,8 +598,9 @@ struct GotoDefaultStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct GotoCaseStatement : Statement
+class GotoCaseStatement : Statement
 {
+public:
     Expression *exp;            // NULL, or which case to goto
     CaseStatement *cs;          // case statement it resolves to
 
@@ -590,8 +614,9 @@ struct GotoCaseStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct SwitchErrorStatement : Statement
+class SwitchErrorStatement : Statement
 {
+public:
     SwitchErrorStatement(Loc loc);
     int blockExit(bool mustNotThrow);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
@@ -599,8 +624,9 @@ struct SwitchErrorStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct ReturnStatement : Statement
+class ReturnStatement : Statement
 {
+public:
     Expression *exp;
 
     ReturnStatement(Loc loc, Expression *exp);
@@ -620,8 +646,9 @@ struct ReturnStatement : Statement
     ReturnStatement *isReturnStatement() { return this; }
 };
 
-struct BreakStatement : Statement
+class BreakStatement : Statement
 {
+public:
     Identifier *ident;
 
     BreakStatement(Loc loc, Identifier *ident);
@@ -634,8 +661,9 @@ struct BreakStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct ContinueStatement : Statement
+class ContinueStatement : Statement
 {
+public:
     Identifier *ident;
 
     ContinueStatement(Loc loc, Identifier *ident);
@@ -648,8 +676,9 @@ struct ContinueStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct SynchronizedStatement : Statement
+class SynchronizedStatement : Statement
 {
+public:
     Expression *exp;
     Statement *body;
 
@@ -670,8 +699,9 @@ struct SynchronizedStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct WithStatement : Statement
+class WithStatement : Statement
 {
+public:
     Expression *exp;
     Statement *body;
     VarDeclaration *wthis;
@@ -689,8 +719,9 @@ struct WithStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct TryCatchStatement : Statement
+class TryCatchStatement : Statement
 {
+public:
     Statement *body;
     Catches *catches;
 
@@ -708,8 +739,9 @@ struct TryCatchStatement : Statement
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct Catch : _Object
+class Catch : _Object
 {
+public:
     Loc loc;
     Type *type;
     Identifier *ident;
@@ -723,8 +755,9 @@ struct Catch : _Object
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct TryFinallyStatement : Statement
+class TryFinallyStatement : Statement
 {
+public:
     Statement *body;
     Statement *finalbody;
 
@@ -743,8 +776,9 @@ struct TryFinallyStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct OnScopeStatement : Statement
+class OnScopeStatement : Statement
 {
+public:
     TOK tok;
     Statement *statement;
 
@@ -760,8 +794,9 @@ struct OnScopeStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct ThrowStatement : Statement
+class ThrowStatement : Statement
 {
+public:
     Expression *exp;
 
     ThrowStatement(Loc loc, Expression *exp);
@@ -776,8 +811,9 @@ struct ThrowStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct VolatileStatement : Statement
+class VolatileStatement : Statement
 {
+public:
     Statement *statement;
 
     VolatileStatement(Loc loc, Statement *statement);
@@ -792,8 +828,9 @@ struct VolatileStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct DebugStatement : Statement
+class DebugStatement : Statement
 {
+public:
     Statement *statement;
 
     DebugStatement(Loc loc, Statement *statement);
@@ -803,8 +840,9 @@ struct DebugStatement : Statement
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct GotoStatement : Statement
+class GotoStatement : Statement
 {
+public:
     Identifier *ident;
     LabelDsymbol *label;
     TryFinallyStatement *tf;
@@ -819,8 +857,9 @@ struct GotoStatement : Statement
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
-struct LabelStatement : Statement
+class LabelStatement : Statement
 {
+public:
     Identifier *ident;
     Statement *statement;
     TryFinallyStatement *tf;
@@ -844,8 +883,9 @@ struct LabelStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct LabelDsymbol : Dsymbol
+class LabelDsymbol : Dsymbol
 {
+public:
     LabelStatement *statement;
 #if IN_GCC
     unsigned asmLabelNum;       // GCC-specific
@@ -855,8 +895,9 @@ struct LabelDsymbol : Dsymbol
     LabelDsymbol *isLabel();
 };
 
-struct AsmStatement : Statement
+class AsmStatement : Statement
 {
+public:
     Token *tokens;
     code *asmcode;
     unsigned asmalign;          // alignment of this statement
@@ -880,8 +921,9 @@ struct AsmStatement : Statement
     void toIR(IRState *irs);
 };
 
-struct ImportStatement : Statement
+class ImportStatement : Statement
 {
+public:
     Dsymbols *imports;          // Array of Import's
 
     ImportStatement(Loc loc, Dsymbols *imports);

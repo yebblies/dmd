@@ -60,8 +60,9 @@ enum ParseStatementFlags
 };
 
 
-struct Parser : Lexer
+class Parser : Lexer
 {
+public:
     ModuleDeclaration *md;
     enum LINK linkage;
     Loc endloc;                 // set to location of last right curly
