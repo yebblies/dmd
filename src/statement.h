@@ -283,7 +283,7 @@ class WhileStatement : Statement
 {
 public:
     Expression *condition;
-    Statement *body;
+    Statement *_body;
 
     WhileStatement(Loc loc, Expression *c, Statement *b);
     Statement *syntaxCopy();
@@ -304,7 +304,7 @@ public:
 class DoStatement : Statement
 {
 public:
-    Statement *body;
+    Statement *_body;
     Expression *condition;
 
     DoStatement(Loc loc, Statement *b, Expression *c);
@@ -329,9 +329,9 @@ public:
     Statement *init;
     Expression *condition;
     Expression *increment;
-    Statement *body;
+    Statement *_body;
 
-    ForStatement(Loc loc, Statement *init, Expression *condition, Expression *increment, Statement *body);
+    ForStatement(Loc loc, Statement *init, Expression *condition, Expression *increment, Statement *_body);
     Statement *syntaxCopy();
     Statement *semantic(Scope *sc);
     Statement *scopeCode(Scope *sc, Statement **sentry, Statement **sexit, Statement **sfinally);
@@ -356,7 +356,7 @@ public:
     enum TOK op;                // TOKforeach or TOKforeach_reverse
     Parameters *arguments;      // array of Parameter*'s
     Expression *aggr;
-    Statement *body;
+    Statement *_body;
 
     VarDeclaration *key;
     VarDeclaration *value;
@@ -366,7 +366,7 @@ public:
     Statements *cases;          // put breaks, continues, gotos and returns here
     CompoundStatements *gotos;  // forward referenced goto's go here
 
-    ForeachStatement(Loc loc, enum TOK op, Parameters *arguments, Expression *aggr, Statement *body);
+    ForeachStatement(Loc loc, enum TOK op, Parameters *arguments, Expression *aggr, Statement *_body);
     Statement *syntaxCopy();
     Statement *semantic(Scope *sc);
     bool checkForArgTypes();
@@ -393,12 +393,12 @@ public:
     Parameter *arg;             // loop index variable
     Expression *lwr;
     Expression *upr;
-    Statement *body;
+    Statement *_body;
 
     VarDeclaration *key;
 
     ForeachRangeStatement(Loc loc, enum TOK op, Parameter *arg,
-        Expression *lwr, Expression *upr, Statement *body);
+        Expression *lwr, Expression *upr, Statement *_body);
     Statement *syntaxCopy();
     Statement *semantic(Scope *sc);
     int hasBreak();
@@ -464,9 +464,9 @@ class PragmaStatement : Statement
 public:
     Identifier *ident;
     Expressions *args;          // array of Expression's
-    Statement *body;
+    Statement *_body;
 
-    PragmaStatement(Loc loc, Identifier *ident, Expressions *args, Statement *body);
+    PragmaStatement(Loc loc, Identifier *ident, Expressions *args, Statement *_body);
     Statement *syntaxCopy();
     Statement *semantic(Scope *sc);
     int usesEH();
@@ -494,7 +494,7 @@ class SwitchStatement : Statement
 {
 public:
     Expression *condition;
-    Statement *body;
+    Statement *_body;
     bool isFinal;
 
     DefaultStatement *sdefault;
@@ -680,9 +680,9 @@ class SynchronizedStatement : Statement
 {
 public:
     Expression *exp;
-    Statement *body;
+    Statement *_body;
 
-    SynchronizedStatement(Loc loc, Expression *exp, Statement *body);
+    SynchronizedStatement(Loc loc, Expression *exp, Statement *_body);
     Statement *syntaxCopy();
     Statement *semantic(Scope *sc);
     int hasBreak();
@@ -695,7 +695,7 @@ public:
 
 // Back end
     elem *esync;
-    SynchronizedStatement(Loc loc, elem *esync, Statement *body);
+    SynchronizedStatement(Loc loc, elem *esync, Statement *_body);
     void toIR(IRState *irs);
 };
 
@@ -703,10 +703,10 @@ class WithStatement : Statement
 {
 public:
     Expression *exp;
-    Statement *body;
+    Statement *_body;
     VarDeclaration *wthis;
 
-    WithStatement(Loc loc, Expression *exp, Statement *body);
+    WithStatement(Loc loc, Expression *exp, Statement *_body);
     Statement *syntaxCopy();
     Statement *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
@@ -722,10 +722,10 @@ public:
 class TryCatchStatement : Statement
 {
 public:
-    Statement *body;
+    Statement *_body;
     Catches *catches;
 
-    TryCatchStatement(Loc loc, Statement *body, Catches *catches);
+    TryCatchStatement(Loc loc, Statement *_body, Catches *catches);
     Statement *syntaxCopy();
     Statement *semantic(Scope *sc);
     int hasBreak();
@@ -758,10 +758,10 @@ public:
 class TryFinallyStatement : Statement
 {
 public:
-    Statement *body;
+    Statement *_body;
     Statement *finalbody;
 
-    TryFinallyStatement(Loc loc, Statement *body, Statement *finalbody);
+    TryFinallyStatement(Loc loc, Statement *_body, Statement *finalbody);
     Statement *syntaxCopy();
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     Statement *semantic(Scope *sc);

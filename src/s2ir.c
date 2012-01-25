@@ -238,8 +238,8 @@ void WhileStatement::toIR(IRState *irs)
     /* curblock is the start of the while loop body
      */
     list_append(&mystate.contBlock->Bsucc, blx->curblock);
-    if (body)
-        body->toIR(&mystate);
+    if (_body)
+        _body->toIR(&mystate);
     list_append(&blx->curblock->Bsucc, mystate.contBlock);
     block_next(blx, BCgoto, mystate.breakBlock);
 
@@ -265,8 +265,8 @@ void DoStatement::toIR(IRState *irs)
     list_append(&mystate.contBlock->Bsucc, blx->curblock);
     list_append(&mystate.contBlock->Bsucc, mystate.breakBlock);
 
-    if (body)
-        body->toIR(&mystate);
+    if (_body)
+        _body->toIR(&mystate);
     list_append(&blx->curblock->Bsucc, mystate.contBlock);
 
     block_next(blx, BCgoto, mystate.contBlock);
@@ -309,8 +309,8 @@ void ForStatement::toIR(IRState *irs)
         list_append(&bcond->Bsucc, blx->curblock);
     }
 
-    if (body)
-        body->toIR(&mystate);
+    if (_body)
+        _body->toIR(&mystate);
     /* End of the body goes to the continue block
      */
     list_append(&blx->curblock->Bsucc, mystate.contBlock);
@@ -568,8 +568,8 @@ void ForeachStatement::toIR(IRState *irs)
     block_appendexp(blx->curblock, e);
 
     bbody = blx->curblock;
-    if (body)
-        body->toIR(&mystate);
+    if (_body)
+        _body->toIR(&mystate);
     bbodyx = blx->curblock;
     block_next(blx,BCgoto,mystate.contBlock);
 
@@ -692,8 +692,8 @@ void ForeachRangeStatement::toIR(IRState *irs)
     }
 
     bbody = blx->curblock;
-    if (body)
-        body->toIR(&mystate);
+    if (_body)
+        _body->toIR(&mystate);
     bbodyx = blx->curblock;
     block_next(blx,BCgoto,mystate.contBlock);
 
@@ -959,7 +959,7 @@ void SwitchStatement::toIR(IRState *irs)
         block_next(blx, BCgoto, NULL);
         list_append(&b->Bsucc, mystate.defaultBlock);
 
-        body->toIR(&mystate);
+        _body->toIR(&mystate);
 
         /* Have the end of the switch body fall through to the block
          * following the switch statement.
@@ -1060,7 +1060,7 @@ void SwitchStatement::toIR(IRState *irs)
         }
     }
 
-    body->toIR(&mystate);
+    _body->toIR(&mystate);
 
     /* Have the end of the switch body fall through to the block
      * following the switch statement.
@@ -1447,8 +1447,8 @@ void WithStatement::toIR(IRState *irs)
         block_appendexp(blx->curblock,e);
     }
     // Execute with block
-    if (body)
-        body->toIR(irs);
+    if (_body)
+        _body->toIR(irs);
 }
 
 
@@ -1501,9 +1501,9 @@ void TryCatchStatement::toIR(IRState *irs)
     blx->tryblock = tryblock;
     block *breakblock = block_calloc(blx);
     block_goto(blx,BC_try,NULL);
-    if (body)
+    if (_body)
     {
-        body->toIR(&mystate);
+        _body->toIR(&mystate);
     }
     blx->tryblock = tryblock->Btry;
 
@@ -1579,8 +1579,8 @@ void TryFinallyStatement::toIR(IRState *irs)
     block *breakblock = block_calloc(blx);
     block *contblock = block_calloc(blx);
 
-    if (body)
-        body->toIR(&bodyirs);
+    if (_body)
+        _body->toIR(&bodyirs);
     blx->tryblock = tryblock->Btry;     // back to previous tryblock
 
     setScopeIndex(blx,blx->curblock,previndex);

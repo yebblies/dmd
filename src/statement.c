@@ -541,8 +541,8 @@ Statement *CompoundStatement::semantic(Scope *sc)
                         {
                             a->push((*statements)[j]);
                         }
-                        Statement *body = new CompoundStatement(0, a);
-                        body = new ScopeStatement(0, body);
+                        Statement *_body = new CompoundStatement(0, a);
+                        _body = new ScopeStatement(0, _body);
 
                         Identifier *id = Lexer::uniqueId("__o");
 
@@ -555,7 +555,7 @@ Statement *CompoundStatement::semantic(Scope *sc)
                         Catches *catches = new Catches();
                         Catch *ctch = new Catch(0, NULL, id, handler);
                         catches->push(ctch);
-                        s = new TryCatchStatement(0, body, catches);
+                        s = new TryCatchStatement(0, _body, catches);
 
                         if (sfinally)
                             s = new TryFinallyStatement(0, s, sfinally);
@@ -583,8 +583,8 @@ Statement *CompoundStatement::semantic(Scope *sc)
                         {
                             a->push((*statements)[j]);
                         }
-                        Statement *body = new CompoundStatement(0, a);
-                        s = new TryFinallyStatement(0, body, sfinally);
+                        Statement *_body = new CompoundStatement(0, a);
+                        s = new TryFinallyStatement(0, _body, sfinally);
                         s = s->semantic(sc);
                         statements->setDim(i + 1);
                         statements->push(s);
@@ -1034,12 +1034,12 @@ WhileStatement::WhileStatement(Loc loc, Expression *c, Statement *b)
     : Statement(loc)
 {
     condition = c;
-    body = b;
+    _body = b;
 }
 
 Statement *WhileStatement::syntaxCopy()
 {
-    WhileStatement *s = new WhileStatement(loc, condition->syntaxCopy(), body ? body->syntaxCopy() : NULL);
+    WhileStatement *s = new WhileStatement(loc, condition->syntaxCopy(), _body ? _body->syntaxCopy() : NULL);
     return s;
 }
 
@@ -1049,7 +1049,7 @@ Statement *WhileStatement::semantic(Scope *sc)
     /* Rewrite as a for(;condition;) loop
      */
 
-    Statement *s = new ForStatement(loc, NULL, condition, NULL, body);
+    Statement *s = new ForStatement(loc, NULL, condition, NULL, _body);
     s = s->semantic(sc);
     return s;
 }
@@ -1067,7 +1067,7 @@ int WhileStatement::hasContinue()
 int WhileStatement::usesEH()
 {
     assert(0);
-    return body ? body->usesEH() : 0;
+    return _body ? _body->usesEH() : 0;
 }
 
 int WhileStatement::blockExit(bool mustNotThrow)
@@ -1080,8 +1080,8 @@ int WhileStatement::blockExit(bool mustNotThrow)
         result |= BEthrow;
     if (condition->isBool(TRUE))
     {
-        if (body)
-        {   result |= body->blockExit(mustNotThrow);
+        if (_body)
+        {   result |= _body->blockExit(mustNotThrow);
             if (result & BEbreak)
                 result |= BEfallthru;
         }
@@ -1092,8 +1092,8 @@ int WhileStatement::blockExit(bool mustNotThrow)
     }
     else
     {
-        if (body)
-            result |= body->blockExit(mustNotThrow);
+        if (_body)
+            result |= _body->blockExit(mustNotThrow);
         result |= BEfallthru;
     }
     result &= ~(BEbreak | BEcontinue);
@@ -1104,8 +1104,8 @@ int WhileStatement::blockExit(bool mustNotThrow)
 int WhileStatement::comeFrom()
 {
     assert(0);
-    if (body)
-        return body->comeFrom();
+    if (_body)
+        return _body->comeFrom();
     return FALSE;
 }
 
@@ -1115,8 +1115,8 @@ void WhileStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
     condition->toCBuffer(buf, hgs);
     buf->writebyte(')');
     buf->writenl();
-    if (body)
-        body->toCBuffer(buf, hgs);
+    if (_body)
+        _body->toCBuffer(buf, hgs);
 }
 
 /******************************** DoStatement ***************************/
@@ -1124,13 +1124,13 @@ void WhileStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
 DoStatement::DoStatement(Loc loc, Statement *b, Expression *c)
     : Statement(loc)
 {
-    body = b;
+    _body = b;
     condition = c;
 }
 
 Statement *DoStatement::syntaxCopy()
 {
-    DoStatement *s = new DoStatement(loc, body ? body->syntaxCopy() : NULL, condition->syntaxCopy());
+    DoStatement *s = new DoStatement(loc, _body ? _body->syntaxCopy() : NULL, condition->syntaxCopy());
     return s;
 }
 
@@ -1138,8 +1138,8 @@ Statement *DoStatement::syntaxCopy()
 Statement *DoStatement::semantic(Scope *sc)
 {
     sc->noctor++;
-    if (body)
-        body = body->semanticScope(sc, this, this);
+    if (_body)
+        _body = _body->semanticScope(sc, this, this);
     sc->noctor--;
     condition = condition->semantic(sc);
     condition = resolveProperties(sc, condition);
@@ -1162,14 +1162,14 @@ int DoStatement::hasContinue()
 
 int DoStatement::usesEH()
 {
-    return body ? body->usesEH() : 0;
+    return _body ? _body->usesEH() : 0;
 }
 
 int DoStatement::blockExit(bool mustNotThrow)
 {   int result;
 
-    if (body)
-    {   result = body->blockExit(mustNotThrow);
+    if (_body)
+    {   result = _body->blockExit(mustNotThrow);
         if (result == BEbreak)
             return BEfallthru;
         if (result & BEcontinue)
@@ -1191,8 +1191,8 @@ int DoStatement::blockExit(bool mustNotThrow)
 
 int DoStatement::comeFrom()
 {
-    if (body)
-        return body->comeFrom();
+    if (_body)
+        return _body->comeFrom();
     return FALSE;
 }
 
@@ -1200,8 +1200,8 @@ void DoStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
 {
     buf->writestring("do");
     buf->writenl();
-    if (body)
-        body->toCBuffer(buf, hgs);
+    if (_body)
+        _body->toCBuffer(buf, hgs);
     buf->writestring("while (");
     condition->toCBuffer(buf, hgs);
     buf->writestring(");");
@@ -1209,13 +1209,13 @@ void DoStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
 
 /******************************** ForStatement ***************************/
 
-ForStatement::ForStatement(Loc loc, Statement *init, Expression *condition, Expression *increment, Statement *body)
+ForStatement::ForStatement(Loc loc, Statement *init, Expression *condition, Expression *increment, Statement *_body)
     : Statement(loc)
 {
     this->init = init;
     this->condition = condition;
     this->increment = increment;
-    this->body = body;
+    this->_body = _body;
 }
 
 Statement *ForStatement::syntaxCopy()
@@ -1229,7 +1229,7 @@ Statement *ForStatement::syntaxCopy()
     Expression *inc = NULL;
     if (increment)
         inc = increment->syntaxCopy();
-    ForStatement *s = new ForStatement(loc, i, c, inc, body->syntaxCopy());
+    ForStatement *s = new ForStatement(loc, i, c, inc, _body->syntaxCopy());
     return s;
 }
 
@@ -1256,8 +1256,8 @@ Statement *ForStatement::semantic(Scope *sc)
 
     sc->sbreak = this;
     sc->scontinue = this;
-    if (body)
-        body = body->semanticNoScope(sc);
+    if (_body)
+        _body = _body->semanticNoScope(sc);
     sc->noctor--;
 
     sc->pop();
@@ -1288,7 +1288,7 @@ int ForStatement::hasContinue()
 
 int ForStatement::usesEH()
 {
-    return (init && init->usesEH()) || body->usesEH();
+    return (init && init->usesEH()) || _body->usesEH();
 }
 
 int ForStatement::blockExit(bool mustNotThrow)
@@ -1309,8 +1309,8 @@ int ForStatement::blockExit(bool mustNotThrow)
     }
     else
         result &= ~BEfallthru;  // the body must do the exiting
-    if (body)
-    {   int r = body->blockExit(mustNotThrow);
+    if (_body)
+    {   int r = _body->blockExit(mustNotThrow);
         if (r & (BEbreak | BEgoto))
             result |= BEfallthru;
         result |= r & ~(BEfallthru | BEbreak | BEcontinue);
@@ -1324,8 +1324,8 @@ int ForStatement::blockExit(bool mustNotThrow)
 int ForStatement::comeFrom()
 {
     //printf("ForStatement::comeFrom()\n");
-    if (body)
-    {   int result = body->comeFrom();
+    if (_body)
+    {   int result = _body->comeFrom();
         //printf("result = %d\n", result);
         return result;
     }
@@ -1356,7 +1356,7 @@ void ForStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
     buf->writenl();
     buf->writebyte('{');
     buf->writenl();
-    body->toCBuffer(buf, hgs);
+    _body->toCBuffer(buf, hgs);
     buf->writebyte('}');
     buf->writenl();
 }
@@ -1364,13 +1364,13 @@ void ForStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
 /******************************** ForeachStatement ***************************/
 
 ForeachStatement::ForeachStatement(Loc loc, enum TOK op, Parameters *arguments,
-        Expression *aggr, Statement *body)
+        Expression *aggr, Statement *_body)
     : Statement(loc)
 {
     this->op = op;
     this->arguments = arguments;
     this->aggr = aggr;
-    this->body = body;
+    this->_body = _body;
 
     this->key = NULL;
     this->value = NULL;
@@ -1386,7 +1386,7 @@ Statement *ForeachStatement::syntaxCopy()
     Parameters *args = Parameter::arraySyntaxCopy(arguments);
     Expression *exp = aggr->syntaxCopy();
     ForeachStatement *s = new ForeachStatement(loc, op, args, exp,
-        body ? body->syntaxCopy() : NULL);
+        _body ? _body->syntaxCopy() : NULL);
     return s;
 }
 
@@ -1534,7 +1534,7 @@ Statement *ForeachStatement::semantic(Scope *sc)
             DeclarationExp *de = new DeclarationExp(loc, var);
             st->push(new ExpStatement(loc, de));
 
-            st->push(body->syntaxCopy());
+            st->push(_body->syntaxCopy());
             s = new CompoundStatement(loc, st);
             s = new ScopeStatement(loc, s);
             statements->push(s);
@@ -1673,9 +1673,9 @@ Lagain:
             value->init = new ExpInitializer(loc, new IndexExp(loc, new VarExp(loc, tmp), new VarExp(loc, key)));
             Statement *ds = new ExpStatement(loc, value);
 
-            body = new CompoundStatement(loc, ds, body);
+            _body = new CompoundStatement(loc, ds, _body);
 
-            s = new ForStatement(loc, forinit, cond, increment, body);
+            s = new ForStatement(loc, forinit, cond, increment, _body);
             s = s->semantic(sc);
             break;
         }
@@ -1708,7 +1708,7 @@ Lagain:
 
             sc->sbreak = this;
             sc->scontinue = this;
-            body = body->semantic(sc);
+            _body = _body->semantic(sc);
             break;
 #endif
 
@@ -1854,7 +1854,7 @@ Lagain:
             }
 
             forbody = new CompoundStatement(loc,
-                makeargs, this->body);
+                makeargs, this->_body);
 
             s = new ForStatement(loc, init, condition, increment, forbody);
 #if 0
@@ -1878,13 +1878,13 @@ Lagain:
             Expression *e;
 
             if (!checkForArgTypes())
-            {   body = body->semanticNoScope(sc);
+            {   _body = _body->semanticNoScope(sc);
                 return this;
             }
 
             Type *tret = func->type->nextOf();
 
-            // Need a variable to hold value from any return statements in body.
+            // Need a variable to hold value from any return statements in _body.
             if (!sc->func->vresult && tret && tret != Type::tvoid)
             {
                 VarDeclaration *v = new VarDeclaration(loc, tret, Id::result, NULL);
@@ -1956,7 +1956,7 @@ Lagain:
                     Initializer *ie = new ExpInitializer(0, new IdentifierExp(0, id));
                     VarDeclaration *v = new VarDeclaration(0, arg->type, arg->ident, ie);
                     s = new ExpStatement(0, v);
-                    body = new CompoundStatement(loc, s, body);
+                    _body = new CompoundStatement(loc, s, _body);
                 }
                 args->push(new Parameter(stc, arg->type, id, NULL));
             }
@@ -1964,7 +1964,7 @@ Lagain:
             cases = new Statements();
             gotos = new CompoundStatements();
             FuncLiteralDeclaration *fld = new FuncLiteralDeclaration(loc, 0, tfld, TOKdelegate, this);
-            fld->fbody = body;
+            fld->fbody = _body;
             Expression *flde = new FuncExp(loc, fld);
             flde = flde->semantic(sc);
             fld->tookAddressOf = 0;
@@ -2172,7 +2172,7 @@ int ForeachStatement::hasContinue()
 
 int ForeachStatement::usesEH()
 {
-    return body->usesEH();
+    return _body->usesEH();
 }
 
 int ForeachStatement::blockExit(bool mustNotThrow)
@@ -2181,9 +2181,9 @@ int ForeachStatement::blockExit(bool mustNotThrow)
     if (aggr->canThrow(mustNotThrow))
         result |= BEthrow;
 
-    if (body)
+    if (_body)
     {
-        result |= body->blockExit(mustNotThrow) & ~(BEbreak | BEcontinue);
+        result |= _body->blockExit(mustNotThrow) & ~(BEbreak | BEcontinue);
     }
     return result;
 }
@@ -2191,8 +2191,8 @@ int ForeachStatement::blockExit(bool mustNotThrow)
 
 int ForeachStatement::comeFrom()
 {
-    if (body)
-        return body->comeFrom();
+    if (_body)
+        return _body->comeFrom();
     return FALSE;
 }
 
@@ -2219,8 +2219,8 @@ void ForeachStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
     buf->writenl();
     buf->writebyte('{');
     buf->writenl();
-    if (body)
-        body->toCBuffer(buf, hgs);
+    if (_body)
+        _body->toCBuffer(buf, hgs);
     buf->writebyte('}');
     buf->writenl();
 }
@@ -2230,14 +2230,14 @@ void ForeachStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
 #if DMDV2
 
 ForeachRangeStatement::ForeachRangeStatement(Loc loc, enum TOK op, Parameter *arg,
-        Expression *lwr, Expression *upr, Statement *body)
+        Expression *lwr, Expression *upr, Statement *_body)
     : Statement(loc)
 {
     this->op = op;
     this->arg = arg;
     this->lwr = lwr;
     this->upr = upr;
-    this->body = body;
+    this->_body = _body;
 
     this->key = NULL;
 }
@@ -2248,7 +2248,7 @@ Statement *ForeachRangeStatement::syntaxCopy()
         arg->syntaxCopy(),
         lwr->syntaxCopy(),
         upr->syntaxCopy(),
-        body ? body->syntaxCopy() : NULL);
+        _body ? _body->syntaxCopy() : NULL);
     return s;
 }
 
@@ -2358,7 +2358,7 @@ Statement *ForeachRangeStatement::semantic(Scope *sc)
         //increment = new AddAssignExp(loc, new VarExp(loc, key), new IntegerExp(1));
         increment = new PreExp(TOKpreplusplus, loc, new VarExp(loc, key));
 
-    ForStatement *fs = new ForStatement(loc, forinit, cond, increment, body);
+    ForStatement *fs = new ForStatement(loc, forinit, cond, increment, _body);
     s = fs->semantic(sc);
     return s;
 #else
@@ -2380,7 +2380,7 @@ Statement *ForeachRangeStatement::semantic(Scope *sc)
 
     sc->sbreak = this;
     sc->scontinue = this;
-    body = body->semantic(sc);
+    _body = _body->semantic(sc);
 
     sc->noctor--;
     sc->pop();
@@ -2401,7 +2401,7 @@ int ForeachRangeStatement::hasContinue()
 int ForeachRangeStatement::usesEH()
 {
     assert(0);
-    return body->usesEH();
+    return _body->usesEH();
 }
 
 int ForeachRangeStatement::blockExit(bool mustNotThrow)
@@ -2414,9 +2414,9 @@ int ForeachRangeStatement::blockExit(bool mustNotThrow)
     else if (upr && upr->canThrow(mustNotThrow))
         result |= BEthrow;
 
-    if (body)
+    if (_body)
     {
-        result |= body->blockExit(mustNotThrow) & ~(BEbreak | BEcontinue);
+        result |= _body->blockExit(mustNotThrow) & ~(BEbreak | BEcontinue);
     }
     return result;
 }
@@ -2425,8 +2425,8 @@ int ForeachRangeStatement::blockExit(bool mustNotThrow)
 int ForeachRangeStatement::comeFrom()
 {
     assert(0);
-    if (body)
-        return body->comeFrom();
+    if (_body)
+        return _body->comeFrom();
     return FALSE;
 }
 
@@ -2448,8 +2448,8 @@ void ForeachRangeStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
     buf->writenl();
     buf->writebyte('{');
     buf->writenl();
-    if (body)
-        body->toCBuffer(buf, hgs);
+    if (_body)
+        _body->toCBuffer(buf, hgs);
     buf->writebyte('}');
     buf->writenl();
 }
@@ -2718,19 +2718,19 @@ void ConditionalStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
 
 /******************************** PragmaStatement ***************************/
 
-PragmaStatement::PragmaStatement(Loc loc, Identifier *ident, Expressions *args, Statement *body)
+PragmaStatement::PragmaStatement(Loc loc, Identifier *ident, Expressions *args, Statement *_body)
     : Statement(loc)
 {
     this->ident = ident;
     this->args = args;
-    this->body = body;
+    this->_body = _body;
 }
 
 Statement *PragmaStatement::syntaxCopy()
 {
     Statement *b = NULL;
-    if (body)
-        b = body->syntaxCopy();
+    if (_body)
+        b = _body->syntaxCopy();
     PragmaStatement *s = new PragmaStatement(loc,
                 ident, Expression::arraySyntaxCopy(args), b);
     return s;
@@ -2805,9 +2805,9 @@ Statement *PragmaStatement::semantic(Scope *sc)
             Dsymbol *sa = getDsymbol(e);
             if (!sa || !sa->isFuncDeclaration())
                 error("function name expected for start address, not '%s'", e->toChars());
-            if (body)
+            if (_body)
             {
-                body = body->semantic(sc);
+                _body = _body->semantic(sc);
             }
             return this;
         }
@@ -2816,16 +2816,16 @@ Statement *PragmaStatement::semantic(Scope *sc)
     else
         error("unrecognized pragma(%s)", ident->toChars());
 
-    if (body)
+    if (_body)
     {
-        body = body->semantic(sc);
+        _body = _body->semantic(sc);
     }
-    return body;
+    return _body;
 }
 
 int PragmaStatement::usesEH()
 {
-    return body && body->usesEH();
+    return _body && _body->usesEH();
 }
 
 int PragmaStatement::blockExit(bool mustNotThrow)
@@ -2834,8 +2834,8 @@ int PragmaStatement::blockExit(bool mustNotThrow)
 #if 0 // currently, no code is generated for Pragma's, so it's just fallthru
     if (arrayExpressionCanThrow(args))
         result |= BEthrow;
-    if (body)
-        result |= body->blockExit(mustNotThrow);
+    if (_body)
+        result |= _body->blockExit(mustNotThrow);
 #endif
     return result;
 }
@@ -2851,13 +2851,13 @@ void PragmaStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
         argsToCBuffer(buf, args, hgs);
     }
     buf->writeByte(')');
-    if (body)
+    if (_body)
     {
         buf->writenl();
         buf->writeByte('{');
         buf->writenl();
 
-        body->toCBuffer(buf, hgs);
+        _body->toCBuffer(buf, hgs);
 
         buf->writeByte('}');
         buf->writenl();
@@ -2907,7 +2907,7 @@ SwitchStatement::SwitchStatement(Loc loc, Expression *c, Statement *b, bool isFi
     : Statement(loc)
 {
     this->condition = c;
-    this->body = b;
+    this->_body = b;
     this->isFinal = isFinal;
     sdefault = NULL;
     tf = NULL;
@@ -2919,7 +2919,7 @@ SwitchStatement::SwitchStatement(Loc loc, Expression *c, Statement *b, bool isFi
 Statement *SwitchStatement::syntaxCopy()
 {
     SwitchStatement *s = new SwitchStatement(loc,
-        condition->syntaxCopy(), body->syntaxCopy(), isFinal);
+        condition->syntaxCopy(), _body->syntaxCopy(), isFinal);
     return s;
 }
 
@@ -2951,7 +2951,7 @@ Statement *SwitchStatement::semantic(Scope *sc)
 
     cases = new CaseStatements();
     sc->noctor++;       // BUG: should use Scope::mergeCallSuper() for each case instead
-    body = body->semantic(sc);
+    _body = _body->semantic(sc);
     sc->noctor--;
 
     // Resolve any goto case's with exp
@@ -3005,12 +3005,12 @@ Statement *SwitchStatement::semantic(Scope *sc)
         }
 
         a->reserve(4);
-        a->push(body);
+        a->push(_body);
         a->push(new BreakStatement(loc, NULL));
         sc->sw->sdefault = new DefaultStatement(loc, s);
         a->push(sc->sw->sdefault);
         cs = new CompoundStatement(loc, a);
-        body = cs;
+        _body = cs;
     }
 
 #if DMDV2
@@ -3055,7 +3055,7 @@ int SwitchStatement::hasBreak()
 
 int SwitchStatement::usesEH()
 {
-    return body ? body->usesEH() : 0;
+    return _body ? _body->usesEH() : 0;
 }
 
 int SwitchStatement::blockExit(bool mustNotThrow)
@@ -3063,8 +3063,8 @@ int SwitchStatement::blockExit(bool mustNotThrow)
     if (condition->canThrow(mustNotThrow))
         result |= BEthrow;
 
-    if (body)
-    {   result |= body->blockExit(mustNotThrow);
+    if (_body)
+    {   result |= _body->blockExit(mustNotThrow);
         if (result & BEbreak)
         {   result |= BEfallthru;
             result &= ~BEbreak;
@@ -3083,18 +3083,18 @@ void SwitchStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
     condition->toCBuffer(buf, hgs);
     buf->writebyte(')');
     buf->writenl();
-    if (body)
+    if (_body)
     {
-        if (!body->isScopeStatement())
+        if (!_body->isScopeStatement())
         {   buf->writebyte('{');
             buf->writenl();
-            body->toCBuffer(buf, hgs);
+            _body->toCBuffer(buf, hgs);
             buf->writebyte('}');
             buf->writenl();
         }
         else
         {
-            body->toCBuffer(buf, hgs);
+            _body->toCBuffer(buf, hgs);
         }
     }
 }
@@ -4045,26 +4045,26 @@ void ContinueStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
 
 /******************************** SynchronizedStatement ***************************/
 
-SynchronizedStatement::SynchronizedStatement(Loc loc, Expression *exp, Statement *body)
+SynchronizedStatement::SynchronizedStatement(Loc loc, Expression *exp, Statement *_body)
     : Statement(loc)
 {
     this->exp = exp;
-    this->body = body;
+    this->_body = _body;
     this->esync = NULL;
 }
 
-SynchronizedStatement::SynchronizedStatement(Loc loc, elem *esync, Statement *body)
+SynchronizedStatement::SynchronizedStatement(Loc loc, elem *esync, Statement *_body)
     : Statement(loc)
 {
     this->exp = NULL;
-    this->body = body;
+    this->_body = _body;
     this->esync = esync;
 }
 
 Statement *SynchronizedStatement::syntaxCopy()
 {
     Expression *e = exp ? exp->syntaxCopy() : NULL;
-    SynchronizedStatement *s = new SynchronizedStatement(loc, e, body ? body->syntaxCopy() : NULL);
+    SynchronizedStatement *s = new SynchronizedStatement(loc, e, _body ? _body->syntaxCopy() : NULL);
     return s;
 }
 
@@ -4110,7 +4110,7 @@ Statement *SynchronizedStatement::semantic(Scope *sc)
         e = new CallExp(loc, new VarExp(loc, fdexit), new VarExp(loc, tmp));
         e->type = Type::tvoid;                  // do not run semantic on e
         Statement *s = new ExpStatement(loc, e);
-        s = new TryFinallyStatement(loc, body, s);
+        s = new TryFinallyStatement(loc, _body, s);
         cs->push(s);
 
         s = new CompoundStatement(loc, cs);
@@ -4145,15 +4145,15 @@ Statement *SynchronizedStatement::semantic(Scope *sc)
         e = new CallExp(loc, new VarExp(loc, fdexit), e);
         e->type = Type::tvoid;                  // do not run semantic on e
         Statement *s = new ExpStatement(loc, e);
-        s = new TryFinallyStatement(loc, body, s);
+        s = new TryFinallyStatement(loc, _body, s);
         cs->push(s);
 
         s = new CompoundStatement(loc, cs);
         return s->semantic(sc);
     }
 #endif
-    if (body)
-        body = body->semantic(sc);
+    if (_body)
+        _body = _body->semantic(sc);
     return this;
 }
 
@@ -4174,7 +4174,7 @@ int SynchronizedStatement::usesEH()
 
 int SynchronizedStatement::blockExit(bool mustNotThrow)
 {
-    return body ? body->blockExit(mustNotThrow) : BEfallthru;
+    return _body ? _body->blockExit(mustNotThrow) : BEfallthru;
 }
 
 
@@ -4186,26 +4186,26 @@ void SynchronizedStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
         exp->toCBuffer(buf, hgs);
         buf->writebyte(')');
     }
-    if (body)
+    if (_body)
     {
         buf->writebyte(' ');
-        body->toCBuffer(buf, hgs);
+        _body->toCBuffer(buf, hgs);
     }
 }
 
 /******************************** WithStatement ***************************/
 
-WithStatement::WithStatement(Loc loc, Expression *exp, Statement *body)
+WithStatement::WithStatement(Loc loc, Expression *exp, Statement *_body)
     : Statement(loc)
 {
     this->exp = exp;
-    this->body = body;
+    this->_body = _body;
     wthis = NULL;
 }
 
 Statement *WithStatement::syntaxCopy()
 {
-    WithStatement *s = new WithStatement(loc, exp->syntaxCopy(), body ? body->syntaxCopy() : NULL);
+    WithStatement *s = new WithStatement(loc, exp->syntaxCopy(), _body ? _body->syntaxCopy() : NULL);
     return s;
 }
 
@@ -4230,8 +4230,8 @@ Statement *WithStatement::semantic(Scope *sc)
         sym = s ? s->isScopeDsymbol() : NULL;
         if (!sym)
         {   error("with type %s has no members", es->toChars());
-            if (body)
-                body = body->semantic(sc);
+            if (_body)
+                _body = _body->semantic(sc);
             return this;
         }
     }
@@ -4265,8 +4265,8 @@ Statement *WithStatement::semantic(Scope *sc)
     }
     sc = sc->push(sym);
 
-    if (body)
-        body = body->semantic(sc);
+    if (_body)
+        _body = _body->semantic(sc);
 
     sc->pop();
 
@@ -4278,13 +4278,13 @@ void WithStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
     buf->writestring("with (");
     exp->toCBuffer(buf, hgs);
     buf->writestring(")\n");
-    if (body)
-        body->toCBuffer(buf, hgs);
+    if (_body)
+        _body->toCBuffer(buf, hgs);
 }
 
 int WithStatement::usesEH()
 {
-    return body ? body->usesEH() : 0;
+    return _body ? _body->usesEH() : 0;
 }
 
 int WithStatement::blockExit(bool mustNotThrow)
@@ -4292,8 +4292,8 @@ int WithStatement::blockExit(bool mustNotThrow)
     int result = BEnone;
     if (exp->canThrow(mustNotThrow))
         result = BEthrow;
-    if (body)
-        result |= body->blockExit(mustNotThrow);
+    if (_body)
+        result |= _body->blockExit(mustNotThrow);
     else
         result |= BEfallthru;
     return result;
@@ -4302,10 +4302,10 @@ int WithStatement::blockExit(bool mustNotThrow)
 
 /******************************** TryCatchStatement ***************************/
 
-TryCatchStatement::TryCatchStatement(Loc loc, Statement *body, Catches *catches)
+TryCatchStatement::TryCatchStatement(Loc loc, Statement *_body, Catches *catches)
     : Statement(loc)
 {
-    this->body = body;
+    this->_body = _body;
     this->catches = catches;
 }
 
@@ -4320,13 +4320,13 @@ Statement *TryCatchStatement::syntaxCopy()
         c = c->syntaxCopy();
         (*a)[i] = c;
     }
-    TryCatchStatement *s = new TryCatchStatement(loc, body->syntaxCopy(), a);
+    TryCatchStatement *s = new TryCatchStatement(loc, _body->syntaxCopy(), a);
     return s;
 }
 
 Statement *TryCatchStatement::semantic(Scope *sc)
 {
-    body = body->semanticScope(sc, NULL /*this*/, NULL);
+    _body = _body->semanticScope(sc, NULL /*this*/, NULL);
 
     /* Even if body is NULL, still do semantic analysis on catches
      */
@@ -4345,7 +4345,7 @@ Statement *TryCatchStatement::semantic(Scope *sc)
         }
     }
 
-    if (!body || body->isEmpty())
+    if (!_body || _body->isEmpty())
     {
         return NULL;
     }
@@ -4364,8 +4364,8 @@ int TryCatchStatement::usesEH()
 
 int TryCatchStatement::blockExit(bool mustNotThrow)
 {
-    assert(body);
-    int result = body->blockExit(false);
+    assert(_body);
+    int result = _body->blockExit(false);
 
     int catchresult = 0;
     for (size_t i = 0; i < catches->dim; i++)
@@ -4386,7 +4386,7 @@ int TryCatchStatement::blockExit(bool mustNotThrow)
     }
     if (mustNotThrow && (result & BEthrow))
     {
-        body->blockExit(mustNotThrow); // now explain why this is nothrow
+        _body->blockExit(mustNotThrow); // now explain why this is nothrow
     }
     return result | catchresult;
 }
@@ -4396,8 +4396,8 @@ void TryCatchStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
 {
     buf->writestring("try");
     buf->writenl();
-    if (body)
-        body->toCBuffer(buf, hgs);
+    if (_body)
+        _body->toCBuffer(buf, hgs);
     for (size_t i = 0; i < catches->dim; i++)
     {
         Catch *c = (*catches)[i];
@@ -4503,36 +4503,36 @@ void Catch::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
 
 /****************************** TryFinallyStatement ***************************/
 
-TryFinallyStatement::TryFinallyStatement(Loc loc, Statement *body, Statement *finalbody)
+TryFinallyStatement::TryFinallyStatement(Loc loc, Statement *_body, Statement *finalbody)
     : Statement(loc)
 {
-    this->body = body;
+    this->_body = _body;
     this->finalbody = finalbody;
 }
 
 Statement *TryFinallyStatement::syntaxCopy()
 {
     TryFinallyStatement *s = new TryFinallyStatement(loc,
-        body->syntaxCopy(), finalbody->syntaxCopy());
+        _body->syntaxCopy(), finalbody->syntaxCopy());
     return s;
 }
 
 Statement *TryFinallyStatement::semantic(Scope *sc)
 {
     //printf("TryFinallyStatement::semantic()\n");
-    body = body->semantic(sc);
+    _body = _body->semantic(sc);
     sc = sc->push();
     sc->tf = this;
     sc->sbreak = NULL;
     sc->scontinue = NULL;       // no break or continue out of finally block
     finalbody = finalbody->semanticNoScope(sc);
     sc->pop();
-    if (!body)
+    if (!_body)
         return finalbody;
     if (!finalbody)
-        return body;
-    if (body->blockExit(false) == BEfallthru)
-    {   Statement *s = new CompoundStatement(loc, body, finalbody);
+        return _body;
+    if (_body->blockExit(false) == BEfallthru)
+    {   Statement *s = new CompoundStatement(loc, _body, finalbody);
         return s;
     }
     return this;
@@ -4541,7 +4541,7 @@ Statement *TryFinallyStatement::semantic(Scope *sc)
 void TryFinallyStatement::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
 {
     buf->printf("try\n{\n");
-    body->toCBuffer(buf, hgs);
+    _body->toCBuffer(buf, hgs);
     buf->printf("}\nfinally\n{\n");
     finalbody->toCBuffer(buf, hgs);
     buf->writeByte('}');
@@ -4565,8 +4565,8 @@ int TryFinallyStatement::usesEH()
 
 int TryFinallyStatement::blockExit(bool mustNotThrow)
 {
-    if (body)
-        return body->blockExit(mustNotThrow);
+    if (_body)
+        return _body->blockExit(mustNotThrow);
     return BEfallthru;
 }
 

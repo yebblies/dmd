@@ -166,8 +166,8 @@ int ForStatement::inlineCost(InlineCostState *ics)
         cost += expressionInlineCost(condition, ics);
     if (increment)
         cost += expressionInlineCost(increment, ics);
-    if (body)
-        cost += body->inlineCost(ics);
+    if (_body)
+        cost += _body->inlineCost(ics);
     //printf("ForStatement: inlineCost = %d\n", cost);
     return cost;
 }
@@ -429,8 +429,8 @@ Statement *ForStatement::doInlineStatement(InlineDoState *ids)
     Statement *init = this->init ? this->init->doInlineStatement(ids) : NULL;
     Expression *condition = this->condition ? this->condition->doInline(ids) : NULL;
     Expression *increment = this->increment ? this->increment->doInline(ids) : NULL;
-    Statement *body = this->body ? this->body->doInlineStatement(ids) : NULL;
-    return new ForStatement(loc, init, condition, increment, body);
+    Statement *_body = this->_body ? this->_body->doInlineStatement(ids) : NULL;
+    return new ForStatement(loc, init, condition, increment, _body);
 }
 
 /* -------------------------------------------------------------------- */
@@ -971,14 +971,14 @@ Statement *ScopeStatement::inlineScan(InlineScanState *iss)
 Statement *WhileStatement::inlineScan(InlineScanState *iss)
 {
     condition = condition->inlineScan(iss);
-    body = body ? body->inlineScan(iss) : NULL;
+    _body = _body ? _body->inlineScan(iss) : NULL;
     return this;
 }
 
 
 Statement *DoStatement::inlineScan(InlineScanState *iss)
 {
-    body = body ? body->inlineScan(iss) : NULL;
+    _body = _body ? _body->inlineScan(iss) : NULL;
     condition = condition->inlineScan(iss);
     return this;
 }
@@ -992,8 +992,8 @@ Statement *ForStatement::inlineScan(InlineScanState *iss)
         condition = condition->inlineScan(iss);
     if (increment)
         increment = increment->inlineScan(iss);
-    if (body)
-        body = body->inlineScan(iss);
+    if (_body)
+        _body = _body->inlineScan(iss);
     return this;
 }
 
@@ -1001,8 +1001,8 @@ Statement *ForStatement::inlineScan(InlineScanState *iss)
 Statement *ForeachStatement::inlineScan(InlineScanState *iss)
 {
     aggr = aggr->inlineScan(iss);
-    if (body)
-        body = body->inlineScan(iss);
+    if (_body)
+        _body = _body->inlineScan(iss);
     return this;
 }
 
@@ -1012,8 +1012,8 @@ Statement *ForeachRangeStatement::inlineScan(InlineScanState *iss)
 {
     lwr = lwr->inlineScan(iss);
     upr = upr->inlineScan(iss);
-    if (body)
-        body = body->inlineScan(iss);
+    if (_body)
+        _body = _body->inlineScan(iss);
     return this;
 }
 #endif
@@ -1034,7 +1034,7 @@ Statement *SwitchStatement::inlineScan(InlineScanState *iss)
 {
     //printf("SwitchStatement::inlineScan()\n");
     condition = condition->inlineScan(iss);
-    body = body ? body->inlineScan(iss) : NULL;
+    _body = _body ? _body->inlineScan(iss) : NULL;
     if (sdefault)
         sdefault = (DefaultStatement *)sdefault->inlineScan(iss);
     if (cases)
@@ -1083,8 +1083,8 @@ Statement *SynchronizedStatement::inlineScan(InlineScanState *iss)
 {
     if (exp)
         exp = exp->inlineScan(iss);
-    if (body)
-        body = body->inlineScan(iss);
+    if (_body)
+        _body = _body->inlineScan(iss);
     return this;
 }
 
@@ -1093,16 +1093,16 @@ Statement *WithStatement::inlineScan(InlineScanState *iss)
 {
     if (exp)
         exp = exp->inlineScan(iss);
-    if (body)
-        body = body->inlineScan(iss);
+    if (_body)
+        _body = _body->inlineScan(iss);
     return this;
 }
 
 
 Statement *TryCatchStatement::inlineScan(InlineScanState *iss)
 {
-    if (body)
-        body = body->inlineScan(iss);
+    if (_body)
+        _body = _body->inlineScan(iss);
     if (catches)
     {
         for (size_t i = 0; i < catches->dim; i++)
@@ -1118,8 +1118,8 @@ Statement *TryCatchStatement::inlineScan(InlineScanState *iss)
 
 Statement *TryFinallyStatement::inlineScan(InlineScanState *iss)
 {
-    if (body)
-        body = body->inlineScan(iss);
+    if (_body)
+        _body = _body->inlineScan(iss);
     if (finalbody)
         finalbody = finalbody->inlineScan(iss);
     return this;
