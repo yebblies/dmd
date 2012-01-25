@@ -9,7 +9,7 @@
 
 
 #if MARS
-struct OutBuffer;
+class OutBuffer;
 #else
 struct Outbuffer;
 #endif
