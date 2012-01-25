@@ -1079,7 +1079,7 @@ Expression *DoStatement::interpret(InterState *istate)
 
     if (istate->start)
     {
-        e = body ? body->interpret(istate) : NULL;
+        e = _body ? _body->interpret(istate) : NULL;
         if (istate->start)
             return NULL;
         if (e == EXP_CANT_INTERPRET)
@@ -1106,7 +1106,7 @@ Expression *DoStatement::interpret(InterState *istate)
 
     while (1)
     {
-        e = body ? body->interpret(istate) : NULL;
+        e = _body ? _body->interpret(istate) : NULL;
         if (e == EXP_CANT_INTERPRET)
             break;
         if (e == EXP_BREAK_INTERPRET)
@@ -1164,7 +1164,7 @@ Expression *ForStatement::interpret(InterState *istate)
 
     if (istate->start)
     {
-        e = body ? body->interpret(istate) : NULL;
+        e = _body ? _body->interpret(istate) : NULL;
         if (istate->start)
             return NULL;
         if (e == EXP_CANT_INTERPRET)
@@ -1203,7 +1203,7 @@ Expression *ForStatement::interpret(InterState *istate)
         if (isTrueBool(e))
         {
         Lhead:
-            e = body ? body->interpret(istate) : NULL;
+            e = _body ? _body->interpret(istate) : NULL;
             if (e == EXP_CANT_INTERPRET)
                 break;
             if (e == EXP_BREAK_INTERPRET)
@@ -1263,7 +1263,7 @@ Expression *SwitchStatement::interpret(InterState *istate)
 
     if (istate->start)
     {
-        e = body ? body->interpret(istate) : NULL;
+        e = _body ? _body->interpret(istate) : NULL;
         if (istate->start)
             return NULL;
         if (e == EXP_CANT_INTERPRET)
@@ -1312,7 +1312,7 @@ Expression *SwitchStatement::interpret(InterState *istate)
 
     assert(s);
     istate->start = s;
-    e = body ? body->interpret(istate) : NULL;
+    e = _body ? _body->interpret(istate) : NULL;
     assert(!istate->start);
     if (e == EXP_BREAK_INTERPRET)
     {
@@ -1401,7 +1401,7 @@ Expression *TryCatchStatement::interpret(InterState *istate)
     printf("TryCatchStatement::interpret()\n");
 #endif
     START()
-    Expression *e = body ? body->interpret(istate) : NULL;
+    Expression *e = _body ? _body->interpret(istate) : NULL;
     if (e == EXP_CANT_INTERPRET)
         return e;
     if (!exceptionOrCantInterpret(e))
@@ -1473,7 +1473,7 @@ Expression *TryFinallyStatement::interpret(InterState *istate)
     printf("TryFinallyStatement::interpret()\n");
 #endif
     START()
-    Expression *e = body ? body->interpret(istate) : NULL;
+    Expression *e = _body ? _body->interpret(istate) : NULL;
     if (e == EXP_CANT_INTERPRET)
         return e;
     Expression *second = finalbody ? finalbody->interpret(istate) : NULL;
@@ -1524,7 +1524,7 @@ Expression *WithStatement::interpret(InterState *istate)
     }
     ctfeStack.push(wthis);
     wthis->setValue(e);
-    e = body ? body->interpret(istate) : EXP_VOID_INTERPRET;
+    e = _body ? _body->interpret(istate) : EXP_VOID_INTERPRET;
     ctfeStack.pop(wthis);
     return e;
 }
