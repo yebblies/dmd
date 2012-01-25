@@ -163,7 +163,6 @@ struct StructDeclaration : AggregateDeclaration
     void toObjFile(int multiobj);                       // compile to .obj file
     void toDt(dt_t **pdt);
     void toDebug();                     // to symbolic debug info
-    Symbol *toSymbol();
 
     StructDeclaration *isStructDeclaration() { return this; }
 };

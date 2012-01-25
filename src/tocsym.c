@@ -415,13 +415,11 @@ Symbol *FuncDeclaration::toSymbol()
                         ::type *tc = cd->type->toCtype();
                         s->Sscope = tc->Tnext->Ttag;
                     }
-                    else
+                    StructDeclaration *sd = parent->isStructDeclaration();
+                    if (sd)
                     {
-                        StructDeclaration *sd = parent->isStructDeclaration();
-                        if (sd)
-                        {
-                            s->Sscope = sd->toSymbol();
-                        }
+                        ::type *tc = sd->type->toCtype();
+                        s->Sscope = tc->Ttag;
                     }
 
                     if (isCtorDeclaration())
@@ -524,15 +522,6 @@ Classsym *fake_classsym(Identifier *id)
     scc->Stype = t;
     slist_add(scc);
     return scc;
-}
-
-Symbol *StructDeclaration::toSymbol()
-{
-    if (!csym)
-    {
-        csym = fake_classsym(ident);
-    }
-    return csym;
 }
 
 /*************************************
