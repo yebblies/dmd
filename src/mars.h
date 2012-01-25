@@ -123,10 +123,10 @@ void unittests();
 #endif
 
 
-struct OutBuffer;
+class OutBuffer;
 
 // Can't include arraytypes.h here, need to declare these directly.
-template <typename TYPE> struct ArrayBase;
+template <typename TYPE> class ArrayBase;
 typedef ArrayBase<struct Identifier> Identifiers;
 typedef ArrayBase<char> Strings;
 
@@ -430,7 +430,7 @@ void util_progress();
 
 struct Dsymbol;
 struct Library;
-struct File;
+class File;
 void obj_start(char *srcfile);
 void obj_end(Library *library, File *objfile);
 void obj_append(Dsymbol *s);

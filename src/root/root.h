@@ -62,16 +62,17 @@ longlong randomx();
  * Root of our class library.
  */
 
-struct OutBuffer;
+class OutBuffer;
 
 // Can't include arraytypes.h here, need to declare these directly.
-template <typename TYPE> struct ArrayBase;
-typedef ArrayBase<struct File> Files;
+template <typename TYPE> class ArrayBase;
+typedef ArrayBase<class File> Files;
 typedef ArrayBase<char> Strings;
 
 
-struct _Object
+class _Object
 {
+public:
     _Object() { }
     virtual ~_Object() { }
 
@@ -110,8 +111,9 @@ struct _Object
         void mark();
 };
 
-struct String : _Object
+class String : _Object
 {
+public:
     int ref;                    // != 0 if this is a reference to someone else's string
     char *str;                  // the string itself
 
@@ -130,8 +132,9 @@ struct String : _Object
     void mark();
 };
 
-struct FileName : String
+class FileName : String
 {
+public:
     FileName(char *str, int ref);
     FileName(char *path, char *name);
     hash_t hashCode();
@@ -162,8 +165,9 @@ struct FileName : String
     static char *canonicalName(const char *name);
 };
 
-struct File : _Object
+class File : _Object
 {
+public:
     int ref;                    // != 0 if this is a reference to someone else's buffer
     unsigned char *buffer;      // data for our file
     unsigned len;               // amount of data in buffer[]
@@ -267,8 +271,9 @@ struct File : _Object
     void remove();              // delete file
 };
 
-struct OutBuffer : _Object
+class OutBuffer : _Object
 {
+public:
     unsigned char *data;
     unsigned offset;
     unsigned size;
@@ -315,8 +320,9 @@ struct OutBuffer : _Object
     char *extractString();
 };
 
-struct Array : _Object
+class Array : _Object
 {
+public:
     unsigned dim;
     void **data;
 
@@ -349,8 +355,9 @@ struct Array : _Object
 };
 
 template <typename TYPE>
-struct ArrayBase : Array
+class ArrayBase : Array
 {
+public:
     TYPE **tdata()
     {
         return (TYPE **)data;
@@ -390,8 +397,9 @@ struct ArrayBase : Array
     }
 };
 
-struct Bits : _Object
+class Bits : _Object
 {
+public:
     unsigned bitdim;
     unsigned allocdim;
     unsigned *data;

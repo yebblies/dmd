@@ -56,7 +56,7 @@ typedef ArrayBase<struct AliasDeclaration> AliasDeclarations;
 
 typedef ArrayBase<struct Module> Modules;
 
-typedef ArrayBase<struct File> Files;
+typedef ArrayBase<class File> Files;
 
 typedef ArrayBase<struct CaseStatement> CaseStatements;
 
