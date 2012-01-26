@@ -124,7 +124,7 @@ public:
     virtual real_t toReal();
     virtual real_t toImaginary();
     virtual complex_t toComplex();
-    virtual StringExp *toString();
+    virtual StringExp *_toString();
     virtual void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     virtual void toMangleBuffer(OutBuffer *buf);
     virtual int isLvalue();
@@ -359,7 +359,7 @@ public:
     Expression *semantic(Scope *sc);
     int isBool(int result);
     int isConst();
-    StringExp *toString();
+    StringExp *_toString();
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     void toMangleBuffer(OutBuffer *buf);
     MATCH implicitConvTo(Type *t);
@@ -388,7 +388,7 @@ public:
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     size_t length();
-    StringExp *toString();
+    StringExp *_toString();
     StringExp *toUTF8(Scope *sc);
     Expression *implicitCastTo(Scope *sc, Type *t);
     MATCH implicitConvTo(Type *t);
@@ -442,7 +442,7 @@ public:
     Expression *semantic(Scope *sc);
     int isBool(int result);
     elem *toElem(IRState *irs);
-    StringExp *toString();
+    StringExp *_toString();
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     void toMangleBuffer(OutBuffer *buf);
     Expression *optimize(int result);

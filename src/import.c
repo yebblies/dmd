@@ -39,13 +39,13 @@ Import::Import(Loc loc, Identifiers *packages, Identifier *id, Identifier *alias
     mod = NULL;
 }
 
-void Import::addAlias(Identifier *name, Identifier *alias)
+void Import::addAlias(Identifier *name, Identifier *_alias)
 {
     if (isstatic)
         error("cannot have an import bind list");
 
     names.push(name);
-    aliases.push(alias);
+    aliases.push(_alias);
 }
 
 const char *Import::kind()
