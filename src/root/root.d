@@ -42,7 +42,7 @@ extern(C++)
  */
 
 alias ArrayBase!File Files;
-alias ArrayBase!(char*) Strings;
+//alias ArrayBasex!char Strings;
 
 extern(C++)
 class _Object
@@ -130,14 +130,14 @@ final:
     static const(char)* replaceName(const(char)* path, const(char)* name);
 
     static char *combine(const(char)* path, const(char)* name);
-    static Strings *splitPath(const(char)* path);
+    static ArrayBasex!char *splitPath(const(char)* path);
     static FileName defaultExt(const(char)* name, const(char)* ext);
     static FileName forceExt(const(char)* name, const(char)* ext);
     int equalsExt(const(char)* ext);
 
     void CopyTo(FileName to);
-    static char *searchPath(Strings *path, const(char)* name, int cwd);
-    static char *safeSearchPath(Strings *path, const(char)* name);
+    static char *searchPath(ArrayBasex!char *path, const(char)* name, int cwd);
+    static char *safeSearchPath(ArrayBasex!char *path, const(char)* name);
     static int exists(const(char)* name);
     static void ensurePathExists(const(char)* path);
     static char *canonicalName(const(char)* name);
@@ -329,6 +329,50 @@ final:
     void *tos();
     void sort();
     Array copy();
+};
+
+extern(C++)
+class ArrayBasex(TYPE) : Array
+{
+final:
+    TYPE **tdata()
+    {
+        return cast(TYPE **)data;
+    }
+
+    ref TYPE* opIndex (size_t index)
+    {
+        debug {
+            assert(index < dim);
+        }
+
+        return (cast(TYPE **)data)[index];
+    }
+
+    void insert(size_t index, TYPE *v)
+    {
+        super.insert(index, cast(void *)v);
+    }
+
+    void insert(size_t index, ArrayBasex a)
+    {
+        super.insert(index, cast(Array )a);
+    }
+
+    void append(ArrayBasex a)
+    {
+        super.append(cast(Array )a);
+    }
+
+    void push(TYPE *a)
+    {
+        super.push(cast(void *)a);
+    }
+
+    ArrayBasex copy()
+    {
+        return cast(ArrayBasex )super.copy();
+    }
 };
 
 extern(C++)

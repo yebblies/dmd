@@ -1300,7 +1300,7 @@ complex_t Expression::toComplex()
 #endif
 }
 
-StringExp *Expression::toString()
+StringExp *Expression::_toString()
 {
     return NULL;
 }
@@ -3044,7 +3044,7 @@ int NullExp::isBool(int result)
     return result ? FALSE : TRUE;
 }
 
-StringExp *NullExp::toString()
+StringExp *NullExp::_toString()
 {
     if (implicitConvTo(Type::tstring))
     {
@@ -3258,7 +3258,7 @@ size_t StringExp::length()
     return result;
 }
 
-StringExp *StringExp::toString()
+StringExp *StringExp::_toString()
 {
     return this;
 }
@@ -3534,7 +3534,7 @@ int ArrayLiteralExp::isBool(int result)
     return result ? (dim != 0) : (dim == 0);
 }
 
-StringExp *ArrayLiteralExp::toString()
+StringExp *ArrayLiteralExp::_toString()
 {
     TY telem = type->nextOf()->toBasetype()->ty;
 
@@ -6046,7 +6046,7 @@ Expression *CompileExp::semantic(Scope *sc)
         return new ErrorExp();
     }
     e1 = e1->optimize(WANTvalue | WANTinterpret);
-    StringExp *se = e1->toString();
+    StringExp *se = e1->_toString();
     if (!se)
     {   error("argument to mixin must be a string, not (%s)", e1->toChars());
         return new ErrorExp();

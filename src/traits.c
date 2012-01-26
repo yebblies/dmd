@@ -238,7 +238,7 @@ Expression *TraitsExp::semantic(Scope *sc)
             goto Lfalse;
         }
         e = e->optimize(WANTvalue | WANTinterpret);
-        StringExp *se = e->toString();
+        StringExp *se = e->_toString();
         if (!se || se->length() == 0)
         {   error("string expected as second argument of __traits %s instead of %s", ident->toChars(), e->toChars());
             goto Lfalse;

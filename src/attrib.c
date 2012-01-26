@@ -945,7 +945,7 @@ void PragmaDeclaration::setScope(Scope *sc)
             e = e->semantic(sc);
             e = e->optimize(WANTvalue | WANTinterpret);
             args->tdata()[0] = e;
-            StringExp* se = e->toString();
+            StringExp* se = e->_toString();
             if (!se)
             {
                 error("string expected, not '%s'", e->toChars());
@@ -978,7 +978,7 @@ void PragmaDeclaration::semantic(Scope *sc)
 
                 e = e->semantic(sc);
                 e = e->optimize(WANTvalue | WANTinterpret);
-                StringExp *se = e->toString();
+                StringExp *se = e->_toString();
                 if (se)
                 {
                     fprintf(stdmsg, "%.*s", (int)se->len, (char *)se->string);
@@ -1003,7 +1003,7 @@ void PragmaDeclaration::semantic(Scope *sc)
             args->tdata()[0] = e;
             if (e->op == TOKerror)
                 goto Lnodecl;
-            StringExp *se = e->toString();
+            StringExp *se = e->_toString();
             if (!se)
                 error("string expected for library name, not '%s'", e->toChars());
             else if (global.params.verbose)
@@ -1042,7 +1042,7 @@ void PragmaDeclaration::semantic(Scope *sc)
             e = args->tdata()[1];
             e = e->semantic(sc);
             e = e->optimize(WANTvalue | WANTinterpret);
-            e = e->toString();
+            e = e->_toString();
             if (e && ((StringExp *)e)->sz == 1)
                 s = ((StringExp *)e);
             else
@@ -1482,7 +1482,7 @@ void CompileDeclaration::compileIt(Scope *sc)
     exp = exp->semantic(sc);
     exp = resolveProperties(sc, exp);
     exp = exp->optimize(WANTvalue | WANTinterpret);
-    StringExp *se = exp->toString();
+    StringExp *se = exp->_toString();
     if (!se)
     {   exp->error("argument to mixin must be a string, not (%s)", exp->toChars());
     }

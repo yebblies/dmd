@@ -403,7 +403,7 @@ Statements *CompileStatement::flatten(Scope *sc)
     exp = exp->optimize(WANTvalue | WANTinterpret);
     if (exp->op == TOKerror)
         return NULL;
-    StringExp *se = exp->toString();
+    StringExp *se = exp->_toString();
     if (!se)
     {   error("argument to mixin must be a string, not (%s)", exp->toChars());
         return NULL;
@@ -2750,7 +2750,7 @@ Statement *PragmaStatement::semantic(Scope *sc)
 
                 e = e->semantic(sc);
                 e = e->optimize(WANTvalue | WANTinterpret);
-                StringExp *se = e->toString();
+                StringExp *se = e->_toString();
                 if (se)
                 {
                     fprintf(stdmsg, "%.*s", (int)se->len, (char *)se->string);
@@ -2777,7 +2777,7 @@ Statement *PragmaStatement::semantic(Scope *sc)
             e = e->semantic(sc);
             e = e->optimize(WANTvalue | WANTinterpret);
             (*args)[0] = e;
-            StringExp *se = e->toString();
+            StringExp *se = e->_toString();
             if (!se)
                 error("string expected for library name, not '%s'", e->toChars());
             else if (global.params.verbose)
