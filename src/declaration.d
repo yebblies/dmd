@@ -117,7 +117,7 @@ class Declaration : Dsymbol
     void semantic(Scope *sc);
     const(char)* kind();
     uint size(Loc loc);
-    void checkModify(Loc loc, Scope *sc, Type t);
+    final void checkModify(Loc loc, Scope *sc, Type t);
 
     void emitComment(Scope *sc);
     void toJsonBuffer(OutBuffer buf);
@@ -131,7 +131,7 @@ class Declaration : Dsymbol
     int isCodeseg();
     int isCtorinit()     { return storage_class & STCctorinit; }
     int isFinal()        { return storage_class & STCfinal; }
-    int isAbstract()     { return storage_class & STCabstract; }
+    final int isAbstract()     { return storage_class & STCabstract; }
     int isConst()        { return storage_class & STCconst; }
     int isImmutable()    { return storage_class & STCimmutable; }
     int isWild()         { return storage_class & STCwild; }
@@ -147,7 +147,7 @@ class Declaration : Dsymbol
     int isOut()   { return storage_class & STCout; }
     int isRef()   { return storage_class & STCref; }
 
-    PROT prot();
+    final PROT prot();
 
     Declaration isDeclaration() { return this; }
 };
@@ -191,13 +191,13 @@ class TypedefDeclaration : Declaration
     void toDocBuffer(OutBuffer buf);
 
     void toObjFile(int multiobj);                       // compile to .obj file
-    void toDebug();
+    final void toDebug();
     int cvMember(ubyte *p);
 
     TypedefDeclaration isTypedefDeclaration() { return this; }
 
     Symbol *sinit;
-    Symbol *toInitializer();
+    final Symbol *toInitializer();
 };
 
 /**************************************************************/
@@ -248,11 +248,11 @@ class VarDeclaration : Declaration
     // The index of this variable on the CTFE stack, -1 if not allocated
     size_t ctfeAdrOnStack;
     // The various functions are used only to detect compiler CTFE bugs
-    Expression getValue();
-    bool hasValue();
-    void setValueNull();
-    void setValueWithoutChecking(Expression newval);
-    void setValue(Expression newval);
+    final Expression getValue();
+    final bool hasValue();
+    final void setValueNull();
+    final void setValueWithoutChecking(Expression newval);
+    final void setValue(Expression newval);
 
 //static if (DMDV2) {
     VarDeclaration rundtor;    // if !NULL, rundtor is tested at runtime to see
@@ -274,17 +274,17 @@ class VarDeclaration : Declaration
     int isImportedSymbol();
     int isDataseg();
     int isThreadlocal();
-    int isCTFE();
+    final int isCTFE();
     int hasPointers();
 //static if (DMDV2) {
-    int canTakeAddressOf();
-    int needsAutoDtor();
+    final int canTakeAddressOf();
+    final int needsAutoDtor();
 //}
-    Expression callScopeDtor(Scope *sc);
-    ExpInitializer getExpInitializer();
-    Expression getConstInitializer();
-    void checkCtorConstInit();
-    void checkNestedReference(Scope *sc, Loc loc);
+    final Expression callScopeDtor(Scope *sc);
+    final ExpInitializer getExpInitializer();
+    final Expression getConstInitializer();
+    final void checkCtorConstInit();
+    final void checkNestedReference(Scope *sc, Loc loc);
     Dsymbol toAlias();
 
     Symbol *toSymbol();
@@ -607,69 +607,69 @@ static if (IN_GCC) {
     void semantic2(Scope *sc);
     void semantic3(Scope *sc);
     // called from semantic3
-    void varArgs(Scope *sc, TypeFunction, ref VarDeclaration , ref VarDeclaration );
-    VarDeclaration declareThis(Scope *sc, AggregateDeclaration ad);
+    final void varArgs(Scope *sc, TypeFunction, ref VarDeclaration , ref VarDeclaration );
+    final VarDeclaration declareThis(Scope *sc, AggregateDeclaration ad);
     int equals(_Object o);
 
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
-    void bodyToCBuffer(OutBuffer buf, HdrGenState *hgs);
-    int overrides(FuncDeclaration fd);
-    int findVtblIndex(Dsymbols vtbl, int dim);
+    final void bodyToCBuffer(OutBuffer buf, HdrGenState *hgs);
+    final int overrides(FuncDeclaration fd);
+    final int findVtblIndex(Dsymbols vtbl, int dim);
     int overloadInsert(Dsymbol s);
-    FuncDeclaration overloadExactMatch(Type t);
-    FuncDeclaration overloadResolve(Loc loc, Expression ethis, Expressions arguments, int flags = 0);
-    MATCH leastAsSpecialized(FuncDeclaration g);
-    LabelDsymbol searchLabel(Identifier ident);
+    final FuncDeclaration overloadExactMatch(Type t);
+    final FuncDeclaration overloadResolve(Loc loc, Expression ethis, Expressions arguments, int flags = 0);
+    final MATCH leastAsSpecialized(FuncDeclaration g);
+    final LabelDsymbol searchLabel(Identifier ident);
     AggregateDeclaration isThis();
-    AggregateDeclaration isMember2();
-    int getLevel(Loc loc, FuncDeclaration fd); // lexical nesting level difference
-    void appendExp(Expression e);
-    void appendState(Statement s);
+    final AggregateDeclaration isMember2();
+    final int getLevel(Loc loc, FuncDeclaration fd); // lexical nesting level difference
+    final void appendExp(Expression e);
+    final void appendState(Statement s);
     char *mangle();
     const(char)* toPrettyChars();
-    int isMain();
-    int isWinMain();
-    int isDllMain();
-    BUILTIN isBuiltin();
+    final int isMain();
+    final int isWinMain();
+    final int isDllMain();
+    final BUILTIN isBuiltin();
     int isExport();
     int isImportedSymbol();
-    int isAbstract();
+    final int isAbstract();
     int isCodeseg();
     int isOverloadable();
-    PURE isPure();
-    PURE isPureBypassingInference();
-    bool setImpure();
-    int isSafe();
-    int isTrusted();
-    bool setUnsafe();
+    final PURE isPure();
+    final PURE isPureBypassingInference();
+    final bool setImpure();
+    final int isSafe();
+    final int isTrusted();
+    final bool setUnsafe();
     int isNested();
     int needThis();
-    int isVirtualMethod();
+    final int isVirtualMethod();
     int isVirtual();
     int isFinal();
     int addPreInvariant();
     int addPostInvariant();
-    Expression interpret(InterState istate, Expressions arguments, Expression thisexp = null);
+    final Expression interpret(InterState istate, Expressions arguments, Expression thisexp = null);
     void inlineScan();
-    int canInline(int hasthis, int hdrscan, int statementsToo);
-    Expression expandInline(InlineScanState iss, Expression ethis, Expressions arguments, Statement *ps);
+    final int canInline(int hasthis, int hdrscan, int statementsToo);
+    final Expression expandInline(InlineScanState iss, Expression ethis, Expressions arguments, Statement *ps);
     const(char)* kind();
     void toDocBuffer(OutBuffer buf);
-    FuncDeclaration isUnique();
-    void checkNestedReference(Scope *sc, Loc loc);
-    int needsClosure();
-    Statement mergeFrequire(Statement );
-    Statement mergeFensure(Statement );
-    Parameters getParameters(int *pvarargs);
+    final FuncDeclaration isUnique();
+    final void checkNestedReference(Scope *sc, Loc loc);
+    final int needsClosure();
+    final Statement mergeFrequire(Statement );
+    final Statement mergeFensure(Statement );
+    final Parameters getParameters(int *pvarargs);
 
     static FuncDeclaration genCfunc(Type treturn, const(char)* name);
     static FuncDeclaration genCfunc(Type treturn, Identifier id);
 
     Symbol *toSymbol();
-    Symbol *toThunkSymbol(int offset);  // thunk version
+    final Symbol *toThunkSymbol(int offset);  // thunk version
     void toObjFile(int multiobj);                       // compile to .obj file
     int cvMember(ubyte *p);
-    void buildClosure(IRState *irs);
+    final void buildClosure(IRState *irs);
 
     FuncDeclaration isFuncDeclaration() { return this; }
 };
@@ -708,7 +708,7 @@ class FuncLiteralDeclaration : FuncDeclaration
     const(char)* kind();
 };
 
-class CtorDeclaration : FuncDeclaration
+final class CtorDeclaration : FuncDeclaration
 {
     this(Loc loc, Loc endloc, StorageClass stc, Type type);
     Dsymbol syntaxCopy(Dsymbol );
@@ -723,7 +723,7 @@ class CtorDeclaration : FuncDeclaration
 };
 
 //static if (DMDV2) {
-class PostBlitDeclaration : FuncDeclaration
+final class PostBlitDeclaration : FuncDeclaration
 {
     this(Loc loc, Loc endloc, StorageClass stc = STCundefined);
     this(Loc loc, Loc endloc, Identifier id);
@@ -741,7 +741,7 @@ class PostBlitDeclaration : FuncDeclaration
 };
 //}
 
-class DtorDeclaration : FuncDeclaration
+final class DtorDeclaration : FuncDeclaration
 {
     this(Loc loc, Loc endloc);
     this(Loc loc, Loc endloc, Identifier id);
@@ -779,7 +779,7 @@ class StaticCtorDeclaration : FuncDeclaration
 };
 
 //static if (DMDV2) {
-class SharedStaticCtorDeclaration : StaticCtorDeclaration
+final class SharedStaticCtorDeclaration : StaticCtorDeclaration
 {
     this(Loc loc, Loc endloc);
     Dsymbol syntaxCopy(Dsymbol );
@@ -797,7 +797,7 @@ class StaticDtorDeclaration : FuncDeclaration
     Dsymbol syntaxCopy(Dsymbol );
     void semantic(Scope *sc);
     AggregateDeclaration isThis();
-    int isVirtual();
+    final int isVirtual();
     bool hasStaticCtorOrDtor();
     int addPreInvariant();
     int addPostInvariant();
@@ -809,7 +809,7 @@ class StaticDtorDeclaration : FuncDeclaration
 };
 
 //static if (DMDV2) {
-class SharedStaticDtorDeclaration : StaticDtorDeclaration
+final class SharedStaticDtorDeclaration : StaticDtorDeclaration
 {
     this(Loc loc, Loc endloc);
     Dsymbol syntaxCopy(Dsymbol );
@@ -819,7 +819,7 @@ class SharedStaticDtorDeclaration : StaticDtorDeclaration
 };
 //}
 
-class InvariantDeclaration : FuncDeclaration
+final class InvariantDeclaration : FuncDeclaration
 {
     this(Loc loc, Loc endloc);
     Dsymbol syntaxCopy(Dsymbol );
@@ -834,7 +834,7 @@ class InvariantDeclaration : FuncDeclaration
     InvariantDeclaration isInvariantDeclaration() { return this; }
 };
 
-class UnitTestDeclaration : FuncDeclaration
+final class UnitTestDeclaration : FuncDeclaration
 {
     this(Loc loc, Loc endloc);
     Dsymbol syntaxCopy(Dsymbol );
@@ -849,7 +849,7 @@ class UnitTestDeclaration : FuncDeclaration
     UnitTestDeclaration isUnitTestDeclaration() { return this; }
 };
 
-class NewDeclaration : FuncDeclaration
+final class NewDeclaration : FuncDeclaration
 {   Parameters arguments;
     int varargs;
 
@@ -866,7 +866,7 @@ class NewDeclaration : FuncDeclaration
 };
 
 
-class DeleteDeclaration : FuncDeclaration
+final class DeleteDeclaration : FuncDeclaration
 {   Parameters arguments;
 
     this(Loc loc, Loc endloc, Parameters arguments);

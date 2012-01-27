@@ -78,7 +78,7 @@ enum SCOPEdebug        = 0x10;    // inside debug conditional
     uint lastoffset;        // offset in docbuf of where to insert next dec
     OutBuffer docbuf;          // buffer for documentation output
 
-    static Scope *freelist;
+    static extern Scope *freelist;
     static void *__new(size_t sz);
     static Scope *createGlobal(Module _module);
 

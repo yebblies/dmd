@@ -364,8 +364,7 @@ enum : DYNCAST
     DYNCAST_TUPLE,
 };
 
-alias uint MATCH;
-enum : MATCH
+enum MATCH
 {
     MATCHnomatch,       // no match
     MATCHconvert,       // match with conversions
@@ -374,6 +373,11 @@ enum : MATCH
 //#endif
     MATCHexact          // exact match
 };
+alias MATCH.MATCHnomatch MATCHnomatch;
+alias MATCH.MATCHconvert MATCHconvert;
+alias MATCH.MATCHconst   MATCHconst;
+alias MATCH.MATCHexact   MATCHexact;
+
 static assert(DMDV2, "disabled preprocessor conditional");
 
 alias uint64_t StorageClass;
@@ -384,4 +388,3 @@ void obj_append(Dsymbol s);
 void obj_write_deferred(Library library);
 
 const(char)* importHint(const(char)* s);
-

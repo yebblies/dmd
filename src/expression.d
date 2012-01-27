@@ -53,14 +53,18 @@ void modifyFieldVar(Loc loc, Scope *sc, VarDeclaration var, Expression e1);
 
 /* Interpreter: what form of return value expression is required?
  */
-alias uint CtfeGoal;
-enum : CtfeGoal
+enum CtfeGoal
 {   ctfeNeedRvalue,   // Must return an Rvalue
     ctfeNeedLvalue,   // Must return an Lvalue
     ctfeNeedAnyValue, // Can return either an Rvalue or an Lvalue
     ctfeNeedLvalueRef,// Must return a reference to an Lvalue (for ref types)
     ctfeNeedNothing   // The return value is not required
 };
+alias CtfeGoal.ctfeNeedRvalue ctfeNeedRvalue;
+alias CtfeGoal.ctfeNeedLvalue ctfeNeedLvalue;
+alias CtfeGoal.ctfeNeedAnyValue ctfeNeedAnyValue;
+alias CtfeGoal.ctfeNeedLvalueRef ctfeNeedLvalueRef;
+alias CtfeGoal.ctfeNeedNothing ctfeNeedNothing;
 
 class Expression : _Object
 {
@@ -71,19 +75,19 @@ class Expression : _Object
     ubyte parens;       // if this is a parenthesized expression
 
     this(Loc loc, TOK op, int size);
-    Expression copy();
+    final Expression copy();
     Expression syntaxCopy();
     int apply(apply_fp_t fp, void *param);
     Expression semantic(Scope *sc);
-    Expression trySemantic(Scope *sc);
+    final Expression trySemantic(Scope *sc);
 
     int dyncast() { return DYNCAST_EXPRESSION; }        // kludge for template.isExpression()
 
     void print();
     char *toChars();
     void dump(int indent);
-    void error(const(char)* format, ...);
-    void warning(const(char)* format, ...);
+    final void error(const(char)* format, ...);
+    final void warning(const(char)* format, ...);
     int rvalue();
 
     static Expression combine(Expression e1, Expression e2);
@@ -107,23 +111,23 @@ class Expression : _Object
     void checkEscape();
     void checkEscapeRef();
     Expression resolveLoc(Loc loc, Scope *sc);
-    void checkScalar();
-    void checkNoBool();
-    Expression checkIntegral();
-    Expression checkArithmetic();
-    void checkDeprecated(Scope *sc, Dsymbol s);
-    void checkPurity(Scope *sc, FuncDeclaration f);
-    void checkPurity(Scope *sc, VarDeclaration v, Expression e1);
-    void checkSafety(Scope *sc, FuncDeclaration f);
+    final void checkScalar();
+    final void checkNoBool();
+    final Expression checkIntegral();
+    final Expression checkArithmetic();
+    final void checkDeprecated(Scope *sc, Dsymbol s);
+    final void checkPurity(Scope *sc, FuncDeclaration f);
+    final void checkPurity(Scope *sc, VarDeclaration v, Expression e1);
+    final void checkSafety(Scope *sc, FuncDeclaration f);
     Expression checkToBoolean(Scope *sc);
     Expression addDtorHook(Scope *sc);
-    Expression checkToPointer();
-    Expression addressOf(Scope *sc);
-    Expression deref();
-    Expression integralPromotions(Scope *sc);
-    Expression isTemp();
+    final Expression checkToPointer();
+    final Expression addressOf(Scope *sc);
+    final Expression deref();
+    final Expression integralPromotions(Scope *sc);
+    final Expression isTemp();
 
-    Expression toDelegate(Scope *sc, Type t);
+    final Expression toDelegate(Scope *sc, Type t);
 
     Expression optimize(int result);
     enum WANTflags = 1;
@@ -138,15 +142,15 @@ class Expression : _Object
     int isConst();
     int isBool(int result);
     int isBit();
-    bool hasSideEffect();
-    void discardValue();
-    void useValue();
-    int canThrow(bool mustNotThrow);
+    final bool hasSideEffect();
+    final void discardValue();
+    final void useValue();
+    final int canThrow(bool mustNotThrow);
 
     int inlineCost3(InlineCostState *ics);
     Expression doInline(InlineDoState *ids);
     Expression inlineScan(InlineScanState *iss);
-    Expression inlineCopy(Scope *sc);
+    final Expression inlineCopy(Scope *sc);
 
     // For operator overloading
     int isCommutative();
@@ -156,11 +160,11 @@ class Expression : _Object
     // For array ops
     void buildArrayIdent(OutBuffer buf, Expressions arguments);
     Expression buildArrayLoop(Parameters fparams);
-    int isArrayOperand();
+    final int isArrayOperand();
 
     // Back end
     elem *toElem(IRState *irs);
-    elem *toElemDtor(IRState *irs);
+    final elem *toElemDtor(IRState *irs);
     dt_t **toDt(dt_t **pdt);
 };
 
@@ -180,7 +184,7 @@ class IntegerExp : Expression
     real_t toReal();
     real_t toImaginary();
     complex_t toComplex();
-    int isConst();
+    final int isConst();
     int isBool(int result);
     MATCH implicitConvTo(Type t);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
@@ -190,7 +194,7 @@ class IntegerExp : Expression
     dt_t **toDt(dt_t **pdt);
 };
 
-class ErrorExp : IntegerExp
+final class ErrorExp : IntegerExp
 {
     this();
 
@@ -200,7 +204,7 @@ class ErrorExp : IntegerExp
     Expression toLvalue(Scope *sc, Expression e);
 };
 
-class RealExp : Expression
+final class RealExp : Expression
 {
     real_t value;
 
@@ -223,7 +227,7 @@ class RealExp : Expression
     dt_t **toDt(dt_t **pdt);
 };
 
-class ComplexExp : Expression
+final class ComplexExp : Expression
 {
     complex_t value;
 
@@ -262,12 +266,12 @@ class IdentifierExp : Expression
     Expression toLvalue(Scope *sc, Expression e);
 };
 
-class DollarExp : IdentifierExp
+final class DollarExp : IdentifierExp
 {
     this(Loc loc);
 };
 
-class DsymbolExp : Expression
+final class DsymbolExp : Expression
 {
     Dsymbol s;
     int hasOverloads;
@@ -300,7 +304,7 @@ class ThisExp : Expression
     elem *toElem(IRState *irs);
 };
 
-class SuperExp : ThisExp
+final class SuperExp : ThisExp
 {
     this(Loc loc);
     Expression semantic(Scope *sc);
@@ -310,7 +314,7 @@ class SuperExp : ThisExp
     //Expression inlineScan(InlineScanState *iss);
 };
 
-class NullExp : Expression
+final class NullExp : Expression
 {
     ubyte committed;    // !=0 if type is committed
 
@@ -329,7 +333,7 @@ class NullExp : Expression
     dt_t **toDt(dt_t **pdt);
 };
 
-class StringExp : Expression
+final class StringExp : Expression
 {
     void *string;       // char, wchar, or dchar data
     size_t len;         // number of chars, wchars, or dchars
@@ -365,7 +369,7 @@ class StringExp : Expression
 
 // Tuple
 
-class TupleExp : Expression
+final class TupleExp : Expression
 {
     Expressions exps;
 
@@ -386,7 +390,7 @@ class TupleExp : Expression
     Expression inlineScan(InlineScanState *iss);
 };
 
-class ArrayLiteralExp : Expression
+final class ArrayLiteralExp : Expression
 {
     Expressions elements;
     bool ownedByCtfe;   // true = created in CTFE
@@ -412,7 +416,7 @@ class ArrayLiteralExp : Expression
     Expression inlineScan(InlineScanState *iss);
 };
 
-class AssocArrayLiteralExp : Expression
+final class AssocArrayLiteralExp : Expression
 {
     Expressions keys;
     Expressions values;
@@ -436,7 +440,7 @@ class AssocArrayLiteralExp : Expression
     Expression inlineScan(InlineScanState *iss);
 };
 
-class StructLiteralExp : Expression
+final class StructLiteralExp : Expression
 {
     StructDeclaration sd;      // which aggregate this is for
     Expressions elements;      // parallels sd->fields[] with
@@ -472,7 +476,7 @@ class StructLiteralExp : Expression
 
 Expression typeDotIdExp(Loc loc, Type type, Identifier ident);
 
-class TypeExp : Expression
+final class TypeExp : Expression
 {
     this(Loc loc, Type type);
     Expression syntaxCopy();
@@ -483,7 +487,7 @@ class TypeExp : Expression
     elem *toElem(IRState *irs);
 };
 
-class ScopeExp : Expression
+final class ScopeExp : Expression
 {
     ScopeDsymbol sds;
 
@@ -494,7 +498,7 @@ class ScopeExp : Expression
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
 
-class TemplateExp : Expression
+final class TemplateExp : Expression
 {
     TemplateDeclaration td;
 
@@ -503,7 +507,7 @@ class TemplateExp : Expression
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
 
-class NewExp : Expression
+final class NewExp : Expression
 {
     /* thisexp.new(newargs) newtype(arguments)
      */
@@ -531,7 +535,7 @@ class NewExp : Expression
     //Expression inlineScan(InlineScanState *iss);
 };
 
-class NewAnonClassExp : Expression
+final class NewAnonClassExp : Expression
 {
     /* thisexp.new(newargs) class baseclasses { } (arguments)
      */
@@ -562,7 +566,7 @@ class SymbolExp : Expression
 
 // Offset from symbol
 
-class SymOffExp : SymbolExp
+final class SymOffExp : SymbolExp
 {
     uint offset;
 
@@ -582,7 +586,7 @@ class SymOffExp : SymbolExp
 
 // Variable
 
-class VarExp : SymbolExp
+final class VarExp : SymbolExp
 {
     this(Loc loc, Declaration var, int hasOverloads = 0);
     int equals(_Object o);
@@ -606,7 +610,7 @@ class VarExp : SymbolExp
 //static if (DMDV2) {
 // Overload Set
 
-class OverExp : Expression
+final class OverExp : Expression
 {
     OverloadSet vars;
 
@@ -618,7 +622,7 @@ class OverExp : Expression
 
 // Function/Delegate literal
 
-class FuncExp : Expression
+final class FuncExp : Expression
 {
     FuncLiteralDeclaration fd;
     TemplateDeclaration td;
@@ -647,7 +651,7 @@ class FuncExp : Expression
 
 // Declaration of a symbol
 
-class DeclarationExp : Expression
+final class DeclarationExp : Expression
 {
     Dsymbol declaration;
 
@@ -663,7 +667,7 @@ class DeclarationExp : Expression
     Expression inlineScan(InlineScanState *iss);
 };
 
-class TypeidExp : Expression
+final class TypeidExp : Expression
 {
     _Object obj;
 
@@ -674,7 +678,7 @@ class TypeidExp : Expression
 };
 
 //static if (DMDV2) {
-class TraitsExp : Expression
+final class TraitsExp : Expression
 {
     Identifier ident;
     Objects args;
@@ -686,7 +690,7 @@ class TraitsExp : Expression
 };
 //}
 
-class HaltExp : Expression
+final class HaltExp : Expression
 {
     this(Loc loc);
     Expression semantic(Scope *sc);
@@ -695,7 +699,7 @@ class HaltExp : Expression
     elem *toElem(IRState *irs);
 };
 
-class IsExp : Expression
+final class IsExp : Expression
 {
     /* is(targ id tok tspec)
      * is(targ id == tok2)
@@ -727,7 +731,7 @@ class UnaExp : Expression
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
     Expression optimize(int result);
     void dump(int indent);
-    Expression interpretCommon(InterState *istate, CtfeGoal goal,
+    final Expression interpretCommon(InterState *istate, CtfeGoal goal,
         Expression function(Type , Expression ) fp);
     Expression resolveLoc(Loc loc, Scope *sc);
 
@@ -746,31 +750,31 @@ class BinExp : Expression
     Expression syntaxCopy();
     int apply(apply_fp_t fp, void *param);
     Expression semantic(Scope *sc);
-    Expression semanticp(Scope *sc);
-    void checkComplexMulAssign();
-    void checkComplexAddAssign();
+    final Expression semanticp(Scope *sc);
+    final void checkComplexMulAssign();
+    final void checkComplexAddAssign();
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
-    Expression scaleFactor(Scope *sc);
-    Expression typeCombine(Scope *sc);
+    final Expression scaleFactor(Scope *sc);
+    final Expression typeCombine(Scope *sc);
     Expression optimize(int result);
-    int isunsigned();
-    Expression incompatibleTypes();
+    final int isunsigned();
+    final Expression incompatibleTypes();
     void dump(int indent);
-    Expression interpretCommon(InterState *istate, CtfeGoal goal,
+    final Expression interpretCommon(InterState *istate, CtfeGoal goal,
         Expression function(Type , Expression , Expression ) fp);
-    Expression interpretCommon2(InterState *istate, CtfeGoal goal,
+    final Expression interpretCommon2(InterState *istate, CtfeGoal goal,
         Expression function(TOK, Type , Expression , Expression ) fp);
-    Expression interpretAssignCommon(InterState *istate, CtfeGoal goal,
+    final Expression interpretAssignCommon(InterState *istate, CtfeGoal goal,
         Expression function(Type , Expression , Expression ) fp, int post = 0);
-    Expression arrayOp(Scope *sc);
+    final Expression arrayOp(Scope *sc);
 
     Expression doInline(InlineDoState *ids);
     Expression inlineScan(InlineScanState *iss);
 
-    Expression op_overload(Scope *sc);
-    Expression compare_overload(Scope *sc, Identifier id);
+    final Expression op_overload(Scope *sc);
+    final Expression compare_overload(Scope *sc, Identifier id);
 
-    elem *toElemBin(IRState *irs, int op);
+    final elem *toElemBin(IRState *irs, int op);
 };
 
 class BinAssignExp : BinExp
@@ -780,10 +784,10 @@ class BinAssignExp : BinExp
         super(loc, op, size, e1, e2);
     }
 
-    Expression commonSemanticAssign(Scope *sc);
-    Expression commonSemanticAssignIntegral(Scope *sc);
+    final Expression commonSemanticAssign(Scope *sc);
+    final Expression commonSemanticAssignIntegral(Scope *sc);
 
-    Expression op_overload(Scope *sc);
+    final Expression op_overload(Scope *sc);
 
     int isLvalue();
     Expression toLvalue(Scope *sc, Expression ex);
@@ -792,21 +796,21 @@ class BinAssignExp : BinExp
 
 /****************************************************************/
 
-class CompileExp : UnaExp
+final class CompileExp : UnaExp
 {
     this(Loc loc, Expression e);
     Expression semantic(Scope *sc);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
 
-class FileExp : UnaExp
+final class FileExp : UnaExp
 {
     this(Loc loc, Expression e);
     Expression semantic(Scope *sc);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
 
-class AssertExp : UnaExp
+final class AssertExp : UnaExp
 {
     Expression msg;
 
@@ -823,7 +827,7 @@ class AssertExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-class DotIdExp : UnaExp
+final class DotIdExp : UnaExp
 {
     Identifier ident;
 
@@ -834,7 +838,7 @@ class DotIdExp : UnaExp
     void dump(int i);
 };
 
-class DotTemplateExp : UnaExp
+final class DotTemplateExp : UnaExp
 {
     TemplateDeclaration td;
 
@@ -842,7 +846,7 @@ class DotTemplateExp : UnaExp
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
 
-class DotVarExp : UnaExp
+final class DotVarExp : UnaExp
 {
     Declaration var;
     int hasOverloads;
@@ -859,7 +863,7 @@ class DotVarExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-class DotTemplateInstanceExp : UnaExp
+final class DotTemplateInstanceExp : UnaExp
 {
     TemplateInstance ti;
 
@@ -871,7 +875,7 @@ class DotTemplateInstanceExp : UnaExp
     void dump(int indent);
 };
 
-class DelegateExp : UnaExp
+final class DelegateExp : UnaExp
 {
     FuncDeclaration func;
     int hasOverloads;
@@ -888,7 +892,7 @@ class DelegateExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-class DotTypeExp : UnaExp
+final class DotTypeExp : UnaExp
 {
     Dsymbol sym;               // symbol that represents a type
 
@@ -898,7 +902,7 @@ class DotTypeExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-class CallExp : UnaExp
+final class CallExp : UnaExp
 {
     Expressions arguments;     // function arguments
     FuncDeclaration f;         // symbol to call
@@ -927,7 +931,7 @@ class CallExp : UnaExp
     Expression inlineScan(InlineScanState *iss);
 };
 
-class AddrExp : UnaExp
+final class AddrExp : UnaExp
 {
     this(Loc loc, Expression e);
     Expression semantic(Scope *sc);
@@ -939,7 +943,7 @@ class AddrExp : UnaExp
     Expression interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
 };
 
-class PtrExp : UnaExp
+final class PtrExp : UnaExp
 {
     this(Loc loc, Expression e);
     this(Loc loc, Expression e, Type t);
@@ -957,7 +961,7 @@ class PtrExp : UnaExp
     Identifier opId();
 };
 
-class NegExp : UnaExp
+final class NegExp : UnaExp
 {
     this(Loc loc, Expression e);
     Expression semantic(Scope *sc);
@@ -973,7 +977,7 @@ class NegExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-class UAddExp : UnaExp
+final class UAddExp : UnaExp
 {
     this(Loc loc, Expression e);
     Expression semantic(Scope *sc);
@@ -982,7 +986,7 @@ class UAddExp : UnaExp
     Identifier opId();
 };
 
-class ComExp : UnaExp
+final class ComExp : UnaExp
 {
     this(Loc loc, Expression e);
     Expression semantic(Scope *sc);
@@ -998,7 +1002,7 @@ class ComExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-class NotExp : UnaExp
+final class NotExp : UnaExp
 {
     this(Loc loc, Expression e);
     Expression semantic(Scope *sc);
@@ -1008,7 +1012,7 @@ class NotExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-class BoolExp : UnaExp
+final class BoolExp : UnaExp
 {
     this(Loc loc, Expression e, Type type);
     Expression semantic(Scope *sc);
@@ -1018,7 +1022,7 @@ class BoolExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-class DeleteExp : UnaExp
+final class DeleteExp : UnaExp
 {
     this(Loc loc, Expression e);
     Expression semantic(Scope *sc);
@@ -1027,7 +1031,7 @@ class DeleteExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-class CastExp : UnaExp
+final class CastExp : UnaExp
 {
     // Possible to cast to one type while painting to another type
     Type to;                   // type to cast to
@@ -1052,7 +1056,7 @@ class CastExp : UnaExp
     Expression op_overload(Scope *sc);
 };
 
-class VectorExp : UnaExp
+final class VectorExp : UnaExp
 {
     Type to;
     uint dim;               // number of elements in the vector
@@ -1064,7 +1068,7 @@ class VectorExp : UnaExp
     elem *toElem(IRState *irs);
 };
 
-class SliceExp : UnaExp
+final class SliceExp : UnaExp
 {
     Expression upr;            // NULL if implicit 0
     Expression lwr;            // NULL if implicit [length - 1]
@@ -1092,7 +1096,7 @@ class SliceExp : UnaExp
     Expression inlineScan(InlineScanState *iss);
 };
 
-class ArrayLengthExp : UnaExp
+final class ArrayLengthExp : UnaExp
 {
     this(Loc loc, Expression e1);
     Expression semantic(Scope *sc);
@@ -1106,7 +1110,7 @@ class ArrayLengthExp : UnaExp
 
 // e1[a0,a1,a2,a3,...]
 
-class ArrayExp : UnaExp
+final class ArrayExp : UnaExp
 {
     Expressions arguments;             // Array of Expression's
     size_t currentDimension;            // for opDollar
@@ -1130,14 +1134,14 @@ class ArrayExp : UnaExp
 
 /****************************************************************/
 
-class DotExp : BinExp
+final class DotExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
 
-class CommaExp : BinExp
+final class CommaExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1156,7 +1160,7 @@ class CommaExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class IndexExp : BinExp
+final class IndexExp : BinExp
 {
     VarDeclaration lengthVar;
     int modifiable;
@@ -1176,7 +1180,7 @@ class IndexExp : BinExp
 
 /* For both i++ and i--
  */
-class PostExp : BinExp
+final class PostExp : BinExp
 {
     this(TOK op, Loc loc, Expression e);
     Expression semantic(Scope *sc);
@@ -1188,7 +1192,7 @@ class PostExp : BinExp
 
 /* For both ++i and --i
  */
-class PreExp : UnaExp
+final class PreExp : UnaExp
 {
     this(TOK op, Loc loc, Expression e);
     Expression semantic(Scope *sc);
@@ -1209,7 +1213,7 @@ class AssignExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class ConstructExp : AssignExp
+final class ConstructExp : AssignExp
 {
     this(Loc loc, Expression e1, Expression e2);
 };
@@ -1217,7 +1221,7 @@ class ConstructExp : AssignExp
 string ASSIGNEXP(string op, bool array)
 {
     return
-        "class " ~ op ~ "AssignExp : BinAssignExp" ~
+        "final class " ~ op ~ "AssignExp : BinAssignExp" ~
         "{" ~
             "this(Loc loc, Expression e1, Expression e2);" ~
             "Expression semantic(Scope *sc);" ~
@@ -1246,7 +1250,7 @@ mixin(ASSIGNEXP("Shr", false));
 mixin(ASSIGNEXP("Ushr", false));
 mixin(ASSIGNEXP("Cat", false));
 
-class AddExp : BinExp
+final class AddExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1264,7 +1268,7 @@ class AddExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class MinExp : BinExp
+final class MinExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1281,7 +1285,7 @@ class MinExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class CatExp : BinExp
+final class CatExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1295,7 +1299,7 @@ class CatExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class MulExp : BinExp
+final class MulExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1313,7 +1317,7 @@ class MulExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class DivExp : BinExp
+final class DivExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1330,7 +1334,7 @@ class DivExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class ModExp : BinExp
+final class ModExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1348,7 +1352,7 @@ class ModExp : BinExp
 };
 
 //static if (DMDV2) {
-class PowExp : BinExp
+final class PowExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1365,7 +1369,7 @@ class PowExp : BinExp
 };
 //}
 
-class ShlExp : BinExp
+final class ShlExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1380,7 +1384,7 @@ class ShlExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class ShrExp : BinExp
+final class ShrExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1395,7 +1399,7 @@ class ShrExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class UshrExp : BinExp
+final class UshrExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1410,7 +1414,7 @@ class UshrExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class AndExp : BinExp
+final class AndExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1428,26 +1432,7 @@ class AndExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class OrExp : BinExp
-{
-    this(Loc loc, Expression e1, Expression e2);
-    Expression semantic(Scope *sc);
-    Expression optimize(int result);
-    Expression interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
-    void buildArrayIdent(OutBuffer buf, Expressions arguments);
-    Expression buildArrayLoop(Parameters fparams);
-    MATCH implicitConvTo(Type t);
-    IntRange getIntRange();
-
-    // For operator overloading
-    int isCommutative();
-    Identifier opId();
-    Identifier opId_r();
-
-    elem *toElem(IRState *irs);
-};
-
-class XorExp : BinExp
+final class OrExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1466,7 +1451,26 @@ class XorExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class OrOrExp : BinExp
+final class XorExp : BinExp
+{
+    this(Loc loc, Expression e1, Expression e2);
+    Expression semantic(Scope *sc);
+    Expression optimize(int result);
+    Expression interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void buildArrayIdent(OutBuffer buf, Expressions arguments);
+    Expression buildArrayLoop(Parameters fparams);
+    MATCH implicitConvTo(Type t);
+    IntRange getIntRange();
+
+    // For operator overloading
+    int isCommutative();
+    Identifier opId();
+    Identifier opId_r();
+
+    elem *toElem(IRState *irs);
+};
+
+final class OrOrExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1477,7 +1481,7 @@ class OrOrExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class AndAndExp : BinExp
+final class AndAndExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1488,7 +1492,7 @@ class AndAndExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class CmpExp : BinExp
+final class CmpExp : BinExp
 {
     this(TOK op, Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1504,7 +1508,7 @@ class CmpExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class InExp : BinExp
+final class InExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1518,7 +1522,7 @@ class InExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-class RemoveExp : BinExp
+final class RemoveExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
     Expression interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -1528,7 +1532,7 @@ class RemoveExp : BinExp
 
 // == and !=
 
-class EqualExp : BinExp
+final class EqualExp : BinExp
 {
     this(TOK op, Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1546,7 +1550,7 @@ class EqualExp : BinExp
 
 // === and !===
 
-class IdentityExp : BinExp
+final class IdentityExp : BinExp
 {
     this(TOK op, Loc loc, Expression e1, Expression e2);
     Expression semantic(Scope *sc);
@@ -1558,7 +1562,7 @@ class IdentityExp : BinExp
 
 /****************************************************************/
 
-class CondExp : BinExp
+final class CondExp : BinExp
 {
     Expression econd;
 
@@ -1595,14 +1599,14 @@ class DefaultInitExp : Expression
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
 
-class FileInitExp : DefaultInitExp
+final class FileInitExp : DefaultInitExp
 {
     this(Loc loc);
     Expression semantic(Scope *sc);
     Expression resolveLoc(Loc loc, Scope *sc);
 };
 
-class LineInitExp : DefaultInitExp
+final class LineInitExp : DefaultInitExp
 {
     this(Loc loc);
     Expression semantic(Scope *sc);

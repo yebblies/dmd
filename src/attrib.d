@@ -33,10 +33,10 @@ class AttribDeclaration : Dsymbol
     this(Dsymbols decl);
     Dsymbols include(Scope *sc, ScopeDsymbol s);
     int addMember(Scope *sc, ScopeDsymbol s, int memnum);
-    void setScopeNewSc(Scope *sc,
+    final void setScopeNewSc(Scope *sc,
         StorageClass newstc, LINK linkage, PROT protection, int explictProtection,
         uint structalign);
-    void semanticNewSc(Scope *sc,
+    final void semanticNewSc(Scope *sc,
         StorageClass newstc, LINK linkage, PROT protection, int explictProtection,
         uint structalign);
     void semantic(Scope *sc);
@@ -50,7 +50,7 @@ class AttribDeclaration : Dsymbol
     int hasPointers();
     bool hasStaticCtorOrDtor();
     void checkCtorConstInit();
-    void addLocalClass(ClassDeclarations );
+    final void addLocalClass(ClassDeclarations );
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
     void toJsonBuffer(OutBuffer buf);
     AttribDeclaration isAttribDeclaration() { return this; }
@@ -170,7 +170,7 @@ class StaticIfDeclaration : ConditionalDeclaration
 
 // Mixin declarations
 
-class CompileDeclaration : AttribDeclaration
+final class CompileDeclaration : AttribDeclaration
 {
     Expression exp;
 

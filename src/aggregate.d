@@ -66,19 +66,19 @@ static if (IN_GCC) {
 }
 
     this(Loc loc, Identifier id);
-    void semantic2(Scope *sc);
-    void semantic3(Scope *sc);
-    void inlineScan();
-    uint size(Loc loc);
+    final void semantic2(Scope *sc);
+    final void semantic3(Scope *sc);
+    final void inlineScan();
+    final uint size(Loc loc);
     static void alignmember(uint salign, uint size, uint *poffset);
-    Type getType();
-    void addField(Scope *sc, VarDeclaration v);
-    int firstFieldInUnion(int indx); // first field in union that includes indx
-    int numFieldsInUnion(int firstIndex); // #fields in union starting at index
-    int isDeprecated();         // is aggregate deprecated?
-    FuncDeclaration buildDtor(Scope *sc);
-    int isNested();
-    int isExport();
+    final Type getType();
+    final void addField(Scope *sc, VarDeclaration v);
+    final int firstFieldInUnion(int indx); // first field in union that includes indx
+    final int numFieldsInUnion(int firstIndex); // #fields in union starting at index
+    final int isDeprecated();         // is aggregate deprecated?
+    final FuncDeclaration buildDtor(Scope *sc);
+    final int isNested();
+    final int isExport();
 
     void emitComment(Scope *sc);
     void toJsonBuffer(OutBuffer buf);
@@ -86,16 +86,16 @@ static if (IN_GCC) {
 
     // For access checking
     PROT getAccess(Dsymbol smember);   // determine access to smember
-    int isFriendOf(AggregateDeclaration cd);
-    int hasPrivateAccess(Dsymbol smember);     // does smember have private access to members of this class?
-    void accessCheck(Loc loc, Scope *sc, Dsymbol smember);
+    final int isFriendOf(AggregateDeclaration cd);
+    final int hasPrivateAccess(Dsymbol smember);     // does smember have private access to members of this class?
+    final void accessCheck(Loc loc, Scope *sc, Dsymbol smember);
 
-    PROT prot();
+    final PROT prot();
 
     // Back end
     Symbol *stag;               // tag symbol for debug data
     Symbol *sinit;
-    Symbol *toInitializer();
+    final Symbol *toInitializer();
 
     AggregateDeclaration isAggregateDeclaration() { return this; }
 };
@@ -103,7 +103,7 @@ static if (IN_GCC) {
 extern(C++)
 class AnonymousAggregateDeclaration : AggregateDeclaration
 {
-    this();
+    this() { super(Loc(0), null); }
 
     AnonymousAggregateDeclaration isAnonymousAggregateDeclaration() { return this; }
 };
@@ -125,7 +125,7 @@ class StructDeclaration : AggregateDeclaration
 
     this(Loc loc, Identifier id);
     Dsymbol syntaxCopy(Dsymbol s);
-    void semantic(Scope *sc);
+    final void semantic(Scope *sc);
     Dsymbol search(Loc, Identifier ident, int flags);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
     char *mangle();
@@ -134,28 +134,28 @@ static if (DMDV1) {
     Expression cloneMembers();
 }
 //static if (DMDV2) {
-    int needOpAssign();
-    int needOpEquals();
-    FuncDeclaration buildOpAssign(Scope *sc);
-    FuncDeclaration buildOpEquals(Scope *sc);
-    FuncDeclaration buildPostBlit(Scope *sc);
-    FuncDeclaration buildCpCtor(Scope *sc);
+    final int needOpAssign();
+    final int needOpEquals();
+    final FuncDeclaration buildOpAssign(Scope *sc);
+    final FuncDeclaration buildOpEquals(Scope *sc);
+    final FuncDeclaration buildPostBlit(Scope *sc);
+    final FuncDeclaration buildCpCtor(Scope *sc);
 
-    FuncDeclaration buildXopEquals(Scope *sc);
+    final FuncDeclaration buildXopEquals(Scope *sc);
 //}
     void toDocBuffer(OutBuffer buf);
 
-    PROT getAccess(Dsymbol smember);   // determine access to smember
+    final PROT getAccess(Dsymbol smember);   // determine access to smember
 
     void toObjFile(int multiobj);                       // compile to .obj file
-    void toDt(dt_t **pdt);
-    void toDebug();                     // to symbolic debug info
+    final void toDt(dt_t **pdt);
+    final void toDebug();                     // to symbolic debug info
 
     StructDeclaration isStructDeclaration() { return this; }
 };
 
 extern(C++)
-class UnionDeclaration : StructDeclaration
+final class UnionDeclaration : StructDeclaration
 {
     this(Loc loc, Identifier id);
     Dsymbol syntaxCopy(Dsymbol s);
@@ -165,7 +165,7 @@ class UnionDeclaration : StructDeclaration
 };
 
 extern(C++)
-class BaseClass
+final class BaseClass
 {
     Type type;                         // (before semantic processing)
     PROT protection;               // protection for the base interface
@@ -196,11 +196,11 @@ class BaseClass
 extern(C++)
 class ClassDeclaration : AggregateDeclaration
 {
-    static ClassDeclaration object;
-    static ClassDeclaration classinfo;
-    static ClassDeclaration throwable;
-    static ClassDeclaration exception;
-    static ClassDeclaration errorException;
+    static extern ClassDeclaration object;
+    static extern ClassDeclaration classinfo;
+    static extern ClassDeclaration throwable;
+    static extern ClassDeclaration exception;
+    static extern ClassDeclaration errorException;
 
     ClassDeclaration baseClass;        // NULL only if this is Object
 //static if (DMDV1) {
@@ -237,45 +237,45 @@ class ClassDeclaration : AggregateDeclaration
     Dsymbol syntaxCopy(Dsymbol s);
     void semantic(Scope *sc);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
-    int isBaseOf2(ClassDeclaration cd);
+    final int isBaseOf2(ClassDeclaration cd);
 
     enum OFFSET_RUNTIME = 0x76543210;
-    int isBaseOf(ClassDeclaration cd, int *poffset);
+    final int isBaseOf(ClassDeclaration cd, int *poffset);
 
-    int isBaseInfoComplete();
-    Dsymbol search(Loc, Identifier ident, int flags);
-    Dsymbol searchBase(Loc, Identifier ident);
+    final int isBaseInfoComplete();
+    final Dsymbol search(Loc, Identifier ident, int flags);
+    final Dsymbol searchBase(Loc, Identifier ident);
 //static if (DMDV2) {
-    int isFuncHidden(FuncDeclaration fd);
+    final int isFuncHidden(FuncDeclaration fd);
 //}
-    FuncDeclaration findFunc(Identifier ident, TypeFunction tf);
-    void interfaceSemantic(Scope *sc);
+    final FuncDeclaration findFunc(Identifier ident, TypeFunction tf);
+    final void interfaceSemantic(Scope *sc);
 //static if (DMDV1) {
 //    int isNested();
 //}
-    int isCOMclass();
-    int isCOMinterface();
+    final int isCOMclass();
+    final int isCOMinterface();
 //static if (DMDV2) {
-    int isCPPinterface();
+    final int isCPPinterface();
 //}
-    int isAbstract();
-    int vtblOffset();
+    final int isAbstract();
+    final int vtblOffset();
     const(char)* kind();
     char *mangle();
     void toDocBuffer(OutBuffer buf);
 
-    PROT getAccess(Dsymbol smember);   // determine access to smember
+    final PROT getAccess(Dsymbol smember);   // determine access to smember
 
     void addLocalClass(ClassDeclarations );
 
     // Back end
     void toObjFile(int multiobj);                       // compile to .obj file
-    void toDebug();
-    uint baseVtblOffset(BaseClass bc);
+    final void toDebug();
+    final uint baseVtblOffset(BaseClass bc);
     Symbol *toSymbol();
-    Symbol *toVtblSymbol();
-    void toDt(dt_t **pdt);
-    void toDt2(dt_t **pdt, ClassDeclaration cd);
+    final Symbol *toVtblSymbol();
+    final void toDt(dt_t **pdt);
+    final void toDt2(dt_t **pdt, ClassDeclaration cd);
 
     Symbol *vtblsym;
 
@@ -283,7 +283,7 @@ class ClassDeclaration : AggregateDeclaration
 };
 
 extern(C++)
-class InterfaceDeclaration : ClassDeclaration
+final class InterfaceDeclaration : ClassDeclaration
 {
 //static if (DMDV2) {
     int cpp;                            // !=0 if this is a C++ interface
@@ -294,7 +294,7 @@ class InterfaceDeclaration : ClassDeclaration
     int isBaseOf(ClassDeclaration cd, int *poffset);
     int isBaseOf(BaseClass bc, int *poffset);
     const(char)* kind();
-    int isBaseInfoComplete();
+    final int isBaseInfoComplete();
     int vtblOffset();
 //static if (DMDV2) {
     int isCPPinterface();

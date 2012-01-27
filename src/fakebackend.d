@@ -2,7 +2,7 @@
 module fakebackend;
 
 struct Symbol {};
-struct type {};
+alias TYPE type;
 
 struct Blockx {};
 

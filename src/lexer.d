@@ -259,9 +259,9 @@ static if (IN_GCC) {
 
 class Lexer
 {
-    static StringTable stringtable;
-    static OutBuffer stringbuffer;
-    static Token *freelist;
+    static extern StringTable stringtable;
+    static extern OutBuffer stringbuffer;
+    static extern Token *freelist;
 
     Loc loc;                    // for error messages
 
@@ -283,6 +283,7 @@ class Lexer
     static Identifier uniqueId(const(char)* s);
     static Identifier uniqueId(const(char)* s, int num);
 
+final:
     TOK nextToken();
     TOK peekNext();
     TOK peekNext2();

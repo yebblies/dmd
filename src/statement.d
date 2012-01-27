@@ -57,14 +57,14 @@ class Statement : _Object
     void print();
     char *toChars();
 
-    void error(const(char)* format, ...);
-    void warning(const(char)* format, ...);
+    final void error(const(char)* format, ...);
+    final void warning(const(char)* format, ...);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
     int incontract;
     ScopeStatement isScopeStatement() { return null; }
     Statement semantic(Scope *sc);
-    Statement semanticScope(Scope *sc, Statement sbreak, Statement scontinue);
-    Statement semanticNoScope(Scope *sc);
+    final Statement semanticScope(Scope *sc, Statement sbreak, Statement scontinue);
+    final Statement semanticNoScope(Scope *sc);
     int hasBreak();
     int hasContinue();
     int usesEH();
@@ -323,9 +323,9 @@ class ForeachStatement : Statement
     this(Loc loc, TOK op, Parameters arguments, Expression aggr, Statement _body);
     Statement syntaxCopy();
     Statement semantic(Scope *sc);
-    bool checkForArgTypes();
-    int inferAggregate(Scope *sc, ref Dsymbol sapply);
-    int inferApplyArgTypes(Scope *sc, ref Dsymbol sapply);
+    final bool checkForArgTypes();
+    final int inferAggregate(Scope *sc, ref Dsymbol sapply);
+    final int inferApplyArgTypes(Scope *sc, ref Dsymbol sapply);
     int hasBreak();
     int hasContinue();
     int usesEH();
@@ -675,7 +675,7 @@ class TryCatchStatement : Statement
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
 
-class Catch : _Object
+final class Catch : _Object
 {
     Loc loc;
     Type type;
@@ -822,7 +822,7 @@ static if (IN_GCC) {
     LabelDsymbol isLabel();
 };
 
-class AsmStatement : Statement
+final class AsmStatement : Statement
 {
     Token *tokens;
     code *asmcode;

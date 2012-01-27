@@ -24,8 +24,8 @@ struct ObjSymbol
 
 import arraytypes;
 
-alias ArrayBasex!ObjModule ObjModules;
-alias ArrayBasex!ObjSymbol ObjSymbols;
+alias ArrayBase!(ObjModule*) ObjModules;
+alias ArrayBase!(ObjSymbol*) ObjSymbols;
 
 struct Library
 {

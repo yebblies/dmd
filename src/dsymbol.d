@@ -34,8 +34,7 @@ import root.aav;
 
 import fakebackend;
 
-alias uint PROT;
-enum : PROT
+enum PROT
 {
     PROTundefined,
     PROTnone,           // no access
@@ -45,6 +44,13 @@ enum : PROT
     PROTpublic,
     PROTexport,
 };
+alias PROT.PROTundefined PROTundefined;
+alias PROT.PROTnone PROTnone;
+alias PROT.PROTprivate PROTprivate;
+alias PROT.PROTpackage PROTpackage;
+alias PROT.PROTprotected PROTprotected;
+alias PROT.PROTpublic PROTpublic;
+alias PROT.PROTexport PROTexport;
 
 /* State of symbol in winding its way through the passes of the compiler
  */
@@ -75,18 +81,18 @@ class Dsymbol : _Object
     this();
     this(Identifier );
     char *toChars();
-    char *locToChars();
+    final char *locToChars();
     int equals(_Object o);
-    int isAnonymous();
-    void error(Loc loc, const(char)* format, ...);
-    void error(const(char)* format, ...);
-    void verror(Loc loc, const(char)* format, va_list ap);
-    void checkDeprecated(Loc loc, Scope *sc);
-    Module getModule();
-    Dsymbol pastMixin();
-    Dsymbol toParent();
-    Dsymbol toParent2();
-    TemplateInstance inTemplateInstance();
+    final int isAnonymous();
+    final void error(Loc loc, const(char)* format, ...);
+    final void error(const(char)* format, ...);
+    final void verror(Loc loc, const(char)* format, va_list ap);
+    final void checkDeprecated(Loc loc, Scope *sc);
+    final Module getModule();
+    final Dsymbol pastMixin();
+    final Dsymbol toParent();
+    final Dsymbol toParent2();
+    final TemplateInstance inTemplateInstance();
 
     int dyncast() { return DYNCAST_DSYMBOL; }   // kludge for template.isSymbol()
 
@@ -104,11 +110,11 @@ class Dsymbol : _Object
     void semantic3(Scope *sc);
     void inlineScan();
     Dsymbol search(Loc loc, Identifier ident, int flags);
-    Dsymbol search_correct(Identifier id);
-    Dsymbol searchX(Loc loc, Scope *sc, Identifier id);
+    final Dsymbol search_correct(Identifier id);
+    final Dsymbol searchX(Loc loc, Scope *sc, Identifier id);
     int overloadInsert(Dsymbol s);
-    char *toHChars();
-    void toHBuffer(OutBuffer buf, HdrGenState *hgs);
+    final char *toHChars();
+    final void toHBuffer(OutBuffer buf, HdrGenState *hgs);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
     void toDocBuffer(OutBuffer buf);
     void toJsonBuffer(OutBuffer buf);
@@ -116,8 +122,8 @@ class Dsymbol : _Object
     int isforwardRef();
     void defineRef(Dsymbol s);
     AggregateDeclaration isThis();     // is a 'this' required to access the member
-    AggregateDeclaration isAggregateMember();  // are we a member of an aggregate?
-    ClassDeclaration isClassMember();          // are we a member of a class?
+    final AggregateDeclaration isAggregateMember();  // are we a member of an aggregate?
+    final ClassDeclaration isClassMember();          // are we a member of a class?
     int isExport();                     // is Dsymbol exported?
     int isImportedSymbol();             // is Dsymbol imported?
     int isDeprecated();                 // is Dsymbol deprecated?
@@ -140,7 +146,7 @@ class Dsymbol : _Object
 
     void addComment(ubyte* comment);
     void emitComment(Scope *sc);
-    void emitDitto(Scope *sc);
+    final void emitDitto(Scope *sc);
 
     // Backend
 
@@ -148,10 +154,10 @@ class Dsymbol : _Object
     void toObjFile(int multiobj);                       // compile to .obj file
     int cvMember(ubyte* p);     // emit cv debug info for member
 
-    Symbol *toImport();                         // to backend import symbol
+    final Symbol *toImport();                         // to backend import symbol
     static Symbol *toImport(Symbol *s);         // to backend import symbol
 
-    Symbol *toSymbolX(const(char)* prefix, int sclass, TYPE *t, const(char)* suffix);     // helper
+    final Symbol *toSymbolX(const(char)* prefix, int sclass, TYPE *t, const(char)* suffix);     // helper
 
     // Eliminate need for dynamic_cast
     Package isPackage() { return null; }
@@ -212,18 +218,20 @@ class ScopeDsymbol : Dsymbol
     this();
     this(Identifier id);
     Dsymbol syntaxCopy(Dsymbol s);
+    abstract void semantic(Scope *sc);
     Dsymbol search(Loc loc, Identifier ident, int flags);
-    void importScope(Dsymbol s, PROT protection);
+    final void importScope(Dsymbol s, PROT protection);
     int isforwardRef();
     void defineRef(Dsymbol s);
     static void multiplyDefined(Loc loc, Dsymbol s1, Dsymbol s2);
-    Dsymbol nameCollision(Dsymbol s);
+    final Dsymbol nameCollision(Dsymbol s);
     const(char)* kind();
-    FuncDeclaration findGetMembers();
+    final FuncDeclaration findGetMembers();
     Dsymbol symtabInsert(Dsymbol s);
     bool hasStaticCtorOrDtor();
+    abstract int isExport();
 
-    void emitMemberComments(Scope *sc);
+    final void emitMemberComments(Scope *sc);
 
     static size_t dim(Dsymbols members);
     static Dsymbol getNth(Dsymbols members, size_t nth, size_t *pn = null);
@@ -269,7 +277,7 @@ class ArrayScopeSymbol : ScopeDsymbol
 
 //static if (DMDV2) {
 extern(C++)
-class OverloadSet : Dsymbol
+final class OverloadSet : Dsymbol
 {
     Dsymbols a;         // array of Dsymbols
 
@@ -283,7 +291,7 @@ class OverloadSet : Dsymbol
 // Table of Dsymbol's
 
 extern(C++)
-class DsymbolTable : _Object
+final class DsymbolTable : _Object
 {
     AA *tab;
 

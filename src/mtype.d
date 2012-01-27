@@ -161,61 +161,61 @@ class Type : _Object
     static ref tptrdiff_t() { return basic[Tptrdiff_t]; }       // matches ptrdiff_t alias
     alias tsize_t thash_t;                 // matches hash_t alias
 
-    static ClassDeclaration typeinfo;
-    static ClassDeclaration typeinfoclass;
-    static ClassDeclaration typeinfointerface;
-    static ClassDeclaration typeinfostruct;
-    static ClassDeclaration typeinfotypedef;
-    static ClassDeclaration typeinfopointer;
-    static ClassDeclaration typeinfoarray;
-    static ClassDeclaration typeinfostaticarray;
-    static ClassDeclaration typeinfoassociativearray;
-    static ClassDeclaration typeinfovector;
-    static ClassDeclaration typeinfoenum;
-    static ClassDeclaration typeinfofunction;
-    static ClassDeclaration typeinfodelegate;
-    static ClassDeclaration typeinfotypelist;
-    static ClassDeclaration typeinfoconst;
-    static ClassDeclaration typeinfoinvariant;
-    static ClassDeclaration typeinfoshared;
-    static ClassDeclaration typeinfowild;
+    static extern ClassDeclaration typeinfo;
+    static extern ClassDeclaration typeinfoclass;
+    static extern ClassDeclaration typeinfointerface;
+    static extern ClassDeclaration typeinfostruct;
+    static extern ClassDeclaration typeinfotypedef;
+    static extern ClassDeclaration typeinfopointer;
+    static extern ClassDeclaration typeinfoarray;
+    static extern ClassDeclaration typeinfostaticarray;
+    static extern ClassDeclaration typeinfoassociativearray;
+    static extern ClassDeclaration typeinfovector;
+    static extern ClassDeclaration typeinfoenum;
+    static extern ClassDeclaration typeinfofunction;
+    static extern ClassDeclaration typeinfodelegate;
+    static extern ClassDeclaration typeinfotypelist;
+    static extern ClassDeclaration typeinfoconst;
+    static extern ClassDeclaration typeinfoinvariant;
+    static extern ClassDeclaration typeinfoshared;
+    static extern ClassDeclaration typeinfowild;
 
-    static TemplateDeclaration associativearray;
+    static extern TemplateDeclaration associativearray;
 
-    static Type basic[TMAX];
-    static ubyte mangleChar[TMAX];
-    static ubyte sizeTy[TMAX];
-    static StringTable stringtable;
+    static extern Type basic[TMAX];
+    static extern ubyte mangleChar[TMAX];
+    static extern ubyte sizeTy[TMAX];
+    static extern StringTable stringtable;
 
     // These tables are for implicit conversion of binary ops;
     // the indices are the type of operand one, followed by operand two.
-    static ubyte impcnvResult[TMAX][TMAX];
-    static ubyte impcnvType1[TMAX][TMAX];
-    static ubyte impcnvType2[TMAX][TMAX];
+    static extern ubyte impcnvResult[TMAX][TMAX];
+    static extern ubyte impcnvType1[TMAX][TMAX];
+    static extern ubyte impcnvType2[TMAX][TMAX];
 
     // If !=0, give warning on implicit conversion
-    static ubyte impcnvWarn[TMAX][TMAX];
+    static extern ubyte impcnvWarn[TMAX][TMAX];
 
     this(TY ty);
     Type syntaxCopy();
     int equals(_Object o);
     int dyncast() { return DYNCAST_TYPE; } // kludge for template.isType()
-    int covariant(Type t);
+    final int covariant(Type t);
     char *toChars();
     static char needThisPrefix();
     static void init();
-    d_uns64 size();
+    final d_uns64 size();
     d_uns64 size(Loc loc);
     uint alignsize();
     Type semantic(Loc loc, Scope *sc);
-    Type trySemantic(Loc loc, Scope *sc);
+    final Type trySemantic(Loc loc, Scope *sc);
     void toDecoBuffer(OutBuffer buf, int flag = 0);
-    Type merge();
-    Type merge2();
+    final Type merge();
+    final Type merge2();
     void toCBuffer(OutBuffer buf, Identifier ident, HdrGenState *hgs);
     void toCBuffer2(OutBuffer buf, HdrGenState *hgs, int mod);
-    void toCBuffer3(OutBuffer buf, HdrGenState *hgs, int mod);
-    void modToBuffer(OutBuffer buf);
+    final void toCBuffer3(OutBuffer buf, HdrGenState *hgs, int mod);
+    final void modToBuffer(OutBuffer buf);
 static if (CPP_MANGLE) {
     void toCppMangle(OutBuffer buf, CppMangleState *cms);
 }
@@ -239,24 +239,24 @@ static if (CPP_MANGLE) {
     int isWild()        { return mod & MODwild; }
     int isSharedWild()  { return mod == (MODshared | MODwild); }
     int isNaked()       { return mod == 0; }
-    Type constOf();
-    Type invariantOf();
-    Type mutableOf();
-    Type sharedOf();
-    Type sharedConstOf();
-    Type unSharedOf();
-    Type wildOf();
-    Type sharedWildOf();
-    void fixTo(Type t);
-    void check();
-    Type addSTC(StorageClass stc);
-    Type castMod(uint mod);
-    Type addMod(uint mod);
-    Type addStorageClass(StorageClass stc);
-    Type pointerTo();
-    Type referenceTo();
-    Type arrayOf();
-    Type aliasthisOf();
+    final Type constOf();
+    final Type invariantOf();
+    final Type mutableOf();
+    final Type sharedOf();
+    final Type sharedConstOf();
+    final Type unSharedOf();
+    final Type wildOf();
+    final Type sharedWildOf();
+    final void fixTo(Type t);
+    final void check();
+    final Type addSTC(StorageClass stc);
+    final Type castMod(uint mod);
+    final Type addMod(uint mod);
+    final Type addStorageClass(StorageClass stc);
+    final Type pointerTo();
+    final Type referenceTo();
+    final Type arrayOf();
+    final Type aliasthisOf();
     Type makeConst();
     Type makeInvariant();
     Type makeShared();
@@ -270,22 +270,22 @@ static if (CPP_MANGLE) {
     MATCH implicitConvTo(Type to);
     MATCH constConv(Type to);
     uint wildConvTo(Type tprm);
-    Type substWildTo(uint mod);
+    final Type substWildTo(uint mod);
     Type toHeadMutable();
     ClassDeclaration isClassHandle();
     Expression getProperty(Loc loc, Identifier ident);
     Expression dotExp(Scope *sc, Expression e, Identifier ident);
-    Expression noMember(Scope *sc, Expression e, Identifier ident);
+    final Expression noMember(Scope *sc, Expression e, Identifier ident);
     uint memalign(uint salign);
     Expression defaultInit(Loc loc);
     Expression defaultInitLiteral(Loc loc);
     int isZeroInit(Loc loc);                // if initializer is 0
     dt_t **toDt(dt_t **pdt);
-    Identifier getTypeInfoIdent(int internal);
+    final Identifier getTypeInfoIdent(int internal);
     MATCH deduceType(Scope *sc, Type tparam, TemplateParameters parameters, Objects dedtypes, uint *wildmatch = null);
     void resolve(Loc loc, Scope *sc, Expression *pe, Type *pt, Dsymbol *ps);
-    Expression getInternalTypeInfo(Scope *sc);
-    Expression getTypeInfo(Scope *sc);
+    final Expression getInternalTypeInfo(Scope *sc);
+    final Expression getTypeInfo(Scope *sc);
     TypeInfoDeclaration getTypeInfoDeclaration();
     int builtinTypeInfo();
     Type reliesOnTident();
@@ -294,14 +294,14 @@ static if (CPP_MANGLE) {
     int hasPointers();
     TypeTuple toArgTypes();
     Type nextOf();
-    uinteger_t sizemask();
+    final uinteger_t sizemask();
     int needsDestruction();
 
     static void error(Loc loc, const(char)* format, ...);
     static void warning(Loc loc, const(char)* format, ...);
 
     // For backend
-    uint totym();
+    final uint totym();
     type *toCtype();
     type *toCParamtype();
     Symbol *toSymbol();
@@ -343,7 +343,7 @@ class TypeNext : Type
     Type makeMutable();
     MATCH constConv(Type to);
     uint wildConvTo(Type tprm);
-    void transitive();
+    final void transitive();
 };
 
 class TypeBasic : Type
@@ -403,7 +403,7 @@ static if (CPP_MANGLE) {
     int checkBoolean();
     MATCH implicitConvTo(Type to);
     Expression defaultInit(Loc loc);
-    TypeBasic elementType();
+    final TypeBasic elementType();
     int isZeroInit(Loc loc);
     TypeInfoDeclaration getTypeInfoDeclaration();
     TypeTuple toArgTypes();
@@ -416,7 +416,7 @@ class TypeArray : TypeNext
 };
 
 // Static array, one with a fixed dimension
-class TypeSArray : TypeArray
+final class TypeSArray : TypeArray
 {
     Expression dim;
 
@@ -453,7 +453,7 @@ static if (CPP_MANGLE) {
 };
 
 // Dynamic array, no dimension
-class TypeDArray : TypeArray
+final class TypeDArray : TypeArray
 {
     this(Type t);
     Type syntaxCopy();
@@ -480,7 +480,7 @@ static if (CPP_MANGLE) {
     type *toCtype();
 };
 
-class TypeAArray : TypeArray
+final class TypeAArray : TypeArray
 {
     Type index;                // key type
     Loc loc;
@@ -516,7 +516,7 @@ static if (CPP_MANGLE) {
     type *toCtype();
 };
 
-class TypePointer : TypeNext
+final class TypePointer : TypeNext
 {
     this(Type t);
     Type syntaxCopy();
@@ -579,7 +579,7 @@ enum : PURE
     PUREfwdref = 4,     // it's pure, but not known which level yet
 };
 
-class TypeFunction : TypeNext
+final class TypeFunction : TypeNext
 {
     // .next is the return type
 
@@ -623,7 +623,7 @@ static if (CPP_MANGLE) {
     Expression defaultInit(Loc loc);
 };
 
-class TypeDelegate : TypeNext
+final class TypeDelegate : TypeNext
 {
     // .next is a TypeFunction
 
@@ -654,11 +654,11 @@ class TypeQualified : Type
     Identifiers idents;       // array of Identifier's representing ident.ident.ident etc.
 
     this(TY ty, Loc loc);
-    void syntaxCopyHelper(TypeQualified t);
-    void addIdent(Identifier ident);
-    void toCBuffer2Helper(OutBuffer buf, HdrGenState *hgs);
+    final void syntaxCopyHelper(TypeQualified t);
+    final void addIdent(Identifier ident);
+    final void toCBuffer2Helper(OutBuffer buf, HdrGenState *hgs);
     d_uns64 size(Loc loc);
-    void resolveHelper(Loc loc, Scope *sc, Dsymbol s, Dsymbol scopesym,
+    final void resolveHelper(Loc loc, Scope *sc, Dsymbol s, Dsymbol scopesym,
         Expression *pe, Type *pt, Dsymbol *ps);
 };
 
@@ -752,7 +752,7 @@ static if (CPP_MANGLE) {
     void toCppMangle(OutBuffer buf, CppMangleState *cms);
 }
 
-    type *toCtype();
+    final type *toCtype();
 };
 
 class TypeEnum : Type
@@ -796,7 +796,7 @@ static if (CPP_MANGLE) {
     type *toCtype();
 };
 
-class TypeTypedef : Type
+final class TypeTypedef : Type
 {
     TypedefDeclaration sym;
 
@@ -931,7 +931,7 @@ class TypeNull : Type
 
 //enum InOut { None, In, Out, InOut, Lazy };
 
-class Parameter : _Object
+final class Parameter : _Object
 {
     //enum InOut inout;
     StorageClass storageClass;
