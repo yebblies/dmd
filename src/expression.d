@@ -1218,9 +1218,9 @@ final class ConstructExp : AssignExp
     this(Loc loc, Expression e1, Expression e2);
 };
 
-string ASSIGNEXP(string op, bool array)
+template ASSIGNEXP(string op, bool array)
 {
-    return
+    enum ASSIGNEXP =
         "final class " ~ op ~ "AssignExp : BinAssignExp" ~
         "{" ~
             "this(Loc loc, Expression e1, Expression e2);" ~
@@ -1230,25 +1230,26 @@ string ASSIGNEXP(string op, bool array)
             (array ? "Expression buildArrayLoop(Parameters fparams);" : "") ~
             "Identifier opId();    /* For operator overloading */" ~
             "elem *toElem(IRState *irs);" ~
-        "};";
+        "};"
+        ;
 }
 
-mixin(ASSIGNEXP("Add", true));
-mixin(ASSIGNEXP("Min", true));
-mixin(ASSIGNEXP("Mul", true));
-mixin(ASSIGNEXP("Div", true));
-mixin(ASSIGNEXP("Mod", true));
-mixin(ASSIGNEXP("And", true));
-mixin(ASSIGNEXP("Or", true));
-mixin(ASSIGNEXP("Xor", true));
+mixin(ASSIGNEXP!("Add", true));
+mixin(ASSIGNEXP!("Min", true));
+mixin(ASSIGNEXP!("Mul", true));
+mixin(ASSIGNEXP!("Div", true));
+mixin(ASSIGNEXP!("Mod", true));
+mixin(ASSIGNEXP!("And", true));
+mixin(ASSIGNEXP!("Or", true));
+mixin(ASSIGNEXP!("Xor", true));
 //static if (DMDV2) {
-mixin(ASSIGNEXP("Pow", true));
+mixin(ASSIGNEXP!("Pow", true));
 //}
 
-mixin(ASSIGNEXP("Shl", false));
-mixin(ASSIGNEXP("Shr", false));
-mixin(ASSIGNEXP("Ushr", false));
-mixin(ASSIGNEXP("Cat", false));
+mixin(ASSIGNEXP!("Shl", false));
+mixin(ASSIGNEXP!("Shr", false));
+mixin(ASSIGNEXP!("Ushr", false));
+mixin(ASSIGNEXP!("Cat", false));
 
 final class AddExp : BinExp
 {
@@ -1618,11 +1619,11 @@ final class LineInitExp : DefaultInitExp
 
 /* Special values used by the interpreter
  */
-auto EXP_CANT_INTERPRET()     { union uu { Expression e; void* v; } uu u; u.v = cast(void*)1; return u.e; }
-auto EXP_CONTINUE_INTERPRET() { union uu { Expression e; void* v; } uu u; u.v = cast(void*)2; return u.e; }
-auto EXP_BREAK_INTERPRET()    { union uu { Expression e; void* v; } uu u; u.v = cast(void*)3; return u.e; }
-auto EXP_GOTO_INTERPRET()     { union uu { Expression e; void* v; } uu u; u.v = cast(void*)4; return u.e; }
-auto EXP_VOID_INTERPRET()     { union uu { Expression e; void* v; } uu u; u.v = cast(void*)5; return u.e; }
+//auto EXP_CANT_INTERPRET()     { union uu { Expression e; void* v; } uu u; u.v = cast(void*)1; return u.e; }
+//auto EXP_CONTINUE_INTERPRET() { union uu { Expression e; void* v; } uu u; u.v = cast(void*)2; return u.e; }
+//auto EXP_BREAK_INTERPRET()    { union uu { Expression e; void* v; } uu u; u.v = cast(void*)3; return u.e; }
+//auto EXP_GOTO_INTERPRET()     { union uu { Expression e; void* v; } uu u; u.v = cast(void*)4; return u.e; }
+//auto EXP_VOID_INTERPRET()     { union uu { Expression e; void* v; } uu u; u.v = cast(void*)5; return u.e; }
 
 Expression expType(Type type, Expression e);
 
