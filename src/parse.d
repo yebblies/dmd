@@ -120,7 +120,7 @@ final class Parser : Lexer
     Expression parseMulExp();
     Expression parseAddExp();
     Expression parseShiftExp();
-static if (DMDV1) {
+version (DMDV1) {
     Expression parseRelExp();
     Expression parseEqualExp();
 }

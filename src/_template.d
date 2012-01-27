@@ -113,9 +113,9 @@ class TemplateParameter
     TemplateTypeParameter  isTemplateTypeParameter();
     TemplateValueParameter isTemplateValueParameter();
     TemplateAliasParameter isTemplateAliasParameter();
-//static if (DMDV2) {
+version (DMDV2) {
     TemplateThisParameter isTemplateThisParameter();
-//}
+}
     TemplateTupleParameter isTemplateTupleParameter();
 
     abstract TemplateParameter syntaxCopy();
@@ -165,7 +165,7 @@ class TemplateTypeParameter : TemplateParameter
     void *dummyArg();
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 extern(C++)
 final class TemplateThisParameter : TemplateTypeParameter
 {
@@ -181,7 +181,7 @@ final class TemplateThisParameter : TemplateTypeParameter
     TemplateParameter syntaxCopy();
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
-//}
+}
 
 extern(C++)
 final class TemplateValueParameter : TemplateParameter
@@ -292,7 +292,7 @@ class TemplateInstance : ScopeDsymbol
     Dsymbol isnested;  // if referencing local symbols, this is the context
     int errors;         // 1 if compiled with errors
     int speculative;    // 1 if only instantiated with errors gagged
-static if (IN_GCC) {
+version (IN_GCC) {
     /* On some targets, it is necessary to know whether a symbol
        will be emitted in the output or not before the symbol
        is used.  This can be different from getModule(). */

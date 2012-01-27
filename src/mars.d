@@ -79,6 +79,14 @@ version (Win32)
 {
     enum _WIN32 = 1;
 }
+version (DMDV2)
+{
+    enum DMDV2 = 1;
+}
+else
+{
+    static assert(0);
+}
 
 debug {
     enum UNITTEST = 1;
@@ -86,8 +94,6 @@ debug {
 
 void unittests();
 
-enum DMDV1 = 0;
-enum DMDV2 = 1;       // Version 2.0 features
 enum BREAKABI = 1;      // 0 if not ready to break the ABI just yet
 enum STRUCTTHISREF = DMDV2;     // if 'this' for struct is a reference, not a pointer
 enum SNAN_DEFAULT_INIT = DMDV2; // if floats are default initialized to signalling NaN
@@ -109,7 +115,6 @@ enum TARGET_SOLARIS = 0;
 enum TARGET_NET = 0;
 enum TARGET_OPENBSD = 0;
 
-enum IN_GCC = 0;
 enum GCC_SAFE_DMD = 1;
 
 version (Win32) {

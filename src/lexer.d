@@ -230,7 +230,7 @@ struct Token
         d_uns64 uns64value;
 
         // Floats
-static if (IN_GCC) {
+version (IN_GCC) {
         // real_t float80value; // can't use this in a union!
 } else {
         d_float80 float80value;
@@ -244,7 +244,7 @@ static if (IN_GCC) {
 
         Identifier ident;
     };
-static if (IN_GCC) {
+version (IN_GCC) {
     real_t float80value; // can't use this in a union!
 }
 
@@ -293,10 +293,10 @@ final:
     uint escapeSequence();
     TOK wysiwygStringConstant(Token *t, int tc);
     TOK hexStringConstant(Token *t);
-//static if (DMDV2) {
+version (DMDV2) {
     TOK delimitedStringConstant(Token *t);
     TOK tokenStringConstant(Token *t);
-//}
+}
     TOK escapeStringConstant(Token *t, int wide);
     TOK charConstant(Token *t, int wide);
     void stringPostfix(Token *t);

@@ -339,7 +339,7 @@ class ForeachStatement : Statement
     void toIR(IRState *irs);
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 class ForeachRangeStatement : Statement
 {
     TOK op;                // TOKforeach or TOKforeach_reverse
@@ -366,7 +366,7 @@ class ForeachRangeStatement : Statement
 
     void toIR(IRState *irs);
 };
-//}
+}
 
 class IfStatement : Statement
 {
@@ -490,7 +490,7 @@ class CaseStatement : Statement
     void toIR(IRState *irs);
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 
 class CaseRangeStatement : Statement
 {
@@ -504,12 +504,12 @@ class CaseRangeStatement : Statement
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
 
-//}
+}
 
 class DefaultStatement : Statement
 {
     Statement statement;
-static if (IN_GCC) {
+version (IN_GCC) {
     block *cblock;      // back end: label for the block
 }
 
@@ -814,7 +814,7 @@ class LabelStatement : Statement
 class LabelDsymbol : Dsymbol
 {
     LabelStatement statement;
-static if (IN_GCC) {
+version (IN_GCC) {
     uint asmLabelNum;       // GCC-specific
 }
 

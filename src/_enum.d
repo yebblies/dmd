@@ -29,15 +29,15 @@ final class EnumDeclaration : ScopeDsymbol
     Type type;                 // the TypeEnum
     Type memtype;              // type of the members
 
-//static if (DMDV1) {
-//    dinteger_t maxval;
-//    dinteger_t minval;
-//    dinteger_t defaultval;      // default initializer
-//} else {
+version (DMDV1) {
+    dinteger_t maxval;
+    dinteger_t minval;
+    dinteger_t defaultval;      // default initializer
+} else {
     Expression maxval;
     Expression minval;
     Expression defaultval;     // default initializer
-//}
+}
     int isdeprecated;
     int isdone;                 // 0: not done
                                 // 1: semantic() successfully completed
@@ -50,9 +50,9 @@ final class EnumDeclaration : ScopeDsymbol
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
     Type getType();
     const(char) *kind();
-//static if (DMDV2) {
+version (DMDV2) {
     Dsymbol search(Loc, Identifier ident, int flags);
-//}
+}
     int isDeprecated();                 // is Dsymbol deprecated?
 
     void emitComment(Scope *sc);

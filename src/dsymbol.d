@@ -127,9 +127,9 @@ class Dsymbol : _Object
     int isExport();                     // is Dsymbol exported?
     int isImportedSymbol();             // is Dsymbol imported?
     int isDeprecated();                 // is Dsymbol deprecated?
-//static if (DMDV2) {
+version (DMDV2) {
     int isOverloadable();
-//}
+}
     LabelDsymbol isLabel();            // is this a LabelDsymbol?
     AggregateDeclaration isMember();   // is this symbol a member of an AggregateDeclaration?
     Type getType();                    // is this a type?
@@ -275,7 +275,7 @@ class ArrayScopeSymbol : ScopeDsymbol
 
 // Overload Sets
 
-//static if (DMDV2) {
+version (DMDV2) {
 extern(C++)
 final class OverloadSet : Dsymbol
 {
@@ -286,7 +286,7 @@ final class OverloadSet : Dsymbol
     OverloadSet isOverloadSet();
     const(char)* kind();
 };
-//}
+}
 
 // Table of Dsymbol's
 
