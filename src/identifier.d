@@ -25,8 +25,8 @@ class Identifier : _Object
     int compare(_Object o);
     void print();
     char *toChars();
-    char *toHChars();
-    const(char)* toHChars2();
+    final char *toHChars();
+    final const(char)* toHChars2();
     int dyncast();
 
     static Identifier generateId(const(char)* prefix);

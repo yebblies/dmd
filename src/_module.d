@@ -38,7 +38,7 @@ class Package : ScopeDsymbol
 };
 
 extern(C++)
-class Module : Package
+final class Module : Package
 {
     static Module rootModule;
     static DsymbolTable modules;       // symbol table of all modules
@@ -174,7 +174,7 @@ static if (IN_GCC) {
 
 
 extern(C++)
-class ModuleDeclaration
+final class ModuleDeclaration
 {
     Identifier id;
     Identifiers packages;            // array of Identifier's representing packages

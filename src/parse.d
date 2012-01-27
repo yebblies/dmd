@@ -43,7 +43,7 @@ enum : ParseStatementFlags
 };
 
 
-class Parser : Lexer
+final class Parser : Lexer
 {
     ModuleDeclaration md;
     LINK linkage;

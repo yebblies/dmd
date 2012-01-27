@@ -1,12 +1,12 @@
 
 module root.lstring;
+extern(C++):
 
 import root._dchar;
 
 static Lstring LSTRING(T, U)(T p, U length) { return Lstring(length, p); }
 static Lstring LSTRING_EMPTY() { return LSTRING("".dup.ptr, 0); }
 
-extern(C++)
 struct Lstring
 {
    uint length;
@@ -14,7 +14,7 @@ struct Lstring
     // Disable warning about nonstandard extension
     _dchar* string;
 
-    extern __gshared static Lstring zero;        // 0 length string
+    static extern Lstring zero;        // 0 length string
 
     // No constructors because we want to be able to statically
     // initialize Lstring's, and Lstrings are of variable size.

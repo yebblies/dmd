@@ -21,7 +21,7 @@ import hdrgen;
 import arraytypes;
 import mars;
 
-class Import : Dsymbol
+final class Import : Dsymbol
 {
     Identifiers packages;      // array of Identifier's representing packages
     Identifier id;             // module Identifier

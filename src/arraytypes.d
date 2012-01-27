@@ -72,11 +72,11 @@ alias ArrayBase!GotoCaseStatement GotoCaseStatements;
 
 alias ArrayBase!TemplateInstance TemplateInstances;
 
-alias ArrayBasex!char Strings;
+alias ArrayBase!(char*) Strings;
 
-alias ArrayBasex!void Voids;
+alias ArrayBase!(void*) Voids;
 
-alias ArrayBasex!block Blocks;
+alias ArrayBase!(block*) Blocks;
 
-alias ArrayBasex!Symbol Symbols;
+alias ArrayBase!(Symbol*) Symbols;
 

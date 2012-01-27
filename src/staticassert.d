@@ -18,7 +18,7 @@ import mars;
 import root.root;
 import _scope;
 
-class StaticAssert : Dsymbol
+final class StaticAssert : Dsymbol
 {
     Expression exp;
     Expression msg;

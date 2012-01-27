@@ -46,7 +46,7 @@ class Initializer : _Object
     ExpInitializer  isExpInitializer()  { return null; }
 };
 
-class VoidInitializer : Initializer
+final class VoidInitializer : Initializer
 {
     Type type;         // type that this will initialize to
 
@@ -61,7 +61,7 @@ class VoidInitializer : Initializer
     VoidInitializer isVoidInitializer() { return this; }
 };
 
-class StructInitializer : Initializer
+final class StructInitializer : Initializer
 {
     Identifiers field;  // of Identifier 's
     Initializers value; // parallel array of Initializer 's
@@ -81,7 +81,7 @@ class StructInitializer : Initializer
     StructInitializer isStructInitializer() { return this; }
 };
 
-class ArrayInitializer : Initializer
+final class ArrayInitializer : Initializer
 {
     Expressions index;  // indices
     Initializers value; // of Initializer 's
@@ -105,7 +105,7 @@ class ArrayInitializer : Initializer
     ArrayInitializer isArrayInitializer() { return this; }
 };
 
-class ExpInitializer : Initializer
+final class ExpInitializer : Initializer
 {
     Expression exp;
 

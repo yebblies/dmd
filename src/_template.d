@@ -21,6 +21,7 @@ import hdrgen;
 import declaration;
 import mtype;
 import root.aav;
+import fakebackend;
 
 extern(C++)
 class Tuple : _Object
@@ -71,20 +72,20 @@ class TemplateDeclaration : ScopeDsymbol
     void toJsonBuffer(OutBuffer buf);
 //    void toDocBuffer(OutBuffer buf);
 
-    MATCH matchWithInstance(TemplateInstance ti, Objects atypes, Expressions fargs, int flag);
-    MATCH leastAsSpecialized(TemplateDeclaration td2, Expressions fargs);
+    final MATCH matchWithInstance(TemplateInstance ti, Objects atypes, Expressions fargs, int flag);
+    final MATCH leastAsSpecialized(TemplateDeclaration td2, Expressions fargs);
 
-    MATCH deduceFunctionTemplateMatch(Scope *sc, Loc loc, Objects targsi, Expression ethis, Expressions fargs, Objects dedargs);
-    FuncDeclaration deduceFunctionTemplate(Scope *sc, Loc loc, Objects targsi, Expression ethis, Expressions fargs, int flags = 0);
-    void declareParameter(Scope *sc, TemplateParameter tp, _Object o);
-    FuncDeclaration doHeaderInstantiation(Scope *sc, Objects tdargs, Expressions fargs);
+    final MATCH deduceFunctionTemplateMatch(Scope *sc, Loc loc, Objects targsi, Expression ethis, Expressions fargs, Objects dedargs);
+    final FuncDeclaration deduceFunctionTemplate(Scope *sc, Loc loc, Objects targsi, Expression ethis, Expressions fargs, int flags = 0);
+    final void declareParameter(Scope *sc, TemplateParameter tp, _Object o);
+    final FuncDeclaration doHeaderInstantiation(Scope *sc, Objects tdargs, Expressions fargs);
 
     TemplateDeclaration isTemplateDeclaration() { return this; }
 
-    TemplateTupleParameter isVariadic();
+    final TemplateTupleParameter isVariadic();
     int isOverloadable();
 
-    void makeParamNamesVisibleInConstraint(Scope *paramscope, Expressions fargs);
+    final void makeParamNamesVisibleInConstraint(Scope *paramscope, Expressions fargs);
 };
 
 extern(C++)
@@ -147,7 +148,7 @@ class TemplateTypeParameter : TemplateParameter
     Type specType;     // type parameter: if !=NULL, this is the type specialization
     Type defaultType;
 
-    static Type tdummy;
+    static extern Type tdummy;
 
     this(Loc loc, Identifier ident, Type specType, Type defaultType);
 
@@ -166,7 +167,7 @@ class TemplateTypeParameter : TemplateParameter
 
 //static if (DMDV2) {
 extern(C++)
-class TemplateThisParameter : TemplateTypeParameter
+final class TemplateThisParameter : TemplateTypeParameter
 {
     /* Syntax:
      *  this ident : specType = defaultType
@@ -183,7 +184,7 @@ class TemplateThisParameter : TemplateTypeParameter
 //}
 
 extern(C++)
-class TemplateValueParameter : TemplateParameter
+final class TemplateValueParameter : TemplateParameter
 {
     /* Syntax:
      *  valType ident : specValue = defaultValue
@@ -193,7 +194,7 @@ class TemplateValueParameter : TemplateParameter
     Expression specValue;
     Expression defaultValue;
 
-    static AA *edummies;
+    static extern AA *edummies;
 
     this(Loc loc, Identifier ident, Type valType, Expression specValue, Expression defaultValue);
 
@@ -211,7 +212,7 @@ class TemplateValueParameter : TemplateParameter
 };
 
 extern(C++)
-class TemplateAliasParameter : TemplateParameter
+final class TemplateAliasParameter : TemplateParameter
 {
     /* Syntax:
      *  specType ident : specAlias = defaultAlias
@@ -221,7 +222,7 @@ class TemplateAliasParameter : TemplateParameter
     _Object specAlias;
     _Object defaultAlias;
 
-    static Dsymbol sdummy;
+    static extern Dsymbol sdummy;
 
     this(Loc loc, Identifier ident, Type specType, _Object specAlias, _Object defaultAlias);
 
@@ -239,7 +240,7 @@ class TemplateAliasParameter : TemplateParameter
 };
 
 extern(C++)
-class TemplateTupleParameter : TemplateParameter
+final class TemplateTupleParameter : TemplateParameter
 {
     /* Syntax:
      *  ident ...
@@ -311,24 +312,27 @@ static if (IN_GCC) {
     Dsymbol toAlias();                 // resolve real symbol
     const(char) *kind();
     int oneMember(Dsymbol *ps);
-    int needsTypeInference(Scope *sc);
+    final int needsTypeInference(Scope *sc);
     char *toChars();
     char *mangle();
-    void printInstantiationTrace();
+    final void printInstantiationTrace();
 
     void toObjFile(int multiobj);                       // compile to .obj file
 
     // Internal
     static void semanticTiargs(Loc loc, Scope *sc, Objects tiargs, int flags);
-    void semanticTiargs(Scope sc);
-    TemplateDeclaration findTemplateDeclaration(Scope *sc);
-    TemplateDeclaration findBestMatch(Scope *sc, Expressions fargs);
-    void declareParameters(Scope *sc);
-    int hasNestedArgs(Objects tiargs);
-    Identifier genIdent(Objects args);
+    final void semanticTiargs(Scope sc);
+    final TemplateDeclaration findTemplateDeclaration(Scope *sc);
+    final TemplateDeclaration findBestMatch(Scope *sc, Expressions fargs);
+    final void declareParameters(Scope *sc);
+    final int hasNestedArgs(Objects tiargs);
+    final Identifier genIdent(Objects args);
 
     TemplateInstance isTemplateInstance() { return this; }
     AliasDeclaration isAliasDeclaration();
+    Symbol *csym;
+    Symbol *toSymbol();
+    type *toCtype();
 };
 
 extern(C++)

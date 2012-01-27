@@ -22,7 +22,7 @@ import _scope;
 import hdrgen;
 import fakebackend;
 
-class EnumDeclaration : ScopeDsymbol
+final class EnumDeclaration : ScopeDsymbol
 {
     /* enum ident : memtype { ... }
      */

@@ -41,8 +41,8 @@ extern(C++)
  * Root of our class library.
  */
 
-alias ArrayBase!File Files;
-alias ArrayBase!(char*) Strings;
+alias ArrayBase!(File*) Files;
+//alias ArrayBase!(char*) Strings;
 
 extern(C++)
 class _Object
@@ -130,14 +130,14 @@ final:
     static const(char)* replaceName(const(char)* path, const(char)* name);
 
     static char *combine(const(char)* path, const(char)* name);
-    static Strings *splitPath(const(char)* path);
+    static ArrayBase!(char*) *splitPath(const(char)* path);
     static FileName defaultExt(const(char)* name, const(char)* ext);
     static FileName forceExt(const(char)* name, const(char)* ext);
     int equalsExt(const(char)* ext);
 
     void CopyTo(FileName to);
-    static char *searchPath(Strings *path, const(char)* name, int cwd);
-    static char *safeSearchPath(Strings *path, const(char)* name);
+    static char *searchPath(ArrayBase!(char*) *path, const(char)* name, int cwd);
+    static char *safeSearchPath(ArrayBase!(char*) *path, const(char)* name);
     static int exists(const(char)* name);
     static void ensurePathExists(const(char)* path);
     static char *canonicalName(const(char)* name);
