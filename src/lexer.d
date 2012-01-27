@@ -248,7 +248,7 @@ static if (IN_GCC) {
     real_t float80value; // can't use this in a union!
 }
 
-    static const(char)* tochars[TOKMAX];
+    static extern const(char)* tochars[TOKMAX];
     static void* __new(size_t sz);
 
     int isKeyword();
