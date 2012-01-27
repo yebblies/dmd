@@ -28,7 +28,7 @@ class Tuple : _Object
 {
     Objects objects;
 
-    int dyncast() { return DYNCAST_TUPLE; } // kludge for template.isType()
+    int dyncast(); // kludge for template.isType()
 };
 
 
@@ -80,7 +80,7 @@ class TemplateDeclaration : ScopeDsymbol
     final void declareParameter(Scope *sc, TemplateParameter tp, _Object o);
     final FuncDeclaration doHeaderInstantiation(Scope *sc, Objects tdargs, Expressions fargs);
 
-    TemplateDeclaration isTemplateDeclaration() { return this; }
+    TemplateDeclaration isTemplateDeclaration();
 
     final TemplateTupleParameter isVariadic();
     int isOverloadable();
@@ -328,7 +328,7 @@ static if (IN_GCC) {
     final int hasNestedArgs(Objects tiargs);
     final Identifier genIdent(Objects args);
 
-    TemplateInstance isTemplateInstance() { return this; }
+    TemplateInstance isTemplateInstance();
     AliasDeclaration isAliasDeclaration();
     Symbol *csym;
     Symbol *toSymbol();
@@ -355,7 +355,7 @@ class TemplateMixin : TemplateInstance
 
     void toObjFile(int multiobj);                       // compile to .obj file
 
-    TemplateMixin isTemplateMixin() { return this; }
+    TemplateMixin isTemplateMixin();
 };
 
 Expression isExpression(_Object o);

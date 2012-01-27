@@ -199,7 +199,7 @@ class Type : _Object
     this(TY ty);
     Type syntaxCopy();
     int equals(_Object o);
-    int dyncast() { return DYNCAST_TYPE; } // kludge for template.isType()
+    int dyncast(); // kludge for template.isType()
     final int covariant(Type t);
     char *toChars();
     static char needThisPrefix();

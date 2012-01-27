@@ -94,7 +94,7 @@ class Dsymbol : _Object
     final Dsymbol toParent2();
     final TemplateInstance inTemplateInstance();
 
-    int dyncast() { return DYNCAST_DSYMBOL; }   // kludge for template.isSymbol()
+    int dyncast();   // kludge for template.isSymbol()
 
     static Dsymbols arraySyntaxCopy(Dsymbols a);
 
@@ -141,8 +141,8 @@ class Dsymbol : _Object
     static int oneMembers(Dsymbols members, Dsymbol *ps, Identifier ident = null);
     int hasPointers();
     bool hasStaticCtorOrDtor();
-    void addLocalClass(ClassDeclarations ) { }
-    void checkCtorConstInit() { }
+    void addLocalClass(ClassDeclarations );
+    void checkCtorConstInit();
 
     void addComment(ubyte* comment);
     void emitComment(Scope *sc);
@@ -160,47 +160,47 @@ class Dsymbol : _Object
     final Symbol *toSymbolX(const(char)* prefix, int sclass, TYPE *t, const(char)* suffix);     // helper
 
     // Eliminate need for dynamic_cast
-    Package isPackage() { return null; }
-    Module isModule() { return null; }
-    EnumMember isEnumMember() { return null; }
-    TemplateDeclaration isTemplateDeclaration() { return null; }
-    TemplateInstance isTemplateInstance() { return null; }
-    TemplateMixin isTemplateMixin() { return null; }
-    Declaration isDeclaration() { return null; }
-    ThisDeclaration isThisDeclaration() { return null; }
-    TupleDeclaration isTupleDeclaration() { return null; }
-    TypedefDeclaration isTypedefDeclaration() { return null; }
-    AliasDeclaration isAliasDeclaration() { return null; }
-    AggregateDeclaration isAggregateDeclaration() { return null; }
-    FuncDeclaration isFuncDeclaration() { return null; }
-    FuncAliasDeclaration isFuncAliasDeclaration() { return null; }
-    FuncLiteralDeclaration isFuncLiteralDeclaration() { return null; }
-    CtorDeclaration isCtorDeclaration() { return null; }
-    PostBlitDeclaration isPostBlitDeclaration() { return null; }
-    DtorDeclaration isDtorDeclaration() { return null; }
-    StaticCtorDeclaration isStaticCtorDeclaration() { return null; }
-    StaticDtorDeclaration isStaticDtorDeclaration() { return null; }
-    SharedStaticCtorDeclaration isSharedStaticCtorDeclaration() { return null; }
-    SharedStaticDtorDeclaration isSharedStaticDtorDeclaration() { return null; }
-    InvariantDeclaration isInvariantDeclaration() { return null; }
-    UnitTestDeclaration isUnitTestDeclaration() { return null; }
-    NewDeclaration isNewDeclaration() { return null; }
-    VarDeclaration isVarDeclaration() { return null; }
-    ClassDeclaration isClassDeclaration() { return null; }
-    StructDeclaration isStructDeclaration() { return null; }
-    UnionDeclaration isUnionDeclaration() { return null; }
-    InterfaceDeclaration isInterfaceDeclaration() { return null; }
-    ScopeDsymbol isScopeDsymbol() { return null; }
-    WithScopeSymbol isWithScopeSymbol() { return null; }
-    ArrayScopeSymbol isArrayScopeSymbol() { return null; }
-    Import isImport() { return null; }
-    EnumDeclaration isEnumDeclaration() { return null; }
-    DeleteDeclaration isDeleteDeclaration() { return null; }
-    SymbolDeclaration isSymbolDeclaration() { return null; }
-    AttribDeclaration isAttribDeclaration() { return null; }
-    OverloadSet isOverloadSet() { return null; }
+    Package isPackage();
+    Module isModule();
+    EnumMember isEnumMember();
+    TemplateDeclaration isTemplateDeclaration();
+    TemplateInstance isTemplateInstance();
+    TemplateMixin isTemplateMixin();
+    Declaration isDeclaration();
+    ThisDeclaration isThisDeclaration();
+    TupleDeclaration isTupleDeclaration();
+    TypedefDeclaration isTypedefDeclaration();
+    AliasDeclaration isAliasDeclaration();
+    AggregateDeclaration isAggregateDeclaration();
+    FuncDeclaration isFuncDeclaration();
+    FuncAliasDeclaration isFuncAliasDeclaration();
+    FuncLiteralDeclaration isFuncLiteralDeclaration();
+    CtorDeclaration isCtorDeclaration();
+    PostBlitDeclaration isPostBlitDeclaration();
+    DtorDeclaration isDtorDeclaration();
+    StaticCtorDeclaration isStaticCtorDeclaration();
+    StaticDtorDeclaration isStaticDtorDeclaration();
+    SharedStaticCtorDeclaration isSharedStaticCtorDeclaration();
+    SharedStaticDtorDeclaration isSharedStaticDtorDeclaration();
+    InvariantDeclaration isInvariantDeclaration();
+    UnitTestDeclaration isUnitTestDeclaration();
+    NewDeclaration isNewDeclaration();
+    VarDeclaration isVarDeclaration();
+    ClassDeclaration isClassDeclaration();
+    StructDeclaration isStructDeclaration();
+    UnionDeclaration isUnionDeclaration();
+    InterfaceDeclaration isInterfaceDeclaration();
+    ScopeDsymbol isScopeDsymbol();
+    WithScopeSymbol isWithScopeSymbol();
+    ArrayScopeSymbol isArrayScopeSymbol();
+    Import isImport();
+    EnumDeclaration isEnumDeclaration();
+    DeleteDeclaration isDeleteDeclaration();
+    SymbolDeclaration isSymbolDeclaration();
+    AttribDeclaration isAttribDeclaration();
+    OverloadSet isOverloadSet();
 static if (TARGET_NET) {
-    PragmaScope isPragmaScope() { return null; }
+    PragmaScope isPragmaScope();
 }
 };
 
@@ -239,7 +239,7 @@ class ScopeDsymbol : Dsymbol
     alias int function(void *ctx, size_t idx, Dsymbol s) ForeachDg;
     static int _foreach(Dsymbols members, ForeachDg dg, void *ctx, size_t *pn=null);
 
-    ScopeDsymbol isScopeDsymbol() { return this; }
+    ScopeDsymbol isScopeDsymbol();
 };
 
 // With statement scope
@@ -252,7 +252,7 @@ class WithScopeSymbol : ScopeDsymbol
     this(WithStatement withstate);
     Dsymbol search(Loc loc, Identifier ident, int flags);
 
-    WithScopeSymbol isWithScopeSymbol() { return this; }
+    WithScopeSymbol isWithScopeSymbol();
 };
 
 // Array Index/Slice scope
@@ -270,7 +270,7 @@ class ArrayScopeSymbol : ScopeDsymbol
     this(Scope *sc, TupleDeclaration td);
     Dsymbol search(Loc loc, Identifier ident, int flags);
 
-    ArrayScopeSymbol isArrayScopeSymbol() { return this; }
+    ArrayScopeSymbol isArrayScopeSymbol();
 };
 
 // Overload Sets
@@ -283,7 +283,7 @@ final class OverloadSet : Dsymbol
 
     this();
     void push(Dsymbol s);
-    OverloadSet isOverloadSet() { return this; }
+    OverloadSet isOverloadSet();
     const(char)* kind();
 };
 //}

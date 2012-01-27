@@ -32,9 +32,9 @@ class Package : ScopeDsymbol
 
     static DsymbolTable resolve(Identifiers packages, Dsymbol *pparent, Package *ppkg);
 
-    Package isPackage() { return this; }
+    Package isPackage();
 
-    void semantic(Scope *sc) { }
+    void semantic(Scope *sc);
 };
 
 extern(C++)
@@ -169,7 +169,7 @@ static if (IN_GCC) {
     Symbol *toSymbol();
     void genmoduleinfo();
 
-    Module isModule() { return this; }
+    Module isModule();
 };
 
 

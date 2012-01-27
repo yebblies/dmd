@@ -49,6 +49,6 @@ final class Import : Dsymbol
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
     char *toChars();
 
-    Import isImport() { return this; }
+    Import isImport();
 };
 

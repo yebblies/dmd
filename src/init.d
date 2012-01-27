@@ -40,10 +40,10 @@ class Initializer : _Object
 
     dt_t *toDt();
 
-    VoidInitializer isVoidInitializer() { return null; }
-    StructInitializer  isStructInitializer()  { return null; }
-    ArrayInitializer  isArrayInitializer()  { return null; }
-    ExpInitializer  isExpInitializer()  { return null; }
+    VoidInitializer isVoidInitializer();
+    StructInitializer  isStructInitializer();
+    ArrayInitializer  isArrayInitializer();
+    ExpInitializer  isExpInitializer();
 };
 
 final class VoidInitializer : Initializer
@@ -58,7 +58,7 @@ final class VoidInitializer : Initializer
 
     dt_t *toDt();
 
-    VoidInitializer isVoidInitializer() { return this; }
+    VoidInitializer isVoidInitializer();
 };
 
 final class StructInitializer : Initializer
@@ -78,7 +78,7 @@ final class StructInitializer : Initializer
 
     dt_t *toDt();
 
-    StructInitializer isStructInitializer() { return this; }
+    StructInitializer isStructInitializer();
 };
 
 final class ArrayInitializer : Initializer
@@ -102,7 +102,7 @@ final class ArrayInitializer : Initializer
     dt_t *toDt();
     dt_t *toDtBit();    // for bit arrays
 
-    ArrayInitializer isArrayInitializer() { return this; }
+    ArrayInitializer isArrayInitializer();
 };
 
 final class ExpInitializer : Initializer
@@ -118,6 +118,6 @@ final class ExpInitializer : Initializer
 
     dt_t *toDt();
 
-    ExpInitializer isExpInitializer() { return this; }
+    ExpInitializer isExpInitializer();
 };
 

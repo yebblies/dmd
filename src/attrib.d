@@ -53,7 +53,7 @@ class AttribDeclaration : Dsymbol
     final void addLocalClass(ClassDeclarations );
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
     void toJsonBuffer(OutBuffer buf);
-    AttribDeclaration isAttribDeclaration() { return this; }
+    AttribDeclaration isAttribDeclaration();
 
     void toObjFile(int multiobj);                       // compile to .obj file
     int cvMember(ubyte *p);

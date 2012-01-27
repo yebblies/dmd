@@ -61,7 +61,7 @@ class Statement : _Object
     final void warning(const(char)* format, ...);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
     int incontract;
-    ScopeStatement isScopeStatement() { return null; }
+    ScopeStatement isScopeStatement();
     Statement semantic(Scope *sc);
     final Statement semanticScope(Scope *sc, Statement sbreak, Statement scontinue);
     final Statement semanticNoScope(Scope *sc);
@@ -85,13 +85,13 @@ class Statement : _Object
     void toIR(IRState *irs);
 
     // Avoid dynamic_cast
-    ExpStatement isExpStatement() { return null; }
-    CompoundStatement isCompoundStatement() { return null; }
-    ReturnStatement isReturnStatement() { return null; }
-    IfStatement isIfStatement() { return null; }
-    CaseStatement isCaseStatement() { return null; }
-    DefaultStatement isDefaultStatement() { return null; }
-    LabelStatement isLabelStatement() { return null; }
+    ExpStatement isExpStatement();
+    CompoundStatement isCompoundStatement();
+    ReturnStatement isReturnStatement();
+    IfStatement isIfStatement();
+    CaseStatement isCaseStatement();
+    DefaultStatement isDefaultStatement();
+    LabelStatement isLabelStatement();
 };
 
 class PeelStatement : Statement
@@ -123,7 +123,7 @@ class ExpStatement : Statement
 
     void toIR(IRState *irs);
 
-    ExpStatement isExpStatement() { return this; }
+    ExpStatement isExpStatement();
 };
 
 class DtorExpStatement : ExpStatement
@@ -176,7 +176,7 @@ class CompoundStatement : Statement
 
     void toIR(IRState *irs);
 
-    CompoundStatement isCompoundStatement() { return this; }
+    CompoundStatement isCompoundStatement();
 };
 
 class CompoundDeclarationStatement : CompoundStatement
@@ -219,7 +219,7 @@ class ScopeStatement : Statement
     this(Loc loc, Statement s);
     Statement syntaxCopy();
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
-    ScopeStatement isScopeStatement() { return this; }
+    ScopeStatement isScopeStatement();
     Statement semantic(Scope *sc);
     int hasBreak();
     int hasContinue();
@@ -384,7 +384,7 @@ class IfStatement : Statement
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
     int usesEH();
     int blockExit(bool mustNotThrow);
-    IfStatement isIfStatement() { return this; }
+    IfStatement isIfStatement();
 
     int inlineCost(InlineCostState *ics);
     Expression doInline(InlineDoState *ids);
@@ -483,7 +483,7 @@ class CaseStatement : Statement
     int comeFrom();
     Expression interpret(InterState *istate);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
-    CaseStatement isCaseStatement() { return this; }
+    CaseStatement isCaseStatement();
 
     Statement inlineScan(InlineScanState *iss);
 
@@ -521,7 +521,7 @@ static if (IN_GCC) {
     int comeFrom();
     Expression interpret(InterState *istate);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
-    DefaultStatement isDefaultStatement() { return this; }
+    DefaultStatement isDefaultStatement();
 
     Statement inlineScan(InlineScanState *iss);
 
@@ -584,7 +584,7 @@ class ReturnStatement : Statement
 
     void toIR(IRState *irs);
 
-    ReturnStatement isReturnStatement() { return this; }
+    ReturnStatement isReturnStatement();
 };
 
 class BreakStatement : Statement
@@ -806,7 +806,7 @@ class LabelStatement : Statement
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 
     Statement inlineScan(InlineScanState *iss);
-    LabelStatement isLabelStatement() { return this; }
+    LabelStatement isLabelStatement();
 
     void toIR(IRState *irs);
 };
