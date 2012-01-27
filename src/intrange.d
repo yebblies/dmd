@@ -45,10 +45,10 @@ struct SignExtendedNumber
     /// Get the minimum or maximum value of a sign-extended number.
     static SignExtendedNumber extreme(bool minimum);
     static SignExtendedNumber max();
-    static SignExtendedNumber min() { return SignExtendedNumber(0, true); }
+    static SignExtendedNumber min();
 
     /// Check if the sign-extended number is minimum or zero.
-    bool isMinimum() const { return negative && value == 0; }
+    bool isMinimum() const;
 
     /// Compare two sign-extended number.
     //bool operator==(const ref SignExtendedNumber) const;
@@ -92,11 +92,9 @@ struct IntRange
     //this() {}
 
     /// Create a range consisting of a single number.
-    this(const ref SignExtendedNumber a)
-        { imin = a; imax = a; }
+    this(const ref SignExtendedNumber a);
     /// Create a range with the lower and upper bounds.
-    this(const ref SignExtendedNumber lower, const ref SignExtendedNumber upper) 
-        { imin = lower; imax = upper; }
+    this(const ref SignExtendedNumber lower, const ref SignExtendedNumber upper);
     
     /// Create the tightest range containing all valid integers in the specified
     /// type. 
