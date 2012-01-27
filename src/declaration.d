@@ -124,28 +124,28 @@ class Declaration : Dsymbol
     void toDocBuffer(OutBuffer buf);
 
     char *mangle();
-    int isStatic() { return storage_class & STCstatic; }
-    int isDelete();
+    final int isStatic();
+    final int isDelete();
     int isDataseg();
     int isThreadlocal();
     int isCodeseg();
-    int isCtorinit()     { return storage_class & STCctorinit; }
-    int isFinal()        { return storage_class & STCfinal; }
-    final int isAbstract()     { return storage_class & STCabstract; }
-    int isConst()        { return storage_class & STCconst; }
-    int isImmutable()    { return storage_class & STCimmutable; }
-    int isWild()         { return storage_class & STCwild; }
-    int isAuto()         { return storage_class & STCauto; }
-    int isScope()        { return storage_class & STCscope; }
-    int isSynchronized() { return storage_class & STCsynchronized; }
-    int isParameter()    { return storage_class & STCparameter; }
-    int isDeprecated()   { return storage_class & STCdeprecated; }
-    int isOverride()     { return storage_class & STCoverride; }
-    StorageClass isResult()       { return storage_class & STCresult; }
+    final int isCtorinit();
+    abstract int isFinal();
+    final int isAbstract();
+    final int isConst();
+    final int isImmutable();
+    final int isWild();
+    final int isAuto();
+    final int isScope();
+    final int isSynchronized();
+    final int isParameter();
+    final int isDeprecated();
+    final int isOverride();
+    final StorageClass isResult();
 
-    int isIn()    { return storage_class & STCin; }
-    int isOut()   { return storage_class & STCout; }
-    int isRef()   { return storage_class & STCref; }
+    final int isIn();
+    final int isOut();
+    final int isRef();
 
     final PROT prot();
 

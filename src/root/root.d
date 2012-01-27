@@ -239,11 +239,7 @@ final:
     /* Set buffer
      */
 
-    void setbuffer(void *buffer, uint len)
-    {
-        this.buffer = cast(ubyte *)buffer;
-        this.len = len;
-    }
+    void setbuffer(void *buffer, uint len);
 
     void checkoffset(size_t offset, size_t nbytes);
 
@@ -274,12 +270,12 @@ final:
     void prependstring(const(char)* string);
     void writenl();                     // write newline
     void writeByte(uint b);
-    void writebyte(uint b) { writeByte(b); }
+    void writebyte(uint b);
     void writeUTF8(uint b);
     void write_dchar(uint b);
     void prependbyte(uint b);
     void writeword(uint w);
-    void writewchar(uint w) { writeword(w); }
+    void writewchar(uint w);
     void writeUTF16(uint w);
     void write4(uint w);
     void write(OutBuffer buf);
