@@ -813,8 +813,8 @@ Ldone:
     /* Save scope for possible later use (if we need the
      * function internals)
      */
-    scope = new Scope(*sc);
-    scope->setNoFree();
+    _scope = new Scope(*sc);
+    _scope->setNoFree();
     return;
 
 Lassignerr:
@@ -1854,8 +1854,8 @@ Statement *FuncDeclaration::mergeFrequire(Statement *sf)
          */
         if (fdv->fdrequire && fdv->fdrequire->semanticRun != PASSsemantic3done)
         {
-            assert(fdv->scope);
-            Scope *sc = fdv->scope->push();
+            assert(fdv->_scope);
+            Scope *sc = fdv->_scope->push();
             sc->stc &= ~STCoverride;
             fdv->semantic3(sc);
             sc->pop();
@@ -1909,8 +1909,8 @@ Statement *FuncDeclaration::mergeFensure(Statement *sf)
          */
         if (fdv->fdensure && fdv->fdensure->semanticRun != PASSsemantic3done)
         {
-            assert(fdv->scope);
-            Scope *sc = fdv->scope->push();
+            assert(fdv->_scope);
+            Scope *sc = fdv->_scope->push();
             sc->stc &= ~STCoverride;
             fdv->semantic3(sc);
             sc->pop();

@@ -653,7 +653,7 @@ struct FuncExp : Expression
     TemplateDeclaration *td;
     enum TOK tok;
     Type *tded;
-    Scope *scope;
+    Scope *_scope;
 
     FuncExp(Loc loc, FuncLiteralDeclaration *fd, TemplateDeclaration *td = NULL);
     Expression *syntaxCopy();

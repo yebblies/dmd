@@ -606,8 +606,8 @@ Dsymbol *AliasDeclaration::toAlias()
         aliassym = new AliasDeclaration(loc, ident, Type::terror);
         type = Type::terror;
     }
-    else if (!aliassym && scope)
-        semantic(scope);
+    else if (!aliassym && _scope)
+        semantic(_scope);
     Dsymbol *s = aliassym ? aliassym->toAlias() : this;
     return s;
 }
@@ -737,9 +737,9 @@ void VarDeclaration::semantic(Scope *sc)
 //      return;
 //    sem = SemanticIn;
 
-    if (scope)
-    {   sc = scope;
-        scope = NULL;
+    if (_scope)
+    {   sc = _scope;
+        _scope = NULL;
     }
 
     /* Pick up storage classes from context, but skip synchronized
@@ -1499,8 +1499,8 @@ Lnomatch:
 #if DMDV2
                     /* Save scope for later use, to try again
                      */
-                    scope = new Scope(*sc);
-                    scope->setNoFree();
+                    _scope = new Scope(*sc);
+                    _scope->setNoFree();
 #endif
                 }
                 else if (ei)
@@ -1525,8 +1525,8 @@ Lnomatch:
 #if DMDV2
                             /* Save scope for later use, to try again
                              */
-                            scope = new Scope(*sc);
-                            scope->setNoFree();
+                            _scope = new Scope(*sc);
+                            _scope->setNoFree();
 #endif
                             break;
                     }

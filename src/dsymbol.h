@@ -118,7 +118,7 @@ struct Dsymbol : _Object
     Symbol *isym;               // import version of csym
     unsigned char *comment;     // documentation comment for this Dsymbol
     Loc loc;                    // where defined
-    Scope *scope;               // !=NULL means context to use for semantic()
+    Scope *_scope;               // !=NULL means context to use for semantic()
 
     Dsymbol();
     Dsymbol(Identifier *);
@@ -276,7 +276,7 @@ struct ScopeDsymbol : Dsymbol
     static Dsymbol *getNth(Dsymbols *members, size_t nth, size_t *pn = NULL);
 
     typedef int (*ForeachDg)(void *ctx, size_t idx, Dsymbol *s);
-    static int foreach(Dsymbols *members, ForeachDg dg, void *ctx, size_t *pn=NULL);
+    static int _foreach(Dsymbols *members, ForeachDg dg, void *ctx, size_t *pn=NULL);
 
     ScopeDsymbol *isScopeDsymbol() { return this; }
 };

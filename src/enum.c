@@ -65,7 +65,7 @@ void EnumDeclaration::semantic0(Scope *sc)
      * to compile it if it doesn't depend on anything else.
      */
 
-    if (isdone || !scope)
+    if (isdone || !_scope)
         return;
     if (!isAnonymous() || memtype)
         return;
@@ -96,17 +96,17 @@ void EnumDeclaration::semantic(Scope *sc)
     }
 
     if (symtab)                 // if already done
-    {   if (isdone || !scope)
+    {   if (isdone || !_scope)
             return;             // semantic() already completed
     }
     else
         symtab = new DsymbolTable();
 
     Scope *scx = NULL;
-    if (scope)
-    {   sc = scope;
-        scx = scope;            // save so we don't make redundant copies
-        scope = NULL;
+    if (_scope)
+    {   sc = _scope;
+        scx = _scope;            // save so we don't make redundant copies
+        _scope = NULL;
     }
 
     unsigned dprogress_save = Module::dprogress;
@@ -131,11 +131,11 @@ void EnumDeclaration::semantic(Scope *sc)
          */
         if (memtype->ty == Tenum)
         {   EnumDeclaration *sym = (EnumDeclaration *)memtype->toDsymbol(sc);
-            if (!sym->memtype || !sym->members || !sym->symtab || sym->scope)
+            if (!sym->memtype || !sym->members || !sym->symtab || sym->_scope)
             {   // memtype is forward referenced, so try again later
-                scope = scx ? scx : new Scope(*sc);
-                scope->setNoFree();
-                scope->module->addDeferredSemantic(this);
+                _scope = scx ? scx : new Scope(*sc);
+                _scope->setNoFree();
+                _scope->module->addDeferredSemantic(this);
                 Module::dprogress = dprogress_save;
                 //printf("\tdeferring %s\n", toChars());
                 return;
@@ -358,11 +358,11 @@ int EnumDeclaration::isDeprecated()
 Dsymbol *EnumDeclaration::search(Loc loc, Identifier *ident, int flags)
 {
     //printf("%s.EnumDeclaration::search('%s')\n", toChars(), ident->toChars());
-    if (scope)
+    if (_scope)
         // Try one last time to resolve this enum
-        semantic(scope);
+        semantic(_scope);
 
-    if (!members || !symtab || scope)
+    if (!members || !symtab || _scope)
     {   error("is forward referenced when looking for '%s'", ident->toChars());
         //*(char*)0=0;
         return NULL;

@@ -44,7 +44,7 @@ Dsymbol::Dsymbol()
     this->isym = NULL;
     this->loc = 0;
     this->comment = NULL;
-    this->scope = NULL;
+    this->_scope = NULL;
 }
 
 Dsymbol::Dsymbol(Identifier *ident)
@@ -57,7 +57,7 @@ Dsymbol::Dsymbol(Identifier *ident)
     this->isym = NULL;
     this->loc = 0;
     this->comment = NULL;
-    this->scope = NULL;
+    this->_scope = NULL;
 }
 
 int Dsymbol::equals(_Object *o)
@@ -289,7 +289,7 @@ void Dsymbol::setScope(Scope *sc)
     //printf("Dsymbol::setScope() %p %s\n", this, toChars());
     if (!sc->nofree)
         sc->setNoFree();                // may need it even after semantic() finishes
-    scope = sc;
+    _scope = sc;
 }
 
 void Dsymbol::importAll(Scope *sc)
@@ -1003,7 +1003,7 @@ static int dimDg(void *ctx, size_t n, Dsymbol *)
 size_t ScopeDsymbol::dim(Dsymbols *members)
 {
     size_t n = 0;
-    foreach(members, &dimDg, &n);
+    _foreach(members, &dimDg, &n);
     return n;
 }
 #endif
@@ -1036,7 +1036,7 @@ static int getNthSymbolDg(void *ctx, size_t n, Dsymbol *sym)
 Dsymbol *ScopeDsymbol::getNth(Dsymbols *members, size_t nth, size_t *pn)
 {
     GetNthSymbolCtx ctx = { nth, NULL };
-    int res = foreach(members, &getNthSymbolDg, &ctx);
+    int res = _foreach(members, &getNthSymbolDg, &ctx);
     return res ? ctx.sym : NULL;
 }
 #endif
@@ -1051,7 +1051,7 @@ Dsymbol *ScopeDsymbol::getNth(Dsymbols *members, size_t nth, size_t *pn)
  */
 
 #if DMDV2
-int ScopeDsymbol::foreach(Dsymbols *members, ScopeDsymbol::ForeachDg dg, void *ctx, size_t *pn)
+int ScopeDsymbol::_foreach(Dsymbols *members, ScopeDsymbol::ForeachDg dg, void *ctx, size_t *pn)
 {
     assert(dg);
     if (!members)
@@ -1063,9 +1063,9 @@ int ScopeDsymbol::foreach(Dsymbols *members, ScopeDsymbol::ForeachDg dg, void *c
     {   Dsymbol *s = (*members)[i];
 
         if (AttribDeclaration *a = s->isAttribDeclaration())
-            result = foreach(a->decl, dg, ctx, &n);
+            result = _foreach(a->decl, dg, ctx, &n);
         else if (TemplateMixin *tm = s->isTemplateMixin())
-            result = foreach(tm->members, dg, ctx, &n);
+            result = _foreach(tm->members, dg, ctx, &n);
         else if (s->isTemplateInstance())
             ;
         else

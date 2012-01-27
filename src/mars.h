@@ -254,7 +254,7 @@ struct Global
     Strings *path;        // Array of char*'s which form the import lookup path
     Strings *filePath;    // Array of char*'s which form the file import lookup path
     int structalign;
-    const char *version;
+    const char *_version;
 
     Param params;
     unsigned errors;       // number of errors reported so far

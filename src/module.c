@@ -110,7 +110,7 @@ Module::Module(char *filename, Identifier *ident, int doDocComment, int doHdrGen
 
     macrotable = NULL;
     escapetable = NULL;
-    safe = FALSE;
+    _safe = FALSE;
     doppelganger = 0;
     cov = NULL;
     covb = NULL;
@@ -635,7 +635,7 @@ void Module::parse()
 
     if (md)
     {   this->ident = md->id;
-        this->safe = md->safe;
+        this->_safe = md->_safe;
         dst = Package::resolve(md->packages, &this->parent, NULL);
     }
     else
@@ -675,7 +675,7 @@ void Module::importAll(Scope *prevsc)
 {
     //printf("+Module::importAll(this = %p, '%s'): parent = %p\n", this, toChars(), parent);
 
-    if (scope)
+    if (_scope)
         return;                 // already done
 
     if (isDocFile)
@@ -745,7 +745,7 @@ void Module::semantic()
     // Note that modules get their own scope, from scratch.
     // This is so regardless of where in the syntax a module
     // gets imported, it is unaffected by context.
-    Scope *sc = scope;                  // see if already got one from importAll()
+    Scope *sc = _scope;                  // see if already got one from importAll()
     if (!sc)
     {   printf("test2\n");
         Scope::createGlobal(this);      // create root scope
@@ -796,7 +796,7 @@ void Module::semantic()
         runDeferredSemantic();
     }
 
-    if (!scope)
+    if (!_scope)
     {   sc = sc->pop();
         sc->pop();              // 2 pops because Scope::createGlobal() created 2
     }
@@ -1102,11 +1102,11 @@ int Module::selfImports()
 
 /* =========================== ModuleDeclaration ===================== */
 
-ModuleDeclaration::ModuleDeclaration(Identifiers *packages, Identifier *id, bool safe)
+ModuleDeclaration::ModuleDeclaration(Identifiers *packages, Identifier *id, bool _safe)
 {
     this->packages = packages;
     this->id = id;
-    this->safe = safe;
+    this->_safe = _safe;
 }
 
 char *ModuleDeclaration::toChars()

@@ -261,7 +261,7 @@ void ClassDeclaration::semantic(Scope *sc)
     }
 
     if (!sc)
-        sc = scope;
+        sc = _scope;
     if (!parent && sc->parent && !sc->parent->isModule())
         parent = sc->parent;
 
@@ -273,7 +273,7 @@ void ClassDeclaration::semantic(Scope *sc)
         return;
     }
     if (symtab)
-    {   if (sizeok == 1 || !scope)
+    {   if (sizeok == 1 || !_scope)
         {   //printf("\tsemantic for '%s' is already completed\n", toChars());
             return;             // semantic() already completed
         }
@@ -282,10 +282,10 @@ void ClassDeclaration::semantic(Scope *sc)
         symtab = new DsymbolTable();
 
     Scope *scx = NULL;
-    if (scope)
-    {   sc = scope;
-        scx = scope;            // save so we don't make redundant copies
-        scope = NULL;
+    if (_scope)
+    {   sc = _scope;
+        scx = _scope;            // save so we don't make redundant copies
+        _scope = NULL;
     }
     unsigned dprogress_save = Module::dprogress;
 #ifdef IN_GCC
@@ -366,20 +366,20 @@ void ClassDeclaration::semantic(Scope *sc)
                 }
                 if (!tc->sym->symtab || tc->sym->sizeok == 0)
                 {   // Try to resolve forward reference
-                    if (/*sc->mustsemantic &&*/ tc->sym->scope)
+                    if (/*sc->mustsemantic &&*/ tc->sym->_scope)
                         tc->sym->semantic(NULL);
                 }
-                if (!tc->sym->symtab || tc->sym->scope || tc->sym->sizeok == 0)
+                if (!tc->sym->symtab || tc->sym->_scope || tc->sym->sizeok == 0)
                 {
                     //printf("%s: forward reference of base class %s\n", toChars(), tc->sym->toChars());
                     //error("forward reference of base class %s", baseClass->toChars());
                     // Forward reference of base class, try again later
                     //printf("\ttry later, forward reference of base class %s\n", tc->sym->toChars());
-                    scope = scx ? scx : new Scope(*sc);
-                    scope->setNoFree();
-                    if (tc->sym->scope)
-                        tc->sym->scope->module->addDeferredSemantic(tc->sym);
-                    scope->module->addDeferredSemantic(this);
+                    _scope = scx ? scx : new Scope(*sc);
+                    _scope->setNoFree();
+                    if (tc->sym->_scope)
+                        tc->sym->_scope->module->addDeferredSemantic(tc->sym);
+                    _scope->module->addDeferredSemantic(this);
                     return;
                 }
                 else
@@ -434,21 +434,21 @@ void ClassDeclaration::semantic(Scope *sc)
 
             if (!tc->sym->symtab)
             {   // Try to resolve forward reference
-                if (/*sc->mustsemantic &&*/ tc->sym->scope)
+                if (/*sc->mustsemantic &&*/ tc->sym->_scope)
                     tc->sym->semantic(NULL);
             }
 
             b->base = tc->sym;
-            if (!b->base->symtab || b->base->scope)
+            if (!b->base->symtab || b->base->_scope)
             {
                 //error("forward reference of base class %s", baseClass->toChars());
                 // Forward reference of base, try again later
                 //printf("\ttry later, forward reference of base %s\n", baseClass->toChars());
-                scope = scx ? scx : new Scope(*sc);
-                scope->setNoFree();
-                if (tc->sym->scope)
-                    tc->sym->scope->module->addDeferredSemantic(tc->sym);
-                scope->module->addDeferredSemantic(this);
+                _scope = scx ? scx : new Scope(*sc);
+                _scope->setNoFree();
+                if (tc->sym->_scope)
+                    tc->sym->_scope->module->addDeferredSemantic(tc->sym);
+                _scope->module->addDeferredSemantic(this);
                 return;
             }
         }
@@ -663,9 +663,9 @@ void ClassDeclaration::semantic(Scope *sc)
 
         sc = sc->pop();
 
-        scope = scx ? scx : new Scope(*sc);
-        scope->setNoFree();
-        scope->module->addDeferredSemantic(this);
+        _scope = scx ? scx : new Scope(*sc);
+        _scope->setNoFree();
+        _scope->module->addDeferredSemantic(this);
 
         Module::dprogress = dprogress_save;
 
@@ -889,8 +889,8 @@ Dsymbol *ClassDeclaration::search(Loc loc, Identifier *ident, int flags)
     Dsymbol *s;
     //printf("%s.ClassDeclaration::search('%s')\n", toChars(), ident->toChars());
 
-    if (scope && !symtab)
-    {   Scope *sc = scope;
+    if (_scope && !symtab)
+    {   Scope *sc = _scope;
         sc->mustsemantic++;
         semantic(sc);
         sc->mustsemantic--;
@@ -1196,7 +1196,7 @@ void InterfaceDeclaration::semantic(Scope *sc)
         return;
 
     if (!sc)
-        sc = scope;
+        sc = _scope;
     if (!parent && sc->parent && !sc->parent->isModule())
         parent = sc->parent;
 
@@ -1208,17 +1208,17 @@ void InterfaceDeclaration::semantic(Scope *sc)
         return;
     }
     if (symtab)                 // if already done
-    {   if (!scope)
+    {   if (!_scope)
             return;
     }
     else
         symtab = new DsymbolTable();
 
     Scope *scx = NULL;
-    if (scope)
-    {   sc = scope;
-        scx = scope;            // save so we don't make redundant copies
-        scope = NULL;
+    if (_scope)
+    {   sc = _scope;
+        scx = _scope;            // save so we don't make redundant copies
+        _scope = NULL;
     }
 
     if (sc->stc & STCdeprecated)
@@ -1288,17 +1288,17 @@ void InterfaceDeclaration::semantic(Scope *sc)
             }
             if (!b->base->symtab)
             {   // Try to resolve forward reference
-                if (sc->mustsemantic && b->base->scope)
+                if (sc->mustsemantic && b->base->_scope)
                     b->base->semantic(NULL);
             }
-            if (!b->base->symtab || b->base->scope || b->base->inuse)
+            if (!b->base->symtab || b->base->_scope || b->base->inuse)
             {
                 //error("forward reference of base class %s", baseClass->toChars());
                 // Forward reference of base, try again later
                 //printf("\ttry later, forward reference of base %s\n", b->base->toChars());
-                scope = scx ? scx : new Scope(*sc);
-                scope->setNoFree();
-                scope->module->addDeferredSemantic(this);
+                _scope = scx ? scx : new Scope(*sc);
+                _scope->setNoFree();
+                _scope->module->addDeferredSemantic(this);
                 return;
             }
         }

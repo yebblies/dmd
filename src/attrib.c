@@ -759,15 +759,15 @@ void AnonDeclaration::semantic(Scope *sc)
 
     if (sem == 1)
     {   //printf("already completed\n");
-        scope = NULL;
+        _scope = NULL;
         return;             // semantic() already completed
     }
 
     Scope *scx = NULL;
-    if (scope)
-    {   sc = scope;
-        scx = scope;
-        scope = NULL;
+    if (_scope)
+    {   sc = _scope;
+        scx = _scope;
+        _scope = NULL;
     }
 
     unsigned dprogress_save = Module::dprogress;
@@ -829,9 +829,9 @@ void AnonDeclaration::semantic(Scope *sc)
             //printf("\tsetting ad->sizeok %p to 2\n", ad);
             if (!sc->anonAgg)
             {
-                scope = scx ? scx : new Scope(*sc);
-                scope->setNoFree();
-                scope->module->addDeferredSemantic(this);
+                _scope = scx ? scx : new Scope(*sc);
+                _scope->setNoFree();
+                _scope->module->addDeferredSemantic(this);
             }
             Module::dprogress = dprogress_save;
             //printf("\tforward reference %p\n", this);
