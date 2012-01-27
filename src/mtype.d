@@ -151,8 +151,8 @@ class Type : _Object
 //    alias tint32 tboolean;          // result of boolean expression
     alias tbool tboolean;               // result of boolean expression
     alias tsize_t tindex;         // array/ptr index
-    static Type tvoidptr;              // void*
-    static Type tstring;               // immutable(char)[]
+    static extern Type tvoidptr;              // void*
+    static extern Type tstring;               // immutable(char)[]
     static ref terror() { return basic[Terror]; }   // for error recovery
 
     static ref tnull() { return basic[Tnull]; }    // for null type

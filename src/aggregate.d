@@ -120,7 +120,7 @@ class StructDeclaration : AggregateDeclaration
     FuncDeclaration postblit;  // aggregate postblit
 
     FuncDeclaration xeq;       // TypeInfo_Struct.xopEquals
-    static FuncDeclaration xerreq;      // object.xopEquals
+    static extern FuncDeclaration xerreq;      // object.xopEquals
 //}
 
     this(Loc loc, Identifier id);

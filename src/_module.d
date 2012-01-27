@@ -40,14 +40,14 @@ class Package : ScopeDsymbol
 extern(C++)
 final class Module : Package
 {
-    static Module rootModule;
-    static DsymbolTable modules;       // symbol table of all modules
-    static Modules amodules;            // array of all modules
-    static Dsymbols deferred;   // deferred Dsymbol's needing semantic() run on them
-    static uint dprogress;  // progress resolving the deferred list
+    static extern Module rootModule;
+    static extern DsymbolTable modules;       // symbol table of all modules
+    static extern Modules amodules;            // array of all modules
+    static extern Dsymbols deferred;   // deferred Dsymbol's needing semantic() run on them
+    static extern uint dprogress;  // progress resolving the deferred list
     static void init();
 
-    static ClassDeclaration moduleinfo;
+    static extern ClassDeclaration moduleinfo;
 
 
     const(char)* arg;    // original argument name
