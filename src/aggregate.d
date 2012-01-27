@@ -41,27 +41,27 @@ class AggregateDeclaration : ScopeDsymbol
     Dsymbol deferred;          // any deferred semantic2() or semantic3() symbol
     int isdeprecated;           // !=0 if deprecated
 
-//static if (DMDV2) {
+version (DMDV2) {
     int isnested;               // !=0 if is nested
     VarDeclaration vthis;      // 'this' parameter if this aggregate is nested
-//}
+}
     // Special member functions
     InvariantDeclaration inv;          // invariant
     NewDeclaration aggNew;             // allocator
     DeleteDeclaration aggDelete;       // deallocator
 
-//static if (DMDV2) {
+version (DMDV2) {
     //CtorDeclaration ctor;
     Dsymbol ctor;                      // CtorDeclaration or TemplateDeclaration
     CtorDeclaration defaultCtor;       // default constructor
     Dsymbol aliasthis;                 // forward unresolved lookups to aliasthis
     bool noDefaultCtor;         // no default construction
-//}
+}
 
     FuncDeclarations dtors;     // Array of destructors
     FuncDeclaration dtor;      // aggregate destructor
 
-static if (IN_GCC) {
+version (IN_GCC) {
     Array methods;              // flat list of all methods for debug information
 }
 
@@ -112,7 +112,7 @@ extern(C++)
 class StructDeclaration : AggregateDeclaration
 {
     int zeroInit;               // !=0 if initialize with 0 fill
-//static if (DMDV2) {
+version (DMDV2) {
     int hasIdentityAssign;      // !=0 if has identity opAssign
     int hasIdentityEquals;      // !=0 if has identity opEquals
     FuncDeclaration cpctor;    // generated copy-constructor, if any
@@ -121,7 +121,7 @@ class StructDeclaration : AggregateDeclaration
 
     FuncDeclaration xeq;       // TypeInfo_Struct.xopEquals
     static extern FuncDeclaration xerreq;      // object.xopEquals
-//}
+}
 
     this(Loc loc, Identifier id);
     Dsymbol syntaxCopy(Dsymbol s);
@@ -130,10 +130,10 @@ class StructDeclaration : AggregateDeclaration
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
     char *mangle();
     const(char)* kind();
-static if (DMDV1) {
+version (DMDV1) {
     Expression cloneMembers();
 }
-//static if (DMDV2) {
+version (DMDV2) {
     final int needOpAssign();
     final int needOpEquals();
     final FuncDeclaration buildOpAssign(Scope *sc);
@@ -142,7 +142,7 @@ static if (DMDV1) {
     final FuncDeclaration buildCpCtor(Scope *sc);
 
     final FuncDeclaration buildXopEquals(Scope *sc);
-//}
+}
     void toDocBuffer(OutBuffer buf);
 
     final PROT getAccess(Dsymbol smember);   // determine access to smember
@@ -186,12 +186,12 @@ final class BaseClass
     void copyBaseInterfaces(BaseClasses );
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
     enum CLASSINFO_SIZE_64 = 0x98;         // value of ClassInfo.size
     enum CLASSINFO_SIZE = (0x3C+12+4);     // value of ClassInfo.size
-//} else {
-//    enum CLASSINFO_SIZE = (0x3C+12+4);     // value of ClassInfo.size
-//}
+} else {
+    enum CLASSINFO_SIZE = (0x3C+12+4);     // value of ClassInfo.size
+}
 
 extern(C++)
 class ClassDeclaration : AggregateDeclaration
@@ -203,10 +203,10 @@ class ClassDeclaration : AggregateDeclaration
     static extern ClassDeclaration errorException;
 
     ClassDeclaration baseClass;        // NULL only if this is Object
-//static if (DMDV1) {
-//    CtorDeclaration ctor;
-//    CtorDeclaration defaultCtor;       // default constructor
-//}
+version (DMDV1) {
+    CtorDeclaration ctor;
+    CtorDeclaration defaultCtor;       // default constructor
+}
     FuncDeclaration staticCtor;
     FuncDeclaration staticDtor;
     Dsymbols vtbl;                      // Array of FuncDeclaration's making up the vtbl[]
@@ -227,10 +227,10 @@ class ClassDeclaration : AggregateDeclaration
                                         // it derives from IUnknown)
     int isscope;                         // !=0 if this is an auto class
     int isabstract;                     // !=0 if abstract class
-//static if (DMDV1) {
-//    int isnested;                       // !=0 if is nested
-//    VarDeclaration vthis;              // 'this' parameter if this class is nested
-//}
+version (DMDV1) {
+    int isnested;                       // !=0 if is nested
+    VarDeclaration vthis;              // 'this' parameter if this class is nested
+}
     int inuse;                          // to prevent recursive attempts
 
     this(Loc loc, Identifier id, BaseClasses baseclasses);
@@ -245,19 +245,19 @@ class ClassDeclaration : AggregateDeclaration
     final int isBaseInfoComplete();
     final Dsymbol search(Loc, Identifier ident, int flags);
     final Dsymbol searchBase(Loc, Identifier ident);
-//static if (DMDV2) {
+version (DMDV2) {
     final int isFuncHidden(FuncDeclaration fd);
-//}
+}
     final FuncDeclaration findFunc(Identifier ident, TypeFunction tf);
     final void interfaceSemantic(Scope *sc);
-//static if (DMDV1) {
-//    int isNested();
-//}
+version (DMDV1) {
+    int isNested();
+}
     final int isCOMclass();
     final int isCOMinterface();
-//static if (DMDV2) {
+version (DMDV2) {
     final int isCPPinterface();
-//}
+}
     final int isAbstract();
     final int vtblOffset();
     const(char)* kind();
@@ -285,9 +285,9 @@ class ClassDeclaration : AggregateDeclaration
 extern(C++)
 final class InterfaceDeclaration : ClassDeclaration
 {
-//static if (DMDV2) {
+version (DMDV2) {
     int cpp;                            // !=0 if this is a C++ interface
-//}
+}
     this(Loc loc, Identifier id, BaseClasses baseclasses);
     Dsymbol syntaxCopy(Dsymbol s);
     void semantic(Scope *sc);
@@ -296,9 +296,9 @@ final class InterfaceDeclaration : ClassDeclaration
     const(char)* kind();
     final int isBaseInfoComplete();
     int vtblOffset();
-//static if (DMDV2) {
+version (DMDV2) {
     int isCPPinterface();
-//}
+}
     int isCOMinterface();
 
     void toObjFile(int multiobj);                       // compile to .obj file

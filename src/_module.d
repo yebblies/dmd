@@ -62,7 +62,7 @@ final class Module : Package
     int isHtml;         // if it is an HTML file
     int isDocFile;      // if it is a documentation input file, not D source
     int needmoduleinfo;
-static if (IN_GCC) {
+version (IN_GCC) {
     int strictlyneedmoduleinfo;
 }
 
@@ -114,7 +114,7 @@ static if (IN_GCC) {
     const(char)* kind();
     void setDocfile();  // set docfile member
     void read(Loc loc); // read file
-static if (IN_GCC) {
+version (IN_GCC) {
     void parse(bool dump_source = false);       // syntactic parse
 } else {
     void parse();       // syntactic parse

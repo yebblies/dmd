@@ -552,7 +552,7 @@ final class NewAnonClassExp : Expression
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 class SymbolExp : Expression
 {
     Declaration var;
@@ -562,7 +562,7 @@ class SymbolExp : Expression
 
     elem *toElem(IRState *irs);
 };
-//}
+}
 
 // Offset from symbol
 
@@ -607,7 +607,7 @@ final class VarExp : SymbolExp
     //Expression inlineScan(InlineScanState *iss);
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 // Overload Set
 
 final class OverExp : Expression
@@ -618,7 +618,7 @@ final class OverExp : Expression
     int isLvalue();
     Expression toLvalue(Scope *sc, Expression e);
 };
-//}
+}
 
 // Function/Delegate literal
 
@@ -677,7 +677,7 @@ final class TypeidExp : Expression
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 final class TraitsExp : Expression
 {
     Identifier ident;
@@ -688,7 +688,7 @@ final class TraitsExp : Expression
     Expression semantic(Scope *sc);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 };
-//}
+}
 
 final class HaltExp : Expression
 {
@@ -1242,9 +1242,9 @@ mixin(ASSIGNEXP!("Mod", true));
 mixin(ASSIGNEXP!("And", true));
 mixin(ASSIGNEXP!("Or", true));
 mixin(ASSIGNEXP!("Xor", true));
-//static if (DMDV2) {
+version (DMDV2) {
 mixin(ASSIGNEXP!("Pow", true));
-//}
+}
 
 mixin(ASSIGNEXP!("Shl", false));
 mixin(ASSIGNEXP!("Shr", false));
@@ -1352,7 +1352,7 @@ final class ModExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 final class PowExp : BinExp
 {
     this(Loc loc, Expression e1, Expression e2);
@@ -1368,7 +1368,7 @@ final class PowExp : BinExp
 
     elem *toElem(IRState *irs);
 };
-//}
+}
 
 final class ShlExp : BinExp
 {
@@ -1589,7 +1589,7 @@ final class CondExp : BinExp
     elem *toElem(IRState *irs);
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 /****************************************************************/
 
 class DefaultInitExp : Expression
@@ -1613,7 +1613,7 @@ final class LineInitExp : DefaultInitExp
     Expression semantic(Scope *sc);
     Expression resolveLoc(Loc loc, Scope *sc);
 };
-//}
+}
 
 /****************************************************************/
 

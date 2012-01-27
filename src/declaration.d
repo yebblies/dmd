@@ -232,12 +232,12 @@ class VarDeclaration : Declaration
     Initializer init;
     uint offset;
     int noscope;                 // no auto semantics
-//static if (DMDV2) {
+version (DMDV2) {
     FuncDeclarations nestedrefs; // referenced by these lexically nested functions
     bool isargptr;              // if parameter that _argptr points to
-//} else {
-//    int nestedref;              // referenced by a lexically nested function
-//}
+} else {
+    int nestedref;              // referenced by a lexically nested function
+}
     int ctorinit;               // it has been initialized in a ctor
     int onstack;                // 1: it has been allocated on the stack
                                 // 2: on stack, run destructor anyway
@@ -254,12 +254,12 @@ class VarDeclaration : Declaration
     final void setValueWithoutChecking(Expression newval);
     final void setValue(Expression newval);
 
-//static if (DMDV2) {
+version (DMDV2) {
     VarDeclaration rundtor;    // if !NULL, rundtor is tested at runtime to see
                                 // if the destructor should be run. Used to prevent
                                 // dtor calls on postblitted vars
     Expression edtor;          // if !=NULL, does the destruction of the variable
-//}
+}
 
     this(Loc loc, Type t, Identifier id, Initializer init);
     Dsymbol syntaxCopy(Dsymbol );
@@ -276,10 +276,10 @@ class VarDeclaration : Declaration
     int isThreadlocal();
     final int isCTFE();
     int hasPointers();
-//static if (DMDV2) {
+version (DMDV2) {
     final int canTakeAddressOf();
     final int needsAutoDtor();
-//}
+}
     final Expression callScopeDtor(Scope *sc);
     final ExpInitializer getExpInitializer();
     final Expression getConstInitializer();
@@ -441,7 +441,7 @@ class TypeInfoTupleDeclaration : TypeInfoDeclaration
     void toDt(dt_t **pdt);
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 class TypeInfoConstDeclaration : TypeInfoDeclaration
 {
     this(Type tinfo);
@@ -476,7 +476,7 @@ class TypeInfoVectorDeclaration : TypeInfoDeclaration
 
     void toDt(dt_t **pdt);
 };
-//}
+}
 
 /**************************************************************/
 
@@ -496,7 +496,7 @@ enum : ILS
 };
 
 /**************************************************************/
-//static if (DMDV2) {
+version (DMDV2) {
 
 alias int BUILTIN;
 enum : BUILTIN
@@ -521,9 +521,9 @@ enum : BUILTIN
 
 Expression eval_builtin(Loc loc, BUILTIN builtin, Expressions arguments);
 
-//} else {
-//enum BUILTIN { };
-//}
+} else {
+enum BUILTIN { };
+}
 
 class FuncDeclaration : Declaration
 {
@@ -544,7 +544,7 @@ class FuncDeclaration : Declaration
                                         // scopes from having the same name
     VarDeclaration vthis;              // 'this' parameter (member and nested)
     VarDeclaration v_arguments;        // '_arguments' parameter
-static if (IN_GCC) {
+version (IN_GCC) {
     VarDeclaration v_argptr;           // '_argptr' variable
 }
     VarDeclaration v_argsave;          // save area for args passed in registers for variadic functions
@@ -580,7 +580,7 @@ static if (IN_GCC) {
     VarDeclaration nrvo_var;           // variable to replace with shidden
     Symbol *shidden;                    // hidden pointer passed to function
 
-//static if (DMDV2) {
+version (DMDV2) {
     BUILTIN builtin;               // set if this is a known, builtin
                                         // function we can evaluate at compile
                                         // time
@@ -597,9 +597,9 @@ static if (IN_GCC) {
     enum FUNCFLAGnothrowInprocess = 4;  // working on determining nothrow
 
     int forceNonVirtual;
-//} else {
-//    int nestedFrameRef;                 // !=0 if nested variables referenced
-//}
+} else {
+    int nestedFrameRef;                 // !=0 if nested variables referenced
+}
 
     this(Loc loc, Loc endloc, Identifier id, StorageClass storage_class, Type type);
     Dsymbol syntaxCopy(Dsymbol );
@@ -674,13 +674,13 @@ static if (IN_GCC) {
     FuncDeclaration isFuncDeclaration();
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 FuncDeclaration resolveFuncCall(Scope *sc, Loc loc, Dsymbol s,
         Objects tiargs,
         Expression ethis,
         Expressions arguments,
         int flags);
-//}
+}
 
 class FuncAliasDeclaration : FuncDeclaration
 {
@@ -722,7 +722,7 @@ final class CtorDeclaration : FuncDeclaration
     CtorDeclaration isCtorDeclaration();
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 final class PostBlitDeclaration : FuncDeclaration
 {
     this(Loc loc, Loc endloc, StorageClass stc = STCundefined);
@@ -739,7 +739,7 @@ final class PostBlitDeclaration : FuncDeclaration
 
     PostBlitDeclaration isPostBlitDeclaration();
 };
-//}
+}
 
 final class DtorDeclaration : FuncDeclaration
 {
@@ -778,7 +778,7 @@ class StaticCtorDeclaration : FuncDeclaration
     StaticCtorDeclaration isStaticCtorDeclaration();
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 final class SharedStaticCtorDeclaration : StaticCtorDeclaration
 {
     this(Loc loc, Loc endloc);
@@ -787,7 +787,7 @@ final class SharedStaticCtorDeclaration : StaticCtorDeclaration
 
     SharedStaticCtorDeclaration isSharedStaticCtorDeclaration();
 };
-//}
+}
 
 class StaticDtorDeclaration : FuncDeclaration
 {   VarDeclaration vgate;      // 'gate' variable
@@ -808,7 +808,7 @@ class StaticDtorDeclaration : FuncDeclaration
     StaticDtorDeclaration isStaticDtorDeclaration();
 };
 
-//static if (DMDV2) {
+version (DMDV2) {
 final class SharedStaticDtorDeclaration : StaticDtorDeclaration
 {
     this(Loc loc, Loc endloc);
@@ -817,7 +817,7 @@ final class SharedStaticDtorDeclaration : StaticDtorDeclaration
 
     SharedStaticDtorDeclaration isSharedStaticDtorDeclaration();
 };
-//}
+}
 
 final class InvariantDeclaration : FuncDeclaration
 {
