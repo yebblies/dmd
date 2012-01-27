@@ -3,7 +3,7 @@
 
 rem compile d source and link with compiler objs
 
-dmd aggregate.d arraytypes.d attrib.d cond.d cppmangle.d declaration.d doc.d dsymbol.d ^
+dmd aggregate.d aliasthis.d arraytypes.d attrib.d cond.d cppmangle.d declaration.d doc.d dsymbol.d ^
     expression.d fakebackend.d hdrgen.d identifier.d init.d inline.d interpret.d ^
     intrange.d irstate.d lexer.d lib.d mars.d mtype.d parse.d statement.d staticassert.d ^
     -version=DMDV2 -c -ofdfiles1.obj
