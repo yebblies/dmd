@@ -149,7 +149,7 @@ class Declaration : Dsymbol
 
     final PROT prot();
 
-    Declaration isDeclaration() { return this; }
+    Declaration isDeclaration();
 };
 
 /**************************************************************/
@@ -167,7 +167,7 @@ class TupleDeclaration : Declaration
     Type getType();
     int needThis();
 
-    TupleDeclaration isTupleDeclaration() { return this; }
+    TupleDeclaration isTupleDeclaration();
 };
 
 /**************************************************************/
@@ -194,7 +194,7 @@ class TypedefDeclaration : Declaration
     final void toDebug();
     int cvMember(ubyte *p);
 
-    TypedefDeclaration isTypedefDeclaration() { return this; }
+    TypedefDeclaration isTypedefDeclaration();
 
     Symbol *sinit;
     final Symbol *toInitializer();
@@ -222,7 +222,7 @@ class AliasDeclaration : Declaration
 
     void toDocBuffer(OutBuffer buf);
 
-    AliasDeclaration isAliasDeclaration() { return this; }
+    AliasDeclaration isAliasDeclaration();
 };
 
 /**************************************************************/
@@ -292,7 +292,7 @@ class VarDeclaration : Declaration
     int cvMember(ubyte *p);
 
     // Eliminate need for dynamic_cast
-    VarDeclaration isVarDeclaration() { return this; }
+    VarDeclaration isVarDeclaration();
 };
 
 /**************************************************************/
@@ -309,7 +309,7 @@ class SymbolDeclaration : Declaration
     Symbol *toSymbol();
 
     // Eliminate need for dynamic_cast
-    SymbolDeclaration isSymbolDeclaration() { return this; }
+    SymbolDeclaration isSymbolDeclaration();
 };
 
 class ClassInfoDeclaration : VarDeclaration
@@ -484,7 +484,7 @@ class ThisDeclaration : VarDeclaration
 {
     this(Loc loc, Type t);
     Dsymbol syntaxCopy(Dsymbol );
-    ThisDeclaration isThisDeclaration() { return this; }
+    ThisDeclaration isThisDeclaration();
 };
 
 alias uint ILS;
@@ -671,7 +671,7 @@ static if (IN_GCC) {
     int cvMember(ubyte *p);
     final void buildClosure(IRState *irs);
 
-    FuncDeclaration isFuncDeclaration() { return this; }
+    FuncDeclaration isFuncDeclaration();
 };
 
 //static if (DMDV2) {
@@ -688,7 +688,7 @@ class FuncAliasDeclaration : FuncDeclaration
 
     this(FuncDeclaration funcalias);
 
-    FuncAliasDeclaration isFuncAliasDeclaration() { return this; }
+    FuncAliasDeclaration isFuncAliasDeclaration();
     const(char)* kind();
     Symbol *toSymbol();
 };
@@ -704,7 +704,7 @@ class FuncLiteralDeclaration : FuncDeclaration
     int isNested();
     int isVirtual();
 
-    FuncLiteralDeclaration isFuncLiteralDeclaration() { return this; }
+    FuncLiteralDeclaration isFuncLiteralDeclaration();
     const(char)* kind();
 };
 
@@ -719,7 +719,7 @@ final class CtorDeclaration : FuncDeclaration
     int addPreInvariant();
     int addPostInvariant();
 
-    CtorDeclaration isCtorDeclaration() { return this; }
+    CtorDeclaration isCtorDeclaration();
 };
 
 //static if (DMDV2) {
@@ -737,7 +737,7 @@ final class PostBlitDeclaration : FuncDeclaration
     void emitComment(Scope *sc);
     void toJsonBuffer(OutBuffer buf);
 
-    PostBlitDeclaration isPostBlitDeclaration() { return this; }
+    PostBlitDeclaration isPostBlitDeclaration();
 };
 //}
 
@@ -757,7 +757,7 @@ final class DtorDeclaration : FuncDeclaration
     void emitComment(Scope *sc);
     void toJsonBuffer(OutBuffer buf);
 
-    DtorDeclaration isDtorDeclaration() { return this; }
+    DtorDeclaration isDtorDeclaration();
 };
 
 class StaticCtorDeclaration : FuncDeclaration
@@ -775,7 +775,7 @@ class StaticCtorDeclaration : FuncDeclaration
     void toJsonBuffer(OutBuffer buf);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 
-    StaticCtorDeclaration isStaticCtorDeclaration() { return this; }
+    StaticCtorDeclaration isStaticCtorDeclaration();
 };
 
 //static if (DMDV2) {
@@ -785,7 +785,7 @@ final class SharedStaticCtorDeclaration : StaticCtorDeclaration
     Dsymbol syntaxCopy(Dsymbol );
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 
-    SharedStaticCtorDeclaration isSharedStaticCtorDeclaration() { return this; }
+    SharedStaticCtorDeclaration isSharedStaticCtorDeclaration();
 };
 //}
 
@@ -805,7 +805,7 @@ class StaticDtorDeclaration : FuncDeclaration
     void toJsonBuffer(OutBuffer buf);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 
-    StaticDtorDeclaration isStaticDtorDeclaration() { return this; }
+    StaticDtorDeclaration isStaticDtorDeclaration();
 };
 
 //static if (DMDV2) {
@@ -815,7 +815,7 @@ final class SharedStaticDtorDeclaration : StaticDtorDeclaration
     Dsymbol syntaxCopy(Dsymbol );
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 
-    SharedStaticDtorDeclaration isSharedStaticDtorDeclaration() { return this; }
+    SharedStaticDtorDeclaration isSharedStaticDtorDeclaration();
 };
 //}
 
@@ -831,7 +831,7 @@ final class InvariantDeclaration : FuncDeclaration
     void toJsonBuffer(OutBuffer buf);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
 
-    InvariantDeclaration isInvariantDeclaration() { return this; }
+    InvariantDeclaration isInvariantDeclaration();
 };
 
 final class UnitTestDeclaration : FuncDeclaration
@@ -846,7 +846,7 @@ final class UnitTestDeclaration : FuncDeclaration
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
     void toJsonBuffer(OutBuffer buf);
 
-    UnitTestDeclaration isUnitTestDeclaration() { return this; }
+    UnitTestDeclaration isUnitTestDeclaration();
 };
 
 final class NewDeclaration : FuncDeclaration
@@ -862,7 +862,7 @@ final class NewDeclaration : FuncDeclaration
     int addPreInvariant();
     int addPostInvariant();
 
-    NewDeclaration isNewDeclaration() { return this; }
+    NewDeclaration isNewDeclaration();
 };
 
 
@@ -878,6 +878,6 @@ final class DeleteDeclaration : FuncDeclaration
     int isVirtual();
     int addPreInvariant();
     int addPostInvariant();
-    DeleteDeclaration isDeleteDeclaration() { return this; }
+    DeleteDeclaration isDeleteDeclaration();
 };
 

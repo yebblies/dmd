@@ -59,7 +59,7 @@ final class EnumDeclaration : ScopeDsymbol
     void toJsonBuffer(OutBuffer buf);
     void toDocBuffer(OutBuffer buf);
 
-    EnumDeclaration isEnumDeclaration() { return this; }
+    EnumDeclaration isEnumDeclaration();
 
     void toObjFile(int multiobj);                       // compile to .obj file
     void toDebug();
@@ -84,6 +84,6 @@ class EnumMember : Dsymbol
     void toJsonBuffer(OutBuffer buf);
     void toDocBuffer(OutBuffer buf);
 
-    EnumMember isEnumMember() { return this; }
+    EnumMember isEnumMember();
 };
 

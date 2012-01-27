@@ -97,7 +97,7 @@ static if (IN_GCC) {
     Symbol *sinit;
     final Symbol *toInitializer();
 
-    AggregateDeclaration isAggregateDeclaration() { return this; }
+    AggregateDeclaration isAggregateDeclaration();
 };
 
 extern(C++)
@@ -105,7 +105,7 @@ class AnonymousAggregateDeclaration : AggregateDeclaration
 {
     this() { super(Loc(0), null); }
 
-    AnonymousAggregateDeclaration isAnonymousAggregateDeclaration() { return this; }
+    AnonymousAggregateDeclaration isAnonymousAggregateDeclaration();
 };
 
 extern(C++)
@@ -151,7 +151,7 @@ static if (DMDV1) {
     final void toDt(dt_t **pdt);
     final void toDebug();                     // to symbolic debug info
 
-    StructDeclaration isStructDeclaration() { return this; }
+    StructDeclaration isStructDeclaration();
 };
 
 extern(C++)
@@ -161,7 +161,7 @@ final class UnionDeclaration : StructDeclaration
     Dsymbol syntaxCopy(Dsymbol s);
     const(char)* kind();
 
-    UnionDeclaration isUnionDeclaration() { return this; }
+    UnionDeclaration isUnionDeclaration();
 };
 
 extern(C++)
@@ -279,7 +279,7 @@ class ClassDeclaration : AggregateDeclaration
 
     Symbol *vtblsym;
 
-    ClassDeclaration isClassDeclaration() { return this; }
+    ClassDeclaration isClassDeclaration();
 };
 
 extern(C++)
@@ -304,6 +304,6 @@ final class InterfaceDeclaration : ClassDeclaration
     void toObjFile(int multiobj);                       // compile to .obj file
     Symbol *toSymbol();
 
-    InterfaceDeclaration isInterfaceDeclaration() { return this; }
+    InterfaceDeclaration isInterfaceDeclaration();
 };
 

@@ -81,7 +81,7 @@ class Expression : _Object
     Expression semantic(Scope *sc);
     final Expression trySemantic(Scope *sc);
 
-    int dyncast() { return DYNCAST_EXPRESSION; }        // kludge for template.isExpression()
+    int dyncast();        // kludge for template.isExpression()
 
     void print();
     char *toChars();

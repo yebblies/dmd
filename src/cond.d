@@ -37,7 +37,7 @@ class Condition
     abstract Condition syntaxCopy();
     abstract int include(Scope *sc, ScopeDsymbol s);
     abstract void toCBuffer(OutBuffer buf, HdrGenState *hgs);
-    DebugCondition isDebugCondition() { return null; }
+    DebugCondition isDebugCondition();
 };
 
 class DVCondition : Condition
@@ -61,7 +61,7 @@ class DebugCondition : DVCondition
 
     int include(Scope *sc, ScopeDsymbol s);
     void toCBuffer(OutBuffer buf, HdrGenState *hgs);
-    DebugCondition isDebugCondition() { return this; }
+    DebugCondition isDebugCondition();
 };
 
 class VersionCondition : DVCondition
