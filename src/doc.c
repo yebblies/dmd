@@ -67,7 +67,7 @@ public:
     void write(DocComment *dc, Scope *sc, Dsymbol *s, OutBuffer *buf);
 };
 
-typedef ArrayBase<Section> Sections;
+typedef ArrayBase<Section*> Sections;
 
 struct DocComment
 {

@@ -50,7 +50,7 @@ private:
     */
     Expressions values;   // values on the stack
     VarDeclarations vars; // corresponding variables
-    ArrayBase<void> savedId; // id of the previous state of that var
+    ArrayBase<void*> savedId; // id of the previous state of that var
 
     /* Global constants get saved here after evaluation, so we never
      * have to redo them. This saves a lot of time and memory.
