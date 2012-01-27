@@ -49,7 +49,7 @@ void clearStringTab();
 
 #define STATICCTOR      0
 
-typedef ArrayBase<symbol> symbols;
+typedef ArrayBase<symbol*> symbols;
 
 elem *eictor;
 symbol *ictorlocalgot;

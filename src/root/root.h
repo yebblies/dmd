@@ -66,8 +66,8 @@ class OutBuffer;
 
 // Can't include arraytypes.h here, need to declare these directly.
 template <typename TYPE> class ArrayBase;
-typedef ArrayBase<class File> Files;
-typedef ArrayBase<char> Strings;
+typedef ArrayBase<class File*> Files;
+typedef ArrayBase<char*> Strings;
 
 
 class _Object
@@ -358,20 +358,20 @@ template <typename TYPE>
 class ArrayBase : Array
 {
 public:
-    TYPE **tdata()
+    TYPE *tdata()
     {
-        return (TYPE **)data;
+        return (TYPE *)data;
     }
 
-    TYPE*& operator[] (size_t index)
+    TYPE& operator[] (size_t index)
     {
 #ifdef DEBUG
         assert(index < dim);
 #endif
-        return ((TYPE **)data)[index];
+        return ((TYPE *)data)[index];
     }
 
-    void insert(size_t index, TYPE *v)
+    void insert(size_t index, TYPE v)
     {
         Array::insert(index, (void *)v);
     }
@@ -386,7 +386,7 @@ public:
         Array::append((Array *)a);
     }
 
-    void push(TYPE *a)
+    void push(TYPE a)
     {
         Array::push((void *)a);
     }

@@ -127,8 +127,8 @@ class OutBuffer;
 
 // Can't include arraytypes.h here, need to declare these directly.
 template <typename TYPE> class ArrayBase;
-typedef ArrayBase<class Identifier> Identifiers;
-typedef ArrayBase<char> Strings;
+typedef ArrayBase<class Identifier*> Identifiers;
+typedef ArrayBase<char*> Strings;
 
 // Put command line switches in here
 struct Param

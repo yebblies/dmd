@@ -38,6 +38,14 @@ class FuncDeclaration;
 struct HdrGenState;
 enum MATCH;
 
+// Back end
+#if IN_GCC
+union tree_node; typedef union tree_node TYPE;
+typedef TYPE type;
+#else
+typedef struct TYPE type;
+#endif
+
 class Tuple : _Object
 {
 public:
@@ -345,6 +353,9 @@ public:
 
     TemplateInstance *isTemplateInstance() { return this; }
     AliasDeclaration *isAliasDeclaration();
+    Symbol *csym;
+    Symbol *toSymbol();
+    type *toCtype();
 };
 
 class TemplateMixin : TemplateInstance
