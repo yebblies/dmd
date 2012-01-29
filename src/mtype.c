@@ -8225,7 +8225,7 @@ MATCH TypeClass::implicitConvTo(Type *to)
         return m;
 
     ClassDeclaration *cdto = to->isClassHandle();
-    if (cdto && cdto->isBaseOf(sym, NULL))
+    if (cdto && cdto->isBaseOf(sym, NULL) && MODimplicitConv(mod, to->mod))
     {   //printf("'to' is base\n");
         return MATCHconvert;
     }
