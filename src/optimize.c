@@ -457,6 +457,11 @@ Expression *DotVarExp::optimize(int result)
         }
     }
 
+    if (result & WANTinterpret)
+    {
+        error("cannot evaluate %s at compile time", toChars());
+    }
+
     return this;
 }
 
@@ -508,7 +513,7 @@ Expression *CallExp::optimize(int result)
         }
     }
 
-    e1 = e1->optimize(result);
+    e1 = e1->optimize(WANTvalue);
 #if 1
     if (result & WANTinterpret)
     {
