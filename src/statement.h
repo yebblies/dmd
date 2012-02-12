@@ -20,6 +20,7 @@
 #include "arraytypes.h"
 #include "dsymbol.h"
 #include "lexer.h"
+#include "microd.h"
 
 struct OutBuffer;
 struct Scope;
@@ -114,6 +115,8 @@ struct Statement : Object
     virtual Statement *doInlineStatement(InlineDoState *ids);
     virtual Statement *inlineScan(InlineScanState *iss);
 
+    virtual void toMicroD(md_fptr sink);
+
     // Back end
     virtual void toIR(IRState *irs);
 
@@ -154,6 +157,7 @@ struct ExpStatement : Statement
     Statement *doInlineStatement(InlineDoState *ids);
     Statement *inlineScan(InlineScanState *iss);
 
+    void toMicroD(md_fptr sink);
     void toIR(IRState *irs);
 
     ExpStatement *isExpStatement() { return this; }
@@ -207,6 +211,8 @@ struct CompoundStatement : Statement
     Statement *doInlineStatement(InlineDoState *ids);
     Statement *inlineScan(InlineScanState *iss);
 
+    void toMicroD(md_fptr sink);
+
     void toIR(IRState *irs);
 
     CompoundStatement *isCompoundStatement() { return this; }
@@ -217,6 +223,7 @@ struct CompoundDeclarationStatement : CompoundStatement
     CompoundDeclarationStatement(Loc loc, Statements *s);
     Statement *syntaxCopy();
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
+    void toMicroD(md_fptr sink);
 };
 
 /* The purpose of this is so that continue will go to the next
@@ -335,6 +342,7 @@ struct ForStatement : Statement
     Statement *inlineScan(InlineScanState *iss);
     Statement *doInlineStatement(InlineDoState *ids);
 
+    void toMicroD(md_fptr sink);
     void toIR(IRState *irs);
 };
 
@@ -615,6 +623,7 @@ struct ReturnStatement : Statement
     Statement *doInlineStatement(InlineDoState *ids);
     Statement *inlineScan(InlineScanState *iss);
 
+    void toMicroD(md_fptr sink);
     void toIR(IRState *irs);
 
     ReturnStatement *isReturnStatement() { return this; }

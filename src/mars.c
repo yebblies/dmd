@@ -46,6 +46,8 @@ void getenv_setargv(const char *envvar, int *pargc, char** *pargv);
 void obj_start(char *srcfile);
 void obj_end(Library *library, File *objfile);
 
+void microd_generate(Modules *modules);
+
 void printCtfePerformanceStats();
 
 Global global;
@@ -339,6 +341,7 @@ Usage:\n\
 #endif
 "  -man           open web browser on manual page\n\
   -map           generate linker .map file\n\
+  -md            generate MicroD files\n\
   -noboundscheck turns off array bounds checking for all functions\n\
   -nofloat       do not emit reference to floating point\n\
   -O             optimize\n\
@@ -549,6 +552,8 @@ int main(int argc, char *argv[])
                 global.params.is64bit = 0;
             else if (strcmp(p + 1, "m64") == 0)
                 global.params.is64bit = 1;
+            else if (strcmp(p + 1, "md") == 0)
+                global.params.microd = 1;
             else if (strcmp(p + 1, "profile") == 0)
                 global.params.trace = 1;
             else if (strcmp(p + 1, "v") == 0)
@@ -1357,6 +1362,12 @@ int main(int argc, char *argv[])
     // Do not attempt to generate output files if errors or warnings occurred
     if (global.errors || global.warnings)
         fatal();
+
+    if (global.params.microd)
+    {
+        microd_generate(&modules);
+        return status;
+    }
 
     printCtfePerformanceStats();
 

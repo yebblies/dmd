@@ -20,6 +20,7 @@
 
 #include "arraytypes.h"
 #include "expression.h"
+#include "microd.h"
 
 struct Scope;
 struct Identifier;
@@ -238,6 +239,7 @@ struct Type : Object
     virtual void toCBuffer(OutBuffer *buf, Identifier *ident, HdrGenState *hgs);
     virtual void toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod);
     void toCBuffer3(OutBuffer *buf, HdrGenState *hgs, int mod);
+    virtual void toMicroD(md_fptr sink);
     void modToBuffer(OutBuffer *buf);
 #if CPP_MANGLE
     virtual void toCppMangle(OutBuffer *buf, CppMangleState *cms);
@@ -397,6 +399,7 @@ struct TypeBasic : Type
     int isZeroInit(Loc loc);
     int builtinTypeInfo();
     TypeTuple *toArgTypes();
+    void toMicroD(md_fptr sink);
 
     // For eliminating dynamic_cast
     TypeBasic *isTypeBasic();
@@ -971,6 +974,7 @@ struct Parameter : Object
     static int isTPL(Parameters *arguments);
     static size_t dim(Parameters *arguments);
     static Parameter *getNth(Parameters *arguments, size_t nth, size_t *pn = NULL);
+    void toMicroD(md_fptr sink);
 
     typedef int (*ForeachDg)(void *ctx, size_t paramidx, Parameter *param);
     static int foreach(Parameters *args, ForeachDg dg, void *ctx, size_t *pn=NULL);

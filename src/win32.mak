@@ -86,7 +86,7 @@ OBJ1= mars.obj enum.obj struct.obj dsymbol.obj import.obj id.obj \
 	glue.obj msc.obj ph.obj tk.obj s2ir.obj todt.obj e2ir.obj tocsym.obj \
 	util.obj eh.obj toobj.obj toctype.obj tocvdebug.obj toir.obj \
 	json.obj unittests.obj imphint.obj argtypes.obj apply.obj canthrow.obj \
-	sideeffect.obj
+	sideeffect.obj microd.obj
 
 # from C/C++ compiler optimizer and back end
 
@@ -126,7 +126,7 @@ SRCS= mars.c enum.c struct.c dsymbol.c import.c idgen.c impcnvgen.c utf.h \
 	delegatize.c toir.h toir.c interpret.c traits.c builtin.c \
 	clone.c lib.h libomf.c libelf.c libmach.c arrayop.c intrange.c \
 	aliasthis.h aliasthis.c json.h json.c unittests.c imphint.c argtypes.c \
-	apply.c canthrow.c sideeffect.c
+	apply.c canthrow.c sideeffect.c microd.c microd.h
 
 # From C++ compiler
 
@@ -501,6 +501,7 @@ inline.obj : $(TOTALH) inline.c
 interpret.obj : $(TOTALH) interpret.c declaration.h expression.h
 intrange.obj : $(TOTALH) intrange.h intrange.c
 json.obj : $(TOTALH) json.h json.c
+microd.obj : $(TOTALH) microd.c microd.h
 lexer.obj : $(TOTALH) lexer.c
 libomf.obj : $(TOTALH) lib.h libomf.c
 link.obj : $(TOTALH) link.c

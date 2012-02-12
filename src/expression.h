@@ -16,6 +16,7 @@
 #include "lexer.h"
 #include "arraytypes.h"
 #include "intrange.h"
+#include "microd.h"
 
 struct Type;
 struct Scope;
@@ -187,6 +188,8 @@ struct Expression : Object
     virtual Expression *buildArrayLoop(Parameters *fparams);
     int isArrayOperand();
 
+    virtual void toMicroD(md_fptr sink);
+
     // Back end
     virtual elem *toElem(IRState *irs);
     elem *toElemDtor(IRState *irs);
@@ -214,6 +217,7 @@ struct IntegerExp : Expression
     MATCH implicitConvTo(Type *t);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     void toMangleBuffer(OutBuffer *buf);
+    void toMicroD(md_fptr sink);
     Expression *toLvalue(Scope *sc, Expression *e);
     elem *toElem(IRState *irs);
     dt_t **toDt(dt_t **pdt);
@@ -628,6 +632,7 @@ struct VarExp : SymbolExp
     Expression *toLvalue(Scope *sc, Expression *e);
     Expression *modifiableLvalue(Scope *sc, Expression *e);
     dt_t **toDt(dt_t **pdt);
+    void toMicroD(md_fptr sink);
 
     int inlineCost3(InlineCostState *ics);
     Expression *doInline(InlineDoState *ids);
@@ -688,6 +693,7 @@ struct DeclarationExp : Expression
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     elem *toElem(IRState *irs);
+    void toMicroD(md_fptr sink);
 
     int inlineCost3(InlineCostState *ics);
     Expression *doInline(InlineDoState *ids);
@@ -801,6 +807,7 @@ struct BinExp : Expression
     Expression *op_overload(Scope *sc);
     Expression *compare_overload(Scope *sc, Identifier *id);
 
+    void toMicroD(md_fptr sink);
     elem *toElemBin(IRState *irs, int op);
 };
 
@@ -1077,6 +1084,7 @@ struct CastExp : UnaExp
     void buildArrayIdent(OutBuffer *buf, Expressions *arguments);
     Expression *buildArrayLoop(Parameters *fparams);
     elem *toElem(IRState *irs);
+    void toMicroD(md_fptr sink);
 
     // For operator overloading
     Identifier *opId();

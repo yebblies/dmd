@@ -118,6 +118,7 @@ struct Module : Package
 
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     void toJsonBuffer(OutBuffer *buf);
+    void toMicroD();
     const char *kind();
     void setDocfile();  // set docfile member
     void read(Loc loc); // read file

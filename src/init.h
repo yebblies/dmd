@@ -15,6 +15,7 @@
 
 #include "mars.h"
 #include "arraytypes.h"
+#include "microd.h"
 
 struct Identifier;
 struct Expression;
@@ -41,6 +42,7 @@ struct Initializer : Object
     virtual Expression *toExpression() = 0;
     virtual void toCBuffer(OutBuffer *buf, HdrGenState *hgs) = 0;
     char *toChars();
+    virtual void toMicroD(md_fptr sink);
 
     static Initializers *arraySyntaxCopy(Initializers *ai);
 
@@ -121,6 +123,7 @@ struct ExpInitializer : Initializer
     Type *inferType(Scope *sc);
     Expression *toExpression();
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
+    void toMicroD(md_fptr sink);
 
     dt_t *toDt();
 

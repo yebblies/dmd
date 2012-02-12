@@ -20,6 +20,7 @@
 
 #include "mars.h"
 #include "arraytypes.h"
+#include "microd.h"
 
 struct Identifier;
 struct Scope;
@@ -161,6 +162,7 @@ struct Dsymbol : Object
     virtual void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     virtual void toDocBuffer(OutBuffer *buf);
     virtual void toJsonBuffer(OutBuffer *buf);
+    virtual void toMicroD();
     virtual unsigned size(Loc loc);
     virtual int isforwardRef();
     virtual void defineRef(Dsymbol *s);
