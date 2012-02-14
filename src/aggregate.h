@@ -160,6 +160,7 @@ struct StructDeclaration : AggregateDeclaration
     void toDocBuffer(OutBuffer *buf);
 
     PROT getAccess(Dsymbol *smember);   // determine access to smember
+    void toMicroD();
 
     void toObjFile(int multiobj);                       // compile to .obj file
     void toDt(dt_t **pdt);

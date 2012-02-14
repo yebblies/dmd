@@ -775,6 +775,7 @@ struct TypeStruct : Type
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
 #endif
 
+    void toMicroD(md_fptr sink);
     type *toCtype();
 };
 

@@ -329,6 +329,7 @@ struct ThisExp : Expression
     int inlineCost3(InlineCostState *ics);
     Expression *doInline(InlineDoState *ids);
     //Expression *inlineScan(InlineScanState *iss);
+    void toMicroD(md_fptr sink);
 
     elem *toElem(IRState *irs);
 };
@@ -358,6 +359,7 @@ struct NullExp : Expression
     MATCH implicitConvTo(Type *t);
     Expression *castTo(Scope *sc, Type *t);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void toMicroD(md_fptr sink);
     elem *toElem(IRState *irs);
     dt_t **toDt(dt_t **pdt);
 };
@@ -393,6 +395,7 @@ struct StringExp : Expression
     unsigned charAt(size_t i);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     void toMangleBuffer(OutBuffer *buf);
+    void toMicroD(md_fptr sink);
     elem *toElem(IRState *irs);
     dt_t **toDt(dt_t **pdt);
 };
@@ -498,6 +501,7 @@ struct StructLiteralExp : Expression
     int isLvalue();
     Expression *toLvalue(Scope *sc, Expression *e);
     MATCH implicitConvTo(Type *t);
+    void toMicroD(md_fptr sink);
 
     int inlineCost3(InlineCostState *ics);
     Expression *doInline(InlineDoState *ids);
@@ -854,6 +858,7 @@ struct AssertExp : UnaExp
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
+    void toMicroD(md_fptr sink);
 
     Expression *doInline(InlineDoState *ids);
     Expression *inlineScan(InlineScanState *iss);
@@ -895,6 +900,7 @@ struct DotVarExp : UnaExp
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     void dump(int indent);
     elem *toElem(IRState *irs);
+    void toMicroD(md_fptr sink);
 };
 
 struct DotTemplateInstanceExp : UnaExp
@@ -959,6 +965,7 @@ struct CallExp : UnaExp
     Expression *toLvalue(Scope *sc, Expression *e);
     Expression *addDtorHook(Scope *sc);
     MATCH implicitConvTo(Type *t);
+    void toMicroD(md_fptr sink);
 
     int inlineCost3(InlineCostState *ics);
     Expression *doInline(InlineDoState *ids);
@@ -975,6 +982,7 @@ struct AddrExp : UnaExp
     Expression *castTo(Scope *sc, Type *t);
     Expression *optimize(int result);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void toMicroD(md_fptr sink);
 };
 
 struct PtrExp : UnaExp
