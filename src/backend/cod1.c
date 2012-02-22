@@ -3691,7 +3691,7 @@ code *loaddata(elem *e,regm_t *pretregs)
             ce = loadea(e,&cs,0x0B,reg,0,regm,0);       /* OR reg,data */
             c = cat(c,ce);
         }
-        else if (sz == 8 || (I64 && sz == 2 * REGSIZE && !tyfloating(tym)))
+        else if (sz == 8 || ((I32 | I64) && sz == CENTSIZE && !tyfloating(tym)))
         {
             c = allocreg(&regm,&reg,TYoffset);  /* get a register */
             int i = sz - REGSIZE;
@@ -3835,7 +3835,16 @@ code *loaddata(elem *e,regm_t *pretregs)
                 ce = movregconst(ce,BX,p[2],0);
             }
         }
-        else if (I64 && sz == 16)
+        else if (I32 && sz == CENTSIZE)
+        {
+            assert((forregs & CENTREGS) == CENTREGS);
+            targ_long *p = (targ_long *) &e->EV.Vcent;
+            ce = movregconst(CNIL,mDX,p[0],0);
+            ce = movregconst(ce,mCX,p[1],0);
+            ce = movregconst(ce,mBX,p[2],0);
+            ce = movregconst(ce,mAX,p[3],0);
+        }
+        else if (I64 && sz == CENTSIZE)
         {
             ce = movregconst(CNIL,findreglsw(forregs),e->EV.Vcent.lsw,0);
             ce = movregconst(ce,findregmsw(forregs),e->EV.Vcent.msw,0);

@@ -73,9 +73,11 @@ enum ENUMTY
     Tuns16,
     Tint32,
     Tuns32,
-
     Tint64,
     Tuns64,
+    Tint128,
+    Tuns128,
+
     Tfloat32,
     Tfloat64,
     Tfloat80,
@@ -152,6 +154,8 @@ struct Type : Object
     #define tuns32      basic[Tuns32]
     #define tint64      basic[Tint64]
     #define tuns64      basic[Tuns64]
+    #define tint128     basic[Tint128]
+    #define tuns128     basic[Tuns128]
     #define tfloat32    basic[Tfloat32]
     #define tfloat64    basic[Tfloat64]
     #define tfloat80    basic[Tfloat80]
@@ -375,6 +379,7 @@ struct TypeBasic : Type
     unsigned flags;
 
     TypeBasic(TY ty);
+    Type *semantic(Loc loc, Scope *sc);
     Type *syntaxCopy();
     d_uns64 size(Loc loc);
     unsigned alignsize();

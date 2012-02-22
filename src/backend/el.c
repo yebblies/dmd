@@ -856,6 +856,11 @@ elem * el_long(tym_t t,targ_llong val)
         case TYcldouble:
             assert(0);
             break;
+        case TYcent:
+        case TYucent:
+            e->EV.Vcent.msw = 0;
+            e->EV.Vcent.lsw = val;
+            break;
         default:
             e->EV.Vllong = val;
             break;
@@ -3130,7 +3135,7 @@ void elem_print(elem *e)
 
                     case TYcent:
                     case TYucent:
-                        dbg_printf("%lluLL+%lluLL ", e->EV.Vcent.msw, e->EV.Vcent.lsw);
+                        dbg_printf("0x%.8X%.8X%.8X%.8X ", e->EV.Vcent.w[3], e->EV.Vcent.w[2], e->EV.Vcent.w[1], e->EV.Vcent.w[0]);
                         break;
 
                     case TYfloat:

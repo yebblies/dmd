@@ -222,6 +222,8 @@ void Type::init()
     mangleChar[Tuns32] = 'k';
     mangleChar[Tint64] = 'l';
     mangleChar[Tuns64] = 'm';
+    mangleChar[Tint128] = 'L';
+    mangleChar[Tuns128] = 'M';
     mangleChar[Tfloat32] = 'f';
     mangleChar[Tfloat64] = 'd';
     mangleChar[Tfloat80] = 'e';
@@ -258,6 +260,7 @@ void Type::init()
     // Set basic types
     static TY basetab[] =
         { Tvoid, Tint8, Tuns8, Tint16, Tuns16, Tint32, Tuns32, Tint64, Tuns64,
+          Tint128, Tuns128,
           Tfloat32, Tfloat64, Tfloat80,
           Timaginary32, Timaginary64, Timaginary80,
           Tcomplex32, Tcomplex64, Tcomplex80,
@@ -2243,7 +2246,9 @@ uinteger_t Type::sizemask()
         case Tint32:
         case Tuns32:    m = 0xFFFFFFFFUL;               break;
         case Tint64:
-        case Tuns64:    m = 0xFFFFFFFFFFFFFFFFULL;      break;
+        case Tuns64:
+        case Tint128:
+        case Tuns128:   m = 0xFFFFFFFFFFFFFFFFULL;      break;
         default:
                 assert(0);
     }
@@ -2590,6 +2595,14 @@ TypeBasic::TypeBasic(TY ty)
                         flags |= TFLAGSintegral | TFLAGSunsigned | TFLAGSvector;
                         break;
 
+        case Tint128:   d = Token::toChars(TOKint128);
+                        flags |= TFLAGSintegral;
+                        break;
+
+        case Tuns128:   d = Token::toChars(TOKuns128);
+                        flags |= TFLAGSintegral | TFLAGSunsigned;
+                        break;
+
         case Tfloat64:  d = Token::toChars(TOKfloat64);
                         flags |= TFLAGSfloating | TFLAGSreal | TFLAGSvector;
                         break;
@@ -2692,6 +2705,7 @@ d_uns64 TypeBasic::size(Loc loc)
                         size = REALSIZE;        break;
         case Tcomplex32:
                         size = 8;               break;
+        case Tuns128:
         case Tcomplex64:
                         size = 16;              break;
         case Tcomplex80:
@@ -3303,6 +3317,17 @@ MATCH TypeBasic::implicitConvTo(Type *to)
 TypeBasic *TypeBasic::isTypeBasic()
 {
     return (TypeBasic *)this;
+}
+
+Type *TypeBasic::semantic(Loc loc, Scope *sc)
+{
+    if (ty == Tint128)
+    {
+        error(loc, "the cent type is not implemented");
+        return terror;
+    }
+
+    return Type::semantic(loc, sc);
 }
 
 /* ============================= TypeVector =========================== */

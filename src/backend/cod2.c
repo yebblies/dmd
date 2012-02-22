@@ -226,6 +226,11 @@ code *cdorth(elem *e,regm_t *pretregs)
         {
             numwords++;
         }
+        else if (sz == 4 * REGSIZE)
+        {
+            assert(I32);
+            numwords = 4;
+        }
   }
   else
   {     /* If ty is a TYfptr, but both operands are long, treat the     */

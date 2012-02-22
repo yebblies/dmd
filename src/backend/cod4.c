@@ -1039,6 +1039,32 @@ code *cdaddass(elem *e,regm_t *pretregs)
                 }
                 c = gen(c,&cs);
         }
+        else if (I32 && sz == CENTSIZE)
+        {
+                cs.Iop = 0x81;
+                cs.Irm |= modregrm(0,mode,0);
+                c = cl;
+                cs.Iflags |= cflags;
+                c = gen(c,&cs);
+                cs.Iflags &= ~CFpsw;
+                switch (op)
+                {   case OPminass:
+                        cs.Irm ^= modregrm(0,6,0);      /* SUB => SBB   */
+                        break;
+                    case OPaddass:
+                        cs.Irm |= modregrm(0,2,0);      /* ADD => ADC   */
+                        break;
+                }
+
+                targ_ulong *p = e->E2->EV.Vcent.w;
+                for (size_t i = 0; i < 3; i++)
+                {
+                    p++;
+                    cs.IEVoffset1 += REGSIZE;
+                    cs.IEV2.Vuns = *p;             /* next word of Constant      */
+                    c = gen(c,&cs);
+                }
+        }
         else
             assert(0);
         freenode(e->E2);        /* don't need it anymore        */
@@ -1889,9 +1915,8 @@ code *cdcmp(elem *e,regm_t *pretregs)
             if (I64 && byte && (reg >= 4 || rreg >= 4))
                 c->Irex |= REX;                 // address byte registers
         }
-        else
-        {   assert(sz <= 2 * REGSIZE);
-
+        else if (sz <= 2 * REGSIZE)
+        {
             /* Compare MSW, if they're equal then compare the LSW       */
             reg = findregmsw(retregs);
             rreg = findregmsw(rretregs);
@@ -1907,6 +1932,11 @@ code *cdcmp(elem *e,regm_t *pretregs)
             genregs(c,0x3B ^ reverse,reg,rreg);         /* CMP reg,rreg */
             if (I64)
                 code_orrex(c, REX_W);
+        }
+        else
+        {
+            assert(I32 && sz == CENTSIZE);
+            assert(0);
         }
         break;
       case OPrelconst:
@@ -2021,7 +2051,9 @@ code *cdcmp(elem *e,regm_t *pretregs)
         }
 
         cs.IFL2 = FLconst;
-        if (sz == 16)
+        if (sz == REGSIZE * 4)
+            cs.IEV2.Vsize_t = e2->EV.Vcent.w[3]; // msw
+        else if (sz == CENTSIZE)
             cs.IEV2.Vsize_t = e2->EV.Vcent.msw;
         else if (sz > REGSIZE)
             cs.IEV2.Vint = MSREG(e2->EV.Vllong);
@@ -2079,7 +2111,39 @@ code *cdcmp(elem *e,regm_t *pretregs)
                 else
                 {
                     cs.Irm |= modregrm(0,7,0);
-                    if (sz > REGSIZE)
+                    if (sz == 4 * REGSIZE)
+                    {
+                        assert(I32); // This only happens with cent
+                        if (e2->Eoper == OPrelconst)
+                        {   cs.Iflags = (cs.Iflags & ~(CFoff | CFseg)) | CFseg;
+                            cs.IEVoffset2 = 0;
+                            assert(0);
+                        }
+                        targ_size_t offsave = cs.IEVoffset1;
+                        cs.IEVoffset1 += REGSIZE * 3;
+                        c = CNIL;
+                        targ_ulong *wp = e2->EV.Vcent.w+2;
+                        while (cs.IEVoffset1 != offsave)
+                        {
+                            c = gen(c,&cs);
+                            genjmp(c,JNE,FLcode,(block*) ce); /* JNE nop   */
+
+                            // Second word
+                            if (e2->Eoper == OPconst)
+                                cs.IEV2.Vsize_t = *wp;
+                            else if (e2->Eoper == OPrelconst)
+                            {   assert(0);
+                                /* Turn off CFseg, on CFoff */
+                                cs.Iflags ^= CFseg | CFoff;
+                                cs.IEVoffset2 = e2->EV.sp.Voffset;
+                            }
+                            else
+                                assert(0);
+                            cs.IEVoffset1 -= REGSIZE;
+                            wp--;
+                        }
+                    }
+                    else if (sz > REGSIZE)
                     {
 #if !TARGET_SEGMENTED
                         if (sz == 6)

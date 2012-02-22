@@ -98,6 +98,8 @@ struct Declaration;
 #define mXMM7   (1 << XMM7)
 #define XMMREGS  (mXMM0 |mXMM1 |mXMM2 |mXMM3 |mXMM4 |mXMM5 |mXMM6 |mXMM7)
 
+#define CENTREGS (mDX | mCX | mBX | mAX)
+
 #define mES     (1 << ES)       // 0x1000000
 #define mPSW    (1 << PSW)      // 0x2000000
 

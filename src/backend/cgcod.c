@@ -1437,6 +1437,11 @@ L3:
             assert(retregs == DOUBLEREGS);
             reg = AX;
         }
+        else if (I32 && (tym == TYcent || tym == TYucent))
+        {
+            assert((retregs & CENTREGS) == CENTREGS);
+            reg = CENTREGS;
+        }
         else
         {
 #ifdef DEBUG
@@ -2009,6 +2014,10 @@ if (regcon.cse.mval & 1) elem_print(regcon.cse.value[i]);
         printf("e = %p, csemask = x%x, emask = x%x\n",e,csemask,emask);
 #endif
         assert(0);
+  }
+  else if (tym == TYcent || tym == TYucent)
+  {
+        goto done;
   }
   else
   {

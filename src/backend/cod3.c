@@ -425,8 +425,7 @@ regm_t regmask(tym_t tym, tym_t tyf)
 
         case TYcent:
         case TYucent:
-            assert(I64);
-            return mDX | mAX;
+            return I64 ? mDX | mAX : CENTREGS;
 
 #if TARGET_SEGMENTED
         case TYvptr:
