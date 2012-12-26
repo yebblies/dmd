@@ -26,7 +26,7 @@
 #include "import.h"
 #include "aggregate.h"
 
-#if CPP_MANGLE
+#if (TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS)
 
 /* Do mangling for C++ linkage.
  * Follows Itanium C++ ABI 1.86
@@ -458,6 +458,191 @@ void Parameter::argsCppMangle(OutBuffer *buf, CppMangleState *cms, Parameters *a
         buf->writeByte('v');            // encode ( ) arguments
 }
 
+#elif TARGET_WINDOS
+
+struct CppMangleState
+{
+    Strings cache;
+    void substitute(OutBuffer *buf, char *s)
+    {
+        for (size_t i = 0; i < cache.dim; i++)
+        {
+            if (!strcmp(cache[i], s))
+            {
+                buf->printf("%d", i);
+                return;
+            }
+        }
+        cache.push(s);
+        buf->writestring(s);
+    }
+};
+
+char *cpp_mangle(Dsymbol *s)
+{
+    CppMangleState cms;
+    memset(&cms, 0, sizeof(cms));
+
+    //printf("cpp_mangle: %s\n", s->toPrettyChars());
+
+    OutBuffer buf;
+
+    FuncDeclaration *fd = s->isFuncDeclaration();
+    if (fd)
+    {
+        buf.writestring("?");
+        buf.writestring(fd->ident->toChars());
+        buf.writebyte('@');
+
+        Dsymbol *parent = fd->toParent();
+        if (parent->isModule())
+        {
+            buf.writestring("@Y");
+        }
+        else
+        {
+            assert(0);
+        }
+
+        buf.writestring("A"); // __cdecl
+        TypeFunction *tf = (TypeFunction *)fd->type;
+        tf->next->toCppMangle(&buf, &cms);
+
+        Parameter::argsCppMangle(&buf, &cms, tf->parameters, tf->varargs);
+        buf.writebyte('Z');
+    }
+
+    buf.writebyte(0);
+    //printf("%s -> %s\n", s->toChars(), buf.toChars());
+    //assert(0);
+    return buf.extractData();
+}
+
+void Parameter::argsCppMangle(OutBuffer *buf, CppMangleState *, Parameters *arguments, int varargs)
+{
+    CppMangleState cms;
+    if (arguments && Parameter::dim(arguments))
+    {
+        for (size_t i = 0; i < Parameter::dim(arguments); i++)
+        {
+            Type *t = (*arguments)[i]->type;
+            t->toCppMangle(buf, &cms);
+        }
+        if (varargs)
+            buf->writebyte('Z');
+        else
+            buf->writebyte('@');
+    }
+    else
+    {
+        buf->writebyte('X');
+    }
+}
+
+void Type::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    assert(0);
+}
+
+void TypeBasic::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    switch(ty)
+    {
+    case Tvoid:    buf->writebyte('X'); break;
+    case Tchar:    buf->writebyte('D'); break;
+    case Twchar:   buf->writestring("_Y"); break;
+    case Tint8:    buf->writebyte('C'); break;
+    case Tuns8:    buf->writebyte('E'); break;
+    case Tint16:   buf->writebyte('F'); break;
+    case Tuns16:   buf->writebyte('G'); break;
+    case Tint32:   buf->writebyte('H'); break;
+    case Tuns32:   buf->writebyte('I'); break;
+    case Tint64:   buf->writestring("_J"); break;
+    case Tuns64:   buf->writestring("_K"); break;
+    case Tfloat32: buf->writebyte('M'); break;
+    case Tfloat64: buf->writebyte('N'); break;
+    case Tfloat80: buf->writestring("_Z"); break;
+
+    case Tbool:        cms->substitute(buf, "_N"); break;
+    case Timaginary32: cms->substitute(buf, "_R"); break;
+    case Timaginary64: cms->substitute(buf, "_S"); break;
+    case Timaginary80: cms->substitute(buf, "_T"); break;
+    case Tcomplex32:   cms->substitute(buf, "_U"); break;
+    case Tcomplex64:   cms->substitute(buf, "_V"); break;
+    case Tcomplex80:   cms->substitute(buf, "_W"); break;
+    default:
+        assert(0);
+    }
+}
+
+void TypeVector::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    assert(0);
+}
+
+void TypeSArray::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    assert(0);
+}
+
+void TypeDArray::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    assert(0);
+}
+
+void TypeAArray::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    assert(0);
+}
+
+void TypePointer::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    CppMangleState cms2;
+    OutBuffer buf2;
+    buf2.writestring("PA");
+    next->toCppMangle(&buf2, &cms2);
+    buf2.writebyte(0);
+    cms->substitute(buf, buf2.extractData());
+}
+
+void TypeReference::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    assert(0);
+}
+
+void TypeFunction::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    assert(0);
+}
+
+void TypeDelegate::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    assert(0);
+}
+
+void TypeEnum::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    assert(0);
+}
+
+void TypeTypedef::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    assert(0);
+}
+
+void TypeStruct::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    assert(0);
+}
+
+void TypeClass::toCppMangle(OutBuffer *buf, CppMangleState *cms)
+{
+    assert(0);
+}
+
+#else
+
+#error "fix this"
 
 #endif
 

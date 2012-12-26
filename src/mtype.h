@@ -251,9 +251,7 @@ struct Type : Object
     void modToBuffer(OutBuffer *buf);
     char *modToChars();
     virtual void toJson(JsonOut *json);
-#if CPP_MANGLE
     virtual void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
     virtual int isintegral();
     virtual int isfloating();   // real, imaginary, or complex
     virtual int isreal();
@@ -400,9 +398,7 @@ struct TypeBasic : Type
     Expression *dotExp(Scope *sc, Expression *e, Identifier *ident);
     char *toChars();
     void toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod);
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
     int isintegral();
     int isfloating();
     int isreal();
@@ -437,9 +433,7 @@ struct TypeVector : Type
     void toDecoBuffer(OutBuffer *buf, int flag);
     void toJson(JsonOut *json);
     MATCH deduceType(Scope *sc, Type *tparam, TemplateParameters *parameters, Objects *dedtypes, unsigned *wildmatch = NULL);
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
     int isintegral();
     int isfloating();
     int isscalar();
@@ -494,9 +488,7 @@ struct TypeSArray : TypeArray
     int needsDestruction();
     bool needsNested();
     TypeTuple *toArgTypes();
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
 
     type *toCtype();
     type *toCParamtype();
@@ -526,9 +518,7 @@ struct TypeDArray : TypeArray
     TypeInfoDeclaration *getTypeInfoDeclaration();
     int hasPointers();
     TypeTuple *toArgTypes();
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
 
     type *toCtype();
 };
@@ -563,9 +553,7 @@ struct TypeAArray : TypeArray
     TypeTuple *toArgTypes();
     MATCH implicitConvTo(Type *to);
     MATCH constConv(Type *to);
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
 
     // Back end
     Symbol *aaGetSymbol(const char *func, int flags);
@@ -590,9 +578,7 @@ struct TypePointer : TypeNext
     TypeInfoDeclaration *getTypeInfoDeclaration();
     int hasPointers();
     TypeTuple *toArgTypes();
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
 
     type *toCtype();
 };
@@ -609,9 +595,7 @@ struct TypeReference : TypeNext
     Expression *dotExp(Scope *sc, Expression *e, Identifier *ident);
     Expression *defaultInit(Loc loc);
     int isZeroInit(Loc loc);
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
 };
 
 enum RET
@@ -671,9 +655,7 @@ struct TypeFunction : TypeNext
     TypeInfoDeclaration *getTypeInfoDeclaration();
     Type *reliesOnTident(TemplateParameters *tparams = NULL);
     bool hasLazyParameters();
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
     bool parameterEscapes(Parameter *p);
     Type *addStorageClass(StorageClass stc);
 
@@ -706,9 +688,7 @@ struct TypeDelegate : TypeNext
     Expression *dotExp(Scope *sc, Expression *e, Identifier *ident);
     int hasPointers();
     TypeTuple *toArgTypes();
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
 
     type *toCtype();
 };
@@ -841,9 +821,7 @@ struct TypeStruct : Type
     MATCH constConv(Type *to);
     unsigned wildConvTo(Type *tprm);
     Type *toHeadMutable();
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
 
     type *toCtype();
 };
@@ -885,9 +863,7 @@ struct TypeEnum : Type
     TypeInfoDeclaration *getTypeInfoDeclaration();
     int hasPointers();
     TypeTuple *toArgTypes();
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
 
     type *toCtype();
 };
@@ -934,9 +910,7 @@ struct TypeTypedef : Type
     int hasPointers();
     TypeTuple *toArgTypes();
     int hasWild();
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
 
     type *toCtype();
     type *toCParamtype();
@@ -973,9 +947,7 @@ struct TypeClass : Type
     int hasPointers();
     TypeTuple *toArgTypes();
     int builtinTypeInfo();
-#if CPP_MANGLE
     void toCppMangle(OutBuffer *buf, CppMangleState *cms);
-#endif
 
     type *toCtype();
 

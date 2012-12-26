@@ -504,6 +504,10 @@ char *cpp_mangle(symbol *s)
         return symbol_ident(s);
 #endif
 
+#if MARS
+    return symbol_ident(s);
+#endif
+
     if (type_mangle(s->Stype) != mTYman_cpp)
         return symbol_ident(s);
     else

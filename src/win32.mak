@@ -159,7 +159,7 @@ OBJ1= mars.obj enum.obj struct.obj dsymbol.obj import.obj id.obj \
 	interpret.obj ctfeexpr.obj traits.obj aliasthis.obj \
 	builtin.obj clone.obj libomf.obj scanomf.obj arrayop.obj irstate.obj \
 	glue.obj msc.obj tk.obj s2ir.obj todt.obj e2ir.obj tocsym.obj \
-	eh.obj toobj.obj toctype.obj tocvdebug.obj toir.obj \
+	eh.obj toobj.obj cppmangle.obj toctype.obj tocvdebug.obj toir.obj \
 	json.obj unittests.obj imphint.obj argtypes.obj apply.obj sapply.obj \
 	sideeffect.obj libmscoff.obj scanmscoff.obj \
 	intrange.obj canthrow.obj target.obj
@@ -690,6 +690,7 @@ class.obj : $(TOTALH) enum.h class.c
 clone.obj : $(TOTALH) clone.c
 constfold.obj : $(TOTALH) expression.h constfold.c
 cond.obj : $(TOTALH) identifier.h declaration.h cond.h cond.c
+cppmangle.obj : $(TOTALH) dsymbol.h cppmangle.c
 declaration.obj : $(TOTALH) identifier.h attrib.h declaration.h declaration.c expression.h
 delegatize.obj : $(TOTALH) delegatize.c
 doc.obj : $(TOTALH) doc.h doc.c
