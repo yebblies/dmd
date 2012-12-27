@@ -333,9 +333,9 @@ unsigned Type::alignsize()
 
 Type *Type::semantic(Loc loc, Scope *sc)
 {
-    if (ty == Tint128 || ty == Tuns128)
+    if (!global.params.is64bit && (ty == Tint128 || ty == Tuns128))
     {
-        error(loc, "cent and ucent types not implemented");
+        error(loc, "cent and ucent types only implemented for x86-64");
         return terror;
     }
 
