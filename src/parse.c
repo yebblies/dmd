@@ -1286,8 +1286,9 @@ InvariantDeclaration *Parser::parseInvariant()
         nextToken();
         check(TOKrparen);
     }
+    StorageClass stc = parsePostfix();
 
-    f = new InvariantDeclaration(loc, 0);
+    f = new InvariantDeclaration(loc, 0, stc);
     f->fbody = parseStatement(PScurly);
     return f;
 }
@@ -1305,10 +1306,11 @@ UnitTestDeclaration *Parser::parseUnitTest()
     Loc loc = this->loc;
 
     nextToken();
+    StorageClass stc = parsePostfix();
 
     body = parseStatement(PScurly);
 
-    f = new UnitTestDeclaration(loc, this->loc);
+    f = new UnitTestDeclaration(loc, this->loc, stc);
     f->fbody = body;
     return f;
 }

@@ -4024,8 +4024,8 @@ void SharedStaticDtorDeclaration::toCBuffer(OutBuffer *buf, HdrGenState *hgs)
 
 /********************************* InvariantDeclaration ****************************/
 
-InvariantDeclaration::InvariantDeclaration(Loc loc, Loc endloc)
-    : FuncDeclaration(loc, endloc, Id::classInvariant, STCundefined, NULL)
+InvariantDeclaration::InvariantDeclaration(Loc loc, Loc endloc, StorageClass storage_class)
+    : FuncDeclaration(loc, endloc, Id::classInvariant, storage_class, NULL)
 {
 }
 
@@ -4034,7 +4034,7 @@ Dsymbol *InvariantDeclaration::syntaxCopy(Dsymbol *s)
     InvariantDeclaration *id;
 
     assert(!s);
-    id = new InvariantDeclaration(loc, endloc);
+    id = new InvariantDeclaration(loc, endloc, storage_class);
     FuncDeclaration::syntaxCopy(id);
     return id;
 }
@@ -4117,8 +4117,8 @@ static Identifier *unitTestId(Loc loc)
 #undef snprintf
 #endif
 
-UnitTestDeclaration::UnitTestDeclaration(Loc loc, Loc endloc)
-    : FuncDeclaration(loc, endloc, unitTestId(loc), STCundefined, NULL)
+UnitTestDeclaration::UnitTestDeclaration(Loc loc, Loc endloc, StorageClass storage_class)
+    : FuncDeclaration(loc, endloc, unitTestId(loc), storage_class, NULL)
 {
 }
 
@@ -4127,7 +4127,7 @@ Dsymbol *UnitTestDeclaration::syntaxCopy(Dsymbol *s)
     UnitTestDeclaration *utd;
 
     assert(!s);
-    utd = new UnitTestDeclaration(loc, endloc);
+    utd = new UnitTestDeclaration(loc, endloc, storage_class);
     return FuncDeclaration::syntaxCopy(utd);
 }
 

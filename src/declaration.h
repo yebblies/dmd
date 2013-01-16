@@ -858,7 +858,7 @@ struct SharedStaticDtorDeclaration : StaticDtorDeclaration
 
 struct InvariantDeclaration : FuncDeclaration
 {
-    InvariantDeclaration(Loc loc, Loc endloc);
+    InvariantDeclaration(Loc loc, Loc endloc, StorageClass storage_class);
     Dsymbol *syntaxCopy(Dsymbol *);
     void semantic(Scope *sc);
     int isVirtual();
@@ -873,7 +873,7 @@ struct InvariantDeclaration : FuncDeclaration
 
 struct UnitTestDeclaration : FuncDeclaration
 {
-    UnitTestDeclaration(Loc loc, Loc endloc);
+    UnitTestDeclaration(Loc loc, Loc endloc, StorageClass storage_class);
     Dsymbol *syntaxCopy(Dsymbol *);
     void semantic(Scope *sc);
     AggregateDeclaration *isThis();
