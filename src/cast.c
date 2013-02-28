@@ -219,16 +219,6 @@ MATCH BinExp::implicitConvToCommon(Type *t)
     /* It is a pointer conversion
      */
 
-    /* Ask if the only reason the pointer conversion doesn't work is because of the
-     * addition or subtraction of mod bits. Perform test by stripping out the mod
-     * bits of the to and from types.
-     */
-    Type *typebm = typeb->castMod(0);
-    Type *tbm = tb->castMod(0);
-    MATCH m = typebm->implicitConvTo(tbm);
-    if (m == MATCHnomatch)
-        return m;
-
     /* Look for (ptr +- offset) or (offset + ptr).
      * Set e to be ptr, and t1 the pointer type.
      */
@@ -241,11 +231,10 @@ MATCH BinExp::implicitConvToCommon(Type *t)
             return MATCHnomatch;
     }
 
-    /* Add t's mod bits to t1, and try to convert e to t1
+    /* If e converts to t, then so will e +/- offset
      */
-    t1 = t1->castMod(tb->mod);
-    MATCH m2 = e->implicitConvTo(t1);
-    if (m2 == MATCHnomatch)
+    MATCH m = e->implicitConvTo(t);
+    if (m == MATCHnomatch)
         return MATCHnomatch;
 
     /* Allow the conversion. Match level is MATCHconst at best.
