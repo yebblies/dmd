@@ -439,11 +439,7 @@ void halt();
 void util_progress();
 
 /*** Where to send error messages ***/
-#ifdef IN_GCC
-#define stdmsg stderr
-#else
-#define stdmsg stderr
-#endif
+FILE *stdmsg;
 
 struct Dsymbol;
 class Library;
