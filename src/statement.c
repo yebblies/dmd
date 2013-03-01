@@ -58,10 +58,10 @@ Identifier *fixupLabelName(Scope *sc, Identifier *ident)
 /******************************** Statement ***************************/
 
 Statement::Statement(Loc loc)
-    : loc(loc)
 {
     // If this is an in{} contract scope statement (skip for determining
     //  inlineStatus of a function body for header content)
+    this->loc = loc;
 }
 
 Statement *Statement::syntaxCopy()

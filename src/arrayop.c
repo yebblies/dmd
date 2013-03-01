@@ -432,30 +432,80 @@ void AssignExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
     buf->writestring("Assign");
 }
 
-#define X(Str) \
-void Str##AssignExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments) \
-{                                                       \
-    /* Evaluate assign expressions right to left        \
-     */                                                 \
-    e2->buildArrayIdent(buf, arguments);                \
-    e1->buildArrayIdent(buf, arguments);                \
-    buf->writestring(#Str);                             \
-    buf->writestring("ass");                            \
+void AddAssignExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions right to left
+     */
+    e2->buildArrayIdent(buf, arguments);
+    e1->buildArrayIdent(buf, arguments);
+    buf->writestring("Addass");
 }
-
-X(Add)
-X(Min)
-X(Mul)
-X(Div)
-X(Mod)
-X(Xor)
-X(And)
-X(Or)
+void MinAssignExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions right to left
+     */
+    e2->buildArrayIdent(buf, arguments);
+    e1->buildArrayIdent(buf, arguments);
+    buf->writestring("Minass");
+}
+void MulAssignExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions right to left
+     */
+    e2->buildArrayIdent(buf, arguments);
+    e1->buildArrayIdent(buf, arguments);
+    buf->writestring("Mulass");
+}
+void DivAssignExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions right to left
+     */
+    e2->buildArrayIdent(buf, arguments);
+    e1->buildArrayIdent(buf, arguments);
+    buf->writestring("Divass");
+}
+void ModAssignExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions right to left
+     */
+    e2->buildArrayIdent(buf, arguments);
+    e1->buildArrayIdent(buf, arguments);
+    buf->writestring("Modass");
+}
+void XorAssignExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions right to left
+     */
+    e2->buildArrayIdent(buf, arguments);
+    e1->buildArrayIdent(buf, arguments);
+    buf->writestring("Xorass");
+}
+void AndAssignExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions right to left
+     */
+    e2->buildArrayIdent(buf, arguments);
+    e1->buildArrayIdent(buf, arguments);
+    buf->writestring("Andass");
+}
+void OrAssignExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions right to left
+     */
+    e2->buildArrayIdent(buf, arguments);
+    e1->buildArrayIdent(buf, arguments);
+    buf->writestring("Orass");
+}
 #if DMDV2
-X(Pow)
+void PowAssignExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions right to left
+     */
+    e2->buildArrayIdent(buf, arguments);
+    e1->buildArrayIdent(buf, arguments);
+    buf->writestring("Powass");
+}
 #endif
-
-#undef X
 
 void NegExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
 {
@@ -469,29 +519,80 @@ void ComExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
     buf->writestring("Com");
 }
 
-#define X(Str) \
-void Str##Exp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)  \
-{                                                                       \
-    /* Evaluate assign expressions left to right                        \
-     */                                                                 \
-    e1->buildArrayIdent(buf, arguments);                                \
-    e2->buildArrayIdent(buf, arguments);                                \
-    buf->writestring(#Str);                                             \
+void AddExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions left to right
+     */
+    e1->buildArrayIdent(buf, arguments);
+    e2->buildArrayIdent(buf, arguments);
+    buf->writestring("Add");
 }
-
-X(Add)
-X(Min)
-X(Mul)
-X(Div)
-X(Mod)
-X(Xor)
-X(And)
-X(Or)
+void MinExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions left to right
+     */
+    e1->buildArrayIdent(buf, arguments);
+    e2->buildArrayIdent(buf, arguments);
+    buf->writestring("Min");
+}
+void MulExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions left to right
+     */
+    e1->buildArrayIdent(buf, arguments);
+    e2->buildArrayIdent(buf, arguments);
+    buf->writestring("Mul");
+}
+void DivExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions left to right
+     */
+    e1->buildArrayIdent(buf, arguments);
+    e2->buildArrayIdent(buf, arguments);
+    buf->writestring("Div");
+}
+void ModExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions left to right
+     */
+    e1->buildArrayIdent(buf, arguments);
+    e2->buildArrayIdent(buf, arguments);
+    buf->writestring("Mod");
+}
+void XorExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions left to right
+     */
+    e1->buildArrayIdent(buf, arguments);
+    e2->buildArrayIdent(buf, arguments);
+    buf->writestring("Xor");
+}
+void AndExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions left to right
+     */
+    e1->buildArrayIdent(buf, arguments);
+    e2->buildArrayIdent(buf, arguments);
+    buf->writestring("And");
+}
+void OrExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions left to right
+     */
+    e1->buildArrayIdent(buf, arguments);
+    e2->buildArrayIdent(buf, arguments);
+    buf->writestring("Or");
+}
 #if DMDV2
-X(Pow)
+void PowExp::buildArrayIdent(OutBuffer *buf, Expressions *arguments)
+{
+    /* Evaluate assign expressions left to right
+     */
+    e1->buildArrayIdent(buf, arguments);
+    e2->buildArrayIdent(buf, arguments);
+    buf->writestring("Pow");
+}
 #endif
-
-#undef X
 
 /******************************************
  * Construct the inner loop for the array operation function,
@@ -551,32 +652,107 @@ Expression *AssignExp::buildArrayLoop(Parameters *fparams)
     return e;
 }
 
-#define X(Str) \
-Expression *Str##AssignExp::buildArrayLoop(Parameters *fparams) \
-{                                                               \
-    /* Evaluate assign expressions right to left                \
-     */                                                         \
-    Expression *ex2 = e2->buildArrayLoop(fparams);              \
-    Expression *ex1 = e1->buildArrayLoop(fparams);              \
-    Parameter *param = (*fparams)[0];                           \
-    param->storageClass = 0;                                    \
-    Expression *e = new Str##AssignExp(loc, ex1, ex2);          \
-    return e;                                                   \
+Expression *AddAssignExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions right to left
+     */
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Parameter *param = (*fparams)[0];
+    param->storageClass = 0;
+    Expression *e = new AddAssignExp(loc, ex1, ex2);
+    return e;
 }
-
-X(Add)
-X(Min)
-X(Mul)
-X(Div)
-X(Mod)
-X(Xor)
-X(And)
-X(Or)
+Expression *MinAssignExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions right to left
+     */
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Parameter *param = (*fparams)[0];
+    param->storageClass = 0;
+    Expression *e = new MinAssignExp(loc, ex1, ex2);
+    return e;
+}
+Expression *MulAssignExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions right to left
+     */
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Parameter *param = (*fparams)[0];
+    param->storageClass = 0;
+    Expression *e = new MulAssignExp(loc, ex1, ex2);
+    return e;
+}
+Expression *DivAssignExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions right to left
+     */
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Parameter *param = (*fparams)[0];
+    param->storageClass = 0;
+    Expression *e = new DivAssignExp(loc, ex1, ex2);
+    return e;
+}
+Expression *ModAssignExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions right to left
+     */
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Parameter *param = (*fparams)[0];
+    param->storageClass = 0;
+    Expression *e = new ModAssignExp(loc, ex1, ex2);
+    return e;
+}
+Expression *AndAssignExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions right to left
+     */
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Parameter *param = (*fparams)[0];
+    param->storageClass = 0;
+    Expression *e = new AndAssignExp(loc, ex1, ex2);
+    return e;
+}
+Expression *OrAssignExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions right to left
+     */
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Parameter *param = (*fparams)[0];
+    param->storageClass = 0;
+    Expression *e = new OrAssignExp(loc, ex1, ex2);
+    return e;
+}
+Expression *XorAssignExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions right to left
+     */
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Parameter *param = (*fparams)[0];
+    param->storageClass = 0;
+    Expression *e = new XorAssignExp(loc, ex1, ex2);
+    return e;
+}
 #if DMDV2
-X(Pow)
+Expression *PowAssignExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions right to left
+     */
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Parameter *param = (*fparams)[0];
+    param->storageClass = 0;
+    Expression *e = new PowAssignExp(loc, ex1, ex2);
+    return e;
+}
 #endif
-
-#undef X
 
 Expression *NegExp::buildArrayLoop(Parameters *fparams)
 {
@@ -592,31 +768,89 @@ Expression *ComExp::buildArrayLoop(Parameters *fparams)
     return e;
 }
 
-#define X(Str) \
-Expression *Str##Exp::buildArrayLoop(Parameters *fparams)       \
-{                                                               \
-    /* Evaluate assign expressions left to right                \
-     */                                                         \
-    Expression *ex1 = e1->buildArrayLoop(fparams);              \
-    Expression *ex2 = e2->buildArrayLoop(fparams);              \
-    Expression *e = new Str##Exp(0, ex1, ex2);                  \
-    return e;                                                   \
+Expression *AddExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions left to right
+     */
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *e = new AddExp(0, ex1, ex2);
+    return e;
 }
-
-X(Add)
-X(Min)
-X(Mul)
-X(Div)
-X(Mod)
-X(Xor)
-X(And)
-X(Or)
+Expression *MinExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions left to right
+     */
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *e = new MinExp(0, ex1, ex2);
+    return e;
+}
+Expression *MulExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions left to right
+     */
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *e = new MulExp(0, ex1, ex2);
+    return e;
+}
+Expression *DivExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions left to right
+     */
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *e = new DivExp(0, ex1, ex2);
+    return e;
+}
+Expression *ModExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions left to right
+     */
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *e = new ModExp(0, ex1, ex2);
+    return e;
+}
+Expression *AndExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions left to right
+     */
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *e = new AndExp(0, ex1, ex2);
+    return e;
+}
+Expression *OrExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions left to right
+     */
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *e = new OrExp(0, ex1, ex2);
+    return e;
+}
+Expression *XorExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions left to right
+     */
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *e = new XorExp(0, ex1, ex2);
+    return e;
+}
 #if DMDV2
-X(Pow)
+Expression *PowExp::buildArrayLoop(Parameters *fparams)
+{
+    /* Evaluate assign expressions left to right
+     */
+    Expression *ex1 = e1->buildArrayLoop(fparams);
+    Expression *ex2 = e2->buildArrayLoop(fparams);
+    Expression *e = new PowExp(0, ex1, ex2);
+    return e;
+}
 #endif
-
-#undef X
-
 
 /***********************************************
  * Test if operand is a valid array op operand.

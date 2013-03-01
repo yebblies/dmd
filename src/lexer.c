@@ -213,7 +213,17 @@ const char *Token::toChars()
         case TOKenum:
         case TOKstruct:
         case TOKimport:
-        case BASIC_TYPES:
+        case TOKwchar: case TOKdchar:
+        case TOKbit: case TOKbool: case TOKchar:
+        case TOKint8: case TOKuns8:
+        case TOKint16: case TOKuns16:
+        case TOKint32: case TOKuns32:
+        case TOKint64: case TOKuns64:
+        case TOKint128: case TOKuns128:
+        case TOKfloat32: case TOKfloat64: case TOKfloat80:
+        case TOKimaginary32: case TOKimaginary64: case TOKimaginary80:
+        case TOKcomplex32: case TOKcomplex64: case TOKcomplex80:
+        case TOKvoid:
             p = ident->toChars();
             break;
 
@@ -245,8 +255,8 @@ OutBuffer Lexer::stringbuffer;
 Lexer::Lexer(Module *mod,
         unsigned char *base, size_t begoffset, size_t endoffset,
         int doDocComment, int commentToken)
-    : loc(mod, 1)
 {
+    this->loc = Loc(mod, 1);
     //printf("Lexer::Lexer(%p,%d)\n",base,length);
     //printf("lexer.mod = %p, %p\n", mod, this->loc.mod);
     memset(&token,0,sizeof(token));
@@ -1143,41 +1153,51 @@ void Lexer::scan(Token *t)
                 return;
 #endif
 
-#define SINGLE(c,tok) case c: p++; t->value = tok; return;
-
-            SINGLE('(', TOKlparen)
-            SINGLE(')', TOKrparen)
-            SINGLE('[', TOKlbracket)
-            SINGLE(']', TOKrbracket)
-            SINGLE('{', TOKlcurly)
-            SINGLE('}', TOKrcurly)
-            SINGLE('?', TOKquestion)
-            SINGLE(',', TOKcomma)
-            SINGLE(';', TOKsemicolon)
-            SINGLE(':', TOKcolon)
-            SINGLE('$', TOKdollar)
+            case '(': p++; t->value = TOKlparen; return;
+            case ')': p++; t->value = TOKrparen; return;
+            case '[': p++; t->value = TOKlbracket; return;
+            case ']': p++; t->value = TOKrbracket; return;
+            case '{': p++; t->value = TOKlcurly; return;
+            case '}': p++; t->value = TOKrcurly; return;
+            case '?': p++; t->value = TOKquestion; return;
+            case ',': p++; t->value = TOKcomma; return;
+            case ';': p++; t->value = TOKsemicolon; return;
+            case ':': p++; t->value = TOKcolon; return;
+            case '$': p++; t->value = TOKdollar; return;
 #if DMDV2
-            SINGLE('@', TOKat)
+            case '@': p++; t->value = TOKat; return;
 #endif
-#undef SINGLE
 
-#define DOUBLE(c1,tok1,c2,tok2)         \
-            case c1:                    \
-                p++;                    \
-                if (*p == c2)           \
-                {   p++;                \
-                    t->value = tok2;    \
-                }                       \
-                else                    \
-                    t->value = tok1;    \
+
+            case '*':
+                p++;
+                if (*p == '=')
+                {   p++;
+                    t->value = TOKmulass;
+                }
+                else
+                    t->value = TOKmul;
                 return;
-
-            DOUBLE('*', TOKmul, '=', TOKmulass)
-            DOUBLE('%', TOKmod, '=', TOKmodass)
+            case '%':
+                p++;
+                if (*p == '=')
+                {   p++;
+                    t->value = TOKmodass;
+                }
+                else
+                    t->value = TOKmod;
+                return;
 #if DMDV1
-            DOUBLE('^', TOKxor, '=', TOKxorass)
+            case '^':
+                p++;
+                if (*p == '=')
+                {   p++;
+                    t->value = TOKxorass;
+                }
+                else
+                    t->value = TOKxor;
+                return;
 #endif
-#undef DOUBLE
 
             case '#':
             {
