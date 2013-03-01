@@ -92,9 +92,7 @@ Global::Global()
 
     copyright = "Copyright (c) 1999-2012 by Digital Mars";
     written = "written by Walter Bright";
-    version = "v"
-#include "verstr.h"
-    ;
+    version = "vX.XXX";
 
     global.structalign = STRUCTALIGN_DEFAULT;
 
