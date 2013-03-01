@@ -52,8 +52,11 @@ elem *eval_Darray(IRState *irs, Expression *e, bool alwaysCopy = false);
 elem *array_toPtr(Type *t, elem *e);
 elem *appendDtors(IRState *irs, elem *er, size_t starti, size_t endi);
 
-#define el_setLoc(e,loc)        ((e)->Esrcpos.Sfilename = (char *)(loc).filename, \
-                                 (e)->Esrcpos.Slinnum = (loc).linnum)
+static void el_setLoc(elem *e, Loc loc)
+{
+    e->Esrcpos.Sfilename = (char *)loc.filename;
+    e->Esrcpos.Slinnum = loc.linnum;
+}
 
 /* If variable var of type typ is a reference
  */
