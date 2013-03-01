@@ -54,9 +54,11 @@ elem *incUsageElem(IRState *irs, Loc loc);
 StructDeclaration *needsPostblit(Type *t);
 elem *addressElem(elem *e, Type *t, bool alwaysCopy = false);
 
-
-#define elem_setLoc(e,loc)      ((e)->Esrcpos.Sfilename = (char *)(loc).filename, \
-                                 (e)->Esrcpos.Slinnum = (loc).linnum)
+static void elem_setLoc(elem *e, Loc loc)
+{
+    e->Esrcpos.Sfilename = (char *)loc.filename;
+    e->Esrcpos.Slinnum = loc.linnum;
+}
 
 #define SEH     (TARGET_WINDOS)
 
