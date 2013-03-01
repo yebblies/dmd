@@ -113,7 +113,7 @@ int isIdStart(unsigned char *p);
 int isIdTail(unsigned char *p);
 int utfStride(unsigned char *p);
 
-static unsigned char ddoc_default[] = "\
+static const char ddoc_default[] = "\
 DDOC =  <html><head>\n\
         <META http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n\
         <title>$(TITLE)</title>\n\
@@ -204,11 +204,11 @@ ESCAPES = /</&lt;/\n\
           /&/&amp;/\n\
 ";
 
-static char ddoc_decl_s[] = "$(DDOC_DECL ";
-static char ddoc_decl_e[] = ")\n";
+static const char ddoc_decl_s[] = "$(DDOC_DECL ";
+static const char ddoc_decl_e[] = ")\n";
 
-static char ddoc_decl_dd_s[] = "$(DDOC_DECL_DD ";
-static char ddoc_decl_dd_e[] = ")\n";
+static const char ddoc_decl_dd_s[] = "$(DDOC_DECL_DD ";
+static const char ddoc_decl_dd_e[] = ")\n";
 
 
 /****************************************************
