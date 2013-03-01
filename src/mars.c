@@ -410,6 +410,12 @@ int tryMain(size_t argc, char *argv[])
     printf("DMD %s DEBUG\n", global.version);
 #endif
 
+#ifdef IN_GCC
+    stdmsg = stderr;
+#else
+    stdmsg = stdout;
+#endif
+
     unittests();
 
     // Check for malformed input
