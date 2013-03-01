@@ -1385,8 +1385,6 @@ int MODmerge(unsigned char mod1, unsigned char mod2)
 
     //printf("MODmerge(1 = %x, 2 = %x)\n", modfrom, modto);
     #define X(m, n) (((m) << 4) | (n))
-    // cases are commutative
-    #define Y(m, n) X(m, n): case X(n, m)
     switch (X(mod1, mod2))
     {
 #if 0
@@ -1399,39 +1397,59 @@ int MODmerge(unsigned char mod1, unsigned char mod2)
         case X(MODshared | MODwild, MODshared | MODwild):
 #endif
 
-        case Y(0, MODconst):
-        case Y(0, MODimmutable):
-        case Y(MODconst, MODimmutable):
-        case Y(MODconst, MODwild):
-        case Y(0, MODwild):
-        case Y(MODimmutable, MODwild):
+        case X(0, MODconst):
+        case X(0, MODimmutable):
+        case X(MODconst, MODimmutable):
+        case X(MODconst, MODwild):
+        case X(0, MODwild):
+        case X(MODimmutable, MODwild):
+        case X(MODconst, 0):
+        case X(MODimmutable, 0):
+        case X(MODimmutable, MODconst):
+        case X(MODwild, MODconst):
+        case X(MODwild, 0):
+        case X(MODwild, MODimmutable):
             return MODconst;
 
-        case Y(0, MODshared):
+        case X(0, MODshared):
+        case X(MODshared, 0):
             return MODshared;
 
-        case Y(0, MODshared | MODconst):
-        case Y(MODconst, MODshared):
-        case Y(MODconst, MODshared | MODconst):
-        case Y(MODimmutable, MODshared):
-        case Y(MODimmutable, MODshared | MODconst):
-        case Y(MODshared, MODshared | MODconst):
-        case Y(0, MODshared | MODwild):
-        case Y(MODconst, MODshared | MODwild):
-        case Y(MODimmutable, MODshared | MODwild):
-        case Y(MODshared, MODwild):
-        case Y(MODshared, MODshared | MODwild):
-        case Y(MODshared | MODconst, MODwild):
-        case Y(MODshared | MODconst, MODshared | MODwild):
+        case X(0, MODshared | MODconst):
+        case X(MODconst, MODshared):
+        case X(MODconst, MODshared | MODconst):
+        case X(MODimmutable, MODshared):
+        case X(MODimmutable, MODshared | MODconst):
+        case X(MODshared, MODshared | MODconst):
+        case X(0, MODshared | MODwild):
+        case X(MODconst, MODshared | MODwild):
+        case X(MODimmutable, MODshared | MODwild):
+        case X(MODshared, MODwild):
+        case X(MODshared, MODshared | MODwild):
+        case X(MODshared | MODconst, MODwild):
+        case X(MODshared | MODconst, MODshared | MODwild):
+        case X(MODshared | MODconst, 0):
+        case X(MODshared, MODconst):
+        case X(MODshared | MODconst, MODconst):
+        case X(MODshared, MODimmutable):
+        case X(MODshared | MODconst, MODimmutable):
+        case X(MODshared | MODconst, MODshared):
+        case X(MODshared | MODwild, 0):
+        case X(MODshared | MODwild, MODconst):
+        case X(MODshared | MODwild, MODimmutable):
+        case X(MODwild, MODshared):
+        case X(MODshared | MODwild, MODshared):
+        case X(MODwild, MODshared | MODconst):
+        case X(MODshared | MODwild, MODshared | MODconst):
             return MODshared | MODconst;
 
-        case Y(MODwild, MODshared | MODwild):
+        case X(MODwild, MODshared | MODwild):
+        case X(MODshared | MODwild, MODwild):
             return MODshared | MODwild;
 
         default:
             assert(0);
     }
-    #undef Y
     #undef X
     assert(0);
     return 0;
@@ -3144,7 +3162,12 @@ Expression *TypeBasic::defaultInit(Loc loc)
     union
     {   unsigned short us[8];
         longdouble     ld;
-    } snan = {{ 0, 0, 0, 0xA000, 0x7FFF }};
+    } snan;
+    snan.us[0] = 0;
+    snan.us[1] = 0;
+    snan.us[2] = 0;
+    snan.us[3] = 0xA000;
+    snan.us[4] = 0x7FFF;
     /*
      * Although long doubles are 10 bytes long, some
      * C ABIs pad them out to 12 or even 16 bytes, so

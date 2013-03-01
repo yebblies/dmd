@@ -104,8 +104,10 @@ struct InterState
 
 CtfeStack ctfeStack;
 
-CtfeStack::CtfeStack() : framepointer(0), maxStackPointer(0)
+CtfeStack::CtfeStack()
 {
+    framepointer = 0;
+    maxStackPointer = 0;
 }
 
 size_t CtfeStack::stackPointer()
@@ -499,13 +501,6 @@ Expression *FuncDeclaration::interpret(InterState *istate, Expressions *argument
 
 /******************************** Statement ***************************/
 
-#define START()                         \
-    if (istate->start)                  \
-    {   if (istate->start != this)      \
-            return NULL;                \
-        istate->start = NULL;           \
-    }
-
 /***********************************
  * Interpret the statement.
  * Returns:
@@ -519,7 +514,12 @@ Expression *Statement::interpret(InterState *istate)
 #if LOG
     printf("%s Statement::interpret()\n", loc.toChars());
 #endif
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     error("Statement %s cannot be interpreted at compile time", this->toChars());
     return EXP_CANT_INTERPRET;
 }
@@ -529,7 +529,12 @@ Expression *ExpStatement::interpret(InterState *istate)
 #if LOG
     printf("%s ExpStatement::interpret(%s)\n", loc.toChars(), exp ? exp->toChars() : "");
 #endif
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     if (exp)
     {
         Expression *e = exp->interpret(istate, ctfeNeedNothing);
@@ -795,7 +800,12 @@ Expression *ReturnStatement::interpret(InterState *istate)
 #if LOG
     printf("%s ReturnStatement::interpret(%s)\n", loc.toChars(), exp ? exp->toChars() : "");
 #endif
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     if (!exp)
         return EXP_VOID_INTERPRET;
     assert(istate && istate->fd && istate->fd->type);
@@ -858,7 +868,12 @@ Expression *BreakStatement::interpret(InterState *istate)
 #if LOG
     printf("%s BreakStatement::interpret()\n", loc.toChars());
 #endif
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     if (ident)
     {   LabelDsymbol *label = istate->fd->searchLabel(ident);
         assert(label && label->statement);
@@ -882,7 +897,12 @@ Expression *ContinueStatement::interpret(InterState *istate)
 #if LOG
     printf("%s ContinueStatement::interpret()\n", loc.toChars());
 #endif
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     if (ident)
     {   LabelDsymbol *label = istate->fd->searchLabel(ident);
         assert(label && label->statement);
@@ -1141,7 +1161,12 @@ Expression *GotoStatement::interpret(InterState *istate)
 #if LOG
     printf("%s GotoStatement::interpret()\n", loc.toChars());
 #endif
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     assert(label && label->statement);
     istate->gotoTarget = label->statement;
     return EXP_GOTO_INTERPRET;
@@ -1152,7 +1177,12 @@ Expression *GotoCaseStatement::interpret(InterState *istate)
 #if LOG
     printf("%s GotoCaseStatement::interpret()\n", loc.toChars());
 #endif
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     assert(cs);
     istate->gotoTarget = cs;
     return EXP_GOTO_INTERPRET;
@@ -1163,7 +1193,12 @@ Expression *GotoDefaultStatement::interpret(InterState *istate)
 #if LOG
     printf("%s GotoDefaultStatement::interpret()\n", loc.toChars());
 #endif
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     assert(sw && sw->sdefault);
     istate->gotoTarget = sw->sdefault;
     return EXP_GOTO_INTERPRET;
@@ -1185,7 +1220,12 @@ Expression *TryCatchStatement::interpret(InterState *istate)
 #if LOG
     printf("%s TryCatchStatement::interpret()\n", loc.toChars());
 #endif
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     Expression *e = body ? body->interpret(istate) : NULL;
     if (e == EXP_CANT_INTERPRET)
         return e;
@@ -1257,7 +1297,12 @@ Expression *TryFinallyStatement::interpret(InterState *istate)
 #if LOG
     printf("%s TryFinallyStatement::interpret()\n", loc.toChars());
 #endif
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     Expression *e = body ? body->interpret(istate) : NULL;
     if (e == EXP_CANT_INTERPRET)
         return e;
@@ -1279,7 +1324,12 @@ Expression *ThrowStatement::interpret(InterState *istate)
 #if LOG
     printf("%s ThrowStatement::interpret()\n", loc.toChars());
 #endif
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     Expression *e = exp->interpret(istate);
     if (exceptionOrCantInterpret(e))
         return e;
@@ -1303,7 +1353,12 @@ Expression *WithStatement::interpret(InterState *istate)
     if (exp->op == TOKimport || exp->op == TOKtype)
         return body ? body->interpret(istate) : EXP_VOID_INTERPRET;
 
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     Expression *e = exp->interpret(istate);
     if (exceptionOrCantInterpret(e))
         return e;
@@ -1324,7 +1379,12 @@ Expression *AsmStatement::interpret(InterState *istate)
 #if LOG
     printf("%s AsmStatement::interpret()\n", loc.toChars());
 #endif
-    START()
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+
     error("asm statements cannot be interpreted at compile time");
     return EXP_CANT_INTERPRET;
 }
@@ -1335,7 +1395,12 @@ Expression *ImportStatement::interpret(InterState *istate)
 #if LOG
     printf("ImportStatement::interpret()\n");
 #endif
-    START();
+    if (istate->start)
+    {   if (istate->start != this)
+            return NULL;
+        istate->start = NULL;
+    }
+;
     return NULL;
 }
 #endif
@@ -2224,16 +2289,22 @@ Expression *UnaExp::interpretCommon(InterState *istate,  CtfeGoal goal, Expressi
     return e;
 }
 
-#define UNA_INTERPRET(op) \
-Expression *op##Exp::interpret(InterState *istate, CtfeGoal goal)  \
-{                                                                  \
-    return interpretCommon(istate, goal, &op);                     \
+Expression *NegExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Neg);
 }
-
-UNA_INTERPRET(Neg)
-UNA_INTERPRET(Com)
-UNA_INTERPRET(Not)
-UNA_INTERPRET(Bool)
+Expression *ComExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Com);
+}
+Expression *NotExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Not);
+}
+Expression *BoolExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Bool);
+}
 
 
 typedef Expression *(*fp_t)(Type *, Expression *, Expression *);
@@ -2302,25 +2373,55 @@ Lcant:
     return EXP_CANT_INTERPRET;
 }
 
-#define BIN_INTERPRET(op) \
-Expression *op##Exp::interpret(InterState *istate, CtfeGoal goal) \
-{                                                                 \
-    return interpretCommon(istate, goal, &op);                    \
+Expression *AddExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Add);
 }
-
-BIN_INTERPRET(Add)
-BIN_INTERPRET(Min)
-BIN_INTERPRET(Mul)
-BIN_INTERPRET(Div)
-BIN_INTERPRET(Mod)
-BIN_INTERPRET(Shl)
-BIN_INTERPRET(Shr)
-BIN_INTERPRET(Ushr)
-BIN_INTERPRET(And)
-BIN_INTERPRET(Or)
-BIN_INTERPRET(Xor)
+Expression *MinExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Min);
+}
+Expression *MulExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Mul);
+}
+Expression *DivExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Div);
+}
+Expression *ModExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Mod);
+}
+Expression *ShlExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Shl);
+}
+Expression *ShrExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Shr);
+}
+Expression *UshrExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Ushr);
+}
+Expression *AndExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &And);
+}
+Expression *OrExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Or);
+}
+Expression *XorExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Xor);
+}
 #if DMDV2
-BIN_INTERPRET(Pow)
+Expression *PowExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCommon(istate, goal, &Pow);
+}
 #endif
 
 
@@ -2378,15 +2479,20 @@ Expression *BinExp::interpretCompareCommon(InterState *istate, CtfeGoal goal, fp
     return new IntegerExp(loc, cmp, type);
 }
 
-#define BIN_INTERPRET2(op, opfunc) \
-Expression *op##Exp::interpret(InterState *istate, CtfeGoal goal)  \
-{                                                                  \
-    return interpretCompareCommon(istate, goal, &opfunc);                \
+Expression *EqualExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCompareCommon(istate, goal, &ctfeEqual);
 }
 
-BIN_INTERPRET2(Equal, ctfeEqual)
-BIN_INTERPRET2(Identity, ctfeIdentity)
-BIN_INTERPRET2(Cmp, ctfeCmp)
+Expression *IdentityExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCompareCommon(istate, goal, &ctfeIdentity);
+}
+
+Expression *CmpExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretCompareCommon(istate, goal, &ctfeCmp);
+}
 
 /* Helper functions for BinExp::interpretAssignCommon
  */
@@ -3481,29 +3587,59 @@ Expression *AssignExp::interpret(InterState *istate, CtfeGoal goal)
 {
     return interpretAssignCommon(istate, goal, NULL);
 }
-
-#define BIN_ASSIGN_INTERPRET_CTFE(op, ctfeOp) \
-Expression *op##AssignExp::interpret(InterState *istate, CtfeGoal goal) \
-{                                                                       \
-    return interpretAssignCommon(istate, goal, &ctfeOp);                    \
+Expression *AddAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &Add);
 }
-
-#define BIN_ASSIGN_INTERPRET(op) BIN_ASSIGN_INTERPRET_CTFE(op, op)
-
-BIN_ASSIGN_INTERPRET(Add)
-BIN_ASSIGN_INTERPRET(Min)
-BIN_ASSIGN_INTERPRET_CTFE(Cat, ctfeCat)
-BIN_ASSIGN_INTERPRET(Mul)
-BIN_ASSIGN_INTERPRET(Div)
-BIN_ASSIGN_INTERPRET(Mod)
-BIN_ASSIGN_INTERPRET(Shl)
-BIN_ASSIGN_INTERPRET(Shr)
-BIN_ASSIGN_INTERPRET(Ushr)
-BIN_ASSIGN_INTERPRET(And)
-BIN_ASSIGN_INTERPRET(Or)
-BIN_ASSIGN_INTERPRET(Xor)
+Expression *MinAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &Min);
+}
+Expression *CatAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &ctfeCat);
+}
+Expression *MulAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &Mul);
+}
+Expression *DivAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &Div);
+}
+Expression *ModAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &Mod);
+}
+Expression *ShlAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &Shl);
+}
+Expression *ShrAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &Shr);
+}
+Expression *UshrAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &Ushr);
+}
+Expression *AndAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &And);
+}
+Expression *OrAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &Or);
+}
+Expression *XorAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &Xor);
+}
 #if DMDV2
-BIN_ASSIGN_INTERPRET(Pow)
+Expression *PowAssignExp::interpret(InterState *istate, CtfeGoal goal)
+{
+    return interpretAssignCommon(istate, goal, &Pow);
+}
 #endif
 
 Expression *PostExp::interpret(InterState *istate, CtfeGoal goal)

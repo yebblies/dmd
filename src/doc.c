@@ -79,9 +79,14 @@ struct DocComment
     Macro **pmacrotable;
     Escape **pescapetable;
 
-    DocComment() :
-       summary(NULL), copyright(NULL), macros(NULL), pmacrotable(NULL), pescapetable(NULL)
-    { }
+    DocComment()
+    {
+        summary = NULL;
+        copyright = NULL;
+        macros = NULL;
+        pmacrotable = NULL;
+        pescapetable = NULL;
+    }
 
     static DocComment *parse(Scope *sc, Dsymbol *s, unsigned char *comment);
     static void parseMacros(Escape **pescapetable, Macro **pmacrotable, unsigned char *m, size_t mlen);

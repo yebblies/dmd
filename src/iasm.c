@@ -128,7 +128,7 @@ const char *asmerrmsgs[] =
 };
 
 // Additional tokens for the inline assembler
-typedef enum
+enum ASMTK
 {
     ASMTKlocalsize = TOKMAX + 1,
     ASMTKdword,
@@ -141,7 +141,7 @@ typedef enum
     ASMTKseg,
     ASMTKword,
     ASMTKmax = ASMTKword-(TOKMAX+1)+1
-} ASMTK;
+};
 
 static const char *apszAsmtk[ASMTKmax] = {
         "__LOCAL_SIZE",
@@ -194,12 +194,12 @@ void init_optab();
 
 static unsigned char asm_TKlbra_seen = FALSE;
 
-typedef struct
+struct REG
 {
         char regstr[6];
         unsigned char val;
         opflag_t ty;
-} REG;
+};
 
 static REG regFp =      { "ST", 0, _st };
 
@@ -437,14 +437,14 @@ static REG regtab64[] =
 "YMM15", 15,    _ymm,
 };
 
-typedef enum {
+enum ASM_JUMPTYPE {
     ASM_JUMPTYPE_UNSPECIFIED,
     ASM_JUMPTYPE_SHORT,
     ASM_JUMPTYPE_NEAR,
     ASM_JUMPTYPE_FAR
-} ASM_JUMPTYPE;             // ajt
+};             // ajt
 
-typedef struct opnd
+struct OPND
 {
         REG *base;              // if plain register
         REG *pregDisp1;         // if [register1]
@@ -461,7 +461,7 @@ typedef struct opnd
         longdouble real;
         Type *ptype;
         ASM_JUMPTYPE ajt;
-} OPND;
+};
 
 //
 // Exported functions called from the compiler
@@ -2476,23 +2476,29 @@ STATIC void asm_make_modrm_byte(
 {
     #undef modregrm
 
-    typedef union {
-        unsigned char   uchOpcode;
+    struct MODRM_BYTE {
         struct {
-            unsigned rm  : 3;
-            unsigned reg : 3;
-            unsigned mod : 2;
+            unsigned rm;
+            unsigned reg;
+            unsigned mod;
         } modregrm;
-    } MODRM_BYTE;                       // mrmb
+        unsigned char pack()
+        {
+            return (modregrm.mod << 6) | (modregrm.reg << 3) | modregrm.rm;
+        }
+    };                       // mrmb
 
-    typedef union {
-        unsigned char   uchOpcode;
+    struct SIB_BYTE {
         struct {
-            unsigned base  : 3;
-            unsigned index : 3;
-            unsigned ss    : 2;
+            unsigned base;
+            unsigned index;
+            unsigned ss;
         } sib;
-    } SIB_BYTE;
+        unsigned char pack()
+        {
+            return (sib.ss << 6) | (sib.index << 3) | sib.base;
+        }
+    };
 
 
     MODRM_BYTE  mrmb = { 0 };
@@ -2871,16 +2877,16 @@ STATIC void asm_make_modrm_byte(
                 pc->Irex |= REX_R;
     }
 #ifdef DEBUG
-    puchOpcode[ (*pusIdx)++ ] = mrmb.uchOpcode;
+    puchOpcode[ (*pusIdx)++ ] = mrmb.pack();
 #endif
-    pc->Irm = mrmb.uchOpcode;
+    pc->Irm = mrmb.pack();
     //printf("Irm = %02x\n", pc->Irm);
     if (bSib)
     {
 #ifdef DEBUG
-            puchOpcode[ (*pusIdx)++ ] = sib.uchOpcode;
+            puchOpcode[ (*pusIdx)++ ] = sib.pack();
 #endif
-            pc->Isib= sib.uchOpcode;
+            pc->Isib= sib.pack();
     }
     if ((!s || (popnd->pregDisp1 && !bOffsetsym)) &&
         aopty != _imm &&
@@ -3531,7 +3537,8 @@ STATIC code *asm_db_parse(OP *pop)
         targ_double d;
         targ_ldouble ld;
         char value[10];
-    } dt;
+    };
+    DT dt;
     code *c;
     unsigned op;
     static unsigned char opsize[] = { 1,2,4,8,4,8,10 };

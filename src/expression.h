@@ -1276,55 +1276,157 @@ struct ConstructExp : AssignExp
     ConstructExp(Loc loc, Expression *e1, Expression *e2);
 };
 
-#define ASSIGNEXP(op)   \
-struct op##AssignExp : BinAssignExp                             \
-{                                                               \
-    op##AssignExp(Loc loc, Expression *e1, Expression *e2);     \
-    S(Expression *semantic(Scope *sc);)                          \
-    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);                  \
-    X(void buildArrayIdent(OutBuffer *buf, Expressions *arguments);) \
-    X(Expression *buildArrayLoop(Parameters *fparams);)         \
-                                                                \
-    Identifier *opId();    /* For operator overloading */       \
-                                                                \
-    elem *toElem(IRState *irs);                                 \
+struct AddAssignExp : BinAssignExp
+{
+    AddAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void buildArrayIdent(OutBuffer *buf, Expressions *arguments);
+    Expression *buildArrayLoop(Parameters *fparams);
+
+    Identifier *opId();    /* For operator overloading */
+
+    elem *toElem(IRState *irs);
 };
 
-#define X(a) a
-#define S(a)
-ASSIGNEXP(Add)
-ASSIGNEXP(Min)
-ASSIGNEXP(Mul)
-ASSIGNEXP(Div)
-ASSIGNEXP(Mod)
-ASSIGNEXP(And)
-ASSIGNEXP(Or)
-ASSIGNEXP(Xor)
-#undef S
+struct MinAssignExp : BinAssignExp
+{
+    MinAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void buildArrayIdent(OutBuffer *buf, Expressions *arguments);
+    Expression *buildArrayLoop(Parameters *fparams);
+
+    Identifier *opId();    /* For operator overloading */
+
+    elem *toElem(IRState *irs);
+};
+
+struct MulAssignExp : BinAssignExp
+{
+    MulAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void buildArrayIdent(OutBuffer *buf, Expressions *arguments);
+    Expression *buildArrayLoop(Parameters *fparams);
+
+    Identifier *opId();    /* For operator overloading */
+
+    elem *toElem(IRState *irs);
+};
+
+struct DivAssignExp : BinAssignExp
+{
+    DivAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void buildArrayIdent(OutBuffer *buf, Expressions *arguments);
+    Expression *buildArrayLoop(Parameters *fparams);
+
+    Identifier *opId();    /* For operator overloading */
+
+    elem *toElem(IRState *irs);
+};
+
+struct ModAssignExp : BinAssignExp
+{
+    ModAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void buildArrayIdent(OutBuffer *buf, Expressions *arguments);
+    Expression *buildArrayLoop(Parameters *fparams);
+
+    Identifier *opId();    /* For operator overloading */
+
+    elem *toElem(IRState *irs);
+};
+
+struct AndAssignExp : BinAssignExp
+{
+    AndAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void buildArrayIdent(OutBuffer *buf, Expressions *arguments);
+    Expression *buildArrayLoop(Parameters *fparams);
+
+    Identifier *opId();    /* For operator overloading */
+
+    elem *toElem(IRState *irs);
+};
+
+struct OrAssignExp : BinAssignExp
+{
+    OrAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void buildArrayIdent(OutBuffer *buf, Expressions *arguments);
+    Expression *buildArrayLoop(Parameters *fparams);
+
+    Identifier *opId();    /* For operator overloading */
+
+    elem *toElem(IRState *irs);
+};
+
+struct XorAssignExp : BinAssignExp
+{
+    XorAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void buildArrayIdent(OutBuffer *buf, Expressions *arguments);
+    Expression *buildArrayLoop(Parameters *fparams);
+
+    Identifier *opId();    /* For operator overloading */
+
+    elem *toElem(IRState *irs);
+};
 
 #if DMDV2
-#define S(a) a
-ASSIGNEXP(Pow)
-#undef S
+struct PowAssignExp : BinAssignExp
+{
+    PowAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *semantic(Scope *sc);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void buildArrayIdent(OutBuffer *buf, Expressions *arguments);
+    Expression *buildArrayLoop(Parameters *fparams);
+
+    Identifier *opId();    /* For operator overloading */
+
+    elem *toElem(IRState *irs);
+};
 #endif
 
-#undef S
-#undef X
+struct ShlAssignExp : BinAssignExp
+{
+    ShlAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
 
-#define X(a)
+    Identifier *opId();    /* For operator overloading */
 
-#define S(a)
-ASSIGNEXP(Shl)
-ASSIGNEXP(Shr)
-ASSIGNEXP(Ushr)
-#undef S
+    elem *toElem(IRState *irs);
+};
 
-#define S(a) a
-ASSIGNEXP(Cat)
-#undef S
+struct ShrAssignExp : BinAssignExp
+{
+    ShrAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
 
-#undef X
-#undef ASSIGNEXP
+    Identifier *opId();    /* For operator overloading */
+
+    elem *toElem(IRState *irs);
+};
+
+struct UshrAssignExp : BinAssignExp
+{
+    UshrAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+
+    Identifier *opId();    /* For operator overloading */
+
+    elem *toElem(IRState *irs);
+};
+
+struct CatAssignExp : BinAssignExp
+{
+    CatAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *semantic(Scope *sc);
+    Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+
+    Identifier *opId();    /* For operator overloading */
+
+    elem *toElem(IRState *irs);
+};
 
 struct AddExp : BinExp
 {

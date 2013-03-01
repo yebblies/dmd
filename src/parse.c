@@ -218,7 +218,17 @@ Dsymbols *Parser::parseDeclDefs(int once)
                 break;
             }
 
-            case BASIC_TYPES:
+            case TOKwchar: case TOKdchar:
+            case TOKbit: case TOKbool: case TOKchar:
+            case TOKint8: case TOKuns8:
+            case TOKint16: case TOKuns16:
+            case TOKint32: case TOKuns32:
+            case TOKint64: case TOKuns64:
+            case TOKint128: case TOKuns128:
+            case TOKfloat32: case TOKfloat64: case TOKfloat80:
+            case TOKimaginary32: case TOKimaginary64: case TOKimaginary80:
+            case TOKcomplex32: case TOKcomplex64: case TOKcomplex80:
+            case TOKvoid:
             case TOKalias:
             case TOKtypedef:
             case TOKidentifier:
@@ -2213,7 +2223,31 @@ Objects *Parser::parseTemplateArgument()
             ta = parseVector();
             goto LabelX;
 
-        case BASIC_TYPES_X(ta):
+        case TOKvoid:    ta = Type::tvoid;  goto LabelX;
+        case TOKint8:    ta = Type::tint8;  goto LabelX;
+        case TOKuns8:    ta = Type::tuns8;  goto LabelX;
+        case TOKint16:   ta = Type::tint16; goto LabelX;
+        case TOKuns16:   ta = Type::tuns16; goto LabelX;
+        case TOKint32:   ta = Type::tint32; goto LabelX;
+        case TOKuns32:   ta = Type::tuns32; goto LabelX;
+        case TOKint64:   ta = Type::tint64; goto LabelX;
+        case TOKuns64:   ta = Type::tuns64; goto LabelX;
+        case TOKint128:  ta = Type::tint128; goto LabelX;
+        case TOKuns128:  ta = Type::tuns128; goto LabelX;
+        case TOKfloat32: ta = Type::tfloat32; goto LabelX;
+        case TOKfloat64: ta = Type::tfloat64; goto LabelX;
+        case TOKfloat80: ta = Type::tfloat80; goto LabelX;
+        case TOKimaginary32: ta = Type::timaginary32; goto LabelX;
+        case TOKimaginary64: ta = Type::timaginary64; goto LabelX;
+        case TOKimaginary80: ta = Type::timaginary80; goto LabelX;
+        case TOKcomplex32: ta = Type::tcomplex32; goto LabelX;
+        case TOKcomplex64: ta = Type::tcomplex64; goto LabelX;
+        case TOKcomplex80: ta = Type::tcomplex80; goto LabelX;
+        case TOKbool:    ta = Type::tbool;    goto LabelX;
+        case TOKchar:    ta = Type::tchar;    goto LabelX;
+        case TOKwchar:   ta = Type::twchar; goto LabelX;
+        case TOKdchar:   ta = Type::tdchar; goto LabelX;
+        LabelX:
             tiargs->push(ta);
             nextToken();
             break;
@@ -2434,7 +2468,31 @@ Type *Parser::parseBasicType()
     //printf("parseBasicType()\n");
     switch (token.value)
     {
-        case BASIC_TYPES_X(t):
+        case TOKvoid:    t = Type::tvoid;  goto LabelX;
+        case TOKint8:    t = Type::tint8;  goto LabelX;
+        case TOKuns8:    t = Type::tuns8;  goto LabelX;
+        case TOKint16:   t = Type::tint16; goto LabelX;
+        case TOKuns16:   t = Type::tuns16; goto LabelX;
+        case TOKint32:   t = Type::tint32; goto LabelX;
+        case TOKuns32:   t = Type::tuns32; goto LabelX;
+        case TOKint64:   t = Type::tint64; goto LabelX;
+        case TOKuns64:   t = Type::tuns64; goto LabelX;
+        case TOKint128:  t = Type::tint128; goto LabelX;
+        case TOKuns128:  t = Type::tuns128; goto LabelX;
+        case TOKfloat32: t = Type::tfloat32; goto LabelX;
+        case TOKfloat64: t = Type::tfloat64; goto LabelX;
+        case TOKfloat80: t = Type::tfloat80; goto LabelX;
+        case TOKimaginary32: t = Type::timaginary32; goto LabelX;
+        case TOKimaginary64: t = Type::timaginary64; goto LabelX;
+        case TOKimaginary80: t = Type::timaginary80; goto LabelX;
+        case TOKcomplex32: t = Type::tcomplex32; goto LabelX;
+        case TOKcomplex64: t = Type::tcomplex64; goto LabelX;
+        case TOKcomplex80: t = Type::tcomplex80; goto LabelX;
+        case TOKbool:    t = Type::tbool;    goto LabelX;
+        case TOKchar:    t = Type::tchar;    goto LabelX;
+        case TOKwchar:   t = Type::twchar; goto LabelX;
+        case TOKdchar:   t = Type::tdchar; goto LabelX;
+        LabelX:
             nextToken();
             break;
 
@@ -3830,7 +3888,17 @@ Statement *Parser::parseStatement(int flags)
             }
             goto Ldeclaration;
 
-        case BASIC_TYPES:
+        case TOKwchar: case TOKdchar:
+        case TOKbit: case TOKbool: case TOKchar:
+        case TOKint8: case TOKuns8:
+        case TOKint16: case TOKuns16:
+        case TOKint32: case TOKuns32:
+        case TOKint64: case TOKuns64:
+        case TOKint128: case TOKuns128:
+        case TOKfloat32: case TOKfloat64: case TOKfloat80:
+        case TOKimaginary32: case TOKimaginary64: case TOKimaginary80:
+        case TOKcomplex32: case TOKcomplex64: case TOKcomplex80:
+        case TOKvoid:
             // bug 7773: int.max is always a part of expression
             if (peekNext() == TOKdot)
                 goto Lexp;
@@ -4826,7 +4894,17 @@ int Parser::isBasicType(Token **pt)
 
     switch (t->value)
     {
-        case BASIC_TYPES:
+        case TOKwchar: case TOKdchar:
+        case TOKbit: case TOKbool: case TOKchar:
+        case TOKint8: case TOKuns8:
+        case TOKint16: case TOKuns16:
+        case TOKint32: case TOKuns32:
+        case TOKint64: case TOKuns64:
+        case TOKint128: case TOKuns128:
+        case TOKfloat32: case TOKfloat64: case TOKfloat80:
+        case TOKimaginary32: case TOKimaginary64: case TOKimaginary80:
+        case TOKcomplex32: case TOKcomplex64: case TOKcomplex80:
+        case TOKvoid:
             t = peek(t);
             break;
 
@@ -4865,7 +4943,17 @@ int Parser::isBasicType(Token **pt)
                             if (!skipParens(t, &t))
                                 goto Lfalse;
                             break;
-                        case BASIC_TYPES:
+                        case TOKwchar: case TOKdchar:
+                        case TOKbit: case TOKbool: case TOKchar:
+                        case TOKint8: case TOKuns8:
+                        case TOKint16: case TOKuns16:
+                        case TOKint32: case TOKuns32:
+                        case TOKint64: case TOKuns64:
+                        case TOKint128: case TOKuns128:
+                        case TOKfloat32: case TOKfloat64: case TOKfloat80:
+                        case TOKimaginary32: case TOKimaginary64: case TOKimaginary80:
+                        case TOKcomplex32: case TOKcomplex64: case TOKcomplex80:
+                        case TOKvoid:
                         case TOKint32v:
                         case TOKuns32v:
                         case TOKint64v:
@@ -5640,7 +5728,31 @@ Expression *Parser::parsePrimaryExp()
             break;
         }
 
-        case BASIC_TYPES_X(t):
+        case TOKvoid:    t = Type::tvoid;  goto LabelX;
+        case TOKint8:    t = Type::tint8;  goto LabelX;
+        case TOKuns8:    t = Type::tuns8;  goto LabelX;
+        case TOKint16:   t = Type::tint16; goto LabelX;
+        case TOKuns16:   t = Type::tuns16; goto LabelX;
+        case TOKint32:   t = Type::tint32; goto LabelX;
+        case TOKuns32:   t = Type::tuns32; goto LabelX;
+        case TOKint64:   t = Type::tint64; goto LabelX;
+        case TOKuns64:   t = Type::tuns64; goto LabelX;
+        case TOKint128:  t = Type::tint128; goto LabelX;
+        case TOKuns128:  t = Type::tuns128; goto LabelX;
+        case TOKfloat32: t = Type::tfloat32; goto LabelX;
+        case TOKfloat64: t = Type::tfloat64; goto LabelX;
+        case TOKfloat80: t = Type::tfloat80; goto LabelX;
+        case TOKimaginary32: t = Type::timaginary32; goto LabelX;
+        case TOKimaginary64: t = Type::timaginary64; goto LabelX;
+        case TOKimaginary80: t = Type::timaginary80; goto LabelX;
+        case TOKcomplex32: t = Type::tcomplex32; goto LabelX;
+        case TOKcomplex64: t = Type::tcomplex64; goto LabelX;
+        case TOKcomplex80: t = Type::tcomplex80; goto LabelX;
+        case TOKbool:    t = Type::tbool;    goto LabelX;
+        case TOKchar:    t = Type::tchar;    goto LabelX;
+        case TOKwchar:   t = Type::twchar; goto LabelX;
+        case TOKdchar:   t = Type::tdchar; goto LabelX;
+        LabelX:
             nextToken();
             check(TOKdot, t->toChars());
             if (token.value != TOKidentifier)
@@ -6313,7 +6425,17 @@ Expression *Parser::parseUnaryExp()
                     case TOKfuncstring:
                     case TOKprettyfunc:
 #endif
-                    case BASIC_TYPES:           // (type)int.size
+                    case TOKwchar: case TOKdchar:
+                    case TOKbit: case TOKbool: case TOKchar:
+                    case TOKint8: case TOKuns8:
+                    case TOKint16: case TOKuns16:
+                    case TOKint32: case TOKuns32:
+                    case TOKint64: case TOKuns64:
+                    case TOKint128: case TOKuns128:
+                    case TOKfloat32: case TOKfloat64: case TOKfloat80:
+                    case TOKimaginary32: case TOKimaginary64: case TOKimaginary80:
+                    case TOKcomplex32: case TOKcomplex64: case TOKcomplex80:
+                    case TOKvoid:
                     {   // (type) una_exp
                         Type *t;
 
@@ -6727,25 +6849,20 @@ Expression *Parser::parseAssignExp()
         loc = this->loc;
         switch (token.value)
         {
-#define X(tok,ector) \
-            case tok:  nextToken(); e2 = parseAssignExp(); e = new ector(loc,e,e2); continue;
-
-            X(TOKassign,    AssignExp);
-            X(TOKaddass,    AddAssignExp);
-            X(TOKminass,    MinAssignExp);
-            X(TOKmulass,    MulAssignExp);
-            X(TOKdivass,    DivAssignExp);
-            X(TOKmodass,    ModAssignExp);
-            X(TOKpowass,    PowAssignExp);
-            X(TOKandass,    AndAssignExp);
-            X(TOKorass,     OrAssignExp);
-            X(TOKxorass,    XorAssignExp);
-            X(TOKshlass,    ShlAssignExp);
-            X(TOKshrass,    ShrAssignExp);
-            X(TOKushrass,   UshrAssignExp);
-            X(TOKcatass,    CatAssignExp);
-
-#undef X
+            case TOKassign:   nextToken(); e2 = parseAssignExp(); e = new AssignExp(loc,e,e2); continue;
+            case TOKaddass:   nextToken(); e2 = parseAssignExp(); e = new AddAssignExp(loc,e,e2); continue;
+            case TOKminass:   nextToken(); e2 = parseAssignExp(); e = new MinAssignExp(loc,e,e2); continue;
+            case TOKmulass:   nextToken(); e2 = parseAssignExp(); e = new MulAssignExp(loc,e,e2); continue;
+            case TOKdivass:   nextToken(); e2 = parseAssignExp(); e = new DivAssignExp(loc,e,e2); continue;
+            case TOKmodass:   nextToken(); e2 = parseAssignExp(); e = new ModAssignExp(loc,e,e2); continue;
+            case TOKpowass:   nextToken(); e2 = parseAssignExp(); e = new PowAssignExp(loc,e,e2); continue;
+            case TOKandass:   nextToken(); e2 = parseAssignExp(); e = new AndAssignExp(loc,e,e2); continue;
+            case TOKorass:    nextToken(); e2 = parseAssignExp(); e = new OrAssignExp(loc,e,e2); continue;
+            case TOKxorass:   nextToken(); e2 = parseAssignExp(); e = new XorAssignExp(loc,e,e2); continue;
+            case TOKshlass:   nextToken(); e2 = parseAssignExp(); e = new ShlAssignExp(loc,e,e2); continue;
+            case TOKshrass:   nextToken(); e2 = parseAssignExp(); e = new ShrAssignExp(loc,e,e2); continue;
+            case TOKushrass:  nextToken(); e2 = parseAssignExp(); e = new UshrAssignExp(loc,e,e2); continue;
+            case TOKcatass:   nextToken(); e2 = parseAssignExp(); e = new CatAssignExp(loc,e,e2); continue;
             default:
                 break;
         }
