@@ -514,7 +514,7 @@ void TemplateDeclaration::semantic(Scope *sc)
      * a copy since attributes can change.
      */
     if (!this->scope)
-    {   this->scope = new Scope(*sc);
+    {   this->scope = new Scope(sc);
         this->scope->setNoFree();
     }
 

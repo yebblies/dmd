@@ -57,7 +57,7 @@ int lambdaCanThrow(Expression *e, void *param)
     {
         case TOKdeclaration:
         {   DeclarationExp *de = (DeclarationExp *)e;
-            pct->can = Dsymbol_canThrow(de->declaration, pct->mustnot);
+            pct->can = Dsymbol_canThrow(de->declaration, pct->mustnot) != 0;
             break;
         }
 
@@ -119,13 +119,11 @@ int lambdaCanThrow(Expression *e, void *param)
 
 int Dsymbol_canThrow(Dsymbol *s, bool mustNotThrow)
 {
-    AttribDeclaration *ad;
-    VarDeclaration *vd;
-    TemplateMixin *tm;
-    TupleDeclaration *td;
-
     //printf("Dsymbol_toElem() %s\n", s->toChars());
-    ad = s->isAttribDeclaration();
+    AttribDeclaration *ad = s->isAttribDeclaration();
+    VarDeclaration *vd = s->isVarDeclaration();
+    TemplateMixin *tm = s->isTemplateMixin();
+    TupleDeclaration *td = s->isTupleDeclaration();
     if (ad)
     {
         Dsymbols *decl = ad->include(NULL, NULL);
@@ -139,7 +137,7 @@ int Dsymbol_canThrow(Dsymbol *s, bool mustNotThrow)
             }
         }
     }
-    else if ((vd = s->isVarDeclaration()) != NULL)
+    else if (vd)
     {
         s = s->toAlias();
         if (s != vd)
@@ -159,7 +157,7 @@ int Dsymbol_canThrow(Dsymbol *s, bool mustNotThrow)
                 return vd->edtor->canThrow(mustNotThrow);
         }
     }
-    else if ((tm = s->isTemplateMixin()) != NULL)
+    else if (tm)
     {
         //printf("%s\n", tm->toChars());
         if (tm->members)
@@ -172,7 +170,7 @@ int Dsymbol_canThrow(Dsymbol *s, bool mustNotThrow)
             }
         }
     }
-    else if ((td = s->isTupleDeclaration()) != NULL)
+    else if (td)
     {
         for (size_t i = 0; i < td->objects->dim; i++)
         {   Object *o = (*td->objects)[i];

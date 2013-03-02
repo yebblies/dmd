@@ -62,9 +62,9 @@ static int fptraits(void *param, FuncDeclaration *f)
 
     Expression *e;
     if (p->e1)
-        e = new DotVarExp(0, p->e1, new FuncAliasDeclaration(f, 0));
+        e = new DotVarExp(Loc(), p->e1, new FuncAliasDeclaration(f, 0));
     else
-        e = new DsymbolExp(0, new FuncAliasDeclaration(f, 0));
+        e = new DsymbolExp(Loc(), new FuncAliasDeclaration(f, 0));
     p->exps->push(e);
     return 0;
 }
