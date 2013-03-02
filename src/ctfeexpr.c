@@ -704,7 +704,7 @@ int comparePointers(Loc loc, enum TOK op, Type *type, Expression *agg1, dinteger
     if ( pointToSameMemoryBlock(agg1, agg2) )
     {
         dinteger_t cm = ofs1 - ofs2;
-        dinteger_t n;
+        int n;
         dinteger_t zero = 0;
         switch(op)
         {
@@ -793,11 +793,11 @@ Expression *paintFloatInt(Expression *fromVal, Type *to)
         if (to->isintegral())
         {
             u.f = fromVal->toReal();
-            return new IntegerExp(fromVal->loc, ldouble(u.x), to);
+            return new IntegerExp(fromVal->loc, u.x, to);
         }
         else
         {
-            u.x = fromVal->toInteger();
+            u.x = (d_int32)fromVal->toInteger();
             return new RealExp(fromVal->loc, ldouble(u.f), to);
         }
     }
@@ -811,7 +811,7 @@ Expression *paintFloatInt(Expression *fromVal, Type *to)
         }
         else
         {
-            v.x = fromVal->toInteger();
+            v.x = (d_int64)fromVal->toInteger();
             return new RealExp(fromVal->loc, ldouble(v.f), to);
         }
     }
@@ -1185,38 +1185,38 @@ int ctfeRawCmp(Loc loc, Expression *e1, Expression *e2);
 int ctfeCmpArrays(Loc loc, Expression *e1, Expression *e2, uinteger_t len)
 {
     // Resolve slices, if necessary
-    uinteger_t lo1 = 0;
-    uinteger_t lo2 = 0;
+    size_t lo1 = 0;
+    size_t lo2 = 0;
 
     Expression *x = e1;
     if (x->op == TOKslice)
-    {   lo1 = ((SliceExp *)x)->lwr->toInteger();
+    {   lo1 = (size_t)((SliceExp *)x)->lwr->toInteger();
         x = ((SliceExp*)x)->e1;
     }
-    StringExp *se1 = (x->op == TOKstring) ? (StringExp *)x : 0;
-    ArrayLiteralExp *ae1 = (x->op == TOKarrayliteral) ? (ArrayLiteralExp *)x : 0;
+    StringExp *se1 = (x->op == TOKstring) ? (StringExp *)x : NULL;
+    ArrayLiteralExp *ae1 = (x->op == TOKarrayliteral) ? (ArrayLiteralExp *)x : NULL;
 
     x = e2;
     if (x->op == TOKslice)
-    {   lo2 = ((SliceExp *)x)->lwr->toInteger();
+    {   lo2 = (size_t)((SliceExp *)x)->lwr->toInteger();
         x = ((SliceExp*)x)->e1;
     }
-    StringExp *se2 = (x->op == TOKstring) ? (StringExp *)x : 0;
-    ArrayLiteralExp *ae2 = (x->op == TOKarrayliteral) ? (ArrayLiteralExp *)x : 0;
+    StringExp *se2 = (x->op == TOKstring) ? (StringExp *)x : NULL;
+    ArrayLiteralExp *ae2 = (x->op == TOKarrayliteral) ? (ArrayLiteralExp *)x : NULL;
 
     // Now both must be either TOKarrayliteral or TOKstring
     if (se1 && se2)
-        return sliceCmpStringWithString(se1, se2, lo1, lo2, len);
+        return sliceCmpStringWithString(se1, se2, lo1, lo2, (size_t)len);
     if (se1 && ae2)
-        return sliceCmpStringWithArray(se1, ae2, lo1, lo2, len);
+        return sliceCmpStringWithArray(se1, ae2, lo1, lo2, (size_t)len);
     if (se2 && ae1)
-        return -sliceCmpStringWithArray(se2, ae1, lo2, lo1, len);
+        return -sliceCmpStringWithArray(se2, ae1, lo2, lo1, (size_t)len);
 
     assert (ae1 && ae2);
     // Comparing two array literals. This case is potentially recursive.
     // If they aren't strings, we just need an equality check rather than
     // a full cmp.
-    bool needCmp = ae1->type->nextOf()->isintegral();
+    int needCmp = ae1->type->nextOf()->isintegral();
     for (size_t i = 0; i < len; i++)
     {   Expression *ee1 = (*ae1->elements)[lo1 + i];
         Expression *ee2 = (*ae2->elements)[lo2 + i];
@@ -1283,7 +1283,7 @@ int ctfeRawCmp(Loc loc, Expression *e1, Expression *e2)
             if (res != 0)
                 return res;
         }
-        return len1 - len2;
+        return (int)(len1 - len2);
     }
     if (e1->type->isintegral())
     {
@@ -1464,7 +1464,7 @@ Expression *ctfeCat(Type *type, Expression *e1, Expression *e2)
         StringExp *es1 = (StringExp *)e2;
         ArrayLiteralExp *es2 = (ArrayLiteralExp *)e1;
         size_t len = es1->len + es2->elements->dim;
-        int sz = es1->sz;
+        unsigned char sz = es1->sz;
 
         void *s = mem.malloc((len + 1) * sz);
         memcpy((char *)s + sz * es2->elements->dim, es1->string, es1->len * sz);
@@ -1494,7 +1494,7 @@ Expression *ctfeCat(Type *type, Expression *e1, Expression *e2)
         StringExp *es1 = (StringExp *)e1;
         ArrayLiteralExp *es2 = (ArrayLiteralExp *)e2;
         size_t len = es1->len + es2->elements->dim;
-        int sz = es1->sz;
+        unsigned char sz = es1->sz;
 
         void *s = mem.malloc((len + 1) * sz);
         memcpy(s, es1->string, es1->len * sz);
@@ -1554,7 +1554,7 @@ Expression *ctfeIndex(Loc loc, Type *type, Expression *e1, uinteger_t indx)
             return EXP_CANT_INTERPRET;
         }
         else
-            return new IntegerExp(loc, es1->charAt(indx), type);
+            return new IntegerExp(loc, es1->charAt((size_t)indx), type);
     }
     assert(e1->op == TOKarrayliteral);
     ArrayLiteralExp *ale = (ArrayLiteralExp *)e1;
@@ -1563,7 +1563,7 @@ Expression *ctfeIndex(Loc loc, Type *type, Expression *e1, uinteger_t indx)
         error(loc, "array index %llu is out of bounds %s[0 .. %llu]", indx, e1->toChars(), (ulonglong)ale->elements->dim);
         return EXP_CANT_INTERPRET;
     }
-    Expression *e = ale->elements->tdata()[indx];
+    Expression *e = ale->elements->tdata()[(size_t)indx];
     return paintTypeOntoLiteral(type, e);
 }
 
@@ -1756,7 +1756,7 @@ Expression *changeArrayLiteralLength(Loc loc, TypeArray *arrayType,
     // Resolve slices
     size_t indxlo = 0;
     if (oldval->op == TOKslice)
-    {   indxlo = ((SliceExp *)oldval)->lwr->toInteger();
+    {   indxlo = (size_t)((SliceExp *)oldval)->lwr->toInteger();
         oldval = ((SliceExp *)oldval)->e1;
     }
     size_t copylen = oldlen < newlen ? oldlen : newlen;
@@ -1770,8 +1770,8 @@ Expression *changeArrayLiteralLength(Loc loc, TypeArray *arrayType,
         {
             switch (oldse->sz)
             {
-                case 1:     s[indxlo + elemi] = defaultValue; break;
-                case 2:     ((unsigned short *)s)[indxlo + elemi] = defaultValue; break;
+                case 1:     s[indxlo + elemi] = (unsigned char)defaultValue; break;
+                case 2:     ((unsigned short *)s)[indxlo + elemi] = (unsigned short)defaultValue; break;
                 case 4:     ((unsigned *)s)[indxlo + elemi] = defaultValue; break;
                 default:    assert(0);
             }

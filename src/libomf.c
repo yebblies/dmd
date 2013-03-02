@@ -733,7 +733,7 @@ static int EnterDict( unsigned char *bucketsP, unsigned short ndicpages, unsigne
                 }
                 else
                 {
-                    aP[ uIndex ] = n >> 1;
+                    aP[ uIndex ] = (unsigned char)(n >> 1);
                     memcpy( (aP + n), entry, nbytes );
                     aP[ HASHMOD ] += (nbytes + 1) >> 1;
                     if (aP[HASHMOD] == 0)
