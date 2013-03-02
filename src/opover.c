@@ -202,7 +202,7 @@ Objects *opToArg(Scope *sc, enum TOK op)
         case TOKcatass: op = TOKcat; break;
         case TOKpowass: op = TOKpow; break;
     }
-    Expression *e = new StringExp(0, (char *)Token::toChars(op));
+    Expression *e = new StringExp(Loc(), (char *)Token::toChars(op));
     e = e->semantic(sc);
     Objects *tiargs = new Objects();
     tiargs->push(e);
@@ -1241,7 +1241,7 @@ Dsymbol *search_function(ScopeDsymbol *ad, Identifier *funcid)
     FuncDeclaration *fd;
     TemplateDeclaration *td;
 
-    s = ad->search(0, funcid, 0);
+    s = ad->search(Loc(), funcid, 0);
     if (s)
     {   Dsymbol *s2;
 
@@ -1537,7 +1537,7 @@ static Dsymbol *inferApplyArgTypesX(Expression *ethis, FuncDeclaration *fstart, 
             MATCH m = MATCHexact;
 
             if (f->isThis())
-            {   if (!MODimplicitConv(p->mod, tf->mod))
+            {   if (!MODimplicitConv((unsigned char)p->mod, tf->mod))
                     m = MATCHnomatch;
                 else if (p->mod != tf->mod)
                     m = MATCHconst;

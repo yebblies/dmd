@@ -68,11 +68,11 @@ struct Parser : Lexer
     int inBrackets;             // inside [] of array index or slice
     Loc lookingForElse;         // location of lonely if looking for an else
 
-    Parser(Module *module, unsigned char *base, size_t length, int doDocComment);
+    Parser(Module *module, const char *base, size_t length, int doDocComment);
 
     Dsymbols *parseModule();
     Dsymbols *parseDeclDefs(int once);
-    Dsymbols *parseAutoDeclarations(StorageClass storageClass, unsigned char *comment);
+    Dsymbols *parseAutoDeclarations(StorageClass storageClass, const char *comment);
     Dsymbols *parseBlock();
     void composeStorageClass(StorageClass stc);
     StorageClass parseAttribute(Expressions **pexps);
@@ -111,7 +111,7 @@ struct Parser : Lexer
     Type *parseBasicType();
     Type *parseBasicType2(Type *t);
     Type *parseDeclarator(Type *t, Identifier **pident, TemplateParameters **tpl = NULL, StorageClass storage_class = 0, int* pdisable = NULL);
-    Dsymbols *parseDeclarations(StorageClass storage_class, unsigned char *comment);
+    Dsymbols *parseDeclarations(StorageClass storage_class, const char *comment);
     void parseContracts(FuncDeclaration *f);
     void checkDanglingElse(Loc elseloc);
     Statement *parseStatement(int flags);
@@ -153,7 +153,7 @@ struct Parser : Lexer
 
     Expression *parseNewExp(Expression *thisexp);
 
-    void addComment(Dsymbol *s, unsigned char *blockComment);
+    void addComment(Dsymbol *s, const char *blockComment);
 };
 
 // Operator precedence - greater values are higher precedence

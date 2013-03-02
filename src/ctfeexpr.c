@@ -479,15 +479,15 @@ StringExp *createBlockDuplicatedStringLiteral(Loc loc, Type *type,
     {
         switch (sz)
         {
-            case 1:     s[elemi] = value; break;
-            case 2:     ((unsigned short *)s)[elemi] = value; break;
+            case 1:     s[elemi] = (unsigned char)value; break;
+            case 2:     ((unsigned short *)s)[elemi] = (unsigned short)value; break;
             case 4:     ((unsigned *)s)[elemi] = value; break;
             default:    assert(0);
         }
     }
     StringExp *se = new StringExp(loc, s, dim);
     se->type = type;
-    se->sz = sz;
+    se->sz = (unsigned char)sz;
     se->committed = true;
     se->ownedByCtfe = true;
     return se;

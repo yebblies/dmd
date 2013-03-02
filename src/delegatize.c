@@ -115,7 +115,7 @@ int lambdaCheckForNestedRef(Expression *e, void *param)
         {   SymOffExp *se = (SymOffExp *)e;
             VarDeclaration *v = se->var->isVarDeclaration();
             if (v)
-                v->checkNestedReference(sc, 0);
+                v->checkNestedReference(sc, Loc());
             break;
         }
 
@@ -123,7 +123,7 @@ int lambdaCheckForNestedRef(Expression *e, void *param)
         {   VarExp *ve = (VarExp *)e;
             VarDeclaration *v = ve->var->isVarDeclaration();
             if (v)
-                v->checkNestedReference(sc, 0);
+                v->checkNestedReference(sc, Loc());
             break;
         }
 
@@ -132,7 +132,7 @@ int lambdaCheckForNestedRef(Expression *e, void *param)
         {   ThisExp *te = (ThisExp *)e;
             VarDeclaration *v = te->var->isVarDeclaration();
             if (v)
-                v->checkNestedReference(sc, 0);
+                v->checkNestedReference(sc, Loc());
             break;
         }
 

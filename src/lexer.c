@@ -35,7 +35,7 @@
 extern "C" char * __cdecl __locale_decpoint;
 #endif
 
-extern int HtmlNamedEntity(unsigned char *p, size_t length);
+extern int HtmlNamedEntity(const char *p, size_t length);
 
 #define LS 0x2028       // UTF line separator
 #define PS 0x2029       // UTF paragraph separator
@@ -46,15 +46,15 @@ void unittest_lexer();
  * Do our own char maps
  */
 
-static unsigned char cmtable[256];
+static char cmtable[256];
 
 const int CMoctal =     0x1;
 const int CMhex =       0x2;
 const int CMidchar =    0x4;
 
-inline unsigned char isoctal (unsigned char c) { return cmtable[c] & CMoctal; }
-inline unsigned char ishex   (unsigned char c) { return cmtable[c] & CMhex; }
-inline unsigned char isidchar(unsigned char c) { return cmtable[c] & CMidchar; }
+inline char isoctal (char c) { return cmtable[c] & CMoctal; }
+inline char ishex   (char c) { return cmtable[c] & CMhex; }
+inline char isidchar(char c) { return cmtable[c] & CMidchar; }
 
 static void cmtable_init()
 {
@@ -253,7 +253,7 @@ StringTable Lexer::stringtable;
 OutBuffer Lexer::stringbuffer;
 
 Lexer::Lexer(Module *mod,
-        unsigned char *base, size_t begoffset, size_t endoffset,
+        const char *base, size_t begoffset, size_t endoffset,
         int doDocComment, int commentToken)
 {
     this->loc = Loc(mod, 1);
@@ -276,7 +276,7 @@ Lexer::Lexer(Module *mod,
     {
         p += 2;
         while (1)
-        {   unsigned char c = *p;
+        {   const char c = *p;
             switch (c)
             {
                 case '\n':
@@ -560,7 +560,7 @@ void Lexer::scan(Token *t)
 #if ! TEXTUAL_ASSEMBLY_OUT
             case '\\':                  // escaped string literal
             {   unsigned c;
-                unsigned char *pstart = p;
+                const char *pstart = p;
 
                 stringbuffer.reset();
                 do
@@ -620,7 +620,7 @@ void Lexer::scan(Token *t)
                     if (isidchar(c))
                         continue;
                     else if (c & 0x80)
-                    {   unsigned char *s = p;
+                    {   const char *s = p;
                         unsigned u = decodeUTF();
                         if (isUniAlpha(u))
                             continue;
@@ -1319,7 +1319,7 @@ unsigned Lexer::escapeSequence()
                 break;
 
         case '&':                       // named character entity
-                for (unsigned char *idstart = ++p; 1; p++)
+                for (const char *idstart = ++p; 1; p++)
                 {
                     switch (*p)
                     {
@@ -1644,7 +1644,7 @@ TOK Lexer::delimitedStringConstant(Token *t)
 #endif
                            )
             {   Token t;
-                unsigned char *psave = p;
+                const char *psave = p;
                 p--;
                 scan(&t);               // read in possible heredoc identifier
                 //printf("endid = '%s'\n", t.ident->toChars());
@@ -1693,7 +1693,7 @@ TOK Lexer::tokenStringConstant(Token *t)
 {
     unsigned nest = 1;
     Loc start = loc;
-    unsigned char *pstart = ++p;
+    const char *pstart = ++p;
 
     while (1)
     {   Token tok;
@@ -1932,7 +1932,7 @@ TOK Lexer::number(Token *t)
     enum FLAGS flags = FLAGS_decimal;
 
     unsigned c;
-    unsigned char *start;
+    const char *start;
     TOK result;
 
     //printf("Lexer::number()\n");
@@ -2157,7 +2157,7 @@ done:
     }
 
     // Parse trailing 'u', 'U', 'l' or 'L' in any combination
-    const unsigned char *psuffix = p;
+    const char *psuffix = p;
     while (1)
     {   unsigned char f;
 
@@ -2570,7 +2570,7 @@ unsigned Lexer::decodeUTF()
 {
     dchar_t u;
     unsigned char c;
-    unsigned char *s = p;
+    const char *s = p;
     size_t len;
     size_t idx;
     const char *msg;
@@ -2583,7 +2583,7 @@ unsigned Lexer::decodeUTF()
         ;
 
     idx = 0;
-    msg = utf_decodeChar(s, len, &idx, &u);
+    msg = utf_decodeChar((unsigned char*)s, len, &idx, &u);
     p += idx - 1;
     if (msg)
     {
@@ -2610,9 +2610,9 @@ void Lexer::getDocComment(Token *t, unsigned lineComment)
 
     /* Start of comment text skips over / * *, / + +, or / / /
      */
-    unsigned char *q = t->ptr + 3;      // start of comment text
+    const char *q = t->ptr + 3;      // start of comment text
 
-    unsigned char *qend = p;
+    const char *qend = p;
     if (ct == '*' || ct == '+')
         qend -= 2;
 
@@ -2705,15 +2705,15 @@ void Lexer::getDocComment(Token *t, unsigned lineComment)
 
     // It's a line comment if the start of the doc comment comes
     // after other non-whitespace on the same line.
-    unsigned char** dc = (lineComment && anyToken)
+    const char** dc = (lineComment && anyToken)
                          ? &t->lineComment
                          : &t->blockComment;
 
     // Combine with previous doc comment, if any
     if (*dc)
-        *dc = combineComments(*dc, (unsigned char *)buf.data);
+        *dc = combineComments(*dc, (char *)buf.data);
     else
-        *dc = (unsigned char *)buf.extractData();
+        *dc = buf.extractData();
 }
 
 /********************************************
@@ -2721,19 +2721,19 @@ void Lexer::getDocComment(Token *t, unsigned lineComment)
  * separated by a newline.
  */
 
-unsigned char *Lexer::combineComments(unsigned char *c1, unsigned char *c2)
+const char *Lexer::combineComments(const char *c1, const char *c2)
 {
     //printf("Lexer::combineComments('%s', '%s')\n", c1, c2);
 
-    unsigned char *c = c2;
+    char *c = (char *)c2;
 
     if (c1)
-    {   c = c1;
+    {   c = (char *)c1;
         if (c2)
         {   size_t len1 = strlen((char *)c1);
             size_t len2 = strlen((char *)c2);
 
-            c = (unsigned char *)mem.malloc(len1 + 1 + len2 + 1);
+            c = (char *)mem.malloc(len1 + 1 + len2 + 1);
             memcpy(c, c1, len1);
             if (len1 && c1[len1 - 1] != '\n')
             {   c[len1] = '\n';
@@ -2757,10 +2757,10 @@ Loc Lexer::tokenLoc()
     while (last->next)
         last = last->next;
 
-    unsigned char* start = token.ptr;
-    unsigned char* stop = last->ptr;
+    const char* start = token.ptr;
+    const char* stop = last->ptr;
 
-    for (unsigned char* p = start; p < stop; ++p)
+    for (const char* p = start; p < stop; ++p)
     {
         switch (*p)
         {
@@ -3116,8 +3116,8 @@ void unittest_lexer()
 
     /* Not much here, just trying things out.
      */
-    const unsigned char text[] = "int";
-    Lexer lex1(NULL, (unsigned char *)text, 0, sizeof(text), 0, 0);
+    const char text[] = "int";
+    Lexer lex1(NULL, text, 0, sizeof(text), 0, 0);
     TOK tok;
     tok = lex1.nextToken();
     //printf("tok == %s, %d, %d\n", Token::toChars(tok), tok, TOKint32);

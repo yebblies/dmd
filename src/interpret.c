@@ -2189,7 +2189,7 @@ Expression *recursivelyCreateArrayLiteral(Loc loc, Type *newtype, InterState *is
         || elemType->ty == Tdchar)
         return createBlockDuplicatedStringLiteral(loc, newtype,
             (unsigned)(elemType->defaultInitLiteral(loc)->toInteger()),
-            len, elemType->size());
+            len, (int)elemType->size());
     return createBlockDuplicatedArrayLiteral(loc, newtype,
         elemType->defaultInitLiteral(loc),
         len);
@@ -5355,8 +5355,8 @@ Expression *foreachApplyUtf(InterState *istate, Expression *str, Expression *del
     unsigned char utf8buf[4];
     unsigned short utf16buf[2];
 
-    size_t start = rvs ? len : 0;
-    size_t end = rvs ? 0: len;
+    size_t start = rvs ? (size_t)len : 0;
+    size_t end = rvs ? 0: (size_t)len;
     for (size_t indx = start; indx != end;)
     {
         // Step 1: Decode the next dchar from the string.
@@ -5369,7 +5369,7 @@ Expression *foreachApplyUtf(InterState *istate, Expression *str, Expression *del
         {   // If it is an array literal, copy the code points into the buffer
             size_t buflen = 1; // #code points in the buffer
             size_t n = 1;   // #code points in this char
-            size_t sz = ale->type->nextOf()->size();
+            size_t sz = (size_t)ale->type->nextOf()->size();
 
             switch(sz)
             {
@@ -5388,7 +5388,7 @@ Expression *foreachApplyUtf(InterState *istate, Expression *str, Expression *del
                     }
                 }
                 else
-                    buflen = (indx + 4 > len) ? len - indx : 4;
+                    buflen = (size_t)((indx + 4 > len) ? len - indx : 4);
                 for (int i = 0; i < buflen; ++i)
                 {
                     Expression * r = ale->elements->tdata()[indx + i];
@@ -5413,7 +5413,7 @@ Expression *foreachApplyUtf(InterState *istate, Expression *str, Expression *del
                     }
                 }
                 else
-                    buflen = (indx + 2 > len) ? len - indx : 2;
+                    buflen = (size_t)((indx + 2 > len) ? len - indx : 2);
                 for (int i=0; i < buflen; ++i)
                 {
                     Expression * r = ale->elements->tdata()[indx + i];
@@ -5430,7 +5430,7 @@ Expression *foreachApplyUtf(InterState *istate, Expression *str, Expression *del
 
                     Expression * r = ale->elements->tdata()[indx];
                     assert(r->op == TOKint64);
-                    rawvalue = ((IntegerExp *)r)->value;
+                    rawvalue = (dchar_t)((IntegerExp *)r)->value;
                     n = 1;
                 }
                 break;
@@ -5630,7 +5630,7 @@ Expression *evaluateIfBuiltin(InterState *istate, Loc loc,
             assert(arguments->dim <= se->elements->dim);
             for (int i = 0; i < arguments->dim; ++i)
             {
-                Expression *e = (*arguments)[i]->interpret(istate);
+                e = (*arguments)[i]->interpret(istate);
                 if (exceptionOrCantInterpret(e))
                     return e;
                 se->elements->tdata()[i] = e;

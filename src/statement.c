@@ -439,7 +439,7 @@ Statements *CompileStatement::flatten(Scope *sc)
         return NULL;
     }
     se = se->toUTF8(sc);
-    Parser p(sc->module, (unsigned char *)se->string, se->len, 0);
+    Parser p(sc->module, (const char *)se->string, se->len, 0);
     p.loc = loc;
     p.nextToken();
 

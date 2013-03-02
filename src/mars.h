@@ -143,7 +143,7 @@ struct Param
     bool alwaysframe;   // always emit standard stack frame
     bool optimize;      // run optimizer
     char map;           // generate linker .map file
-    char is64bit;       // generate 64 bit code
+    bool is64bit;       // generate 64 bit code
     char isLinux;       // generate code for linux
     char isOSX;         // generate code for Mac OSX
     char isWindows;     // generate code for Windows

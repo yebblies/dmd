@@ -45,7 +45,7 @@ struct AttribDeclaration : Dsymbol
     void semantic2(Scope *sc);
     void semantic3(Scope *sc);
     void inlineScan();
-    void addComment(unsigned char *comment);
+    void addComment(const char *comment);
     void emitComment(Scope *sc);
     const char *kind();
     int oneMember(Dsymbol **ps, Identifier *ident);
@@ -162,7 +162,7 @@ struct ConditionalDeclaration : AttribDeclaration
     int oneMember(Dsymbol **ps, Identifier *ident);
     void emitComment(Scope *sc);
     Dsymbols *include(Scope *sc, ScopeDsymbol *s);
-    void addComment(unsigned char *comment);
+    void addComment(const char *comment);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     void toJson(JsonOut *json);
     void importAll(Scope *sc);
