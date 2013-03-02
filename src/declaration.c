@@ -2237,7 +2237,7 @@ Expression *VarDeclaration::callScopeDtor(Scope *sc)
 
 void ObjectNotFound(Identifier *id)
 {
-    Type::error(0, "%s not found. object.d may be incorrectly installed or corrupt.", id->toChars());
+    error(0, "%s not found. object.d may be incorrectly installed or corrupt.", id->toChars());
     fatal();
 }
 

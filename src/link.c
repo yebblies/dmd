@@ -44,8 +44,8 @@
 
 #include        "arraytypes.h"
 
-int executecmd(char *cmd, char *args, int useenv);
-int executearg0(char *cmd, char *args);
+int executecmd(const char *cmd, char *args, int useenv);
+int executearg0(const char *cmd, char *args);
 
 /****************************************
  * Write filename to cmdbuf, quoting if necessary.
@@ -273,7 +273,7 @@ int runLINK()
                 sprintf(p, "@%s", lnkfilename);
         }
 
-        char *linkcmd = getenv("LINKCMD64");
+        const char *linkcmd = getenv("LINKCMD64");
         if (!linkcmd)
         {
             if (vcinstalldir)
@@ -418,7 +418,7 @@ int runLINK()
                 sprintf(p, "@%s", lnkfilename);
         }
 
-        char *linkcmd = getenv("LINKCMD");
+        const char *linkcmd = getenv("LINKCMD");
         if (!linkcmd)
             linkcmd = "link";
         int status = executecmd(linkcmd, p, 1);
@@ -686,7 +686,7 @@ void deleteExeFile()
  */
 
 #if _WIN32
-int executecmd(char *cmd, char *args, int useenv)
+int executecmd(const char *cmd, char *args, int useenv)
 {
     int status;
     size_t len;
@@ -704,18 +704,17 @@ int executecmd(char *cmd, char *args, int useenv)
     {
     if ((len = strlen(args)) > 255)
     {   char *q;
-        static char envname[] = "@_CMDLINE";
+        static const char envnamea[] = "@_CMDLINE";
+        static const char envnameb[] = "%_CMDLINE";
+        const char *envname = useenv == 2 ? envnamea : envnameb;
 
-        envname[0] = '@';
-        switch (useenv)
-        {   case 0:     goto L1;
-            case 2: envname[0] = '%';   break;
-        }
+        if (!useenv)
+            goto L1;
         q = (char *) alloca(sizeof(envname) + len + 1);
         sprintf(q,"%s=%s", envname + 1, args);
         status = putenv(q);
         if (status == 0)
-            args = envname;
+            args = mem.strdup(envname);
         else
         {
         L1:
@@ -726,22 +725,23 @@ int executecmd(char *cmd, char *args, int useenv)
 
 #if _WIN32
     // Normalize executable path separators, see Bugzilla 9330
-    for (char *p=cmd; *p; ++p)
+    char *cmdm = mem.strdup(cmd);
+    for (char *p=cmdm; *p; ++p)
         if (*p == '/') *p = '\\';
 #endif
 
-    status = executearg0(cmd,args);
+    status = executearg0(cmdm,args);
 #if _WIN32
     if (status == -1)
         // spawnlp returns intptr_t in some systems, not int
-        status = spawnlp(0,cmd,cmd,args,NULL);
+        status = spawnlp(0,cmdm,cmdm,args,NULL);
 #endif
 //    if (global.params.verbose)
 //      printf("\n");
     if (status)
     {
         if (status == -1)
-            printf("Can't run '%s', check PATH\n", cmd);
+            printf("Can't run '%s', check PATH\n", cmdm);
         else
             printf("--- errorlevel %d\n", status);
     }
@@ -758,7 +758,7 @@ int executecmd(char *cmd, char *args, int useenv)
  */
 
 #if _WIN32
-int executearg0(char *cmd, char *args)
+int executearg0(const char *cmd, char *args)
 {
     const char *file;
     char *argv0 = global.params.argv0;

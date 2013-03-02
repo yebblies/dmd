@@ -82,7 +82,7 @@ void valueNoDtor(Expression *e);
 int modifyFieldVar(Loc loc, Scope *sc, VarDeclaration *var, Expression *e1);
 #if DMDV2
 Expression *resolveAliasThis(Scope *sc, Expression *e);
-Expression *callCpCtor(Loc loc, Scope *sc, Expression *e, int noscope);
+Expression *callCpCtor(Loc loc, Scope *sc, Expression *e, bool noscope);
 int checkPostblit(Loc loc, Type *t);
 #endif
 struct ArrayExp *resolveOpDollar(Scope *sc, struct ArrayExp *ae);
@@ -98,6 +98,13 @@ enum CtfeGoal
     ctfeNeedLvalueRef,// Must return a reference to an Lvalue (for ref types)
     ctfeNeedNothing   // The return value is not required
 };
+
+#define WANTflags   1
+#define WANTvalue   2
+// A compile-time result is required. Give an error if not possible
+#define WANTinterpret 4
+// Same as WANTvalue, but also expand variables as far as possible
+#define WANTexpand  8
 
 struct Expression : Object
 {
@@ -167,12 +174,6 @@ struct Expression : Object
     Expression *toDelegate(Scope *sc, Type *t);
 
     virtual Expression *optimize(int result, bool keepLvalue = false);
-    #define WANTflags   1
-    #define WANTvalue   2
-    // A compile-time result is required. Give an error if not possible
-    #define WANTinterpret 4
-    // Same as WANTvalue, but also expand variables as far as possible
-    #define WANTexpand  8
 
     // Entry point for CTFE.
     // A compile-time result is required. Give an error if not possible

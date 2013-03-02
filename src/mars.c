@@ -1240,7 +1240,7 @@ int tryMain(size_t argc, char *argv[])
     for (size_t i = 0; i < modules.dim; i++)
     {
         m = modules[i];
-        m->read(0);
+        m->read(Loc());
     }
 #endif
 
@@ -1324,7 +1324,7 @@ int tryMain(size_t argc, char *argv[])
        m = modules[i];
        if (global.params.verbose)
            printf("importall %s\n", m->toChars());
-       m->importAll(0);
+       m->importAll(NULL);
     }
     if (global.errors)
         fatal();
@@ -1428,8 +1428,8 @@ int tryMain(size_t argc, char *argv[])
         // Add input object and input library files to output library
         for (size_t i = 0; i < libmodules.dim; i++)
         {
-            char *p = libmodules[i];
-            library->addObject(p, NULL, 0);
+            char *q = libmodules[i];
+            library->addObject(q, NULL, 0);
         }
     }
 
@@ -1553,8 +1553,7 @@ int tryMain(size_t argc, char *argv[])
                  */
                 for (size_t i = 0; i < modules.dim; i++)
                 {
-                    Module *m = modules[i];
-                    m->deleteObjFile();
+                    modules[i]->deleteObjFile();
                     if (global.params.oneobj)
                         break;
                 }

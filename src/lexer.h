@@ -181,10 +181,10 @@ enum TOK
 struct Token
 {
     Token *next;
-    unsigned char *ptr;         // pointer to first character of this token within buffer
+    const char *ptr;         // pointer to first character of this token within buffer
     enum TOK value;
-    unsigned char *blockComment; // doc comment string prior to this token
-    unsigned char *lineComment;  // doc comment for previous token
+    const char *blockComment; // doc comment string prior to this token
+    const char *lineComment;  // doc comment for previous token
     union
     {
         // Integers
@@ -230,9 +230,9 @@ struct Lexer
 
     Loc loc;                    // for error messages
 
-    unsigned char *base;        // pointer to start of buffer
-    unsigned char *end;         // past end of buffer
-    unsigned char *p;           // current character
+    const char *base;        // pointer to start of buffer
+    const char *end;         // past end of buffer
+    const char *p;           // current character
     Token token;
     Module *mod;
     int doDocComment;           // collect doc comment information
@@ -240,7 +240,7 @@ struct Lexer
     int commentToken;           // !=0 means comments are TOKcomment's
 
     Lexer(Module *mod,
-        unsigned char *base, size_t begoffset, size_t endoffset,
+        const char *base, size_t begoffset, size_t endoffset,
         int doDocComment, int commentToken);
 
     static void initKeywords();
@@ -275,7 +275,7 @@ struct Lexer
     void getDocComment(Token *t, unsigned lineComment);
 
     static int isValidIdentifier(char *p);
-    static unsigned char *combineComments(unsigned char *c1, unsigned char *c2);
+    static const char *combineComments(const char *c1, const char *c2);
 
     Loc tokenLoc();
 };

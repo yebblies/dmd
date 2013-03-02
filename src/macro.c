@@ -21,16 +21,16 @@
 
 #include "macro.h"
 
-int isIdStart(unsigned char *p);
-int isIdTail(unsigned char *p);
-int utfStride(unsigned char *p);
+int isIdStart(const char *p);
+int isIdTail(const char *p);
+int utfStride(const char *p);
 
-unsigned char *memdup(unsigned char *p, size_t len)
+char *memdup(const char *p, size_t len)
 {
-    return (unsigned char *)memcpy(mem.malloc(len), p, len);
+    return (char *)memcpy(mem.malloc(len), p, len);
 }
 
-Macro::Macro(unsigned char *name, size_t namelen, unsigned char *text, size_t textlen)
+Macro::Macro(const char *name, size_t namelen, const char *text, size_t textlen)
 {
     next = NULL;
 
@@ -51,7 +51,7 @@ Macro::Macro(unsigned char *name, size_t namelen, unsigned char *text, size_t te
 }
 
 
-Macro *Macro::search(unsigned char *name, size_t namelen)
+Macro *Macro::search(const char *name, size_t namelen)
 {   Macro *table;
 
     //printf("Macro::search(%.*s)\n", namelen, name);
@@ -67,7 +67,7 @@ Macro *Macro::search(unsigned char *name, size_t namelen)
     return table;
 }
 
-Macro *Macro::define(Macro **ptable, unsigned char *name, size_t namelen, unsigned char *text, size_t textlen)
+Macro *Macro::define(Macro **ptable, const char *name, size_t namelen, const char *text, size_t textlen)
 {
     //printf("Macro::define('%.*s' = '%.*s')\n", namelen, name, textlen, text);
 
@@ -98,7 +98,7 @@ Macro *Macro::define(Macro **ptable, unsigned char *name, size_t namelen, unsign
  *              -1:     get 2nd through end
  */
 
-size_t extractArgN(unsigned char *p, size_t end, unsigned char **pmarg, size_t *pmarglen, int n)
+size_t extractArgN(char *p, size_t end, char **pmarg, size_t *pmarglen, int n)
 {
     /* Scan forward for matching right parenthesis.
      * Nest parentheses.
@@ -238,7 +238,7 @@ size_t extractArgN(unsigned char *p, size_t end, unsigned char **pmarg, size_t *
  */
 
 void Macro::expand(OutBuffer *buf, size_t start, size_t *pend,
-        unsigned char *arg, size_t arglen)
+        char *arg, size_t arglen)
 {
 #if 0
     printf("Macro::expand(buf[%d..%d], arg = '%.*s')\n", start, *pend, arglen, arg);
@@ -276,7 +276,7 @@ void Macro::expand(OutBuffer *buf, size_t start, size_t *pend,
             unsigned char c = p[u + 1];
             int n = (c == '+') ? -1 : c - '0';
 
-            unsigned char *marg;
+            char *marg;
             size_t marglen;
             extractArgN(arg, arglen, &marg, &marglen, n);
             if (marglen == 0)
@@ -327,7 +327,7 @@ void Macro::expand(OutBuffer *buf, size_t start, size_t *pend,
      */
     for (size_t u = start; u + 4 < end; )
     {
-        unsigned char *p = buf->data;   // buf->data is not loop invariant
+        char *p = (char *)buf->data;   // buf->data is not loop invariant
 
         /* A valid start of macro expansion is $(c, where c is
          * an id start character, and not $$(c.
@@ -335,10 +335,10 @@ void Macro::expand(OutBuffer *buf, size_t start, size_t *pend,
         if (p[u] == '$' && p[u + 1] == '(' && isIdStart(p+u+2))
         {
             //printf("\tfound macro start '%c'\n", p[u + 2]);
-            unsigned char *name = p + u + 2;
+            const char *name = p + u + 2;
             size_t namelen = 0;
 
-            unsigned char *marg;
+            char *marg;
             size_t marglen;
 
             size_t v;

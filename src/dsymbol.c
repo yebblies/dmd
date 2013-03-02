@@ -399,7 +399,7 @@ void *symbol_search_fp(void *arg, const char *seed)
 
     Dsymbol *s = (Dsymbol *)arg;
     Module::clearCache();
-    return s->search(0, id, 4|2);
+    return (void *)s->search(Loc(), id, 4|2);
 }
 
 Dsymbol *Dsymbol::search_correct(Identifier *ident)
@@ -774,7 +774,7 @@ Dsymbols *Dsymbol::arraySyntaxCopy(Dsymbols *a)
  * Ignore NULL comments.
  */
 
-void Dsymbol::addComment(unsigned char *comment)
+void Dsymbol::addComment(const char *comment)
 {
     //if (comment)
         //printf("adding comment '%s' to symbol %p '%s'\n", comment, this, toChars());

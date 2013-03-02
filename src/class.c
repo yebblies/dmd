@@ -999,7 +999,7 @@ Dsymbol *ClassDeclaration::searchBase(Loc loc, Identifier *ident)
 int isf(void *param, FuncDeclaration *fd)
 {
     //printf("param = %p, fd = %p %s\n", param, fd, fd->toChars());
-    return param == fd;
+    return (Object *)param == fd;
 }
 
 int ClassDeclaration::isFuncHidden(FuncDeclaration *fd)

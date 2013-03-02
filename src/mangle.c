@@ -79,15 +79,15 @@ L1:
         buf.writeByte(Type::needThisPrefix());
     if (isv && fd && (fd->inferRetType || getFuncTemplateDecl(fd)))
     {
-        TypeFunction tfn = *(TypeFunction *)sthis->type;
+        TypeFunction *tfn = (TypeFunction *)sthis->type->syntaxCopy();
         TypeFunction *tfo = (TypeFunction *)sthis->originalType;
-        tfn.purity      = tfo->purity;
-        tfn.isnothrow   = tfo->isnothrow;
-        tfn.isproperty  = tfo->isproperty;
-        tfn.isref       = fd->storage_class & STCauto ? false : tfo->isref;
-        tfn.trust       = tfo->trust;
-        tfn.next        = NULL;     // do not mangle return type
-        tfn.toDecoBuffer(&buf, 0);
+        tfn->purity      = tfo->purity;
+        tfn->isnothrow   = tfo->isnothrow;
+        tfn->isproperty  = tfo->isproperty;
+        tfn->isref       = fd->storage_class & STCauto ? false : tfo->isref;
+        tfn->trust       = tfo->trust;
+        tfn->next        = NULL;     // do not mangle return type
+        tfn->toDecoBuffer(&buf, 0);
     }
     else if (sthis->type->deco)
         buf.writestring(sthis->type->deco);

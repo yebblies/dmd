@@ -91,8 +91,8 @@ Expression *expandVar(int result, VarDeclaration *v)
                     }
                     else if (ei->implicitConvTo(v->type) >= MATCHconst)
                     {   // const var initialized with non-const expression
-                        ei = ei->implicitCastTo(0, v->type);
-                        ei = ei->semantic(0);
+                        ei = ei->implicitCastTo(NULL, v->type);
+                        ei = ei->semantic(NULL);
                     }
                     else
                         goto L1;
@@ -1003,7 +1003,7 @@ void setLengthVarIfKnown(VarDeclaration *lengthVar, Expression *arr)
         return;
     if (lengthVar->init && !lengthVar->init->isVoidInitializer())
         return; // we have previously calculated the length
-    size_t len;
+    dinteger_t len;
     if (arr->op == TOKstring)
         len = ((StringExp *)arr)->len;
     else if (arr->op == TOKarrayliteral)
