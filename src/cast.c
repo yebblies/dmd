@@ -228,6 +228,11 @@ MATCH IntegerExp::implicitConvTo(Type *t)
         toty = tb->ty;
     }
 
+    if (t->ty == Tstruct && t->toDsymbol(NULL)->ident == Lexer::idPool("Loc") && value == 0)
+    {
+        return MATCHconvert;
+    }
+
     switch (ty)
     {
         case Tbool:
