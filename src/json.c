@@ -69,9 +69,9 @@ struct JsonOut
     void property(const char *name, const char *deconame, Type* type);
     void property(const char *name, Parameters* parameters);
     void property(const char *name, Expressions* expressions);
-    void property(const char *name, enum TRUST trust);
-    void property(const char *name, enum PURE purity);
-    void property(const char *name, enum LINK linkage);
+    void propertyTRUST(const char *name, enum TRUST trust);
+    void propertyPURE(const char *name, enum PURE purity);
+    void propertyLINK(const char *name, enum LINK linkage);
 };
 
 
@@ -308,7 +308,7 @@ void JsonOut::propertyBool(const char *name, bool b)
 }
 
 
-void JsonOut::property(const char *name, enum TRUST trust)
+void JsonOut::propertyTRUST(const char *name, enum TRUST trust)
 {
     switch (trust)
     {
@@ -330,7 +330,7 @@ void JsonOut::property(const char *name, enum TRUST trust)
     }
 }
 
-void JsonOut::property(const char *name, enum PURE purity)
+void JsonOut::propertyPURE(const char *name, enum PURE purity)
 {
     switch (purity)
     {
@@ -355,7 +355,7 @@ void JsonOut::property(const char *name, enum PURE purity)
     }
 }
 
-void JsonOut::property(const char *name, enum LINK linkage)
+void JsonOut::propertyLINK(const char *name, enum LINK linkage)
 {
     switch (linkage)
     {
@@ -526,9 +526,9 @@ void TypeFunction::toJson(JsonOut *json)
         json->arrayEnd();
     }
 
-    json->property("trust", trust);
-    json->property("purity", purity);
-    json->property("linkage", linkage);
+    json->propertyTRUST("trust", trust);
+    json->propertyPURE("purity", purity);
+    json->propertyLINK("linkage", linkage);
 
     json->property("returnType", next);
     json->property("parameters", parameters);
