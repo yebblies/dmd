@@ -378,7 +378,7 @@ MATCH IntegerExp::implicitConvTo(Type *t)
 
         case Tfloat80:
         {
-            volatile_longdouble f;
+            longdouble f;
             if (type->isunsigned())
             {
                 f = ldouble(value);
