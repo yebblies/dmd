@@ -3309,8 +3309,8 @@ MATCH TypeBasic::implicitConvTo(Type *to)
 
     if (ty == Tvoid || to->ty == Tvoid)
         return MATCHnomatch;
-    if (to->ty == Tbool)
-        return MATCHnomatch;
+    /*if (to->ty == Tbool)
+        return MATCHnomatch;*/
 
     TypeBasic *tob;
     if (to->ty == Tvector && to->deco)
@@ -3337,8 +3337,8 @@ MATCH TypeBasic::implicitConvTo(Type *to)
 
             /* Can't convert to smaller size
              */
-            if (sz > tosz)
-                return MATCHnomatch;
+            /*if (sz > tosz)
+                return MATCHnomatch;*/
 
             /* Can't change sign if same size
              */
