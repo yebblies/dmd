@@ -191,14 +191,15 @@ void LibOMF::addLibrary(void *buf, size_t buflen)
 #define LIBIDMAX (512 - 0x25 - 3 - 4)   // max size that will fit in dictionary
 
 
+#define MFgentheadr     1       // generate THEADR record
+#define MFtheadr        2       // module name comes from THEADR record
+
 struct ObjModule
 {
     unsigned char *base;        // where are we holding it in memory
     unsigned length;            // in bytes
     unsigned short page;        // page module starts in output file
     unsigned char flags;
-#define MFgentheadr     1       // generate THEADR record
-#define MFtheadr        2       // module name comes from THEADR record
     char *name;                 // module name
 };
 
@@ -249,7 +250,7 @@ void LibOMF::addSymbol(ObjModule *om, char *name, int pickAny)
         ObjSymbol *os = new ObjSymbol();
         os->name = strdup(name);
         os->om = om;
-        s->ptrvalue = (void *)os;
+        s->ptrvalue = (char *)os;
 
         objsymbols.push(os);
     }
@@ -467,7 +468,7 @@ void LibOMF::addObject(const char *module_name, void *buf, size_t buflen)
             goto Lcorrupt;
         buflen = lh->lSymSeek - g_page_size;
     }
-    else if (lh->recTyp == '!' && memcmp(lh, "!<arch>\n", 8) == 0)
+    else if (lh->recTyp == '!' && memcmp((char *)lh, "!<arch>\n", 8) == 0)
     {
         error("COFF libraries not supported");
         return;
@@ -564,7 +565,7 @@ void LibOMF::addObject(const char *module_name, void *buf, size_t buflen)
 /*****************************************************************************/
 /*****************************************************************************/
 
-typedef int (__cdecl * cmpfunc_t)(const void *,const void *);
+typedef int (__cdecl * cmpfunc_t)(const void * const,const void * const);
 
 extern "C" int NameCompare(ObjSymbol **p1, ObjSymbol **p2)
 {
@@ -795,7 +796,7 @@ int LibOMF::FillDict(unsigned char *bucketsP, unsigned short ndicpages)
     }
 
     // Sort the symbols
-    qsort( objsymbols.tdata(), objsymbols.dim, sizeof(objsymbols[0]), (cmpfunc_t)NameCompare );
+    qsort( objsymbols.tdata(), objsymbols.dim, sizeof(objsymbols[0]), (cmpfunc_t)&NameCompare );
 
     // Add each of the symbols
     for (size_t i = 0; i < objsymbols.dim; i++)
