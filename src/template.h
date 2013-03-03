@@ -299,7 +299,7 @@ struct TemplateInstance : ScopeDsymbol
     int nest;           // for recursion detection
     int havetempdecl;   // 1 if used second constructor
     Dsymbol *isnested;  // if referencing local symbols, this is the context
-    int speculative;    // 1 if only instantiated with errors gagged
+    bool speculative;    // 1 if only instantiated with errors gagged
 #ifdef IN_GCC
     /* On some targets, it is necessary to know whether a symbol
        will be emitted in the output or not before the symbol
