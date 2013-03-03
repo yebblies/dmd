@@ -378,14 +378,14 @@ void LibOMF::scanObjModule(ObjModule *om)
                     }
                 }
                 // Recognize .IMPDEF Import Definition Records
-                {   static unsigned char omfstr[] =
+                {   static unsigned char omfstr2[] =
                         {0,0xA0,1};
 
                     if (recLen >= 7)
                     {
                         p++;
-                        for (unsigned i = 1; i < sizeof(omfstr); i++)
-                            if (*p++ != omfstr[i])
+                        for (unsigned i = 1; i < sizeof(omfstr2); i++)
+                            if (*p++ != omfstr2[i])
                                 goto L2;
                         p++;            // skip OrdFlag field
                         parseName(&p, name);

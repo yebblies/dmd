@@ -3654,9 +3654,9 @@ Expression *TypeArray::dotExp(Scope *sc, Expression *e, Identifier *ident)
         FuncDeclaration *fd;
         Expressions *arguments;
         const char *nm;
-        static const char *name[2] = { "_adSortChar", "_adSortWchar" };
+        static const char *name2[2] = { "_adSortChar", "_adSortWchar" };
 
-        nm = name[n->ty == Twchar];
+        nm = name2[n->ty == Twchar];
         fd = FuncDeclaration::genCfunc(Type::tindex, nm);
         ec = new VarExp(0, fd);
         e = e->castTo(sc, n->arrayOf());        // convert to dynamic array
