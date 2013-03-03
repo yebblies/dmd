@@ -2035,14 +2035,12 @@ Expression *Type::getProperty(Loc loc, Identifier *ident)
         else
             s = deco;
         e = new StringExp(loc, (char *)s, strlen(s), 'c');
-        Scope sc;
-        e = e->semantic(&sc);
+        e = e->semantic(new Scope());
     }
     else if (ident == Id::stringof)
     {   char *s = toChars();
         e = new StringExp(loc, s, strlen(s), 'c');
-        Scope sc;
-        e = e->semantic(&sc);
+        e = e->semantic(new Scope());
     }
     else
     {
@@ -2634,11 +2632,6 @@ void TypeNext::transitive()
 
 /* ============================= TypeBasic =========================== */
 
-TypeBasic::TypeBasic(TY ty)
-        : Type(ty)
-{   const char *d;
-    unsigned flags;
-
 #define TFLAGSintegral  1
 #define TFLAGSfloating  2
 #define TFLAGSunsigned  4
@@ -2646,6 +2639,11 @@ TypeBasic::TypeBasic(TY ty)
 #define TFLAGSimaginary 0x10
 #define TFLAGScomplex   0x20
 #define TFLAGSvector    0x40    // valid for a SIMD vector type
+
+TypeBasic::TypeBasic(TY ty)
+        : Type(ty)
+{   const char *d;
+    unsigned flags;
 
     flags = 0;
     switch (ty)
@@ -2862,7 +2860,7 @@ unsigned TypeBasic::alignsize()
 #endif
 
         default:
-            sz = size(0);
+            sz = (unsigned)size(0);
             break;
     }
     return sz;
@@ -3651,7 +3649,7 @@ Expression *TypeArray::dotExp(Scope *sc, Expression *e, Identifier *ident)
         Expression *ec;
         FuncDeclaration *fd;
         Expressions *arguments;
-        int size = next->size(e->loc);
+        int size = (int)next->size(e->loc);
         int dup;
 
         Expression *olde = e;
@@ -4188,7 +4186,7 @@ Expression *TypeSArray::defaultInitLiteral(Loc loc)
 #if LOGDEFAULTINIT
     printf("TypeSArray::defaultInitLiteral() '%s'\n", toChars());
 #endif
-    size_t d = dim->toInteger();
+    size_t d = (size_t)dim->toInteger();
     Expression *elementinit = next->defaultInitLiteral(loc);
     Expressions *elements = new Expressions();
     elements->setDim(d);
@@ -7529,8 +7527,7 @@ Expression *TypeEnum::getProperty(Loc loc, Identifier *ident)
     else if (ident == Id::stringof)
     {   char *s = toChars();
         e = new StringExp(loc, s, strlen(s), 'c');
-        Scope sc;
-        e = e->semantic(&sc);
+        e = e->semantic(new Scope());
     }
     else if (ident == Id::mangleof)
     {
