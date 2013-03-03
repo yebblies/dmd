@@ -45,8 +45,8 @@ Expression *Expression::toDelegate(Scope *sc, Type *t)
     sc = sc->push();
     sc->parent = fld;           // set current function to be the delegate
     e = this;
-    e->apply(&lambdaSetParent, sc);
-    e->apply(&lambdaCheckForNestedRef, sc);
+    e->apply(&lambdaSetParent, (void *)sc);
+    e->apply(&lambdaCheckForNestedRef, (void *)sc);
     sc = sc->pop();
     Statement *s;
     if (t->ty == Tvoid)
