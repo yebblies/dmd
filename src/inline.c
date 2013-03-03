@@ -707,7 +707,7 @@ Expression *DeclarationExp::doInline(InlineDoState *ids)
             VarDeclaration *vto;
 
             vto = new VarDeclaration(vd->loc, vd->type, vd->ident, vd->init);
-            *vto = *vd;
+            memcpy(vto, vd, sizeof(VarDeclaration));
             vto->parent = ids->parent;
             vto->csym = NULL;
             vto->isym = NULL;
