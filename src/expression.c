@@ -6762,7 +6762,7 @@ Expression *DotIdExp::semantic(Scope *sc, int flag)
              * aliases to private symbols are public.
              */
             if (Declaration *d = s->isDeclaration())
-                accessCheck(loc, sc, 0, d);
+                accessCheck(loc, sc, NULL, d);
 
             s = s->toAlias();
             checkDeprecated(sc, s);
