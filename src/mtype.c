@@ -356,7 +356,7 @@ d_uns64 Type::size(Loc loc)
 
 unsigned Type::alignsize()
 {
-    return size(0);
+    return (unsigned)size(0);
 }
 
 Type *Type::semantic(Loc loc, Scope *sc)
@@ -1646,7 +1646,7 @@ void Type::toCBuffer3(OutBuffer *buf, HdrGenState *hgs, int mod)
         int m2 = (mod ^ m1) & m1;
         if (m2)
         {
-            MODtoBuffer(buf, m2);
+            MODtoBuffer(buf, (unsigned char)m2);
             buf->writeByte('(');
             toCBuffer2(buf, hgs, this->mod);
             buf->writeByte(')');
@@ -1720,7 +1720,7 @@ Type *Type::merge()
         }
         else
         {
-            sv->ptrvalue = this;
+            sv->ptrvalue = (char *)this;
             deco = (char *)sv->toDchars();
             //printf("new value, deco = '%s' %p\n", t->deco, t->deco);
         }

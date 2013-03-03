@@ -406,7 +406,7 @@ Expression *StructInitializer::toExpression()
                     (*elements)[i] = vd->type->defaultInit();
             }
         }
-        offset = vd->offset + vd->type->size();
+        offset = (size_t)(vd->offset + vd->type->size());
         i++;
 #if 0
         int unionSize = ad->numFieldsInUnion(i);
@@ -567,7 +567,7 @@ Initializer *ArrayInitializer::semantic(Scope *sc, Type *t, NeedInterpret needIn
         {   idx = idx->semantic(sc);
             idx = idx->ctfeInterpret();
             index[i] = idx;
-            length = idx->toInteger();
+            length = (size_t)idx->toInteger();
             if (idx->op == TOKerror)
                 errors = true;
         }
@@ -654,7 +654,7 @@ Expression *ArrayInitializer::toExpression()
         switch (t->ty)
         {
            case Tsarray:
-               edim = ((TypeSArray *)t)->dim->toInteger();
+               edim = (size_t)((TypeSArray *)t)->dim->toInteger();
                break;
 
            case Tpointer:
@@ -674,7 +674,7 @@ Expression *ArrayInitializer::toExpression()
             if (index[i])
             {
                 if (index[i]->op == TOKint64)
-                    j = index[i]->toInteger();
+                    j = (size_t)index[i]->toInteger();
                 else
                     goto Lno;
             }
@@ -689,7 +689,7 @@ Expression *ArrayInitializer::toExpression()
     for (size_t i = 0, j = 0; i < value.dim; i++, j++)
     {
         if (index[i])
-            j = (index[i])->toInteger();
+            j = (size_t)(index[i])->toInteger();
         assert(j < edim);
         Initializer *iz = value[i];
         if (!iz)

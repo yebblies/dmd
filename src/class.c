@@ -41,7 +41,7 @@ ClassDeclaration *ClassDeclaration::errorException;
 ClassDeclaration::ClassDeclaration(Loc loc, Identifier *id, BaseClasses *baseclasses)
     : AggregateDeclaration(loc, id)
 {
-    static char msg[] = "only object.d can define this reserved class name";
+    static const char msg[] = "only object.d can define this reserved class name";
 
     if (baseclasses)
         // Actually, this is a transfer
@@ -629,7 +629,8 @@ void ClassDeclaration::semantic(Scope *sc)
     }
     sc->userAttributes = NULL;
     structsize = sc->offset;
-    Scope scsave = *sc;
+    Scope *scsave = sc;
+    sc = new Scope(*sc);
     size_t members_dim = members->dim;
     sizeok = SIZEOKnone;
 
@@ -739,7 +740,7 @@ void ClassDeclaration::semantic(Scope *sc)
         ctor->fbody = new CompoundStatement(0, new Statements());
         members->push(ctor);
         ctor->addMember(sc, this, 1);
-        *sc = scsave;   // why? What about sc->nofree?
+        sc = scsave;   // why? What about sc->nofree?
         ctor->semantic(sc);
         this->ctor = ctor;
         defaultCtor = ctor;
@@ -1020,7 +1021,7 @@ int ClassDeclaration::isFuncHidden(FuncDeclaration *fd)
         for (size_t i = 0; i < os->a.dim; i++)
         {   Dsymbol *s2 = os->a[i];
             FuncDeclaration *f2 = s2->isFuncDeclaration();
-            if (f2 && overloadApply(f2, &isf, fd))
+            if (f2 && overloadApply(f2, &isf, (void *)fd))
                 return 0;
         }
         return 1;
@@ -1029,7 +1030,7 @@ int ClassDeclaration::isFuncHidden(FuncDeclaration *fd)
     {
         FuncDeclaration *fdstart = s->isFuncDeclaration();
         //printf("%s fdstart = %p\n", s->kind(), fdstart);
-        if (overloadApply(fdstart, &isf, fd))
+        if (overloadApply(fdstart, &isf, (void *)fd))
             return 0;
 
         return !fd->parent->isTemplateMixin();

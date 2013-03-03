@@ -1391,7 +1391,7 @@ L2:
         if (fd->type && !fd->isCtorDeclaration())
         {
             Type *tthis = ethis->type;
-            unsigned mod = fd->type->mod;
+            unsigned char mod = fd->type->mod;
             StorageClass stc = scope->stc | fd->storage_class2;
             // Propagate parent storage class (see bug 5504)
             Dsymbol *p = parent;
@@ -1895,9 +1895,9 @@ Object *TemplateDeclaration::declareParameter(Scope *sc, TemplateParameter *tp, 
     {
         TupleDeclaration *td = s->isTupleDeclaration();
         if (va && td)
-        {   Tuple tup;
-            tup.objects = *td->objects;
-            if (match(va, &tup, this, sc))
+        {   Tuple *tup = new Tuple();
+            tup->objects = *td->objects;
+            if (match(va, tup, this, sc))
             {
                 return o;
             }
@@ -6088,7 +6088,8 @@ void TemplateInstance::semantic3(Scope *sc)
         }
         if (speculative && !oldgag)
         {   // If errors occurred, this instantiation failed
-            errors += global.errors - olderrors;
+            if (global.errors - olderrors)
+                errors = true;
             global.endGagging(olderrors);
         }
         sc = sc->pop();
