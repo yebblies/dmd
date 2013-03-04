@@ -38,12 +38,12 @@ int hasPackageAccess(Scope *sc, Dsymbol *s);
  * Return PROT access for Dsymbol smember in this declaration.
  */
 
-enum PROT AggregateDeclaration::getAccess(Dsymbol *smember)
+PROT AggregateDeclaration::getAccess(Dsymbol *smember)
 {
     return PROTpublic;
 }
 
-enum PROT StructDeclaration::getAccess(Dsymbol *smember)
+PROT StructDeclaration::getAccess(Dsymbol *smember)
 {
     enum PROT access_ret = PROTnone;
 
@@ -62,7 +62,7 @@ enum PROT StructDeclaration::getAccess(Dsymbol *smember)
     return access_ret;
 }
 
-enum PROT ClassDeclaration::getAccess(Dsymbol *smember)
+PROT ClassDeclaration::getAccess(Dsymbol *smember)
 {
     enum PROT access_ret = PROTnone;
 
