@@ -274,8 +274,8 @@ public:
     unsigned decodeUTF();
     void getDocComment(Token *t, unsigned lineComment);
 
-    static int isValidIdentifier(char *p);
-    static utf8_t *combineComments(utf8_t *c1, utf8_t *c2);
+    static int isValidIdentifier(const char *p);
+    static const utf8_t *combineComments(const utf8_t *c1, const utf8_t *c2);
 
     Loc tokenLoc();
 };

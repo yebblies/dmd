@@ -40,16 +40,16 @@ long __cdecl __ehfilter(LPEXCEPTION_POINTERS ep);
 #endif
 
 
-int response_expand(size_t *pargc, char ***pargv);
+int response_expand(size_t *pargc, const char ***pargv);
 void browse(const char *url);
-void getenv_setargv(const char *envvar, size_t *pargc, char** *pargv);
+void getenv_setargv(const char *envvar, size_t *pargc, const char** *pargv);
 
 void obj_start(char *srcfile);
 void obj_end(Library *library, File *objfile);
 
 void printCtfePerformanceStats();
 
-static bool parse_arch(size_t argc, char** argv, bool is64bit);
+static bool parse_arch(size_t argc, const char** argv, bool is64bit);
 
 /** Normalize path by turning forward slashes into backslashes */
 void toWinPath(char *src)
@@ -415,7 +415,7 @@ extern "C"
 }
 #endif
 
-int tryMain(size_t argc, char *argv[])
+int tryMain(size_t argc, const char *argv[])
 {
     mem.init();                         // initialize storage allocator
     mem.setStackBottom(&argv);
@@ -425,7 +425,7 @@ int tryMain(size_t argc, char *argv[])
 
     Strings files;
     Strings libmodules;
-    char *p;
+    const char *p;
     Module *m;
     size_t argcstart = argc;
     int setdebuglib = 0;
@@ -540,7 +540,7 @@ int tryMain(size_t argc, char *argv[])
 #endif
 
     size_t dflags_argc = 0;
-    char** dflags_argv = NULL;
+    const char** dflags_argv = NULL;
     getenv_setargv("DFLAGS", &dflags_argc, &dflags_argv);
 
     bool is64bit = global.params.is64bit; // use default
@@ -849,7 +849,7 @@ Language changes listed by -transition=id:\n\
                     {   long level;
 
                         errno = 0;
-                        level = strtol(p + 7, &p, 10);
+                        level = strtol(p + 7, (char **)&p, 10);
                         if (*p || errno || level > INT_MAX)
                             goto Lerror;
                         DebugCondition::setGlobalLevel((int)level);
@@ -875,7 +875,7 @@ Language changes listed by -transition=id:\n\
                     {   long level;
 
                         errno = 0;
-                        level = strtol(p + 9, &p, 10);
+                        level = strtol(p + 9, (char **)&p, 10);
                         if (*p || errno || level > INT_MAX)
                             goto Lerror;
                         VersionCondition::setGlobalLevel((int)level);
@@ -1193,7 +1193,7 @@ Language changes listed by -transition=id:\n\
     {
         for (size_t i = 0; i < global.params.imppath->dim; i++)
         {
-            char *path = (*global.params.imppath)[i];
+            const char *path = (*global.params.imppath)[i];
             Strings *a = FileName::splitPath(path);
 
             if (a)
@@ -1210,7 +1210,7 @@ Language changes listed by -transition=id:\n\
     {
         for (size_t i = 0; i < global.params.fileImppath->dim; i++)
         {
-            char *path = (*global.params.fileImppath)[i];
+            const char *path = (*global.params.fileImppath)[i];
             Strings *a = FileName::splitPath(path);
 
             if (a)
@@ -1236,19 +1236,19 @@ Language changes listed by -transition=id:\n\
         const char *ext;
         char *name;
 
-        p = files[i];
+        char *q = mem.strdup(files[i]);
 
 #if _WIN32
         // Convert / to \ so linker will work
-        for (size_t j = 0; p[j]; j++)
+        for (size_t j = 0; q[j]; j++)
         {
-            if (p[j] == '/')
-                p[j] = '\\';
+            if (q[j] == '/')
+                q[j] = '\\';
         }
 #endif
 
-        p = (char *)FileName::name(p);          // strip path
-        ext = FileName::ext(p);
+        q = (char *)FileName::name(q);          // strip path
+        ext = FileName::ext(q);
         if (ext)
         {   /* Deduce what to do with a file based on its extension
              */
@@ -1313,9 +1313,9 @@ Language changes listed by -transition=id:\n\
             {
                 ext--;                  // skip onto '.'
                 assert(*ext == '.');
-                name = (char *)mem.malloc((ext - p) + 1);
-                memcpy(name, p, ext - p);
-                name[ext - p] = 0;              // strip extension
+                name = (char *)mem.malloc((ext - q) + 1);
+                memcpy(name, q, ext - q);
+                name[ext - q] = 0;              // strip extension
 
                 if (name[0] == 0 ||
                     strcmp(name, "..") == 0 ||
@@ -1332,7 +1332,7 @@ Language changes listed by -transition=id:\n\
             }
         }
         else
-        {   name = p;
+        {   name = q;
             if (!*name)
                 goto Linvalid;
         }
@@ -1577,8 +1577,8 @@ Language changes listed by -transition=id:\n\
         // Add input object and input library files to output library
         for (size_t i = 0; i < libmodules.dim; i++)
         {
-            char *p = libmodules[i];
-            library->addObject(p, NULL, 0);
+            const char *q = libmodules[i];
+            library->addObject(q, NULL, 0);
         }
     }
 
@@ -1714,7 +1714,7 @@ Language changes listed by -transition=id:\n\
     return status;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
     int status = -1;
 #if WINDOWS_SEH
@@ -1740,7 +1740,7 @@ int main(int argc, char *argv[])
  * The string is separated into arguments, processing \ and ".
  */
 
-void getenv_setargv(const char *envvar, size_t *pargc, char** *pargv)
+void getenv_setargv(const char *envvar, size_t *pargc, const char** *pargv)
 {
     char *p;
 
@@ -1864,10 +1864,10 @@ void escapePath(OutBuffer *buf, const char *fname)
  * to detect the desired architecture.
  */
 
-static bool parse_arch(size_t argc, char** argv, bool is64bit)
+static bool parse_arch(size_t argc, const char** argv, bool is64bit)
 {
     for (size_t i = 0; i < argc; ++i)
-    {   char* p = argv[i];
+    {   const char* p = argv[i];
         if (p[0] == '-')
         {
             if (strcmp(p + 1, "m32") == 0)

@@ -1,4 +1,5 @@
 
+
 // Compiler implementation of the D programming language
 // Copyright (c) 1999-2013 by Digital Mars
 // All Rights Reserved
@@ -117,7 +118,7 @@ public:
     size_t nameoffset;          // offset of module name from start of ModuleInfo
     size_t namelen;             // length of module name in characters
 
-    Module(char *arg, Identifier *ident, int doDocComment, int doHdrGen);
+    Module(const char *arg, Identifier *ident, int doDocComment, int doHdrGen);
     ~Module();
 
     static Module *load(Loc loc, Identifiers *packages, Identifier *ident);
