@@ -147,33 +147,39 @@ DMDMAKE=$(MAKE) -fwin32.mak C=$C TK=$(TK) ROOT=$(ROOT)
 
 ############################### Rule Variables ###############################
 
+# Glue layer
+GLUEOBJ=glue.obj msc.obj s2ir.obj todt.obj e2ir.obj tocsym.obj \
+	toobj.obj toctype.obj tocvdebug.obj toir.obj \
+	libmscoff.obj scanmscoff.obj irstate.obj typinf.obj
+
+GLUESTUB=gluestub.obj
+
 # D front end
 OBJ1= mars.obj enum.obj struct.obj dsymbol.obj import.obj id.obj \
 	staticassert.obj identifier.obj mtype.obj expression.obj \
 	optimize.obj template.obj lexer.obj declaration.obj cast.obj \
 	init.obj func.obj utf.obj parse.obj statement.obj \
-	constfold.obj version.obj inifile.obj typinf.obj \
+	constfold.obj version.obj inifile.obj \
 	module.obj scope.obj dump.obj cond.obj inline.obj opover.obj \
 	entity.obj class.obj mangle.obj attrib.obj impcnvtab.obj \
 	link.obj access.obj doc.obj macro.obj hdrgen.obj delegatize.obj \
 	interpret.obj ctfeexpr.obj traits.obj aliasthis.obj \
-	builtin.obj clone.obj libomf.obj arrayop.obj irstate.obj \
-	glue.obj msc.obj tk.obj s2ir.obj todt.obj e2ir.obj tocsym.obj \
-	eh.obj toobj.obj toctype.obj tocvdebug.obj toir.obj \
+	builtin.obj clone.obj libomf.obj arrayop.obj \
 	json.obj unittests.obj imphint.obj argtypes.obj apply.obj \
-	sideeffect.obj libmscoff.obj scanmscoff.obj \
-	intrange.obj canthrow.obj target.obj
+	sideeffect.obj intrange.obj canthrow.obj target.obj tk.obj \
+	$(GLUESTUB)
 
 # D back end
-OBJ8= go.obj gdag.obj gother.obj gflow.obj gloop.obj var.obj el.obj \
-	newman.obj glocal.obj os.obj nteh.obj evalu8.obj cgcs.obj \
-	rtlsym.obj cgelem.obj cgen.obj cgreg.obj out.obj \
-	blockopt.obj cgobj.obj cg.obj cgcv.obj type.obj dt.obj \
-	debug.obj code.obj cg87.obj cgxmm.obj cgsched.obj ee.obj csymbol.obj \
-	cgcod.obj cod1.obj cod2.obj cod3.obj cod4.obj cod5.obj outbuf.obj \
-	bcomplex.obj iasm.obj ptrntab.obj aa.obj ti_achar.obj md5.obj \
-	ti_pvoid.obj mscoffobj.obj pdata.obj cv8.obj backconfig.obj \
-	ph2.obj util2.obj \
+OBJ8=
+# OBJ8= go.obj gdag.obj gother.obj gflow.obj gloop.obj var.obj el.obj \
+	# newman.obj glocal.obj os.obj nteh.obj evalu8.obj cgcs.obj \
+	# rtlsym.obj cgelem.obj cgen.obj cgreg.obj out.obj \
+	# blockopt.obj cgobj.obj cg.obj cgcv.obj type.obj dt.obj \
+	# debug.obj code.obj cg87.obj cgxmm.obj cgsched.obj ee.obj csymbol.obj \
+	# cgcod.obj cod1.obj cod2.obj cod3.obj cod4.obj cod5.obj outbuf.obj \
+	# bcomplex.obj iasm.obj ptrntab.obj aa.obj ti_achar.obj md5.obj \
+	# ti_pvoid.obj mscoffobj.obj pdata.obj cv8.obj backconfig.obj \
+	# ph2.obj util2.obj eh.obj \
 
 
 # Root package
@@ -525,6 +531,9 @@ gloop.obj : $C\gloop.c
 
 glue.obj : $(CH) $(TOTALH) $C\rtlsym.h mars.h module.h glue.c
 	$(CC) -c $(MFLAGS) -I$(ROOT) glue
+
+gluestub.obj : $(CH) $(TOTALH) $C\rtlsym.h mars.h module.h gluestub.c
+	$(CC) -c $(MFLAGS) -I$(ROOT) gluestub
 
 imphint.obj : imphint.c
 	$(CC) -c $(CFLAGS) $*
