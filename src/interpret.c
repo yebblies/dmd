@@ -2307,8 +2307,6 @@ Expression *BoolExp::interpret(InterState *istate, CtfeGoal goal)
 }
 
 
-typedef Expression *(*fp_t)(Type *, Expression *, Expression *);
-
 Expression *BinExp::interpretCommon(InterState *istate, CtfeGoal goal, fp_t fp)
 {   Expression *e;
     Expression *e1;
@@ -2423,9 +2421,6 @@ Expression *PowExp::interpret(InterState *istate, CtfeGoal goal)
     return interpretCommon(istate, goal, &Pow);
 }
 #endif
-
-
-typedef int (*fp2_t)(Loc loc, enum TOK, Expression *, Expression *);
 
 
 Expression *BinExp::interpretCompareCommon(InterState *istate, CtfeGoal goal, fp2_t fp)
