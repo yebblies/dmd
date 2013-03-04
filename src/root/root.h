@@ -32,7 +32,7 @@ struct OutBuffer;
 // Can't include arraytypes.h here, need to declare these directly.
 template <typename TYPE> struct ArrayBase;
 typedef ArrayBase<struct File> Files;
-typedef ArrayBase<char> Strings;
+typedef ArrayBase<const char> Strings;
 
 
 struct Object

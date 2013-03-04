@@ -50,13 +50,13 @@ class LibOMF : public Library
     StringTable tab;
 
     LibOMF();
-    void setFilename(char *dir, char *filename);
+    void setFilename(const char *dir, const char *filename);
     void addObject(const char *module_name, void *buf, size_t buflen);
     void addLibrary(void *buf, size_t buflen);
     void write();
 
   private:
-    void addSymbol(ObjModule *om, char *name, int pickAny = 0);
+    void addSymbol(ObjModule *om, const char *name, int pickAny = 0);
     void scanObjModule(ObjModule *om);
     unsigned short numDictPages(unsigned padding);
     int FillDict(unsigned char *bucketsP, unsigned short uNumPages);
@@ -94,7 +94,7 @@ LibOMF::LibOMF()
  * Add default library file name extension.
  */
 
-void LibOMF::setFilename(char *dir, char *filename)
+void LibOMF::setFilename(const char *dir, const char *filename)
 {
     const char *arg = filename;
     if (!arg || !*arg)
@@ -229,7 +229,7 @@ static unsigned short parseIdx(unsigned char **pp)
     return idx;
 }
 
-void LibOMF::addSymbol(ObjModule *om, char *name, int pickAny)
+void LibOMF::addSymbol(ObjModule *om, const char *name, int pickAny)
 {
 #if LOG
     printf("LibOMF::addSymbol(%s, %s, %d)\n", om->name, name, pickAny);
@@ -403,7 +403,7 @@ void LibOMF::scanObjModule(ObjModule *om)
     }
 Ret:
     for (u = 1; u < names.dim; u++)
-        free(names[u]);
+        free((void *)names[u]);
 }
 
 /***************************************

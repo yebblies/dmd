@@ -278,7 +278,7 @@ struct Lexer
     unsigned decodeUTF();
     void getDocComment(Token *t, unsigned lineComment);
 
-    static int isValidIdentifier(char *p);
+    static int isValidIdentifier(const char *p);
     static const char *combineComments(const char *c1, const char *c2);
 
     Loc tokenLoc();
