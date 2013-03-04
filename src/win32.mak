@@ -167,19 +167,18 @@ OBJ1= mars.obj enum.obj struct.obj dsymbol.obj import.obj id.obj \
 	builtin.obj clone.obj libomf.obj arrayop.obj \
 	json.obj unittests.obj imphint.obj argtypes.obj apply.obj \
 	sideeffect.obj intrange.obj canthrow.obj target.obj tk.obj \
-	$(GLUESTUB)
+	$(GLUEOBJ)
 
 # D back end
-OBJ8=
-# OBJ8= go.obj gdag.obj gother.obj gflow.obj gloop.obj var.obj el.obj \
-	# newman.obj glocal.obj os.obj nteh.obj evalu8.obj cgcs.obj \
-	# rtlsym.obj cgelem.obj cgen.obj cgreg.obj out.obj \
-	# blockopt.obj cgobj.obj cg.obj cgcv.obj type.obj dt.obj \
-	# debug.obj code.obj cg87.obj cgxmm.obj cgsched.obj ee.obj csymbol.obj \
-	# cgcod.obj cod1.obj cod2.obj cod3.obj cod4.obj cod5.obj outbuf.obj \
-	# bcomplex.obj iasm.obj ptrntab.obj aa.obj ti_achar.obj md5.obj \
-	# ti_pvoid.obj mscoffobj.obj pdata.obj cv8.obj backconfig.obj \
-	# ph2.obj util2.obj eh.obj \
+OBJ8= go.obj gdag.obj gother.obj gflow.obj gloop.obj var.obj el.obj \
+	newman.obj glocal.obj os.obj nteh.obj evalu8.obj cgcs.obj \
+	rtlsym.obj cgelem.obj cgen.obj cgreg.obj out.obj \
+	blockopt.obj cgobj.obj cg.obj cgcv.obj type.obj dt.obj \
+	debug.obj code.obj cg87.obj cgxmm.obj cgsched.obj ee.obj csymbol.obj \
+	cgcod.obj cod1.obj cod2.obj cod3.obj cod4.obj cod5.obj outbuf.obj \
+	bcomplex.obj iasm.obj ptrntab.obj aa.obj ti_achar.obj md5.obj \
+	ti_pvoid.obj mscoffobj.obj pdata.obj cv8.obj backconfig.obj \
+	ph2.obj util2.obj eh.obj \
 
 
 # Root package
