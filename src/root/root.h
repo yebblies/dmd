@@ -34,7 +34,7 @@ template <typename TYPE> struct ArrayBase;
 typedef ArrayBase<struct File> Files;
 typedef ArrayBase<const char> Strings;
 
-
+#ifndef MAGICPORT
 struct Object
 {
     Object() { }
@@ -73,6 +73,7 @@ struct Object
     /*virtual*/         // not used, disable for now
         void mark();
 };
+#endif
 
 struct String : Object
 {
@@ -274,9 +275,9 @@ struct OutBuffer : Object
     size_t insert(size_t offset, const void *data, size_t nbytes);
     void remove(size_t offset, size_t nbytes);
     char *toChars();
-    char *extractString();
 };
 
+#ifndef MAGICPORT
 struct Array
 {
     size_t dim;
@@ -366,6 +367,7 @@ struct ArrayBase : Array
         return 0;
     }
 };
+#endif
 
 // TODO: Remove (only used by disabled GC)
 struct Bits : Object

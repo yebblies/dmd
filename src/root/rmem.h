@@ -23,6 +23,7 @@ struct Mem
 
     void init();
 
+#ifndef MAGICPORT
     // Derive from Mem to get these storage allocators instead of global new/delete
     void * operator new(size_t m_size);
     void * operator new(size_t m_size, Mem *mem);
@@ -31,25 +32,28 @@ struct Mem
 
     void * operator new[](size_t m_size);
     void operator delete[](void *p);
+#endif
 
     char *strdup(const char *s);
     void *malloc(size_t size);
-    void *malloc_uncollectable(size_t size);
     void *calloc(size_t size, size_t n);
     void *realloc(void *p, size_t size);
     void free(void *p);
-    void free_uncollectable(void *p);
     void *mallocdup(void *o, size_t size);
     void error();
-    void check(void *p);        // validate pointer
     void fullcollect();         // do full garbage collection
-    void fullcollectNoStack();  // do full garbage collection, no scan stack
     void mark(void *pointer);
     void addroots(char* pStart, char* pEnd);
+#ifndef MAGICPORT
+    void *malloc_uncollectable(size_t size);
+    void free_uncollectable(void *p);
+    void check(void *p);        // validate pointer
+    void fullcollectNoStack();  // do full garbage collection, no scan stack
     void removeroots(char* pStart);
     void setFinalizer(void* pObj, FINALIZERPROC pFn, void* pClientData);
-    void setStackBottom(void *bottom);
     GC *getThreadGC();          // get apartment allocator for this thread
+#endif
+    void setStackBottom(void *bottom);
 };
 
 extern Mem mem;

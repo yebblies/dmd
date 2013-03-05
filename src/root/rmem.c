@@ -142,6 +142,7 @@ void Mem::addroots(char* pStart, char* pEnd)
 
 /* =================================================== */
 
+#ifndef MAGICPORT
 void * operator new(size_t m_size)
 {
     void *p = malloc(m_size);
@@ -156,5 +157,6 @@ void operator delete(void *p)
 {
     free(p);
 }
+#endif
 
 
