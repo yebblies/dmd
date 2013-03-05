@@ -1838,6 +1838,11 @@ size_t OutBuffer::insert(size_t offset, const void *p, size_t nbytes)
     return offset + nbytes;
 }
 
+size_t OutBuffer::insert(size_t offset, const char *p, size_t nbytes)
+{
+    return insert(offset, (const void *)p, nbytes);
+}
+
 void OutBuffer::remove(size_t offset, size_t nbytes)
 {
     memmove(data + offset, data + offset + nbytes, this->offset - (offset + nbytes));

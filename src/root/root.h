@@ -273,6 +273,7 @@ struct OutBuffer : Object
     size_t bracket(size_t i, const char *left, size_t j, const char *right);
     void spread(size_t offset, size_t nbytes);
     size_t insert(size_t offset, const void *data, size_t nbytes);
+    size_t insert(size_t offset, const char *data, size_t nbytes);
     void remove(size_t offset, size_t nbytes);
     char *toChars();
 };

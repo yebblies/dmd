@@ -9547,7 +9547,7 @@ void Parameter::argsToDecoBuffer(OutBuffer *buf, Parameters *arguments)
 {
     //printf("Parameter::argsToDecoBuffer()\n");
     // Write argument types
-    foreach(arguments, &argsToDecoBufferDg, buf);
+    foreach(arguments, &argsToDecoBufferDg, (void *)buf);
 }
 
 /****************************************
