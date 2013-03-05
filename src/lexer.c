@@ -250,7 +250,6 @@ const char *Token::toChars(enum TOK value)
 
 Token *Lexer::freelist = NULL;
 StringTable Lexer::stringtable;
-OutBuffer Lexer::stringbuffer;
 
 Lexer::Lexer(Module *mod,
         const char *base, size_t begoffset, size_t endoffset,
@@ -562,7 +561,7 @@ void Lexer::scan(Token *t)
             {   unsigned c;
                 const char *pstart = p;
 
-                stringbuffer.reset();
+                OutBuffer stringbuffer;
                 do
                 {
                     p++;
@@ -1378,7 +1377,7 @@ TOK Lexer::wysiwygStringConstant(Token *t, int tc)
     Loc start = loc;
 
     p++;
-    stringbuffer.reset();
+    OutBuffer stringbuffer;
     while (1)
     {
         c = *p++;
@@ -1444,7 +1443,7 @@ TOK Lexer::hexStringConstant(Token *t)
     unsigned v;
 
     p++;
-    stringbuffer.reset();
+    OutBuffer stringbuffer;
     while (1)
     {
         c = *p++;
@@ -1540,7 +1539,7 @@ TOK Lexer::delimitedStringConstant(Token *t)
     unsigned startline = 0;
 
     p++;
-    stringbuffer.reset();
+    OutBuffer stringbuffer;
     while (1)
     {
         c = *p++;
@@ -1745,7 +1744,7 @@ TOK Lexer::escapeStringConstant(Token *t, int wide)
     Loc start = loc;
 
     p++;
-    stringbuffer.reset();
+    OutBuffer stringbuffer;
     while (1)
     {
         c = *p++;
@@ -1937,7 +1936,7 @@ TOK Lexer::number(Token *t)
 
     //printf("Lexer::number()\n");
     state = STATE_initial;
-    stringbuffer.reset();
+    OutBuffer stringbuffer;
     start = p;
     while (1)
     {
@@ -2294,7 +2293,7 @@ __body
     TOK result;
 
     //printf("Lexer::inreal()\n");
-    stringbuffer.reset();
+    OutBuffer stringbuffer;
     dblstate = 0;
     hex = 0;
 Lnext:
@@ -2511,7 +2510,7 @@ void Lexer::poundLine()
             case '"':
                 if (filespec)
                     goto Lerr;
-                stringbuffer.reset();
+                OutBuffer stringbuffer;
                 p++;
                 while (1)
                 {   unsigned c;

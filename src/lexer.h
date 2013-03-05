@@ -230,7 +230,6 @@ struct Token
 struct Lexer
 {
     static StringTable stringtable;
-    static OutBuffer stringbuffer;
     static Token *freelist;
 
     Loc loc;                    // for error messages
