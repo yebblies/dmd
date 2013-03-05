@@ -228,6 +228,7 @@ struct Type : Object
     Type(TY ty);
     virtual const char *kind();
     virtual Type *syntaxCopy();
+    virtual Type *clone();
     int equals(Object *o);
     int dyncast() { return DYNCAST_TYPE; } // kludge for template.isType()
     int covariant(Type *t, StorageClass *pstc = NULL);
@@ -390,6 +391,7 @@ struct TypeBasic : Type
     TypeBasic(TY ty);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone();
     d_uns64 size(Loc loc);
     unsigned alignsize();
     Expression *getProperty(Loc loc, Identifier *ident);

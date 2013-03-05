@@ -164,6 +164,14 @@ Type *Type::syntaxCopy()
     return this;
 }
 
+Type *Type::clone()
+{
+    print();
+    fprintf(stdmsg, "ty = %d\n", ty);
+    assert(0);
+    return NULL;
+}
+
 int Type::equals(Object *o)
 {   Type *t;
 
@@ -2783,6 +2791,10 @@ Type *TypeBasic::syntaxCopy()
     return this;
 }
 
+Type *TypeBasic::clone()
+{
+    return new TypeBasic(ty);
+}
 
 char *TypeBasic::toChars()
 {
