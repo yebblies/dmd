@@ -12195,14 +12195,14 @@ Expression *EqualExp::semantic(Scope *sc)
 
     Type *t1 = e1->type->toBasetype();
     Type *t2 = e2->type->toBasetype();
-    /*if (t1->ty == Tclass && e2->op == TOKnull ||
+    if (t1->ty == Tclass && e2->op == TOKnull ||
         t2->ty == Tclass && e1->op == TOKnull)
     {
         error("use '%s' instead of '%s' when comparing with null",
                 Token::toChars(op == TOKequal ? TOKidentity : TOKnotidentity),
                 Token::toChars(op));
         return new ErrorExp();
-    }*/
+    }
 
     if ((t1->ty == Tarray || t1->ty == Tsarray) &&
         (t2->ty == Tarray || t2->ty == Tsarray))
