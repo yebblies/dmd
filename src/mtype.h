@@ -229,6 +229,7 @@ public:
     virtual const char *kind();
     Type *copy();
     virtual Type *syntaxCopy();
+    virtual Type *clone();
     bool equals(RootObject *o);
     int dyncast() { return DYNCAST_TYPE; } // kludge for template.isType()
     int covariant(Type *t, StorageClass *pstc = NULL);
@@ -353,6 +354,7 @@ class TypeError : public Type
 {
 public:
     TypeError();
+    Type *clone() { return new TypeError(); }
     Type *syntaxCopy();
 
     void toCBuffer(OutBuffer *buf, Identifier *ident, HdrGenState *hgs);
@@ -394,9 +396,13 @@ public:
     const char *dstring;
     unsigned flags;
 
+private:
+    TypeBasic() : Type(Terror) {}
+public:
     TypeBasic(TY ty);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone();
     d_uns64 size(Loc loc);
     unsigned alignsize();
     Expression *getProperty(Loc loc, Identifier *ident, int flag);
@@ -477,6 +483,7 @@ public:
     TypeSArray(Type *t, Expression *dim);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone() { return new TypeSArray(next, dim); }
     d_uns64 size(Loc loc);
     unsigned alignsize();
     Type *semantic(Loc loc, Scope *sc);
@@ -519,6 +526,7 @@ public:
     TypeDArray(Type *t);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone();
     d_uns64 size(Loc loc);
     unsigned alignsize();
     Type *semantic(Loc loc, Scope *sc);
@@ -556,6 +564,7 @@ public:
     TypeAArray(Type *t, Type *index);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone() { return new TypeAArray(next, index); }
     d_uns64 size(Loc loc);
     Type *semantic(Loc loc, Scope *sc);
     StructDeclaration *getImpl();
@@ -591,6 +600,7 @@ public:
     TypePointer(Type *t);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone();
     Type *semantic(Loc loc, Scope *sc);
     d_uns64 size(Loc loc);
     void toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod);
@@ -673,6 +683,7 @@ public:
     TypeFunction(Parameters *parameters, Type *treturn, int varargs, LINK linkage, StorageClass stc = 0);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone();
     Type *semantic(Loc loc, Scope *sc);
     void purityLevel();
     void toDecoBuffer(OutBuffer *buf, int flag);
@@ -708,6 +719,7 @@ public:
     TypeDelegate(Type *t);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone() { return new TypeDelegate(next); }
     Type *semantic(Loc loc, Scope *sc);
     d_uns64 size(Loc loc);
     unsigned alignsize();
@@ -755,6 +767,7 @@ public:
     TypeIdentifier(Loc loc, Identifier *ident);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone();
     //char *toChars();
     void toDecoBuffer(OutBuffer *buf, int flag);
     void toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod);
@@ -777,6 +790,7 @@ public:
     TypeInstance(Loc loc, TemplateInstance *tempinst);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone() { return new TypeInstance(loc, tempinst); }
     //char *toChars();
     //void toDecoBuffer(OutBuffer *buf, int flag);
     void toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod);
@@ -798,6 +812,7 @@ public:
     TypeTypeof(Loc loc, Expression *exp);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone();
     Dsymbol *toDsymbol(Scope *sc);
     void toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod);
     void toJson(JsonOut *json);
@@ -841,6 +856,7 @@ public:
     unsigned alignsize();
     char *toChars();
     Type *syntaxCopy();
+    Type *clone();
     Type *semantic(Loc loc, Scope *sc);
     Dsymbol *toDsymbol(Scope *sc);
     void toDecoBuffer(OutBuffer *buf, int flag);
@@ -880,6 +896,7 @@ public:
     TypeEnum(EnumDeclaration *sym);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone() { return new TypeEnum(sym); }
     d_uns64 size(Loc loc);
     unsigned alignsize();
     char *toChars();
@@ -927,6 +944,7 @@ public:
     TypeTypedef(TypedefDeclaration *sym);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone() { return new TypeTypedef(sym); }
     d_uns64 size(Loc loc);
     unsigned alignsize();
     char *toChars();
@@ -981,6 +999,7 @@ public:
     d_uns64 size(Loc loc);
     char *toChars();
     Type *syntaxCopy();
+    Type *clone();
     Type *semantic(Loc loc, Scope *sc);
     Dsymbol *toDsymbol(Scope *sc);
     void toDecoBuffer(OutBuffer *buf, int flag);
@@ -1023,6 +1042,7 @@ public:
     TypeTuple(Type *t1, Type *t2);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone() { return new TypeTuple(arguments); }
     Type *semantic(Loc loc, Scope *sc);
     bool equals(RootObject *o);
     Type *reliesOnTident(TemplateParameters *tparams = NULL);
@@ -1056,6 +1076,7 @@ public:
     const char *kind();
 
     Type *syntaxCopy();
+    Type *clone();
     void toDecoBuffer(OutBuffer *buf, int flag);
     MATCH implicitConvTo(Type *to);
     int checkBoolean();

@@ -169,6 +169,14 @@ Type *Type::syntaxCopy()
     return this;
 }
 
+Type *Type::clone()
+{
+    print();
+    fprintf(stderr, "ty = %d\n", ty);
+    assert(0);
+    return NULL;
+}
+
 bool Type::equals(RootObject *o)
 {
     Type *t = (Type *)o;
@@ -2822,6 +2830,10 @@ Type *TypeBasic::syntaxCopy()
     return this;
 }
 
+Type *TypeBasic::clone()
+{
+    return new TypeBasic();
+}
 
 char *TypeBasic::toChars()
 {
@@ -4310,6 +4322,11 @@ Type *TypeDArray::syntaxCopy()
     return t;
 }
 
+Type *TypeDArray::clone()
+{
+    return new TypeDArray(next);
+}
+
 d_uns64 TypeDArray::size(Loc loc)
 {
     //printf("TypeDArray::size()\n");
@@ -4884,6 +4901,11 @@ Type *TypePointer::syntaxCopy()
     return t;
 }
 
+Type *TypePointer::clone()
+{
+    return new TypePointer(next);
+}
+
 Type *TypePointer::semantic(Loc loc, Scope *sc)
 {
     //printf("TypePointer::semantic() %s\n", toChars());
@@ -5166,6 +5188,11 @@ Type *TypeFunction::syntaxCopy()
     t->trust = trust;
     t->fargs = fargs;
     return t;
+}
+
+Type *TypeFunction::clone()
+{
+    return new TypeFunction(parameters, next, varargs, linkage);
 }
 
 /*******************************
@@ -6702,6 +6729,11 @@ Type *TypeIdentifier::syntaxCopy()
     return t;
 }
 
+Type *TypeIdentifier::clone()
+{
+    return new TypeIdentifier(loc, ident);
+}
+
 void TypeIdentifier::toDecoBuffer(OutBuffer *buf, int flag)
 {
     Type::toDecoBuffer(buf, flag);
@@ -7045,6 +7077,11 @@ Type *TypeTypeof::syntaxCopy()
     t->syntaxCopyHelper(this);
     t->mod = mod;
     return t;
+}
+
+Type *TypeTypeof::clone()
+{
+    return new TypeTypeof(loc, exp);
 }
 
 Dsymbol *TypeTypeof::toDsymbol(Scope *sc)
@@ -7930,6 +7967,11 @@ Type *TypeStruct::syntaxCopy()
     return this;
 }
 
+Type *TypeStruct::clone()
+{
+    return new TypeStruct(sym);
+}
+
 Type *TypeStruct::semantic(Loc loc, Scope *sc)
 {
     //printf("TypeStruct::semantic('%s')\n", sym->toChars());
@@ -8471,6 +8513,11 @@ char *TypeClass::toChars()
 Type *TypeClass::syntaxCopy()
 {
     return this;
+}
+
+Type *TypeClass::clone()
+{
+    return new TypeClass(sym);
 }
 
 Type *TypeClass::semantic(Loc loc, Scope *sc)
@@ -9355,6 +9402,11 @@ Type *TypeNull::syntaxCopy()
 {
     // No semantic analysis done, no need to copy
     return this;
+}
+
+Type *TypeNull::clone()
+{
+    return new TypeNull();
 }
 
 MATCH TypeNull::implicitConvTo(Type *to)
