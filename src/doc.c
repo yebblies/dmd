@@ -1209,7 +1209,7 @@ void DocComment::parseSections(const char *comment)
     p = comment;
     while (*p)
     {
-        unsigned char *pstart0 = p;
+        const char *pstart0 = p;
         p = skipwhitespace(p);
         pstart = p;
         pend = p;
@@ -2114,7 +2114,7 @@ void highlightText(Scope *sc, Dsymbol *s, OutBuffer *buf, size_t offset)
                             {
                                 size_t j = codeIndent;
                                 unsigned char *q = p;
-                                while (j-- > 0 && q < endp && isIndentWS(q))
+                                while (j-- > 0 && q < endp && isIndentWS((const char *)q))
                                     ++q;
                                 codebuf.remove(p - codebuf.data, q - p);
                                 assert(codebuf.data <= p);
