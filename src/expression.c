@@ -4784,8 +4784,9 @@ Lagain:
         }
 
         FuncDeclaration *f = NULL;
+        Expression *dummythis = type->defaultInit(0);
         if (sd->ctor)
-            f = resolveFuncCall(loc, sc, sd->ctor, NULL, NULL, arguments, 0);
+            f = resolveFuncCall(loc, sc, sd->ctor, NULL, dummythis, arguments, 0);
         if (f)
         {
             checkDeprecated(sc, f);
@@ -4795,7 +4796,7 @@ Lagain:
             sd->accessCheck(loc, sc, member);
 
             TypeFunction *tf = (TypeFunction *)f->type;
-            type = tf->next;
+            type = type->addMod(tf->nextOf()->mod);
 
             if (!arguments)
                 arguments = new Expressions();
@@ -7957,16 +7958,13 @@ Lagain:
                 av = new CommaExp(loc, av, new VarExp(loc, tmp));
 
                 Expression *e;
-                CtorDeclaration *cf = ad->ctor->isCtorDeclaration();
-                if (cf)
-                    e = new DotVarExp(loc, av, cf, 1);
-                else
-                {   TemplateDeclaration *td = ad->ctor->isTemplateDeclaration();
-                    assert(td);
-                    e = new DotTemplateExp(loc, av, td);
-                }
+                Expression *dummythis = t1->defaultInit(0);
+                FuncDeclaration *fd = resolveFuncCall(loc, sc, ad->ctor, NULL, dummythis, arguments, 0);
+                assert(fd);
+                e = new DotVarExp(loc, av, fd, 1);
                 e = new CallExp(loc, e, arguments);
                 e = e->semantic(sc);
+                e->type = t1->addMod(fd->type->nextOf()->mod);
                 return e;
             }
 #endif
