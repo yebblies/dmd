@@ -46,7 +46,7 @@ void unittest_lexer();
  * Do our own char maps
  */
 
-static char cmtable[256];
+static unsigned char cmtable[256];
 
 const int CMoctal =     0x1;
 const int CMhex =       0x2;
