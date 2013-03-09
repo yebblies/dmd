@@ -22,7 +22,7 @@ Symbol *SymbolDeclaration::toSymbol()
     return NULL;
 }
 
-Symbol *Dsymbol::toSymbolX(const char *prefix, int sclass, type *t, const char *suffix)
+Symbol *Dsymbol::toSymbolX(const char *prefix, int sclass, TYPE *t, const char *suffix)
 {
     assert(0);
     return NULL;
