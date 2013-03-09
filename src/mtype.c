@@ -4932,6 +4932,11 @@ Type *TypePointer::syntaxCopy()
     return t;
 }
 
+Type *TypePointer::clone()
+{
+    return new TypePointer(next);
+}
+
 Type *TypePointer::semantic(Loc loc, Scope *sc)
 {
     //printf("TypePointer::semantic() %s\n", toChars());
@@ -6743,6 +6748,11 @@ Type *TypeIdentifier::syntaxCopy()
     t->syntaxCopyHelper(this);
     t->mod = mod;
     return t;
+}
+
+Type *TypeIdentifier::clone()
+{
+    return new TypeIdentifier(loc, ident);
 }
 
 void TypeIdentifier::toDecoBuffer(OutBuffer *buf, int flag)

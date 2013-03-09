@@ -576,6 +576,7 @@ struct TypePointer : TypeNext
     TypePointer(Type *t);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone();
     Type *semantic(Loc loc, Scope *sc);
     d_uns64 size(Loc loc);
     void toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod);
@@ -734,6 +735,7 @@ struct TypeIdentifier : TypeQualified
     TypeIdentifier(Loc loc, Identifier *ident);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone();
     //char *toChars();
     void toDecoBuffer(OutBuffer *buf, int flag);
     void toCBuffer2(OutBuffer *buf, HdrGenState *hgs, int mod);
