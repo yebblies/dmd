@@ -509,6 +509,7 @@ struct TypeDArray : TypeArray
     TypeDArray(Type *t);
     const char *kind();
     Type *syntaxCopy();
+    Type *clone();
     d_uns64 size(Loc loc);
     unsigned alignsize();
     Type *semantic(Loc loc, Scope *sc);
@@ -661,6 +662,7 @@ struct TypeFunction : TypeNext
     const char *kind();
     TypeFunction *copy();
     Type *syntaxCopy();
+    Type *clone();
     Type *semantic(Loc loc, Scope *sc);
     void purityLevel();
     void toDecoBuffer(OutBuffer *buf, int flag);

@@ -4287,6 +4287,11 @@ Type *TypeDArray::syntaxCopy()
     return t;
 }
 
+Type *TypeDArray::clone()
+{
+    return new TypeDArray(next);
+}
+
 d_uns64 TypeDArray::size(Loc loc)
 {
     //printf("TypeDArray::size()\n");
@@ -5224,6 +5229,11 @@ Type *TypeFunction::syntaxCopy()
     t->trust = trust;
     t->fargs = fargs;
     return t;
+}
+
+Type *TypeFunction::clone()
+{
+    return new TypeFunction(parameters, next, varargs, linkage);
 }
 
 /*******************************
