@@ -2793,7 +2793,7 @@ Type *TypeBasic::syntaxCopy()
 
 Type *TypeBasic::clone()
 {
-    return new TypeBasic(ty);
+    return new TypeBasic();
 }
 
 char *TypeBasic::toChars()

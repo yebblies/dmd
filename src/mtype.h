@@ -388,6 +388,9 @@ struct TypeBasic : Type
     const char *dstring;
     unsigned flags;
 
+private:
+    TypeBasic() : Type(Terror) {}
+public:
     TypeBasic(TY ty);
     const char *kind();
     Type *syntaxCopy();
