@@ -27,7 +27,7 @@ struct StringValue
     union
     {
         void *ptrvalue;
-        char *string;
+        //char *string;
     };
 private:
     size_t length;
