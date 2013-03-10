@@ -1914,6 +1914,13 @@ Expression *Expression::syntaxCopy()
     return copy();
 }
 
+Expression *Expression::clone()
+{
+    printf("Cannot clone %s\n", Token::toChars(op));
+    assert(0);
+    return NULL;
+}
+
 /*********************************
  * Does *not* do a deep copy.
  */
@@ -7922,6 +7929,11 @@ Expression *DotTemplateInstanceExp::syntaxCopy()
     return de;
 }
 
+Expression *DotTemplateInstanceExp::clone()
+{
+    return new DotTemplateInstanceExp(loc, e1, ti->name, ti->tiargs);
+}
+
 bool DotTemplateInstanceExp::findTempDecl(Scope *sc)
 {
 #if LOGSEMANTIC
@@ -9949,6 +9961,11 @@ VectorExp::VectorExp(Loc loc, Expression *e, Type *t)
 Expression *VectorExp::syntaxCopy()
 {
     return new VectorExp(loc, e1->syntaxCopy(), to->syntaxCopy());
+}
+
+Expression *VectorExp::clone()
+{
+    return new VectorExp(loc, e1, to);
 }
 
 Expression *VectorExp::semantic(Scope *sc)

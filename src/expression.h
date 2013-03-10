@@ -125,6 +125,7 @@ public:
     static void init();
     Expression *copy();
     virtual Expression *syntaxCopy();
+    virtual Expression *clone();
     virtual int apply(apply_fp_t fp, void *param);
     virtual Expression *semantic(Scope *sc);
     Expression *trySemantic(Scope *sc);
@@ -226,6 +227,7 @@ public:
     IntegerExp(Loc loc, dinteger_t value, Type *type);
     IntegerExp(dinteger_t value);
     bool equals(RootObject *o);
+    Expression *clone() { return new IntegerExp(loc, value, type); }
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     char *toChars();
@@ -250,6 +252,7 @@ class ErrorExp : public IntegerExp
 public:
     ErrorExp();
 
+    Expression *clone() { return new ErrorExp(); }
     Expression *implicitCastTo(Scope *sc, Type *t);
     MATCH implicitConvTo(Type *t);
     Expression *castTo(Scope *sc, Type *t);
@@ -265,6 +268,7 @@ public:
     RealExp(Loc loc, real_t value, Type *type);
     bool equals(RootObject *o);
     Expression *semantic(Scope *sc);
+    Expression *clone() { return new RealExp(loc, value, type); }
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     char *toChars();
     dinteger_t toInteger();
@@ -288,6 +292,7 @@ public:
 
     ComplexExp(Loc loc, complex_t value, Type *type);
     bool equals(RootObject *o);
+    Expression *clone() { return new ComplexExp(loc, value, type); }
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     char *toChars();
@@ -312,6 +317,7 @@ public:
     Declaration *var;
 
     IdentifierExp(Loc loc, Identifier *ident);
+    Expression *clone() { return new IdentifierExp(loc, ident); }
     Expression *semantic(Scope *sc);
     char *toChars();
     void dump(int indent);
@@ -324,6 +330,7 @@ class DollarExp : public IdentifierExp
 {
 public:
     DollarExp(Loc loc);
+    Expression *clone() { return new DollarExp(loc); }
 };
 
 class DsymbolExp : public Expression
@@ -333,6 +340,7 @@ public:
     bool hasOverloads;
 
     DsymbolExp(Loc loc, Dsymbol *s, bool hasOverloads = false);
+    Expression *clone() { return new DsymbolExp(loc, s, hasOverloads); }
     Expression *semantic(Scope *sc);
     char *toChars();
     void dump(int indent);
@@ -347,6 +355,7 @@ public:
     Declaration *var;
 
     ThisExp(Loc loc);
+    Expression *clone() { return new ThisExp(loc); }
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     int isBool(int result);
@@ -366,6 +375,7 @@ class SuperExp : public ThisExp
 {
 public:
     SuperExp(Loc loc);
+    Expression *clone() { return new SuperExp(loc); }
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 
@@ -380,6 +390,7 @@ public:
 
     NullExp(Loc loc, Type *t = NULL);
     bool equals(RootObject *o);
+    Expression *clone() { return new NullExp(loc, type); }
     Expression *semantic(Scope *sc);
     int isBool(int result);
     int isConst();
@@ -407,6 +418,7 @@ public:
     StringExp(Loc loc, void *s, size_t len);
     StringExp(Loc loc, void *s, size_t len, utf8_t postfix);
     //Expression *syntaxCopy();
+    Expression *clone() { return new StringExp(loc, string, len, postfix); }
     bool equals(RootObject *o);
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -447,6 +459,7 @@ public:
     TupleExp(Loc loc, Expressions *exps);
     TupleExp(Loc loc, TupleDeclaration *tup);
     Expression *syntaxCopy();
+    Expression *clone() { return new TupleExp(loc, exps); }
     int apply(apply_fp_t fp, void *param);
     bool equals(RootObject *o);
     Expression *semantic(Scope *sc);
@@ -471,6 +484,7 @@ public:
     ArrayLiteralExp(Loc loc, Expression *e);
 
     Expression *syntaxCopy();
+    Expression *clone() { return new ArrayLiteralExp(loc, elements); }
     int apply(apply_fp_t fp, void *param);
     Expression *semantic(Scope *sc);
     int isBool(int result);
@@ -499,6 +513,7 @@ public:
     AssocArrayLiteralExp(Loc loc, Expressions *keys, Expressions *values);
 
     Expression *syntaxCopy();
+    Expression *clone() { return new AssocArrayLiteralExp(loc, keys, values); }
     int apply(apply_fp_t fp, void *param);
     Expression *semantic(Scope *sc);
     int isBool(int result);
@@ -558,6 +573,7 @@ public:
     bool equals(RootObject *o);
     Expression *syntaxCopy();
     int apply(apply_fp_t fp, void *param);
+    Expression *clone() { return new StructLiteralExp(loc, sd, elements, stype); }
     Expression *semantic(Scope *sc);
     Expression *getField(Type *type, unsigned offset);
     int getFieldIndex(Type *type, unsigned offset);
@@ -584,6 +600,7 @@ class TypeExp : public Expression
 public:
     TypeExp(Loc loc, Type *type);
     Expression *syntaxCopy();
+    Expression *clone() { return new TypeExp(loc, type); }
     Expression *semantic(Scope *sc);
     int rvalue();
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
@@ -598,6 +615,7 @@ public:
 
     ScopeExp(Loc loc, ScopeDsymbol *sds);
     Expression *syntaxCopy();
+    Expression *clone() { return new ScopeExp(loc, sds); }
     Expression *semantic(Scope *sc);
     elem *toElem(IRState *irs);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
@@ -610,6 +628,7 @@ public:
     FuncDeclaration *fd;
 
     TemplateExp(Loc loc, TemplateDeclaration *td, FuncDeclaration *fd = NULL);
+    Expression *clone() { return new TemplateExp(loc, td); }
     int rvalue();
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     int isLvalue();
@@ -633,6 +652,7 @@ public:
     NewExp(Loc loc, Expression *thisexp, Expressions *newargs,
         Type *newtype, Expressions *arguments);
     Expression *syntaxCopy();
+    Expression *clone() { return new NewExp(loc, thisexp, newargs, newtype, arguments); }
     int apply(apply_fp_t fp, void *param);
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -659,6 +679,7 @@ public:
     NewAnonClassExp(Loc loc, Expression *thisexp, Expressions *newargs,
         ClassDeclaration *cd, Expressions *arguments);
     Expression *syntaxCopy();
+    Expression *clone() { return new NewAnonClassExp(loc, thisexp, newargs, cd, arguments); }
     int apply(apply_fp_t fp, void *param);
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
@@ -672,6 +693,7 @@ public:
     bool hasOverloads;
 
     SymbolExp(Loc loc, TOK op, int size, Declaration *var, bool hasOverloads);
+    Expression *clone() { return new SymbolExp(loc, op, size, var, hasOverloads); }
 
     elem *toElem(IRState *irs);
 };
@@ -685,6 +707,7 @@ public:
     unsigned offset;
 
     SymOffExp(Loc loc, Declaration *var, unsigned offset, bool hasOverloads = false);
+    Expression *clone() { return new SymOffExp(loc, var, offset, hasOverloads); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -706,6 +729,7 @@ class VarExp : public SymbolExp
 public:
     VarExp(Loc loc, Declaration *var, bool hasOverloads = false);
     bool equals(RootObject *o);
+    Expression *clone() { return new VarExp(loc, var, hasOverloads); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -734,6 +758,7 @@ public:
     OverloadSet *vars;
 
     OverExp(Loc loc, OverloadSet *s);
+    Expression *clone() { return new OverExp(loc, vars); }
     int isLvalue();
     Expression *toLvalue(Scope *sc, Expression *e);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
@@ -750,6 +775,7 @@ public:
     TOK tok;
 
     FuncExp(Loc loc, FuncLiteralDeclaration *fd, TemplateDeclaration *td = NULL);
+    Expression *clone() { return new FuncExp(loc, fd, td); }
     Expression *syntaxCopy();
     Expression *semantic(Scope *sc);
     Expression *semantic(Scope *sc, Expressions *arguments);
@@ -776,6 +802,7 @@ public:
     Dsymbol *declaration;
 
     DeclarationExp(Loc loc, Dsymbol *declaration);
+    Expression *clone() { return new DeclarationExp(loc, declaration); }
     Expression *syntaxCopy();
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -794,6 +821,7 @@ public:
 
     TypeidExp(Loc loc, RootObject *obj);
     Expression *syntaxCopy();
+    Expression *clone() { return new TypeidExp(loc, obj); }
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
@@ -807,6 +835,7 @@ public:
 
     TraitsExp(Loc loc, Identifier *ident, Objects *args);
     Expression *syntaxCopy();
+    Expression *clone() { return new TraitsExp(loc, ident, args); }
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
@@ -816,6 +845,7 @@ class HaltExp : public Expression
 {
 public:
     HaltExp(Loc loc);
+    Expression *clone() { return new HaltExp(loc); }
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 
@@ -838,6 +868,7 @@ public:
     IsExp(Loc loc, Type *targ, Identifier *id, TOK tok, Type *tspec,
         TOK tok2, TemplateParameters *parameters);
     Expression *syntaxCopy();
+    Expression *clone() { return new IsExp(loc, targ, id, tok, tspec, tok2, parameters); }
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
@@ -941,6 +972,7 @@ class CompileExp : public UnaExp
 {
 public:
     CompileExp(Loc loc, Expression *e);
+    Expression *clone() { return new CompileExp(loc, e1); }
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
@@ -949,6 +981,7 @@ class FileExp : public UnaExp
 {
 public:
     FileExp(Loc loc, Expression *e);
+    Expression *clone() { return new FileExp(loc, e1); }
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
@@ -960,6 +993,7 @@ public:
 
     AssertExp(Loc loc, Expression *e, Expression *msg = NULL);
     Expression *syntaxCopy();
+    Expression *clone() { return new AssertExp(loc, e1, msg); }
     int apply(apply_fp_t fp, void *param);
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -977,6 +1011,7 @@ public:
     Identifier *ident;
 
     DotIdExp(Loc loc, Expression *e, Identifier *ident);
+    Expression *clone() { return new DotIdExp(loc, e1, ident); }
     Expression *semantic(Scope *sc);
     Expression *semanticX(Scope *sc);
     Expression *semanticY(Scope *sc, int flag);
@@ -990,6 +1025,7 @@ public:
     TemplateDeclaration *td;
 
     DotTemplateExp(Loc loc, Expression *e, TemplateDeclaration *td);
+    Expression *clone() { return new DotTemplateExp(loc, e1, td); }
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
 
@@ -1000,6 +1036,7 @@ public:
     bool hasOverloads;
 
     DotVarExp(Loc loc, Expression *e, Declaration *var, bool hasOverloads = false);
+    Expression *clone() { return new DotVarExp(loc, e1, var, hasOverloads); }
     Expression *semantic(Scope *sc);
     int checkModifiable(Scope *sc, int flag);
     int isLvalue();
@@ -1019,6 +1056,7 @@ public:
 
     DotTemplateInstanceExp(Loc loc, Expression *e, Identifier *name, Objects *tiargs);
     Expression *syntaxCopy();
+    Expression *clone();
     bool findTempDecl(Scope *sc);
     Expression *semantic(Scope *sc);
     Expression *semanticY(Scope *sc, int flag);
@@ -1033,6 +1071,7 @@ public:
     bool hasOverloads;
 
     DelegateExp(Loc loc, Expression *e, FuncDeclaration *func, bool hasOverloads = false);
+    Expression *clone() { return new DelegateExp(loc, e1, func, hasOverloads); }
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     MATCH implicitConvTo(Type *t);
@@ -1050,6 +1089,7 @@ public:
     Dsymbol *sym;               // symbol that represents a type
 
     DotTypeExp(Loc loc, Expression *e, Dsymbol *sym);
+    Expression *clone() { return new DotTypeExp(loc, e1, sym); }
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     elem *toElem(IRState *irs);
@@ -1067,6 +1107,7 @@ public:
     CallExp(Loc loc, Expression *e, Expression *earg1, Expression *earg2);
 
     Expression *syntaxCopy();
+    Expression *clone() { return new CallExp(loc, e1); }
     int apply(apply_fp_t fp, void *param);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
@@ -1088,6 +1129,7 @@ class AddrExp : public UnaExp
 {
 public:
     AddrExp(Loc loc, Expression *e);
+    Expression *clone() { return new AddrExp(loc, e1); }
     Expression *semantic(Scope *sc);
     void checkEscape();
     elem *toElem(IRState *irs);
@@ -1103,6 +1145,7 @@ class PtrExp : public UnaExp
 public:
     PtrExp(Loc loc, Expression *e);
     PtrExp(Loc loc, Expression *e, Type *t);
+    Expression *clone() { return new PtrExp(loc, e1); }
     Expression *semantic(Scope *sc);
     void checkEscapeRef();
     int checkModifiable(Scope *sc, int flag);
@@ -1122,6 +1165,7 @@ class NegExp : public UnaExp
 {
 public:
     NegExp(Loc loc, Expression *e);
+    Expression *clone() { return new NegExp(loc, e1); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     void buildArrayIdent(OutBuffer *buf, Expressions *arguments);
@@ -1138,6 +1182,7 @@ class UAddExp : public UnaExp
 {
 public:
     UAddExp(Loc loc, Expression *e);
+    Expression *clone() { return new UAddExp(loc, e1); }
     Expression *semantic(Scope *sc);
 
     // For operator overloading
@@ -1148,6 +1193,7 @@ class ComExp : public UnaExp
 {
 public:
     ComExp(Loc loc, Expression *e);
+    Expression *clone() { return new ComExp(loc, e1); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     void buildArrayIdent(OutBuffer *buf, Expressions *arguments);
@@ -1165,6 +1211,7 @@ class NotExp : public UnaExp
 public:
     NotExp(Loc loc, Expression *e);
     Expression *semantic(Scope *sc);
+    Expression *clone() { return new NotExp(loc, e1); }
     Expression *optimize(int result, bool keepLvalue = false);
     int isBit();
     elem *toElem(IRState *irs);
@@ -1174,6 +1221,7 @@ class BoolExp : public UnaExp
 {
 public:
     BoolExp(Loc loc, Expression *e, Type *type);
+    Expression *clone() { return new BoolExp(loc, e1, type); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     int isBit();
@@ -1184,6 +1232,7 @@ class DeleteExp : public UnaExp
 {
 public:
     DeleteExp(Loc loc, Expression *e);
+    Expression *clone() { return new DeleteExp(loc, e1); }
     Expression *semantic(Scope *sc);
     Expression *checkToBoolean(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
@@ -1199,6 +1248,7 @@ public:
 
     CastExp(Loc loc, Expression *e, Type *t);
     CastExp(Loc loc, Expression *e, unsigned mod);
+    Expression *clone() { return new CastExp(loc, e1, to); }
     Expression *syntaxCopy();
     Expression *semantic(Scope *sc);
     MATCH implicitConvTo(Type *t);
@@ -1225,6 +1275,7 @@ public:
 
     VectorExp(Loc loc, Expression *e, Type *t);
     Expression *syntaxCopy();
+    Expression *clone();
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     elem *toElem(IRState *irs);
@@ -1240,6 +1291,7 @@ public:
 
     SliceExp(Loc loc, Expression *e1, Expression *lwr, Expression *upr);
     Expression *syntaxCopy();
+    Expression *clone() { return new SliceExp(loc, e1, lwr, upr); }
     int apply(apply_fp_t fp, void *param);
     Expression *semantic(Scope *sc);
     void checkEscape();
@@ -1268,6 +1320,7 @@ class ArrayLengthExp : public UnaExp
 {
 public:
     ArrayLengthExp(Loc loc, Expression *e1);
+    Expression *clone() { return new ArrayLengthExp(loc, e1); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -1288,6 +1341,7 @@ public:
 
     ArrayExp(Loc loc, Expression *e1, Expressions *arguments);
     Expression *syntaxCopy();
+    Expression *clone() { return new ArrayExp(loc, e1, arguments); }
     int apply(apply_fp_t fp, void *param);
     Expression *semantic(Scope *sc);
     int isLvalue();
@@ -1308,6 +1362,7 @@ class DotExp : public BinExp
 {
 public:
     DotExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new DotExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
@@ -1316,6 +1371,7 @@ class CommaExp : public BinExp
 {
 public:
     CommaExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new CommaExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     void checkEscape();
     void checkEscapeRef();
@@ -1342,6 +1398,7 @@ public:
 
     IndexExp(Loc loc, Expression *e1, Expression *e2);
     Expression *syntaxCopy();
+    Expression *clone() { return new IndexExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     int checkModifiable(Scope *sc, int flag);
     int isLvalue();
@@ -1361,6 +1418,7 @@ class PostExp : public BinExp
 {
 public:
     PostExp(TOK op, Loc loc, Expression *e);
+    Expression *clone() { return new PostExp(op, loc, e1); }
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
@@ -1374,6 +1432,7 @@ class PreExp : public UnaExp
 {
 public:
     PreExp(TOK op, Loc loc, Expression *e);
+    Expression *clone() { return new PreExp(op, loc, e1); }
     Expression *semantic(Scope *sc);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
 };
@@ -1384,6 +1443,7 @@ public:
     int ismemset;       // !=0 if setting the contents of an array
 
     AssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new AssignExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *checkToBoolean(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -1397,12 +1457,14 @@ class ConstructExp : public AssignExp
 {
 public:
     ConstructExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new ConstructExp(loc, e1, e2); }
 };
 
 class AddAssignExp : public BinAssignExp
 {
 public:
     AddAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new AddAssignExp(loc, e1, e2); }
 
     Identifier *opId();    /* For operator overloading */
 
@@ -1413,6 +1475,7 @@ class MinAssignExp : public BinAssignExp
 {
 public:
     MinAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new MinAssignExp(loc, e1, e2); }
 
     Identifier *opId();    /* For operator overloading */
 
@@ -1423,6 +1486,7 @@ class MulAssignExp : public BinAssignExp
 {
 public:
     MulAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new MulAssignExp(loc, e1, e2); }
 
     Identifier *opId();    /* For operator overloading */
 
@@ -1433,6 +1497,7 @@ class DivAssignExp : public BinAssignExp
 {
 public:
     DivAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new DivAssignExp(loc, e1, e2); }
 
     Identifier *opId();    /* For operator overloading */
 
@@ -1443,6 +1508,7 @@ class ModAssignExp : public BinAssignExp
 {
 public:
     ModAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new ModAssignExp(loc, e1, e2); }
 
     Identifier *opId();    /* For operator overloading */
 
@@ -1453,6 +1519,7 @@ class AndAssignExp : public BinAssignExp
 {
 public:
     AndAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new AndAssignExp(loc, e1, e2); }
 
     Identifier *opId();    /* For operator overloading */
 
@@ -1463,6 +1530,7 @@ class OrAssignExp : public BinAssignExp
 {
 public:
     OrAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new OrAssignExp(loc, e1, e2); }
 
     Identifier *opId();    /* For operator overloading */
 
@@ -1473,6 +1541,7 @@ class XorAssignExp : public BinAssignExp
 {
 public:
     XorAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new XorAssignExp(loc, e1, e2); }
 
     Identifier *opId();    /* For operator overloading */
 
@@ -1484,6 +1553,7 @@ class PowAssignExp : public BinAssignExp
 {
 public:
     PowAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new PowAssignExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
 
     Identifier *opId();    /* For operator overloading */
@@ -1496,6 +1566,7 @@ class ShlAssignExp : public BinAssignExp
 {
 public:
     ShlAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new ShlAssignExp(loc, e1, e2); }
 
     Identifier *opId();    /* For operator overloading */
 
@@ -1506,6 +1577,7 @@ class ShrAssignExp : public BinAssignExp
 {
 public:
     ShrAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new ShrAssignExp(loc, e1, e2); }
 
     Identifier *opId();    /* For operator overloading */
 
@@ -1516,6 +1588,7 @@ class UshrAssignExp : public BinAssignExp
 {
 public:
     UshrAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new UshrAssignExp(loc, e1, e2); }
 
     Identifier *opId();    /* For operator overloading */
 
@@ -1526,6 +1599,7 @@ class CatAssignExp : public BinAssignExp
 {
 public:
     CatAssignExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new CatAssignExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
 
     Identifier *opId();    /* For operator overloading */
@@ -1537,6 +1611,7 @@ class AddExp : public BinExp
 {
 public:
     AddExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new AddExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     IntRange getIntRange();
@@ -1553,6 +1628,7 @@ class MinExp : public BinExp
 {
 public:
     MinExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new MinExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     IntRange getIntRange();
@@ -1568,6 +1644,7 @@ class CatExp : public BinExp
 {
 public:
     CatExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new CatExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
@@ -1583,6 +1660,7 @@ class MulExp : public BinExp
 {
 public:
     MulExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new MulExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     IntRange getIntRange();
@@ -1599,6 +1677,7 @@ class DivExp : public BinExp
 {
 public:
     DivExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new DivExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     IntRange getIntRange();
@@ -1614,6 +1693,7 @@ class ModExp : public BinExp
 {
 public:
     ModExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new ModExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     IntRange getIntRange();
@@ -1630,6 +1710,7 @@ class PowExp : public BinExp
 {
 public:
     PowExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new PowExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
 
@@ -1645,6 +1726,7 @@ class ShlExp : public BinExp
 {
 public:
     ShlExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new ShlExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     IntRange getIntRange();
@@ -1660,6 +1742,7 @@ class ShrExp : public BinExp
 {
 public:
     ShrExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new ShrExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     IntRange getIntRange();
@@ -1675,6 +1758,7 @@ class UshrExp : public BinExp
 {
 public:
     UshrExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new UshrExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     IntRange getIntRange();
@@ -1690,6 +1774,7 @@ class AndExp : public BinExp
 {
 public:
     AndExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new AndExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     IntRange getIntRange();
@@ -1706,6 +1791,7 @@ class OrExp : public BinExp
 {
 public:
     OrExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new OrExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     MATCH implicitConvTo(Type *t);
@@ -1723,6 +1809,7 @@ class XorExp : public BinExp
 {
 public:
     XorExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new XorExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     MATCH implicitConvTo(Type *t);
@@ -1740,6 +1827,7 @@ class OrOrExp : public BinExp
 {
 public:
     OrOrExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new OrOrExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *checkToBoolean(Scope *sc);
     int isBit();
@@ -1752,6 +1840,7 @@ class AndAndExp : public BinExp
 {
 public:
     AndAndExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new AndAndExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *checkToBoolean(Scope *sc);
     int isBit();
@@ -1764,6 +1853,7 @@ class CmpExp : public BinExp
 {
 public:
     CmpExp(TOK op, Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new CmpExp(op, loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
     int isBit();
@@ -1780,6 +1870,7 @@ class InExp : public BinExp
 {
 public:
     InExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new InExp(loc, e1, e2); }
     Expression *semantic(Scope *sc);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     int isBit();
@@ -1795,6 +1886,7 @@ class RemoveExp : public BinExp
 {
 public:
     RemoveExp(Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new RemoveExp(loc, e1, e2); }
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     elem *toElem(IRState *irs);
@@ -1807,6 +1899,7 @@ class EqualExp : public BinExp
 public:
     EqualExp(TOK op, Loc loc, Expression *e1, Expression *e2);
     Expression *semantic(Scope *sc);
+    Expression *clone() { return new EqualExp(op, loc, e1, e2); }
     Expression *optimize(int result, bool keepLvalue = false);
     int isBit();
 
@@ -1824,6 +1917,7 @@ class IdentityExp : public BinExp
 {
 public:
     IdentityExp(TOK op, Loc loc, Expression *e1, Expression *e2);
+    Expression *clone() { return new IdentityExp(op, loc, e1, e2); }
     Expression *semantic(Scope *sc);
     int isBit();
     Expression *optimize(int result, bool keepLvalue = false);
@@ -1839,6 +1933,7 @@ public:
 
     CondExp(Loc loc, Expression *econd, Expression *e1, Expression *e2);
     Expression *syntaxCopy();
+    Expression *clone() { return new CondExp(loc, econd, e1, e2); }
     int apply(apply_fp_t fp, void *param);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
@@ -1877,6 +1972,7 @@ class FileInitExp : public DefaultInitExp
 {
 public:
     FileInitExp(Loc loc);
+    Expression *clone() { return new FileInitExp(loc); }
     Expression *semantic(Scope *sc);
     Expression *resolveLoc(Loc loc, Scope *sc);
 };
@@ -1885,6 +1981,7 @@ class LineInitExp : public DefaultInitExp
 {
 public:
     LineInitExp(Loc loc);
+    Expression *clone() { return new LineInitExp(loc); }
     Expression *semantic(Scope *sc);
     Expression *resolveLoc(Loc loc, Scope *sc);
 };
@@ -1893,6 +1990,7 @@ class ModuleInitExp : public DefaultInitExp
 {
 public:
     ModuleInitExp(Loc loc);
+    Expression *clone() { return new ModuleInitExp(loc); }
     Expression *semantic(Scope *sc);
     Expression *resolveLoc(Loc loc, Scope *sc);
 };
@@ -1901,6 +1999,7 @@ class FuncInitExp : public DefaultInitExp
 {
 public:
     FuncInitExp(Loc loc);
+    Expression *clone() { return new FuncInitExp(loc); }
     Expression *semantic(Scope *sc);
     Expression *resolveLoc(Loc loc, Scope *sc);
 };
@@ -1909,6 +2008,7 @@ class PrettyFuncInitExp : public DefaultInitExp
 {
 public:
     PrettyFuncInitExp(Loc loc);
+    Expression *clone() { return new PrettyFuncInitExp(loc); }
     Expression *semantic(Scope *sc);
     Expression *resolveLoc(Loc loc, Scope *sc);
 };

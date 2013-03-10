@@ -39,6 +39,7 @@ class ClassReferenceExp : public Expression
 public:
     StructLiteralExp *value;
     ClassReferenceExp(Loc loc, StructLiteralExp *lit, Type *type);
+    Expression *clone() { return new ClassReferenceExp(loc, value, type); }
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     ClassDeclaration *originalClass();
@@ -70,6 +71,7 @@ public:
     VarDeclaration *var;
 
     VoidInitExp(VarDeclaration *var, Type *type);
+    Expression *clone() { return new VoidInitExp(var, type); }
     char *toChars();
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
 };
@@ -83,6 +85,7 @@ class ThrownExceptionExp : public Expression
 public:
     ClassReferenceExp *thrown; // the thing being tossed
     ThrownExceptionExp(Loc loc, ClassReferenceExp *victim);
+    Expression *clone() { return new ThrownExceptionExp(loc, thrown); }
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
     char *toChars();
     /// Generate an error message when this exception is not caught
