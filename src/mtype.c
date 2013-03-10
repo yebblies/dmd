@@ -4162,7 +4162,7 @@ MATCH TypeSArray::implicitConvTo(Type *to)
     //printf("TypeSArray::implicitConvTo(to = %s) this = %s\n", to->toChars(), toChars());
 
     // Allow implicit conversion of static array to pointer or dynamic array
-    if (IMPLICIT_ARRAY_TO_PTR && to->ty == Tpointer)
+    if ((IMPLICIT_ARRAY_TO_PTR || global.params.magicport) && to->ty == Tpointer)
     {
         TypePointer *tp = (TypePointer *)to;
 
