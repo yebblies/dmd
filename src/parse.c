@@ -1326,8 +1326,8 @@ UnitTestDeclaration *Parser::parseUnitTest()
     Loc loc = this->loc;
 
     nextToken();
-    utf8_t *begPtr = token.ptr + 1;  // skip '{'
-    utf8_t *endPtr = NULL;
+    const utf8_t *begPtr = token.ptr + 1;  // skip '{'
+    const utf8_t *endPtr = NULL;
     body = parseStatement(PScurly, &endPtr);
 
     /** Extract unittest body as a string. Must be done eagerly since memory
@@ -1336,7 +1336,7 @@ UnitTestDeclaration *Parser::parseUnitTest()
     if (global.params.doDocComments && endPtr > begPtr)
     {
         /* Remove trailing whitespaces */
-        for (utf8_t *p = endPtr - 1;
+        for (const utf8_t *p = endPtr - 1;
              begPtr <= p && (*p == ' ' || *p == '\n' || *p == '\t'); --p)
         {
             endPtr = p;
@@ -3873,7 +3873,7 @@ void Parser::checkDanglingElse(Loc elseloc)
  *      flags   PSxxxx
  */
 
-Statement *Parser::parseStatement(int flags, utf8_t** endPtr)
+Statement *Parser::parseStatement(int flags, const utf8_t** endPtr)
 {   Statement *s;
     Condition *condition;
     Statement *ifbody;

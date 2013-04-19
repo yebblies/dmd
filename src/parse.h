@@ -116,7 +116,7 @@ public:
     void parseContracts(FuncDeclaration *f);
     void checkDanglingElse(Loc elseloc);
     /** endPtr used for documented unittests */
-    Statement *parseStatement(int flags, utf8_t** endPtr = NULL);
+    Statement *parseStatement(int flags, const utf8_t** endPtr = NULL);
     Initializer *parseInitializer();
     Expression *parseDefaultInitExp();
     void check(Loc loc, TOK value);
