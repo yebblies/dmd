@@ -208,7 +208,7 @@ void LibOMF::scanObjModule(ObjModule *om)
             this->om = om;
         }
 
-        static void addSymbol(void *pctx, char *name, int pickAny)
+        static void addSymbol(void *pctx, const char *name, int pickAny)
         {
             ((Context *)pctx)->lib->addSymbol(((Context *)pctx)->om, name, pickAny);
         }
@@ -216,7 +216,7 @@ void LibOMF::scanObjModule(ObjModule *om)
 
     Context ctx(this, om);
 
-    extern void scanOmfObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
+    extern void scanOmfObjModule(void*, void (*pAddSymbol)(void*, const char*, int), void *, size_t, const char *, Loc loc);
     scanOmfObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
 }
 
