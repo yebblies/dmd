@@ -504,10 +504,6 @@ char *cpp_mangle(symbol *s)
         return symbol_ident(s);
 #endif
 
-#if MARS
-    return symbol_ident(s);
-#endif
-
     if (type_mangle(s->Stype) != mTYman_cpp)
         return symbol_ident(s);
     else
@@ -523,6 +519,18 @@ char *cpp_mangle(symbol *s)
         //dbg_printf("cpp_mangle() = '%s'\n", mangle.buf);
         assert(strlen(mangle.buf) <= BUFIDMAX);
         assert(mangle.buf[BUFIDMAX + 1] == 0x55);
+#if MARS
+    char *p = mangle.buf+1;
+    char *q = symbol_ident(s);
+    while (*p == *q)
+        p++, q++;
+    //printf("o:\t\t\t\t%s\n", p);
+    q -= strlen(p);
+    //printf("n:\t\t\t\t%s\n", q);
+    /*if (strcmp(p, q))
+        printf("\t\t\t\tDifferent!\n");*/
+    return symbol_ident(s);
+#endif
         return mangle.buf;
     }
 }

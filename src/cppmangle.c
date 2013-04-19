@@ -487,10 +487,13 @@ char *cpp_mangle(Dsymbol *s)
 
     OutBuffer buf;
 
+    Declaration *d = s->isDeclaration();
+    assert(d);
     FuncDeclaration *fd = s->isFuncDeclaration();
+    VarDeclaration *vd = s->isVarDeclaration();
     if (fd)
     {
-        buf.writestring("?");
+        buf.writebyte('?');
         buf.writestring(fd->ident->toChars());
         buf.writebyte('@');
 
@@ -511,9 +514,39 @@ char *cpp_mangle(Dsymbol *s)
         Parameter::argsCppMangle(&buf, &cms, tf->parameters, tf->varargs);
         buf.writebyte('Z');
     }
+    else if (vd)
+    {
+        buf.writebyte('?');
+        buf.writestring(vd->ident->toChars());
+        buf.writebyte('@');
 
+        Dsymbol *parent = vd->toParent();
+        if (parent->isModule())
+        {
+            buf.writestring("@3");
+        }
+        else
+        {
+            assert(0);
+        }
+
+        vd->type->toCppMangle(&buf, &cms);
+
+        int mod;
+        if (vd->type->ty == Tpointer)
+            mod = vd->type->nextOf()->mod;
+        else
+            mod = vd->type->mod;
+        if (mod & MODconst)
+            buf.writebyte('B');
+        else
+            buf.writebyte('A');
+    }
+
+    if (!buf.offset)
+        buf.writestring("__dummy__");
     buf.writebyte(0);
-    //printf("%s -> %s\n", s->toChars(), buf.toChars());
+    //printf("%s -> %s %s\n", s->toChars(), buf.toChars(), d->type->toChars());
     //assert(0);
     return buf.extractData();
 }
@@ -551,6 +584,7 @@ void TypeBasic::toCppMangle(OutBuffer *buf, CppMangleState *cms)
     case Tvoid:    buf->writebyte('X'); break;
     case Tchar:    buf->writebyte('D'); break;
     case Twchar:   buf->writestring("_Y"); break;
+    case Tdchar:   buf->writestring("K"); break;
     case Tint8:    buf->writebyte('C'); break;
     case Tuns8:    buf->writebyte('E'); break;
     case Tint16:   buf->writebyte('F'); break;
@@ -571,6 +605,7 @@ void TypeBasic::toCppMangle(OutBuffer *buf, CppMangleState *cms)
     case Tcomplex64:   cms->substitute(buf, "_V"); break;
     case Tcomplex80:   cms->substitute(buf, "_W"); break;
     default:
+        printf("Internal error: Cannot mangle type %s\n", toChars());
         assert(0);
     }
 }
@@ -599,7 +634,14 @@ void TypePointer::toCppMangle(OutBuffer *buf, CppMangleState *cms)
 {
     CppMangleState cms2;
     OutBuffer buf2;
-    buf2.writestring("PA");
+    if (mod & MODconst)
+        buf2.writebyte('Q');
+    else
+        buf2.writebyte('P');
+    if (next->mod & MODconst)
+        buf2.writebyte('B');
+    else
+        buf2.writebyte('A');
     next->toCppMangle(&buf2, &cms2);
     buf2.writebyte(0);
     cms->substitute(buf, buf2.extractData());
@@ -622,7 +664,15 @@ void TypeDelegate::toCppMangle(OutBuffer *buf, CppMangleState *cms)
 
 void TypeEnum::toCppMangle(OutBuffer *buf, CppMangleState *cms)
 {
-    assert(0);
+    Type *tb = toBasetype();
+    if (tb->ty == Tint32)
+    {
+        buf->writebyte('W');
+    }
+    else
+    {
+        tb->toCppMangle(buf, cms);
+    }
 }
 
 void TypeTypedef::toCppMangle(OutBuffer *buf, CppMangleState *cms)
@@ -632,12 +682,12 @@ void TypeTypedef::toCppMangle(OutBuffer *buf, CppMangleState *cms)
 
 void TypeStruct::toCppMangle(OutBuffer *buf, CppMangleState *cms)
 {
-    assert(0);
+    buf->writebyte('U');
 }
 
 void TypeClass::toCppMangle(OutBuffer *buf, CppMangleState *cms)
 {
-    assert(0);
+    buf->writebyte('V');
 }
 
 #else
