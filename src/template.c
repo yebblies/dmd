@@ -5278,25 +5278,7 @@ void TemplateInstance::tryExpandMembers(Scope *sc2)
         fatal();
     }
 
-#if WINDOWS_SEH
-    if(nest == 1)
-    {
-        // do not catch at every nesting level, because generating the output error might cause more stack
-        //  errors in the __except block otherwise
-        __try
-        {
-            expandMembers(sc2);
-        }
-        __except (__ehfilter(GetExceptionInformation()))
-        {
-            global.gag = 0;                     // ensure error message gets printed
-            error("recursive expansion");
-            fatal();
-        }
-    }
-    else
-#endif
-        expandMembers(sc2);
+    expandMembers(sc2);
     nest--;
 }
 
@@ -5310,25 +5292,7 @@ void TemplateInstance::trySemantic3(Scope *sc2)
         error("recursive expansion");
         fatal();
     }
-#if WINDOWS_SEH
-    if(nest == 1)
-    {
-        // do not catch at every nesting level, because generating the output error might cause more stack
-        //  errors in the __except block otherwise
-        __try
-        {
-            semantic3(sc2);
-        }
-        __except (__ehfilter(GetExceptionInformation()))
-        {
-            global.gag = 0;            // ensure error message gets printed
-            error("recursive expansion");
-            fatal();
-        }
-    }
-    else
-#endif
-        semantic3(sc2);
+    semantic3(sc2);
 
     --nest;
 }
@@ -5466,15 +5430,15 @@ void TemplateInstance::semantic(Scope *sc, Expressions *fargs)
         //if (scx && scx->scopesym) printf("3: scx is %s %s\n", scx->scopesym->kind(), scx->scopesym->toChars());
         if (scx && scx->scopesym &&
             scx->scopesym->members && !scx->scopesym->isTemplateMixin()
-#if 0 // removed because it bloated compile times
+    // removed because it bloated compile times
             /* The problem is if A imports B, and B imports A, and both A
              * and B instantiate the same template, does the compilation of A
              * or the compilation of B do the actual instantiation?
              *
              * see bugzilla 2500.
              */
-            && !scx->module->selfImports()
-#endif
+            //&& !scx->module->selfImports()
+
            )
         {
             //printf("\t1: adding to %s %s\n", scx->scopesym->kind(), scx->scopesym->toChars());
@@ -6391,24 +6355,6 @@ int TemplateInstance::hasNestedArgs(Objects *args)
         Expression *ea = isExpression(o);
         Dsymbol *sa = isDsymbol(o);
         Tuple *va = isTuple(o);
-#define FIXBUG8863 0
-#if FIXBUG8863
-        /* This does fix 8863, but it causes other complex
-         * failures in Phobos unittests and the test suite.
-         * Not sure why.
-         */
-        Type *ta = isType(o);
-        if (ta && !sa)
-        {
-            Dsymbol *s = ta->toDsymbol(NULL);
-            if (s)
-            {
-                sa = s;
-                goto Lsa;
-            }
-        }
-        else
-#endif
         if (ea)
         {
             if (ea->op == TOKvar)
@@ -6446,13 +6392,8 @@ int TemplateInstance::hasNestedArgs(Objects *args)
             Declaration *d = sa->isDeclaration();
             if ((td && td->literal) ||
                 (ti && ti->enclosing) ||
-#if FIXBUG8863
-                (ad && ad->isNested()) ||
-#endif
                 (d && !d->isDataseg() &&
-#if DMDV2
                  !(d->storage_class & STCmanifest) &&
-#endif
                  (!d->isFuncDeclaration() || d->isFuncDeclaration()->isNested()) &&
                  !isTemplateMixin()
                 ))
