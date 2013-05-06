@@ -630,19 +630,6 @@ void Lexer::scan(Token *t)
                         sprintf(timestamp, "%.24s", p);
                     }
 
-#if DMDV1
-                    if (mod && id == Id::FILE)
-                    {
-                        t->ustring = (utf8_t *)(loc.filename ? loc.filename : mod->ident->toChars());
-                        goto Lstr;
-                    }
-                    else if (mod && id == Id::LINE)
-                    {
-                        t->value = TOKint64v;
-                        t->uns64value = loc.linnum;
-                    }
-                    else
-#endif
                     if (id == Id::DATE)
                     {
                         t->ustring = (utf8_t *)date;
@@ -1608,11 +1595,7 @@ TOK Lexer::delimitedStringConstant(Token *t)
             }
             else if (c == delimright)
                 goto Ldone;
-            if (startline && isalpha(c)
-#if DMDV2
-                            && hereid
-#endif
-                           )
+            if (startline && isalpha(c) && hereid)
             {   Token t;
                 utf8_t *psave = p;
                 p--;
@@ -2237,7 +2220,7 @@ done:
  */
 
 TOK Lexer::inreal(Token *t)
-#ifdef __DMC__
+/*#ifdef __DMC__
 __in
 {
     assert(*p == '.' || isdigit(*p));
@@ -2259,7 +2242,7 @@ __out (result)
     }
 }
 __body
-#endif /* __DMC__ */
+#endif*/
 {   int dblstate;
     unsigned c;
     char hex;                   // is this a hexadecimal-floating-constant?
@@ -2886,7 +2869,7 @@ static Keyword keywords[] =
     {   "__parameters", TOKparameters   },
     {   "ref",          TOKref          },
     {   "macro",        TOKmacro        },
-#if DMDV2
+
     {   "pure",         TOKpure         },
     {   "nothrow",      TOKnothrow      },
     {   "__gshared",    TOKgshared      },
@@ -2900,7 +2883,6 @@ static Keyword keywords[] =
     {   "__PRETTY_FUNCTION__", TOKprettyfunc   },
     {   "shared",       TOKshared       },
     {   "immutable",    TOKimmutable    },
-#endif
 };
 
 int Token::isKeyword()
