@@ -118,7 +118,7 @@ L1:
 }
 
 const char *Declaration::mangle(bool isv)
-#if __DMC__
+/*#if __DMC__
     __out(result)
     {
         int len = strlen(result);
@@ -133,7 +133,7 @@ const char *Declaration::mangle(bool isv)
         }
     }
     __body
-#endif
+#endif*/
     {
         //printf("Declaration::mangle(this = %p, '%s', parent = '%s', linkage = %d)\n", this, toChars(), parent ? parent->toChars() : "null", linkage);
         if (!parent || parent->isModule() || linkage == LINKcpp) // if at global scope
@@ -219,13 +219,13 @@ const char *FuncAliasDeclaration::mangle(bool isv)
  * Returns exact mangled name of function.
  */
 const char *FuncDeclaration::mangleExact(bool isv)
-#if __DMC__
+/*#if __DMC__
     __out(result)
     {
         assert(strlen(result) > 0);
     }
     __body
-#endif
+#endif*/
     {
         assert(!isFuncAliasDeclaration());
 

@@ -315,9 +315,7 @@ int DeclarationExp::inlineCost3(InlineCostState *ics)
         declaration->isClassDeclaration() ||
         declaration->isFuncDeclaration() ||
         declaration->isTypedefDeclaration() ||
-#if DMDV2
         declaration->isAttribDeclaration() ||
-#endif
         declaration->isTemplateMixin())
         return COST_MAX;
 
@@ -1554,12 +1552,6 @@ int FuncDeclaration::canInline(int hasthis, int hdrscan, int statementsToo)
          toParent()->isFuncDeclaration()->needThis()) ||
         !hdrscan &&
         (
-#if 0
-        isCtorDeclaration() ||  // cannot because need to convert:
-                                //      return;
-                                // to:
-                                //      return this;
-#endif
         isSynchronized() ||
         isImportedSymbol() ||
         hasNestedFrameRefs() ||      // no nested references to this frame

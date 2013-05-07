@@ -866,9 +866,7 @@ Expression *FuncDeclaration::interpret(InterState *istate, Expressions *argument
                  * copy them if they are passed as const
                  */
                 if (earg->op == TOKstructliteral
-#if DMDV2
                     && !(arg->storageClass & (STCconst | STCimmutable))
-#endif
                 )
                     earg = copyLiteral(earg);
             }
@@ -2222,7 +2220,6 @@ Expression *getVarExp(Loc loc, InterState *istate, Declaration *d, CtfeGoal goal
     SymbolDeclaration *s = d->isSymbolDeclaration();
     if (v)
     {
-#if DMDV2
         /* Magic variable __ctfe always returns true when interpreting
          */
         if (v->ident == Id::ctfe)
@@ -2237,9 +2234,6 @@ Expression *getVarExp(Loc loc, InterState *istate, Declaration *d, CtfeGoal goal
 
         if ((v->isConst() || v->isImmutable() || v->storage_class & STCmanifest)
             && v->init && !v->hasValue() && !v->isCTFE())
-#else
-        if (v->isConst() && v->init && !v->isCTFE())
-#endif
         {
             if(v->scope)
                 v->init->semantic(v->scope, v->type, INITinterpret); // might not be run on aggregate members
@@ -2449,11 +2443,7 @@ Expression *DeclarationExp::interpret(InterState *istate, CtfeGoal goal)
         {   // Zero-length arrays don't need an initializer
             e = v->type->defaultInitLiteral(loc);
         }
-#if DMDV2
         else if (s == v && (v->isConst() || v->isImmutable()) && v->init)
-#else
-        else if (s == v && v->isConst() && v->init)
-#endif
         {   e = v->init->toExpression();
             if (!e)
                 e = EXP_CANT_INTERPRET;
@@ -3152,11 +3142,7 @@ Expression *BinExp::interpretAssignCommon(InterState *istate, CtfeGoal goal, fp_
         while ( desttype->ty == Tsarray || desttype->ty == Tarray)
         {
             desttype = ((TypeArray *)desttype)->next;
-#if DMDV2
             if (srctype->equals(desttype->castMod(0)))
-#else
-            if (srctype->equals(desttype))
-#endif
             {
                 isBlockAssignment = true;
                 break;

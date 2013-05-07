@@ -397,9 +397,7 @@ enum MATCH
 {
     MATCHnomatch,       // no match
     MATCHconvert,       // match with conversions
-#if DMDV2
     MATCHconst,         // match with conversion to const
-#endif
     MATCHexact          // exact match
 };
 
@@ -418,9 +416,7 @@ void verrorSupplemental(Loc loc, const char *format, va_list ap);
 void verrorPrint(Loc loc, const char *header, const char *format, va_list ap, const char *p1 = NULL, const char *p2 = NULL);
 void vdeprecation(Loc loc, const char *format, va_list ap, const char *p1 = NULL, const char *p2 = NULL);
 
-#if defined(__GNUC__) || defined(__clang__)
-__attribute__((noreturn))
-#endif
+//__attribute__((noreturn))
 void fatal();
 
 void err_nomem();
