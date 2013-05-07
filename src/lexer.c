@@ -677,7 +677,6 @@ void Lexer::scan(Token *t)
                         t->value = TOKint64v;
                         t->uns64value = major * 1000 + minor;
                     }
-#if DMDV2
                     else if (id == Id::EOFX)
                     {
                         t->value = TOKeof;
@@ -685,7 +684,6 @@ void Lexer::scan(Token *t)
                         while (!(*p == 0 || *p == 0x1A))
                             p++;
                     }
-#endif
                 }
                 //printf("t->value = %d\n",t->value);
                 return;
@@ -942,12 +940,6 @@ void Lexer::scan(Token *t)
                 {   p++;
                     t->value = TOKminass;
                 }
-#if 0
-                else if (*p == '>')
-                {   p++;
-                    t->value = TOKarrow;
-                }
-#endif
                 else if (*p == '-')
                 {   p++;
                     t->value = TOKminusminus;
@@ -1069,12 +1061,10 @@ void Lexer::scan(Token *t)
                 {   p++;
                     t->value = TOKequal;            // ==
                 }
-#if DMDV2
                 else if (*p == '>')
                 {   p++;
                     t->value = TOKgoesto;               // =>
                 }
-#endif
                 else
                     t->value = TOKassign;               // =
                 return;

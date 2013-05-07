@@ -1646,7 +1646,6 @@ Type *functionParameters(Loc loc, Scope *sc, TypeFunction *tf,
                     // call copy constructor of each element
                     arg = callCpCtor(loc, sc, arg, 1);
                 }
-#if DMDV2
                 else if (tb->ty == Tstruct)
                 {
                     if (arg->op == TOKcall && !arg->isLvalue())
@@ -1663,7 +1662,6 @@ Type *functionParameters(Loc loc, Scope *sc, TypeFunction *tf,
                         arg = callCpCtor(loc, sc, arg, 1);
                     }
                 }
-#endif
             }
 
             //printf("arg: %s\n", arg->toChars());

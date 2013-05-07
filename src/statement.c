@@ -2911,7 +2911,6 @@ Statement *PragmaStatement::semantic(Scope *sc)
         }
 #endif
     }
-#if DMDV2
     else if (ident == Id::startaddress)
     {
         if (!args || args->dim != 1)
@@ -2937,7 +2936,6 @@ Statement *PragmaStatement::semantic(Scope *sc)
             return this;
         }
     }
-#endif
     else
         error("unrecognized pragma(%s)", ident->toChars());
 Lerror:
@@ -4286,7 +4284,6 @@ Statement *SynchronizedStatement::semantic(Scope *sc)
         return s->semantic(sc);
 #endif
     }
-#if 1
     else
     {   /* Generate our own critical section, then rewrite as:
          *  __gshared byte[CriticalSection.sizeof] critsec;
@@ -4323,7 +4320,6 @@ Statement *SynchronizedStatement::semantic(Scope *sc)
         s = new CompoundStatement(loc, cs);
         return s->semantic(sc);
     }
-#endif
 Lbody:
     if (body)
         body = body->semantic(sc);

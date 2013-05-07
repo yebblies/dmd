@@ -368,7 +368,6 @@ Expression *TraitsExp::semantic(Scope *sc)
             goto Lfalse;
         goto Ltrue;
     }
-#if DMDV2
     else if (ident == Id::isStaticFunction)
     {
         FuncDeclaration *f;
@@ -501,7 +500,6 @@ Expression *TraitsExp::semantic(Scope *sc)
         }
         return (new DsymbolExp(loc, s))->semantic(sc);
     }
-#endif
     else if (ident == Id::hasMember ||
              ident == Id::getMember ||
              ident == Id::getOverloads ||

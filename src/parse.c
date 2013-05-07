@@ -1067,7 +1067,6 @@ Condition *Parser::parseVersionCondition()
             id = token.ident;
         else if (token.value == TOKint32v || token.value == TOKint64v)
             level = (unsigned)token.uns64value;
-#if DMDV2
         /* Allow:
          *    version (unittest)
          *    version (assert)
@@ -1077,7 +1076,6 @@ Condition *Parser::parseVersionCondition()
             id = Lexer::idPool(Token::toChars(TOKunittest));
         else if (token.value == TOKassert)
             id = Lexer::idPool(Token::toChars(TOKassert));
-#endif
         else
             error("identifier or integer expected, not %s", token.toChars());
         nextToken();
@@ -2029,7 +2027,6 @@ TemplateParameters *Parser::parseTemplateParameterList(int flag)
                 nextToken();
                 tp = new TemplateTupleParameter(loc, tp_ident);
             }
-#if DMDV2
             else if (token.value == TOKthis)
             {   // ThisParameter
                 nextToken();
@@ -2051,7 +2048,6 @@ TemplateParameters *Parser::parseTemplateParameterList(int flag)
                 }
                 tp = new TemplateThisParameter(loc, tp_ident, tp_spectype, tp_defaulttype);
             }
-#endif
             else
             {   // ValueParameter
                 tp_valtype = parseType(&tp_ident);
