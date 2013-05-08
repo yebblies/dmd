@@ -530,7 +530,7 @@ int runLINK()
     }
 
     for (size_t i = 0; i < global.params.linkswitches->dim; i++)
-    {   char *p = (*global.params.linkswitches)[i];
+    {   const char *p = (*global.params.linkswitches)[i];
         if (!p || !p[0] || !(p[0] == '-' && (p[1] == 'l' || p[1] == 'L')))
             // Don't need -Xlinker if switch starts with -l or -L.
             // Eliding -Xlinker is significant for -L since it allows our paths
@@ -548,7 +548,7 @@ int runLINK()
      *  4. standard libraries.
      */
     for (size_t i = 0; i < global.params.libfiles->dim; i++)
-    {   char *p = (*global.params.libfiles)[i];
+    {   const char *p = (*global.params.libfiles)[i];
         size_t plen = strlen(p);
         if (plen > 2 && p[plen - 2] == '.' && p[plen -1] == 'a')
             argv.push(p);
@@ -626,7 +626,7 @@ int runLINK()
         dup2(fds[1], STDERR_FILENO);
         close(fds[0]);
 
-        execvp(argv[0], argv.tdata());
+        execvp(argv[0], (char **)argv.tdata());
         perror(argv[0]);           // failed to execute
         return -1;
     }
@@ -854,7 +854,7 @@ int runProgram()
         {   // Make it "./fn"
             fn = FileName::combine(".", fn);
         }
-        execv(fn, argv.tdata());
+        execv(fn, (char **)argv.tdata());
         perror(fn);             // failed to execute
         return -1;
     }
