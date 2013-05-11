@@ -471,6 +471,7 @@ int tryMain(size_t argc, const char *argv[])
     global.params.obj = 1;
     global.params.quiet = 1;
     global.params.useDeprecated = 2;
+    global.params.magicport = false;
 
     global.params.linkswitches = new Strings();
     global.params.libfiles = new Strings();
@@ -616,6 +617,8 @@ int tryMain(size_t argc, const char *argv[])
             }
             else if (strcmp(p + 1, "map") == 0)
                 global.params.map = 1;
+            else if (strcmp(p + 1, "magicport") == 0)
+                global.params.magicport = true;
             else if (strcmp(p + 1, "multiobj") == 0)
                 global.params.multiobj = 1;
             else if (strcmp(p + 1, "g") == 0)

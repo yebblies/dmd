@@ -178,6 +178,7 @@ struct Param
     char enforcePropertySyntax;
     char betterC;       // be a "better C" compiler; no dependency on D runtime
     bool addMain;       // add a default main() function
+    bool magicport;     // allow more conversions when building the compiler itself
 
     const char *argv0;        // program name
     Strings *imppath;     // array of char*'s of where to look for import modules
