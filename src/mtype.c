@@ -3369,7 +3369,7 @@ MATCH TypeBasic::implicitConvTo(Type *to)
 
     if (ty == Tvoid || to->ty == Tvoid)
         return MATCHnomatch;
-    if (to->ty == Tbool)
+    if (to->ty == Tbool && !global.params.magicport)
         return MATCHnomatch;
 
     TypeBasic *tob;
@@ -3397,7 +3397,7 @@ MATCH TypeBasic::implicitConvTo(Type *to)
 
             /* Can't convert to smaller size
              */
-            if (sz > tosz)
+            if (sz > tosz && !global.params.magicport)
                 return MATCHnomatch;
 
             /* Can't change sign if same size
