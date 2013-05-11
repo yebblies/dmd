@@ -3302,7 +3302,8 @@ Expression *IdentifierExp::semantic(Scope *sc)
 
                 if (scx->scopesym && scx->scopesym->symtab &&
                     (s2 = scx->scopesym->symtab->lookup(s->ident)) != NULL &&
-                    s != s2)
+                    s != s2 &&
+                    !global.params.magicport)
                 {
                     error("with symbol %s is shadowing local symbol %s", s->toPrettyChars(), s2->toPrettyChars());
                     return new ErrorExp();
@@ -6182,7 +6183,8 @@ Expression *DeclarationExp::semantic(Scope *sc)
 
                     if (scx->scopesym && scx->scopesym->symtab &&
                         (s2 = scx->scopesym->symtab->lookup(s->ident)) != NULL &&
-                        s != s2)
+                        s != s2 &&
+                        !global.params.magicport)
                     {
                         error("is shadowing declaration %s", s->toPrettyChars());
                         return new ErrorExp();
