@@ -9368,7 +9368,9 @@ Expression *CastExp::semantic(Scope *sc)
     }
 
 Lsafe:
+    printf("castto\n");
     Expression *e = e1->castTo(sc, to);
+    printf("xcastto\n");
     return e;
 }
 

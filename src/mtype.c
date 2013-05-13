@@ -224,6 +224,8 @@ void Type::init()
     mangleChar[Tuns32] = 'k';
     mangleChar[Tint64] = 'l';
     mangleChar[Tuns64] = 'm';
+    mangleChar[Tint128] = 'L';
+    mangleChar[Tuns128] = 'M';
     mangleChar[Tfloat32] = 'f';
     mangleChar[Tfloat64] = 'd';
     mangleChar[Tfloat80] = 'e';
@@ -2296,6 +2298,8 @@ uinteger_t Type::sizemask()
         case Tuns32:    m = 0xFFFFFFFFUL;               break;
         case Tint64:
         case Tuns64:    m = 0xFFFFFFFFFFFFFFFFULL;      break;
+        case Tint128:
+        case Tuns128:   m = 0xFFFFFFFFFFFFFFFFULL;      break;
         default:
                 assert(0);
     }

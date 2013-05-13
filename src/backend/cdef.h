@@ -930,8 +930,18 @@ struct con_t
 
 struct Cent
 {
-    targ_ullong lsw;
-    targ_ullong msw;
+    union
+    {
+        struct
+        {
+            targ_ullong lsw;
+            targ_ullong msw;
+        };
+        struct
+        {
+            targ_ulong w[4];
+        };
+    };
 };
 
 union eve

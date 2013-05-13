@@ -236,6 +236,14 @@ struct IntegerExp : Expression
     dt_t **toDt(dt_t **pdt);
 };
 
+struct Int128Exp : Expression
+{
+    uinteger_t msw;
+    uinteger_t lsw;
+
+    Int128Exp(Loc loc, uinteger_t msw, uinteger_t lsw, Type *type);
+};
+
 struct ErrorExp : IntegerExp
 {
     ErrorExp();

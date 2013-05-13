@@ -49,7 +49,7 @@ C=backend
 TK=tk
 ROOT=root
 
-MODEL=32
+MODEL=64
 ifneq (x,x$(MODEL))
     MODEL_FLAG=-m$(MODEL)
 endif
@@ -83,8 +83,8 @@ CC=$(HOST_CC) $(MODEL_FLAG) $(TARGET_CFLAGS)
 
 WARNINGS=-Wno-deprecated -Wstrict-aliasing
 
-#GFLAGS = $(WARNINGS) -D__pascal= -fno-exceptions -g -DDEBUG=1 -DUNITTEST $(COV)
-GFLAGS = $(WARNINGS) -D__pascal= -fno-exceptions -O2
+GFLAGS = $(WARNINGS) -D__pascal= -fno-exceptions -g -DDEBUG=1 -DUNITTEST $(COV)
+#GFLAGS = $(WARNINGS) -D__pascal= -fno-exceptions -O2
 
 CFLAGS = $(GFLAGS) -I$(ROOT) -DMARS=1 -DTARGET_$(TARGET)=1 -DDM_TARGET_CPU_$(TARGET_CPU)=1
 MFLAGS = $(GFLAGS) -I$C -I$(TK) -I$(ROOT) -DMARS=1 -DTARGET_$(TARGET)=1 -DDM_TARGET_CPU_$(TARGET_CPU)=1

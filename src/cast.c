@@ -1061,7 +1061,9 @@ Expression *Expression::castTo(Scope *sc, Type *t)
                 e->type = t;
                 return e;
             }
+            printf("castexp\n");
             e = new CastExp(loc, e, tb);
+            printf("xcastexp\n");
         }
     }
     else

@@ -4106,6 +4106,8 @@ Lagain:
         case X(Tbool,Tuns32):   eop = OPu8_16;  goto Leop;
         case X(Tbool,Tint64):
         case X(Tbool,Tuns64):
+        case X(Tbool,Tint128):
+        case X(Tbool,Tuns128):
         case X(Tbool,Tfloat32):
         case X(Tbool,Tfloat64):
         case X(Tbool,Tfloat80):
@@ -4128,6 +4130,8 @@ Lagain:
         case X(Tint8,Tuns32):   eop = OPs8_16;  goto Leop;
         case X(Tint8,Tint64):
         case X(Tint8,Tuns64):
+        case X(Tint8,Tint128):
+        case X(Tint8,Tuns128):
         case X(Tint8,Tfloat32):
         case X(Tint8,Tfloat64):
         case X(Tint8,Tfloat80):
@@ -4150,6 +4154,8 @@ Lagain:
         case X(Tuns8,Tuns32):   eop = OPu8_16;  goto Leop;
         case X(Tuns8,Tint64):
         case X(Tuns8,Tuns64):
+        case X(Tuns8,Tint128):
+        case X(Tuns8,Tuns128):
         case X(Tuns8,Tfloat32):
         case X(Tuns8,Tfloat64):
         case X(Tuns8,Tfloat80):
@@ -4171,7 +4177,9 @@ Lagain:
         case X(Tint16,Tint32):
         case X(Tint16,Tuns32):  eop = OPs16_32; goto Leop;
         case X(Tint16,Tint64):
-        case X(Tint16,Tuns64):  e = el_una(OPs16_32, TYint, e);
+        case X(Tint16,Tuns64):
+        case X(Tint16,Tint128):
+        case X(Tint16,Tuns128): e = el_una(OPs16_32, TYint, e);
                                 fty = Tint32;
                                 goto Lagain;
         case X(Tint16,Tfloat32):
@@ -4196,6 +4204,8 @@ Lagain:
         case X(Tuns16,Tuns32):  eop = OPu16_32; goto Leop;
         case X(Tuns16,Tint64):
         case X(Tuns16,Tuns64):
+        case X(Tuns16,Tint128):
+        case X(Tuns16,Tuns128):
         case X(Tuns16,Tfloat64):
         case X(Tuns16,Tfloat32):
         case X(Tuns16,Tfloat80):
@@ -4220,6 +4230,10 @@ Lagain:
         case X(Tint32,Tuns32):  goto Lpaint;
         case X(Tint32,Tint64):
         case X(Tint32,Tuns64):  eop = OPs32_64; goto Leop;
+        case X(Tint32,Tint128):
+        case X(Tint32,Tuns128):  e = el_una(OPs32_64, TYlong, e);
+                                 fty = Tint64;
+                                 goto Lagain;
         case X(Tint32,Tfloat32):
         case X(Tint32,Tfloat64):
         case X(Tint32,Tfloat80):
@@ -4244,6 +4258,10 @@ Lagain:
         case X(Tuns32,Tint32):  goto Lpaint;
         case X(Tuns32,Tint64):
         case X(Tuns32,Tuns64):  eop = OPu32_64; goto Leop;
+        case X(Tuns32,Tint128):
+        case X(Tuns32,Tuns128):  e = el_una(OPu32_64, TYulong, e);
+                                 fty = Tuns64;
+                                 goto Lagain;
         case X(Tuns32,Tfloat32):
         case X(Tuns32,Tfloat64):
         case X(Tuns32,Tfloat80):
@@ -4268,6 +4286,8 @@ Lagain:
         case X(Tint64,Tint32):
         case X(Tint64,Tuns32):  eop = OP64_32; goto Leop;
         case X(Tint64,Tuns64):  goto Lpaint;
+        case X(Tint64,Tint128):
+        case X(Tint64,Tuns128):  eop = OPs64_128; goto Leop;
         case X(Tint64,Tfloat32):
         case X(Tint64,Tfloat64):
         case X(Tint64,Tfloat80):
@@ -4292,6 +4312,8 @@ Lagain:
         case X(Tuns64,Tint32):
         case X(Tuns64,Tuns32):  eop = OP64_32;  goto Leop;
         case X(Tuns64,Tint64):  goto Lpaint;
+        case X(Tuns64,Tint128):
+        case X(Tuns64,Tuns128):  eop = OPu64_128; goto Leop;
         case X(Tuns64,Tfloat32):
         case X(Tuns64,Tfloat64):
         case X(Tuns64,Tfloat80):
@@ -4315,6 +4337,8 @@ Lagain:
         case X(Tfloat32,Tuns32):
         case X(Tfloat32,Tint64):
         case X(Tfloat32,Tuns64):
+        case X(Tfloat32,Tint128):
+        case X(Tfloat32,Tuns128):
         case X(Tfloat32,Tfloat80): e = el_una(OPf_d, TYdouble, e);
                                    fty = Tfloat64;
                                    goto Lagain;
@@ -4341,6 +4365,10 @@ Lagain:
         case X(Tfloat64,Tuns32):   eop = OPd_u32; goto Leop;
         case X(Tfloat64,Tint64):   eop = OPd_s64; goto Leop;
         case X(Tfloat64,Tuns64):   eop = OPd_u64; goto Leop;
+        case X(Tfloat64,Tint128):
+        case X(Tfloat64,Tuns128):  e = el_una(OPd_s64, TYshort, e);
+                                   fty = Tint64;
+                                   goto Lagain;
         case X(Tfloat64,Tfloat32): eop = OPd_f;   goto Leop;
         case X(Tfloat64,Tfloat80): eop = OPd_ld;  goto Leop;
         case X(Tfloat64,Timaginary32):  goto Lzero;
@@ -4362,11 +4390,15 @@ Lagain:
         case X(Tfloat80,Tint32):
         case X(Tfloat80,Tuns32):
         case X(Tfloat80,Tint64):
+        case X(Tfloat80,Tint128):
         case X(Tfloat80,Tfloat32): e = el_una(OPld_d, TYdouble, e);
                                    fty = Tfloat64;
                                    goto Lagain;
         case X(Tfloat80,Tuns64):
                                    eop = OPld_u64; goto Leop;
+        case X(Tfloat80,Tuns128):  e = el_una(OPld_u64, TYulong, e);
+                                   fty = Tuns64;
+                                   goto Lagain;
         case X(Tfloat80,Tfloat64): eop = OPld_d; goto Leop;
         case X(Tfloat80,Timaginary32): goto Lzero;
         case X(Tfloat80,Timaginary64): goto Lzero;
@@ -4388,6 +4420,8 @@ Lagain:
         case X(Timaginary32,Tuns32):
         case X(Timaginary32,Tint64):
         case X(Timaginary32,Tuns64):
+        case X(Timaginary32,Tint128):
+        case X(Timaginary32,Tuns128):
         case X(Timaginary32,Tfloat32):
         case X(Timaginary32,Tfloat64):
         case X(Timaginary32,Tfloat80):  goto Lzero;
@@ -4413,6 +4447,8 @@ Lagain:
         case X(Timaginary64,Tuns32):
         case X(Timaginary64,Tint64):
         case X(Timaginary64,Tuns64):
+        case X(Timaginary64,Tint128):
+        case X(Timaginary64,Tuns128):
         case X(Timaginary64,Tfloat32):
         case X(Timaginary64,Tfloat64):
         case X(Timaginary64,Tfloat80):  goto Lzero;
@@ -4435,6 +4471,8 @@ Lagain:
         case X(Timaginary80,Tuns32):
         case X(Timaginary80,Tint64):
         case X(Timaginary80,Tuns64):
+        case X(Timaginary80,Tint128):
+        case X(Timaginary80,Tuns128):
         case X(Timaginary80,Tfloat32):
         case X(Timaginary80,Tfloat64):
         case X(Timaginary80,Tfloat80):  goto Lzero;
@@ -4459,6 +4497,8 @@ Lagain:
         case X(Tcomplex32,Tuns32):
         case X(Tcomplex32,Tint64):
         case X(Tcomplex32,Tuns64):
+        case X(Tcomplex32,Tint128):
+        case X(Tcomplex32,Tuns128):
         case X(Tcomplex32,Tfloat32):
         case X(Tcomplex32,Tfloat64):
         case X(Tcomplex32,Tfloat80):
@@ -4487,6 +4527,8 @@ Lagain:
         case X(Tcomplex64,Tuns32):
         case X(Tcomplex64,Tint64):
         case X(Tcomplex64,Tuns64):
+        case X(Tcomplex64,Tint128):
+        case X(Tcomplex64,Tuns128):
         case X(Tcomplex64,Tfloat32):
         case X(Tcomplex64,Tfloat64):
         case X(Tcomplex64,Tfloat80):
@@ -4512,6 +4554,8 @@ Lagain:
         case X(Tcomplex80,Tuns32):
         case X(Tcomplex80,Tint64):
         case X(Tcomplex80,Tuns64):
+        case X(Tcomplex80,Tint128):
+        case X(Tcomplex80,Tuns128):
         case X(Tcomplex80,Tfloat32):
         case X(Tcomplex80,Tfloat64):
         case X(Tcomplex80,Tfloat80):
