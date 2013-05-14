@@ -243,13 +243,13 @@ const char *FuncDeclaration::mangleExact(bool isv)
     }
 
 const char *VarDeclaration::mangle(bool isv)
-#if __DMC__
+/*#if __DMC__
     __out(result)
     {
         assert(strlen(result) > 0);
     }
     __body
-#endif
+#endif*/
     {
         if (mangleOverride)
             return mangleOverride;
