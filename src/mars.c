@@ -669,7 +669,7 @@ Language changes listed by -transition=id:\n\
                     {   long num;
 
                         errno = 0;
-                        num = strtol(p + 12, &p, 10);
+                        num = strtol(p + 12, (char **)&p, 10);
                         if (*p || errno || num > INT_MAX)
                             goto Lerror;
                         switch (num)    // Bugzilla issue number
