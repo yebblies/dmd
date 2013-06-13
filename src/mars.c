@@ -714,7 +714,7 @@ Language changes listed by -transition=id:\n\
                         if (!p[3])
                             goto Lnoarg;
 #if _WIN32
-                        toWinPath(p + 3);
+                        toWinPath((char *)p + 3);
 #endif
                         global.params.objdir = p + 3;
                         break;
@@ -723,7 +723,7 @@ Language changes listed by -transition=id:\n\
                         if (!p[3])
                             goto Lnoarg;
 #if _WIN32
-                        toWinPath(p + 3);
+                        toWinPath((char *)p + 3);
 #endif
                         global.params.objname = p + 3;
                         break;
