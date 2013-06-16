@@ -9,8 +9,6 @@
 
 #include "filename.h"
 
-#define POSIX (linux || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __sun)
-
 #include <stdint.h>
 #include <ctype.h>
 
@@ -43,21 +41,6 @@
 #endif
 
 /****************************** String ********************************/
-
-String::String(const char *str)
-    : str(mem.strdup(str))
-{
-}
-
-String::~String()
-{
-    mem.free((void *)str);
-}
-
-void String::mark()
-{
-    mem.mark((void *)str);
-}
 
 hash_t String::calcHash(const char *str, size_t len)
 {
@@ -101,41 +84,10 @@ hash_t String::calcHash(const char *str)
     return calcHash(str, strlen(str));
 }
 
-hash_t String::hashCode()
-{
-    return calcHash(str, strlen(str));
-}
-
-size_t String::len()
-{
-    return strlen(str);
-}
-
-bool String::equals(RootObject *obj)
-{
-    return strcmp(str,((String *)obj)->str) == 0;
-}
-
-int String::compare(RootObject *obj)
-{
-    return strcmp(str,((String *)obj)->str);
-}
-
-char *String::toChars()
-{
-    return (char *)str;         // toChars() should really be const
-}
-
-void String::print()
-{
-    printf("String '%s'\n",str);
-}
-
-
 /****************************** FileName ********************************/
 
 FileName::FileName(const char *str)
-    : String(str)
+    : str(mem.strdup(str))
 {
 }
 
@@ -845,3 +797,26 @@ void FileName::free(const char *str)
     mem.free((void *)str);
 }
 
+char *FileName::toChars()
+{
+    return (char *)str;         // toChars() should really be const
+}
+
+
+/**************************************
+ * Print error message and exit.
+ */
+
+void FileName::error(const char *format, ...)
+{
+    va_list ap;
+
+    va_start(ap, format);
+    printf("Error: ");
+    vprintf(format, ap);
+    va_end( ap );
+    printf("\n");
+    fflush(stdout);
+
+    exit(EXIT_FAILURE);
+}

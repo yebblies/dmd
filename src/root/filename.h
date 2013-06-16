@@ -19,28 +19,15 @@
 template <typename TYPE> struct Array;
 typedef Array<const char> Strings;
 
-class String : public RootObject
+struct String
 {
-public:
-    const char *str;                  // the string itself
-
-    String(const char *str);
-    ~String();
-
     static hash_t calcHash(const char *str, size_t len);
     static hash_t calcHash(const char *str);
-    hash_t hashCode();
-    size_t len();
-    bool equals(RootObject *obj);
-    int compare(RootObject *obj);
-    char *toChars();
-    void print();
-    void mark();
 };
 
-class FileName : public String
+struct FileName
 {
-public:
+    const char *str;                  // the string itself
     FileName(const char *str);
     hash_t hashCode();
     bool equals(RootObject *obj);
@@ -63,6 +50,7 @@ public:
     static int equalsExt(const char *name, const char *ext);
 
     int equalsExt(const char *ext);
+    char *toChars();
 
     void CopyTo(FileName *to);
     static const char *searchPath(Strings *path, const char *name, int cwd);
@@ -73,6 +61,7 @@ public:
     static const char *canonicalName(const char *name);
 
     static void free(const char *str);
+    static void error(const char *format, ...);
 };
 
 #endif

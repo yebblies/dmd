@@ -553,3 +553,21 @@ char *File::toChars()
 {
     return name->toChars();
 }
+
+/**************************************
+ * Print error message and exit.
+ */
+
+void File::error(const char *format, ...)
+{
+    va_list ap;
+
+    va_start(ap, format);
+    printf("Error: ");
+    vprintf(format, ap);
+    va_end( ap );
+    printf("\n");
+    fflush(stdout);
+
+    exit(EXIT_FAILURE);
+}

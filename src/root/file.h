@@ -17,13 +17,12 @@
 #include "object.h"
 
 template <typename TYPE> struct Array;
-typedef Array<class File> Files;
+typedef Array<struct File> Files;
 
-class FileName;
+struct FileName;
 
-class File : public RootObject
+struct File
 {
-public:
     int ref;                    // != 0 if this is a reference to someone else's buffer
     unsigned char *buffer;      // data for our file
     size_t len;                 // amount of data in buffer[]
@@ -125,6 +124,8 @@ public:
     void checkoffset(size_t offset, size_t nbytes);
 
     void remove();              // delete file
+
+    static void error(const char *format, ...);
 };
 
 #endif

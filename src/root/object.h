@@ -10,6 +10,8 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#define POSIX (linux || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __sun)
+
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
@@ -67,7 +69,5 @@ public:
     /*virtual*/         // not used, disable for now
         void mark();
 };
-
-void error(const char *format, ...);
 
 #endif
