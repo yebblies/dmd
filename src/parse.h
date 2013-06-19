@@ -69,11 +69,11 @@ public:
     int inBrackets;             // inside [] of array index or slice
     Loc lookingForElse;         // location of lonely if looking for an else
 
-    Parser(Module *module, utf8_t *base, size_t length, int doDocComment);
+    Parser(Module *module, const utf8_t *base, size_t length, int doDocComment);
 
     Dsymbols *parseModule();
     Dsymbols *parseDeclDefs(int once, Dsymbol **pLastDecl = NULL);
-    Dsymbols *parseAutoDeclarations(StorageClass storageClass, utf8_t *comment);
+    Dsymbols *parseAutoDeclarations(StorageClass storageClass, const utf8_t *comment);
     Dsymbols *parseBlock(Dsymbol **pLastDecl);
     void composeStorageClass(StorageClass stc);
     StorageClass parseAttribute(Expressions **pexps);
@@ -112,7 +112,7 @@ public:
     Type *parseBasicType();
     Type *parseBasicType2(Type *t);
     Type *parseDeclarator(Type *t, Identifier **pident, TemplateParameters **tpl = NULL, StorageClass storage_class = 0, int* pdisable = NULL);
-    Dsymbols *parseDeclarations(StorageClass storage_class, utf8_t *comment);
+    Dsymbols *parseDeclarations(StorageClass storage_class, const utf8_t *comment);
     void parseContracts(FuncDeclaration *f);
     void checkDanglingElse(Loc elseloc);
     /** endPtr used for documented unittests */
@@ -155,7 +155,7 @@ public:
 
     Expression *parseNewExp(Expression *thisexp);
 
-    void addComment(Dsymbol *s, utf8_t *blockComment);
+    void addComment(Dsymbol *s, const utf8_t *blockComment);
 };
 
 // Operator precedence - greater values are higher precedence

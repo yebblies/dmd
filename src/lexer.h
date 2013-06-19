@@ -185,10 +185,10 @@ enum TOK
 struct Token
 {
     Token *next;
-    utf8_t *ptr;         // pointer to first character of this token within buffer
+    const utf8_t *ptr;         // pointer to first character of this token within buffer
     TOK value;
-    utf8_t *blockComment; // doc comment string prior to this token
-    utf8_t *lineComment;  // doc comment for previous token
+    const utf8_t *blockComment; // doc comment string prior to this token
+    const utf8_t *lineComment;  // doc comment for previous token
     union
     {
         // Integers
@@ -230,9 +230,9 @@ public:
 
     Loc loc;                    // for error messages
 
-    utf8_t *base;        // pointer to start of buffer
-    utf8_t *end;         // past end of buffer
-    utf8_t *p;           // current character
+    const utf8_t *base;        // pointer to start of buffer
+    const utf8_t *end;         // past end of buffer
+    const utf8_t *p;           // current character
     Token token;
     Module *mod;
     int doDocComment;           // collect doc comment information
@@ -240,7 +240,7 @@ public:
     int commentToken;           // !=0 means comments are TOKcomment's
 
     Lexer(Module *mod,
-        utf8_t *base, size_t begoffset, size_t endoffset,
+        const utf8_t *base, size_t begoffset, size_t endoffset,
         int doDocComment, int commentToken);
 
     static void initKeywords();

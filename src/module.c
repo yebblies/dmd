@@ -326,7 +326,7 @@ void Module::parse()
     char *srcname = srcfile->name->toChars();
     //printf("Module::parse(srcname = '%s')\n", srcname);
 
-    utf8_t *buf = srcfile->buffer;
+    const utf8_t *buf = (const utf8_t *)srcfile->buffer;
     size_t buflen = srcfile->len;
 
     if (buflen >= 2)
@@ -376,7 +376,7 @@ void Module::parse()
                 }
                 dbuf.writeByte(0);              // add 0 as sentinel for scanner
                 buflen = dbuf.offset - 1;       // don't include sentinel in count
-                buf = (utf8_t *) dbuf.extractData();
+                buf = (const utf8_t *) dbuf.extractData();
             }
             else
             {   // UTF-16LE (X86)
@@ -429,7 +429,7 @@ void Module::parse()
                 }
                 dbuf.writeByte(0);              // add 0 as sentinel for scanner
                 buflen = dbuf.offset - 1;       // don't include sentinel in count
-                buf = (utf8_t *) dbuf.extractData();
+                buf = (const utf8_t *) dbuf.extractData();
             }
         }
         else if (buf[0] == 0xFE && buf[1] == 0xFF)

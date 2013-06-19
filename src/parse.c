@@ -55,7 +55,7 @@
 // Support D1 inout
 #define D1INOUT         0
 
-Parser::Parser(Module *module, utf8_t *base, size_t length, int doDocComment)
+Parser::Parser(Module *module, const utf8_t *base, size_t length, int doDocComment)
     : Lexer(module, base, 0, length, doDocComment, 0)
 {
     //printf("Parser::Parser()\n");
@@ -75,7 +75,7 @@ Dsymbols *Parser::parseModule()
     if (token.value == TOKmodule)
     {
         Loc loc = this->loc;
-        utf8_t *comment = token.blockComment;
+        const utf8_t *comment = token.blockComment;
         bool safe = FALSE;
 
         nextToken();
@@ -153,7 +153,7 @@ Dsymbols *Parser::parseDeclDefs(int once, Dsymbol **pLastDecl)
     StorageClass stc;
     StorageClass storageClass;
     Condition *condition;
-    utf8_t *comment;
+    const utf8_t *comment;
     Dsymbol *lastDecl = NULL;   // used to link unittest to its previous declaration
     if (!pLastDecl)
         pLastDecl = &lastDecl;
@@ -1614,7 +1614,7 @@ EnumDeclaration *Parser::parseEnum()
         //printf("enum definition\n");
         e->members = new Dsymbols();
         nextToken();
-        utf8_t *comment = token.blockComment;
+        const utf8_t *comment = token.blockComment;
         while (token.value != TOKrcurly)
         {
             /* Can take the following forms:
@@ -2898,7 +2898,7 @@ Type *Parser::parseDeclarator(Type *t, Identifier **pident, TemplateParameters *
  * Return array of Declaration *'s.
  */
 
-Dsymbols *Parser::parseDeclarations(StorageClass storage_class, utf8_t *comment)
+Dsymbols *Parser::parseDeclarations(StorageClass storage_class, const utf8_t *comment)
 {
     StorageClass stc;
     int disable;
@@ -3452,7 +3452,7 @@ L2:
  */
 
 #if DMDV2
-Dsymbols *Parser::parseAutoDeclarations(StorageClass storageClass, utf8_t *comment)
+Dsymbols *Parser::parseAutoDeclarations(StorageClass storageClass, const utf8_t *comment)
 {
     Dsymbols *a = new Dsymbols;
 
@@ -7169,7 +7169,7 @@ Expression *Parser::parseNewExp(Expression *thisexp)
 /**********************************************
  */
 
-void Parser::addComment(Dsymbol *s, utf8_t *blockComment)
+void Parser::addComment(Dsymbol *s, const utf8_t *blockComment)
 {
     s->addComment(combineComments(blockComment, token.lineComment));
     token.lineComment = NULL;

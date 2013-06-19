@@ -7129,7 +7129,7 @@ Expression *CompileExp::semantic(Scope *sc)
         return new ErrorExp();
     }
     se = se->toUTF8(sc);
-    Parser p(sc->module, (utf8_t *)se->string, se->len, 0);
+    Parser p(sc->module, (const utf8_t *)se->string, se->len, 0);
     p.loc = loc;
     p.nextToken();
     //printf("p.loc.linnum = %d\n", p.loc.linnum);

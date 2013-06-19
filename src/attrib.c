@@ -204,7 +204,7 @@ void AttribDeclaration::inlineScan()
     }
 }
 
-void AttribDeclaration::addComment(utf8_t *comment)
+void AttribDeclaration::addComment(const utf8_t *comment)
 {
     //printf("AttribDeclaration::addComment %s\n", comment);
     if (comment)
@@ -1348,7 +1348,7 @@ void ConditionalDeclaration::importAll(Scope *sc)
     }
 }
 
-void ConditionalDeclaration::addComment(utf8_t *comment)
+void ConditionalDeclaration::addComment(const utf8_t *comment)
 {
     /* Because addComment is called by the parser, if we called
      * include() it would define a version before it was used.
@@ -1586,7 +1586,7 @@ void CompileDeclaration::compileIt(Scope *sc)
     else
     {
         se = se->toUTF8(sc);
-        Parser p(sc->module, (utf8_t *)se->string, se->len, 0);
+        Parser p(sc->module, (const utf8_t *)se->string, se->len, 0);
         p.loc = loc;
         p.nextToken();
         decl = p.parseDeclDefs(0);

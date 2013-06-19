@@ -21,16 +21,16 @@
 
 #include "macro.h"
 
-int isIdStart(utf8_t *p);
-int isIdTail(utf8_t *p);
-int utfStride(utf8_t *p);
+int isIdStart(const utf8_t *p);
+int isIdTail(const utf8_t *p);
+int utfStride(const utf8_t *p);
 
-utf8_t *memdup(utf8_t *p, size_t len)
+utf8_t *memdup(const utf8_t *p, size_t len)
 {
     return (utf8_t *)memcpy(mem.malloc(len), p, len);
 }
 
-Macro::Macro(utf8_t *name, size_t namelen, utf8_t *text, size_t textlen)
+Macro::Macro(const utf8_t *name, size_t namelen, const utf8_t *text, size_t textlen)
 {
     next = NULL;
 
@@ -51,7 +51,7 @@ Macro::Macro(utf8_t *name, size_t namelen, utf8_t *text, size_t textlen)
 }
 
 
-Macro *Macro::search(utf8_t *name, size_t namelen)
+Macro *Macro::search(const utf8_t *name, size_t namelen)
 {   Macro *table;
 
     //printf("Macro::search(%.*s)\n", namelen, name);
@@ -67,7 +67,7 @@ Macro *Macro::search(utf8_t *name, size_t namelen)
     return table;
 }
 
-Macro *Macro::define(Macro **ptable, utf8_t *name, size_t namelen, utf8_t *text, size_t textlen)
+Macro *Macro::define(Macro **ptable, const utf8_t *name, size_t namelen, const utf8_t *text, size_t textlen)
 {
     //printf("Macro::define('%.*s' = '%.*s')\n", namelen, name, textlen, text);
 
@@ -327,7 +327,7 @@ void Macro::expand(OutBuffer *buf, size_t start, size_t *pend,
      */
     for (size_t u = start; u + 4 < end; )
     {
-        utf8_t *p = buf->data;   // buf->data is not loop invariant
+        utf8_t *p = (utf8_t)buf->data;   // buf->data is not loop invariant
 
         /* A valid start of macro expansion is $(c, where c is
          * an id start character, and not $$(c.
@@ -335,7 +335,7 @@ void Macro::expand(OutBuffer *buf, size_t start, size_t *pend,
         if (p[u] == '$' && p[u + 1] == '(' && isIdStart(p+u+2))
         {
             //printf("\tfound macro start '%c'\n", p[u + 2]);
-            utf8_t *name = p + u + 2;
+            const utf8_t *name = p + u + 2;
             size_t namelen = 0;
 
             utf8_t *marg;
