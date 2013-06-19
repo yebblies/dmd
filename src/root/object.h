@@ -1,4 +1,33 @@
 
+// Copyright (c) 1999-2011 by Digital Mars
+// All Rights Reserved
+// written by Walter Bright
+// http://www.digitalmars.com
+// License for redistribution is by either the Artistic License
+// in artistic.txt, or the GNU General Public License in gnu.txt.
+// See the included readme.txt for details.
+
+#ifndef OBJECT_H
+#define OBJECT_H
+
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <assert.h>
+#include "port.h"
+#include "rmem.h"
+
+#if __DMC__
+#pragma once
+#endif
+
+typedef size_t hash_t;
+
+struct OutBuffer;
+
+/*
+ * Root of our class library.
+ */
 class RootObject
 {
 public:
@@ -38,3 +67,7 @@ public:
     /*virtual*/         // not used, disable for now
         void mark();
 };
+
+void error(const char *format, ...);
+
+#endif
