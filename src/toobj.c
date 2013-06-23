@@ -483,7 +483,7 @@ void ClassDeclaration::toObjFile(int multiobj)
          */
 
         // Fill in vtbl[]
-        b->fillVtbl(this, &b->vtbl, 1);
+        b->fillVtbl(this, (void *)&b->vtbl, 1);
 
         dtxoff(&dt, id->toSymbol(), 0, TYnptr);         // ClassInfo
 
@@ -548,7 +548,7 @@ void ClassDeclaration::toObjFile(int multiobj)
         for (size_t k = 0; k < cd->vtblInterfaces->dim; k++)
         {   BaseClass *bs = (*cd->vtblInterfaces)[k];
 
-            if (bs->fillVtbl(this, &bvtbl, 0))
+            if (bs->fillVtbl(this, (void *)&bvtbl, 0))
             {
                 //printf("\toverriding vtbl[] for %s\n", bs->base->toChars());
                 ClassDeclaration *id = bs->base;
@@ -664,7 +664,7 @@ void ClassDeclaration::toObjFile(int multiobj)
                     {
                         TypeFunction *tf = (TypeFunction *)fd->type;
                         if (tf->ty == Tfunction)
-                            deprecation("use of %s%s hidden by %s is deprecated. Use 'alias %s.%s %s;' to introduce base class overload set.", fd->toPrettyChars(), Parameter::argsTypesToChars(tf->parameters, tf->varargs), toChars(), fd->parent->toChars(), fd->toChars(), fd->toChars());
+                            deprecation("use of %s%s hidden by %s is deprecated. Use 'alias %s.%s %s;' to introduce base class overload set.", fd->toPrettyChars(), Parameter::argsTypesToChars((void *)tf->parameters, tf->varargs), toChars(), fd->parent->toChars(), fd->toChars(), fd->toChars());
                         else
                             deprecation("use of %s hidden by %s is deprecated", fd->toPrettyChars(), toChars());
                         s = rtlsym[RTLSYM_DHIDDENFUNC];
@@ -721,7 +721,7 @@ unsigned ClassDeclaration::baseVtblOffset(BaseClass *bc)
         for (size_t k = 0; k < cd->vtblInterfaces->dim; k++)
         {   BaseClass *bs = (*cd->vtblInterfaces)[k];
 
-            if (bs->fillVtbl(this, NULL, 0))
+            if (bs->fillVtbl(this, (void *)NULL, 0))
             {
                 if (bc == bs)
                 {   //printf("\tcsymoffset = x%x\n", csymoffset);

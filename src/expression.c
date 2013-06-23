@@ -5866,7 +5866,7 @@ Expression *TupleExp::semantic(Scope *sc)
     }
 
     expandTuples(exps);
-    type = new TypeTuple(exps);
+    type = TypeTuple::fromExps(exps);
     type = type->semantic(loc, sc);
     //printf("-TupleExp::semantic(%s)\n", toChars());
     return this;

@@ -214,7 +214,7 @@ struct BaseClass
     BaseClass();
     BaseClass(Type *type, PROT protection);
 
-    int fillVtbl(ClassDeclaration *cd, FuncDeclarations *vtbl, int newinstance);
+    int fillVtbl(ClassDeclaration *cd, void *_vtbl, int newinstance);
     void copyBaseInterfaces(BaseClasses *);
 };
 

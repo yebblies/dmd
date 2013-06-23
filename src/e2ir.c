@@ -161,10 +161,10 @@ elem *callfunc(Loc loc,
 
             //printf("\targ[%d]: %s\n", i, arg->toChars());
 
-            size_t nparams = Parameter::dim(tf->parameters);
+            size_t nparams = Parameter::dim((void *)tf->parameters);
             if (i - j < nparams && i >= j)
             {
-                Parameter *p = Parameter::getNth(tf->parameters, i - j);
+                Parameter *p = Parameter::getNth((void *)tf->parameters, i - j);
 
                 if (p->storageClass & (STCout | STCref))
                 {

@@ -95,7 +95,7 @@ type *TypeFunction::toCtype()
 {
     if (!ctype)
     {
-        size_t nparams = Parameter::dim(parameters);
+        size_t nparams = Parameter::dim((void *)parameters);
 
         type *tmp[10];
         type **ptypes = tmp;
@@ -103,7 +103,7 @@ type *TypeFunction::toCtype()
             ptypes = (type **)malloc(sizeof(type*) * nparams);
 
         for (size_t i = 0; i < nparams; i++)
-        {   Parameter *arg = Parameter::getNth(parameters, i);
+        {   Parameter *arg = Parameter::getNth((void *)parameters, i);
             type *tp = arg->type->toCtype();
             if (arg->storageClass & (STCout | STCref))
                 tp = type_allocn(TYref, tp);

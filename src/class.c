@@ -1631,8 +1631,9 @@ BaseClass::BaseClass(Type *type, PROT protection)
  *      by base classes)
  */
 
-int BaseClass::fillVtbl(ClassDeclaration *cd, FuncDeclarations *vtbl, int newinstance)
+int BaseClass::fillVtbl(ClassDeclaration *cd, void *_vtbl, int newinstance)
 {
+    FuncDeclarations *vtbl = (FuncDeclarations *)_vtbl;
     int result = 0;
 
     //printf("BaseClass::fillVtbl(this='%s', cd='%s')\n", base->toChars(), cd->toChars());

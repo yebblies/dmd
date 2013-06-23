@@ -577,11 +577,11 @@ void TypeInfoStructDeclaration::toDt(dt_t **pdt)
     {
         /* const hash_t toHash();
          */
-        tftohash = new TypeFunction(NULL, Type::thash_t, 0, LINKd);
+        tftohash = new TypeFunction(Type::thash_t, 0, LINKd);
         tftohash->mod = MODconst;
         tftohash = (TypeFunction *)tftohash->merge();
 
-        tftostring = new TypeFunction(NULL, Type::tstring, 0, LINKd);
+        tftostring = new TypeFunction(Type::tstring, 0, LINKd);
         tftostring = (TypeFunction *)tftostring->merge();
     }
 
@@ -831,7 +831,8 @@ Expression *createTypeInfoArray(Scope *sc, Expression *exps[], size_t dim)
     {   Parameter *arg = new Parameter(STCin, exps[i]->type, NULL, NULL);
         (*args)[i] = arg;
     }
-    TypeTuple *tup = new TypeTuple(args);
+    assert(0);
+    TypeTuple *tup ;//= new TypeTuple(args);
     Expression *e = tup->getTypeInfo(sc);
     e = e->optimize(WANTvalue);
     assert(e->op == TOKsymoff);         // should be SymOffExp

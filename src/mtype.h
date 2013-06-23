@@ -680,6 +680,7 @@ public:
 
     int inuse;
 
+    TypeFunction(Type *treturn, int varargs, LINK linkage, StorageClass stc = 0);
     TypeFunction(Parameters *parameters, Type *treturn, int varargs, LINK linkage, StorageClass stc = 0);
     const char *kind();
     Type *syntaxCopy();
@@ -1036,7 +1037,8 @@ public:
     Parameters *arguments;      // types making up the tuple
 
     TypeTuple(Parameters *arguments);
-    TypeTuple(Expressions *exps);
+    //TypeTuple(Expressions *exps);
+    static TypeTuple *fromExps(Expressions *exps);
     TypeTuple();
     TypeTuple(Type *t1);
     TypeTuple(Type *t1, Type *t2);
@@ -1107,14 +1109,16 @@ public:
     void toDecoBuffer(OutBuffer *buf);
     int dyncast() { return DYNCAST_PARAMETER; } // kludge for template.isType()
     static Parameters *arraySyntaxCopy(Parameters *args);
-    static char *argsTypesToChars(Parameters *args, int varargs);
+    static char *argsTypesToChars(void *args, int varargs);
 #if CPP_MANGLE
     static void argsCppMangle(OutBuffer *buf, CppMangleState *cms, Parameters *arguments, int varargs);
 #endif
     static void argsToCBuffer(OutBuffer *buf, HdrGenState *hgs, Parameters *arguments, int varargs);
     static void argsToDecoBuffer(OutBuffer *buf, Parameters *arguments);
     static int isTPL(Parameters *arguments);
+    static size_t dim(void *arguments);
     static size_t dim(Parameters *arguments);
+    static Parameter *getNth(void *args, size_t nth, size_t *pn = NULL);
     static Parameter *getNth(Parameters *arguments, size_t nth, size_t *pn = NULL);
 
     typedef int (*ForeachDg)(void *ctx, size_t paramidx, Parameter *param);

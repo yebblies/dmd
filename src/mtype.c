@@ -5134,6 +5134,42 @@ int TypeReference::isZeroInit(Loc loc)
 
 /***************************** TypeFunction *****************************/
 
+TypeFunction::TypeFunction(Type *treturn, int varargs, LINK linkage, StorageClass stc)
+    : TypeNext(Tfunction, treturn)
+{
+//if (!treturn) *(char*)0=0;
+//    assert(treturn);
+    assert(0 <= varargs && varargs <= 2);
+    this->parameters = NULL;
+    this->varargs = varargs;
+    this->linkage = linkage;
+    this->inuse = 0;
+    this->isnothrow = false;
+    this->purity = PUREimpure;
+    this->isproperty = false;
+    this->isref = false;
+    this->iswild = false;
+    this->fargs = NULL;
+
+    if (stc & STCpure)
+        this->purity = PUREfwdref;
+    if (stc & STCnothrow)
+        this->isnothrow = true;
+    if (stc & STCproperty)
+        this->isproperty = true;
+
+    if (stc & STCref)
+        this->isref = true;
+
+    this->trust = TRUSTdefault;
+    if (stc & STCsafe)
+        this->trust = TRUSTsafe;
+    if (stc & STCsystem)
+        this->trust = TRUSTsystem;
+    if (stc & STCtrusted)
+        this->trust = TRUSTtrusted;
+}
+
 TypeFunction::TypeFunction(Parameters *parameters, Type *treturn, int varargs, LINK linkage, StorageClass stc)
     : TypeNext(Tfunction, treturn)
 {
@@ -9064,8 +9100,7 @@ TypeTuple::TypeTuple(Parameters *arguments)
  * Assume exps[] is already tuple expanded.
  */
 
-TypeTuple::TypeTuple(Expressions *exps)
-    : Type(Ttuple)
+TypeTuple *TypeTuple::fromExps(Expressions *exps)
 {
     Parameters *arguments = new Parameters;
     if (exps)
@@ -9079,7 +9114,8 @@ TypeTuple::TypeTuple(Expressions *exps)
             (*arguments)[i] = arg;
         }
     }
-    this->arguments = arguments;
+    arguments = arguments;
+    return new TypeTuple(arguments);
     //printf("TypeTuple() %p, %s\n", this, toChars());
 }
 
@@ -9486,8 +9522,9 @@ Parameters *Parameter::arraySyntaxCopy(Parameters *args)
     return a;
 }
 
-char *Parameter::argsTypesToChars(Parameters *args, int varargs)
+char *Parameter::argsTypesToChars(void *_args, int varargs)
 {
+    Parameters *args = (Parameters *)_args;
     OutBuffer buf;
     buf.reserve(16);
 
@@ -9670,6 +9707,11 @@ static int dimDg(void *ctx, size_t n, Parameter *)
     return 0;
 }
 
+size_t Parameter::dim(void *args)
+{
+    return dim((Parameters *)args);
+}
+
 size_t Parameter::dim(Parameters *args)
 {
     size_t n = 0;
@@ -9699,6 +9741,11 @@ static int getNthParamDg(void *ctx, size_t n, Parameter *arg)
         return 1;
     }
     return 0;
+}
+
+Parameter *Parameter::getNth(void *args, size_t nth, size_t *pn)
+{
+    return getNth((Parameters *)args, nth, pn);
 }
 
 Parameter *Parameter::getNth(Parameters *args, size_t nth, size_t *pn)
