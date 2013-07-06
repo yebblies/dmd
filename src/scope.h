@@ -113,6 +113,7 @@ struct Scope
     static Scope *createGlobal(Module *module);
 
     Scope();
+    Scope(Scope &sc);
     Scope(Scope *enclosing);
 
     Scope *push();

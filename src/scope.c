@@ -83,6 +83,42 @@ Scope::Scope()
     this->userAttributes = NULL;
 }
 
+Scope::Scope(Scope& sc)
+{
+    this->module = sc.module;
+    this->scopesym = sc.scopesym;
+    this->sd = sc.sd;
+    this->enclosing = sc.enclosing;
+    this->parent = sc.parent;
+    this->sw = sc.sw;
+    this->tf = sc.tf;
+    this->tinst = sc.tinst;
+    this->sbreak = sc.sbreak;
+    this->scontinue = sc.scontinue;
+    this->fes = sc.fes;
+    this->callsc = sc.callsc;
+    this->structalign = sc.structalign;
+    this->func = sc.func;
+    this->slabel = sc.slabel;
+    this->linkage = sc.linkage;
+    this->protection = sc.protection;
+    this->explicitProtection = sc.explicitProtection;
+    this->stc = sc.stc;
+    this->depmsg = sc.depmsg;
+    this->offset = sc.offset;
+    this->inunion = sc.inunion;
+    this->nofree = sc.nofree;
+    this->noctor = sc.noctor;
+    this->intypeof = sc.intypeof;
+    this->speculative = sc.speculative;
+    this->callSuper = sc.callSuper;
+    this->flags = sc.flags;
+    this->lastdc = sc.lastdc;
+    this->lastoffset = sc.lastoffset;
+    this->docbuf = sc.docbuf;
+    this->userAttributes = sc.userAttributes;
+}
+
 Scope::Scope(Scope *enclosing)
 {
     //printf("Scope::Scope(enclosing = %p) %p\n", enclosing, this);
