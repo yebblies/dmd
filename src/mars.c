@@ -1887,3 +1887,9 @@ long __cdecl __ehfilter(LPEXCEPTION_POINTERS ep)
 }
 
 #endif
+
+void *Dsymbols__factory() { return new Dsymbols(); }
+void *Parameters__factory() { return new Parameters(); }
+void *Symbols__factory() { return new Symbols(); }
+void *VarDeclarations__factory() { return new VarDeclarations(); }
+void *Blocks__factory() { return new Blocks(); }

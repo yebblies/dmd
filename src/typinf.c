@@ -29,6 +29,8 @@
 
 #include "dt.h"
 
+void *Parameters__factory();
+
 /*
  * Used in TypeInfo*::toDt to verify the runtime TypeInfo sizes
  */
@@ -708,7 +710,7 @@ void TypeInfoClassDeclaration::toDt(dt_t **pdt)
     Symbol *s;
 
     if (!tc->sym->vclassinfo)
-        tc->sym->vclassinfo = new ClassInfoDeclaration(tc->sym);
+        tc->sym->vclassinfo = ClassInfoDeclaration::factory(tc->sym);
     s = tc->sym->vclassinfo->toSymbol();
     dtxoff(pdt, s, 0);          // ClassInfo for tinfo
 #else
@@ -731,7 +733,7 @@ void TypeInfoInterfaceDeclaration::toDt(dt_t **pdt)
 
     if (!tc->sym->vclassinfo)
 #if DMDV1
-        tc->sym->vclassinfo = new ClassInfoDeclaration(tc->sym);
+        tc->sym->vclassinfo = ClassInfoDeclaration::factory(tc->sym);
 #else
         tc->sym->vclassinfo = TypeInfoClassDeclaration::factory(tc);
 #endif
@@ -825,7 +827,7 @@ Expression *createTypeInfoArray(Scope *sc, Expression *exps[], size_t dim)
      * at the start of the called function by offseting into the TypeInfo_Tuple
      * reference.
      */
-    Parameters *args = new Parameters;
+    Parameters *args = (Parameters *)Parameters__factory();
     args->setDim(dim);
     for (size_t i = 0; i < dim; i++)
     {   Parameter *arg = Parameter::factory(STCin, exps[i]->type, NULL, NULL);

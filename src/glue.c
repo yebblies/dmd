@@ -45,6 +45,7 @@ elem *addressElem(elem *e, Type *t, bool alwaysCopy = false);
 #define STATICCTOR      0
 
 typedef Array<symbol> symbols;
+void *Dsymbols__factory();
 
 elem *eictor;
 symbol *ictorlocalgot;
@@ -120,7 +121,7 @@ void obj_write_deferred(Library *library)
             Identifier *id = Identifier::factory(idstr, TOKidentifier);
 
             Module *md = Module::factory(mname, id, 0, 0);
-            md->members = Dsymbols::factory();
+            md->members = (Dsymbols *)Dsymbols__factory();
             md->members->push(s);   // its only 'member' is s
             md->doppelganger = 1;       // identify this module as doppelganger
             md->md = m->md;
