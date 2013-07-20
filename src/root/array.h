@@ -40,10 +40,6 @@ struct Array
         dim = 0;
         allocdim = SMALLARRAYCAP;
     }
-    static Array *factory()
-    {
-        return new Array();
-    }
 
     ~Array()
     {

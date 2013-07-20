@@ -53,7 +53,7 @@ elem *exp2_copytotemp(elem *e);
 elem *incUsageElem(IRState *irs, Loc loc);
 StructDeclaration *needsPostblit(Type *t);
 elem *addressElem(elem *e, Type *t, bool alwaysCopy = false);
-
+void *Blocks__factory();
 
 #define elem_setLoc(e,loc)      ((e)->Esrcpos.Sfilename = (char *)(loc).filename, \
                                  (e)->Esrcpos.Slinnum = (loc).linnum)
@@ -105,7 +105,7 @@ block *labelToBlock(Loc loc, Blockx *blx, LabelDsymbol *label, int flag = 0)
         {
             // Keep track of the forward reference to this block, so we can check it later
             if (!s->fwdrefs)
-                s->fwdrefs = new Blocks();
+                s->fwdrefs = (Blocks *)Blocks__factory();
             s->fwdrefs->push(blx->curblock);
         }
     }
