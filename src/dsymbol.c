@@ -70,6 +70,11 @@ Dsymbol::Dsymbol(Identifier *ident)
     this->unittest = NULL;
 }
 
+Dsymbol *Dsymbol::factory(Identifier *ident)
+{
+    return new Dsymbol(ident);
+}
+
 bool Dsymbol::equals(RootObject *o)
 {
     if (this == o)

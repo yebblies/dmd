@@ -88,10 +88,10 @@ Expression *Type::getInternalTypeInfo(Scope *sc)
         Linternal:
             tid = internalTI[t->ty];
             if (!tid)
-            {   tid = new TypeInfoDeclaration(t, 1);
+            {   tid = TypeInfoDeclaration::factory(t, 1);
                 internalTI[t->ty] = tid;
             }
-            e = new VarExp(Loc(), tid);
+            e = VarExp::factory(Loc(), tid);
             e = e->addressOf(sc);
             e->type = tid->type;        // do this so we don't get redundant dereference
             return e;
@@ -122,13 +122,13 @@ Expression *Type::getTypeInfo(Scope *sc)
     {
 #if DMDV2
         if (t->isShared())      // does both 'shared' and 'shared const'
-            t->vtinfo = new TypeInfoSharedDeclaration(t);
+            t->vtinfo = TypeInfoSharedDeclaration::factory(t);
         else if (t->isConst())
-            t->vtinfo = new TypeInfoConstDeclaration(t);
+            t->vtinfo = TypeInfoConstDeclaration::factory(t);
         else if (t->isImmutable())
-            t->vtinfo = new TypeInfoInvariantDeclaration(t);
+            t->vtinfo = TypeInfoInvariantDeclaration::factory(t);
         else if (t->isWild())
-            t->vtinfo = new TypeInfoWildDeclaration(t);
+            t->vtinfo = TypeInfoWildDeclaration::factory(t);
         else
 #endif
             t->vtinfo = t->getTypeInfoDeclaration();
@@ -153,7 +153,7 @@ Expression *Type::getTypeInfo(Scope *sc)
     }
     if (!vtinfo)
         vtinfo = t->vtinfo;     // Types aren't merged, but we can share the vtinfo's
-    Expression *e = new VarExp(Loc(), t->vtinfo);
+    Expression *e = VarExp::factory(Loc(), t->vtinfo);
     e = e->addressOf(sc);
     e->type = t->vtinfo->type;          // do this so we don't get redundant dereference
     return e;
@@ -162,70 +162,70 @@ Expression *Type::getTypeInfo(Scope *sc)
 TypeInfoDeclaration *Type::getTypeInfoDeclaration()
 {
     //printf("Type::getTypeInfoDeclaration() %s\n", toChars());
-    return new TypeInfoDeclaration(this, 0);
+    return TypeInfoDeclaration::factory(this, 0);
 }
 
 TypeInfoDeclaration *TypeTypedef::getTypeInfoDeclaration()
 {
-    return new TypeInfoTypedefDeclaration(this);
+    return TypeInfoTypedefDeclaration::factory(this);
 }
 
 TypeInfoDeclaration *TypePointer::getTypeInfoDeclaration()
 {
-    return new TypeInfoPointerDeclaration(this);
+    return TypeInfoPointerDeclaration::factory(this);
 }
 
 TypeInfoDeclaration *TypeDArray::getTypeInfoDeclaration()
 {
-    return new TypeInfoArrayDeclaration(this);
+    return TypeInfoArrayDeclaration::factory(this);
 }
 
 TypeInfoDeclaration *TypeSArray::getTypeInfoDeclaration()
 {
-    return new TypeInfoStaticArrayDeclaration(this);
+    return TypeInfoStaticArrayDeclaration::factory(this);
 }
 
 TypeInfoDeclaration *TypeAArray::getTypeInfoDeclaration()
 {
-    return new TypeInfoAssociativeArrayDeclaration(this);
+    return TypeInfoAssociativeArrayDeclaration::factory(this);
 }
 
 TypeInfoDeclaration *TypeStruct::getTypeInfoDeclaration()
 {
-    return new TypeInfoStructDeclaration(this);
+    return TypeInfoStructDeclaration::factory(this);
 }
 
 TypeInfoDeclaration *TypeClass::getTypeInfoDeclaration()
 {
     if (sym->isInterfaceDeclaration())
-        return new TypeInfoInterfaceDeclaration(this);
+        return TypeInfoInterfaceDeclaration::factory(this);
     else
-        return new TypeInfoClassDeclaration(this);
+        return TypeInfoClassDeclaration::factory(this);
 }
 
 TypeInfoDeclaration *TypeVector::getTypeInfoDeclaration()
 {
-    return new TypeInfoVectorDeclaration(this);
+    return TypeInfoVectorDeclaration::factory(this);
 }
 
 TypeInfoDeclaration *TypeEnum::getTypeInfoDeclaration()
 {
-    return new TypeInfoEnumDeclaration(this);
+    return TypeInfoEnumDeclaration::factory(this);
 }
 
 TypeInfoDeclaration *TypeFunction::getTypeInfoDeclaration()
 {
-    return new TypeInfoFunctionDeclaration(this);
+    return TypeInfoFunctionDeclaration::factory(this);
 }
 
 TypeInfoDeclaration *TypeDelegate::getTypeInfoDeclaration()
 {
-    return new TypeInfoDelegateDeclaration(this);
+    return TypeInfoDelegateDeclaration::factory(this);
 }
 
 TypeInfoDeclaration *TypeTuple::getTypeInfoDeclaration()
 {
-    return new TypeInfoTupleDeclaration(this);
+    return TypeInfoTupleDeclaration::factory(this);
 }
 
 /****************************************************
@@ -577,11 +577,11 @@ void TypeInfoStructDeclaration::toDt(dt_t **pdt)
     {
         /* const hash_t toHash();
          */
-        tftohash = new TypeFunction(Type::thash_t, 0, LINKd);
+        tftohash = TypeFunction::factory(Type::thash_t, 0, LINKd);
         tftohash->mod = MODconst;
         tftohash = (TypeFunction *)tftohash->merge();
 
-        tftostring = new TypeFunction(Type::tstring, 0, LINKd);
+        tftostring = TypeFunction::factory(Type::tstring, 0, LINKd);
         tftostring = (TypeFunction *)tftostring->merge();
     }
 
@@ -733,7 +733,7 @@ void TypeInfoInterfaceDeclaration::toDt(dt_t **pdt)
 #if DMDV1
         tc->sym->vclassinfo = new ClassInfoDeclaration(tc->sym);
 #else
-        tc->sym->vclassinfo = new TypeInfoClassDeclaration(tc);
+        tc->sym->vclassinfo = TypeInfoClassDeclaration::factory(tc);
 #endif
     s = tc->sym->vclassinfo->toSymbol();
     dtxoff(pdt, s, 0);          // ClassInfo for tinfo
@@ -828,7 +828,7 @@ Expression *createTypeInfoArray(Scope *sc, Expression *exps[], size_t dim)
     Parameters *args = new Parameters;
     args->setDim(dim);
     for (size_t i = 0; i < dim; i++)
-    {   Parameter *arg = new Parameter(STCin, exps[i]->type, NULL, NULL);
+    {   Parameter *arg = Parameter::factory(STCin, exps[i]->type, NULL, NULL);
         (*args)[i] = arg;
     }
     assert(0);
@@ -892,7 +892,7 @@ Expression *createTypeInfoArray(Scope *sc, Expression *exps[], size_t dim)
         v->parent = m;
         sc = sc->pop();
     }
-    e = new VarExp(Loc(), v);
+    e = VarExp::factory(Loc(), v);
     e = e->semantic(sc);
     return e;
 #endif

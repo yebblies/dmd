@@ -362,6 +362,7 @@ public:
     Type *tinfo;
 
     TypeInfoDeclaration(Type *tinfo, int internal);
+    static TypeInfoDeclaration *factory(Type *tinfo, int internal);
     Dsymbol *syntaxCopy(Dsymbol *);
     void semantic(Scope *sc);
 
@@ -377,6 +378,7 @@ class TypeInfoStructDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoStructDeclaration(Type *tinfo);
+    static TypeInfoStructDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -385,6 +387,7 @@ class TypeInfoClassDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoClassDeclaration(Type *tinfo);
+    static TypeInfoClassDeclaration *factory(Type *tinfo);
     Symbol *toSymbol();
 
     void toDt(dt_t **pdt);
@@ -394,6 +397,7 @@ class TypeInfoInterfaceDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoInterfaceDeclaration(Type *tinfo);
+    static TypeInfoInterfaceDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -402,6 +406,7 @@ class TypeInfoTypedefDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoTypedefDeclaration(Type *tinfo);
+    static TypeInfoTypedefDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -410,6 +415,7 @@ class TypeInfoPointerDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoPointerDeclaration(Type *tinfo);
+    static TypeInfoPointerDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -418,6 +424,7 @@ class TypeInfoArrayDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoArrayDeclaration(Type *tinfo);
+    static TypeInfoArrayDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -426,6 +433,7 @@ class TypeInfoStaticArrayDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoStaticArrayDeclaration(Type *tinfo);
+    static TypeInfoStaticArrayDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -434,6 +442,7 @@ class TypeInfoAssociativeArrayDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoAssociativeArrayDeclaration(Type *tinfo);
+    static TypeInfoAssociativeArrayDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -442,6 +451,7 @@ class TypeInfoEnumDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoEnumDeclaration(Type *tinfo);
+    static TypeInfoEnumDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -450,6 +460,7 @@ class TypeInfoFunctionDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoFunctionDeclaration(Type *tinfo);
+    static TypeInfoFunctionDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -458,6 +469,7 @@ class TypeInfoDelegateDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoDelegateDeclaration(Type *tinfo);
+    static TypeInfoDelegateDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -466,6 +478,7 @@ class TypeInfoTupleDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoTupleDeclaration(Type *tinfo);
+    static TypeInfoTupleDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -475,6 +488,7 @@ class TypeInfoConstDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoConstDeclaration(Type *tinfo);
+    static TypeInfoConstDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -483,6 +497,7 @@ class TypeInfoInvariantDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoInvariantDeclaration(Type *tinfo);
+    static TypeInfoInvariantDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -491,6 +506,7 @@ class TypeInfoSharedDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoSharedDeclaration(Type *tinfo);
+    static TypeInfoSharedDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -499,6 +515,7 @@ class TypeInfoWildDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoWildDeclaration(Type *tinfo);
+    static TypeInfoWildDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };
@@ -507,6 +524,7 @@ class TypeInfoVectorDeclaration : public TypeInfoDeclaration
 {
 public:
     TypeInfoVectorDeclaration(Type *tinfo);
+    static TypeInfoVectorDeclaration *factory(Type *tinfo);
 
     void toDt(dt_t **pdt);
 };

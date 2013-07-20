@@ -25,6 +25,11 @@ Identifier::Identifier(const char *string, int value)
     this->len = strlen(string);
 }
 
+Identifier *Identifier::factory(const char *string, int value)
+{
+    return new Identifier(string, value);
+}
+
 hash_t Identifier::hashCode()
 {
     return String::calcHash(string);

@@ -127,6 +127,7 @@ public:
 
     Dsymbol();
     Dsymbol(Identifier *);
+    static Dsymbol *factory(Identifier *);
     char *toChars();
     Loc& getLoc();
     char *locToChars();

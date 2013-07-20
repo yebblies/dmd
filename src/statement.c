@@ -336,6 +336,11 @@ ExpStatement::ExpStatement(Loc loc, Dsymbol *declaration)
     this->exp = new DeclarationExp(loc, declaration);
 }
 
+ExpStatement *ExpStatement::factory(Loc loc, Expression *exp)
+{
+    return new ExpStatement(loc, exp);
+}
+
 Statement *ExpStatement::syntaxCopy()
 {
     Expression *e = exp ? exp->syntaxCopy() : NULL;
@@ -577,6 +582,11 @@ CompoundStatement::CompoundStatement(Loc loc, Statement *s1)
 {
     statements = new Statements();
     statements->push(s1);
+}
+
+CompoundStatement *CompoundStatement::factory(Loc loc, Statement *s1, Statement *s2)
+{
+    return new CompoundStatement(loc, s1, s2);
 }
 
 Statement *CompoundStatement::syntaxCopy()
@@ -4705,6 +4715,11 @@ TryFinallyStatement::TryFinallyStatement(Loc loc, Statement *body, Statement *fi
     this->finalbody = finalbody;
 }
 
+TryFinallyStatement *TryFinallyStatement::factory(Loc loc, Statement *body, Statement *finalbody)
+{
+    return new TryFinallyStatement(loc, body, finalbody);
+}
+
 Statement *TryFinallyStatement::syntaxCopy()
 {
     TryFinallyStatement *s = new TryFinallyStatement(loc,
@@ -5133,6 +5148,11 @@ LabelDsymbol::LabelDsymbol(Identifier *ident)
         : Dsymbol(ident)
 {
     statement = NULL;
+}
+
+LabelDsymbol *LabelDsymbol::factory(Identifier *ident)
+{
+    return new LabelDsymbol(ident);
 }
 
 LabelDsymbol *LabelDsymbol::isLabel()           // is this a LabelDsymbol()?

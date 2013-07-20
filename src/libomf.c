@@ -110,7 +110,7 @@ void LibOMF::setFilename(const char *dir, const char *filename)
         arg = FileName::combine(dir, arg);
     const char *libfilename = FileName::defaultExt(arg, global.lib_ext);
 
-    libfile = new File(libfilename);
+    libfile = File::factory(libfilename);
 
     loc.filename = libfile->name->toChars();
     loc.linnum = 0;
@@ -234,8 +234,7 @@ void LibOMF::addObject(const char *module_name, void *buf, size_t buflen)
 #endif
     if (!buf)
     {   assert(module_name);
-        FileName f((char *)module_name);
-        File *file = new File(&f);
+        File *file = File::factory(module_name);
         file->readv();
         buf = file->buffer;
         buflen = file->len;

@@ -317,6 +317,7 @@ public:
     Declaration *var;
 
     IdentifierExp(Loc loc, Identifier *ident);
+    static IdentifierExp *factory(Loc loc, Identifier *ident);
     Expression *clone() { return new IdentifierExp(loc, ident); }
     Expression *semantic(Scope *sc);
     char *toChars();
@@ -417,6 +418,7 @@ public:
     StringExp(Loc loc, char *s);
     StringExp(Loc loc, void *s, size_t len);
     StringExp(Loc loc, void *s, size_t len, utf8_t postfix);
+    static StringExp *factory(Loc loc, char *s);
     //Expression *syntaxCopy();
     Expression *clone() { return new StringExp(loc, string, len, postfix); }
     bool equals(RootObject *o);
@@ -728,6 +730,7 @@ class VarExp : public SymbolExp
 {
 public:
     VarExp(Loc loc, Declaration *var, bool hasOverloads = false);
+    static VarExp *factory(Loc loc, Declaration *var, bool hasOverloads = false);
     bool equals(RootObject *o);
     Expression *clone() { return new VarExp(loc, var, hasOverloads); }
     Expression *semantic(Scope *sc);
@@ -1011,6 +1014,7 @@ public:
     Identifier *ident;
 
     DotIdExp(Loc loc, Expression *e, Identifier *ident);
+    static DotIdExp *factory(Loc loc, Expression *e, Identifier *ident);
     Expression *clone() { return new DotIdExp(loc, e1, ident); }
     Expression *semantic(Scope *sc);
     Expression *semanticX(Scope *sc);
@@ -1105,6 +1109,9 @@ public:
     CallExp(Loc loc, Expression *e);
     CallExp(Loc loc, Expression *e, Expression *earg1);
     CallExp(Loc loc, Expression *e, Expression *earg1, Expression *earg2);
+
+    static CallExp *factory(Loc loc, Expression *e);
+    static CallExp *factory(Loc loc, Expression *e, Expression *earg1);
 
     Expression *syntaxCopy();
     Expression *clone() { return new CallExp(loc, e1); }

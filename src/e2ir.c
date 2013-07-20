@@ -5185,7 +5185,7 @@ elem *AssocArrayLiteralExp::toElem(IRState *irs)
         else
         {   // It's the AssociativeArray type.
             // Turn it back into a TypeAArray
-            ta = new TypeAArray((*values)[0]->type, (*keys)[0]->type);
+            ta = TypeAArray::factory((*values)[0]->type, (*keys)[0]->type);
             ta = ta->semantic(loc, NULL);
         }
 
