@@ -1629,7 +1629,7 @@ STATIC void cpp_symbol_name(symbol *s)
         }
     }
 #endif
-#if MARS
+#if MARS && 0
     if (tyfunc(s->Stype->Tty) && s->Sfunc)
     {
         if (s->Sfunc->Fflags & Fctor)
