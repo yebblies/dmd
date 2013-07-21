@@ -1022,6 +1022,7 @@ public:
     TypeTuple(Parameters *arguments);
     //TypeTuple(Expressions *exps);
     static TypeTuple *fromExps(Expressions *exps);
+    static TypeTuple *factory(void *arguments);
     TypeTuple();
     TypeTuple(Type *t1);
     TypeTuple(Type *t1, Type *t2);
