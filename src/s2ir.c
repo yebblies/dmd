@@ -441,7 +441,7 @@ void LabelStatement::toIR(IRState *irs)
                 }
 
             }
-            delete fwdrefs;
+            //delete fwdrefs;
             fwdrefs = NULL;
         }
     }
