@@ -9105,6 +9105,11 @@ TypeTuple::TypeTuple(Parameters *arguments)
 #endif
 }
 
+TypeTuple *TypeTuple::factory(void *arguments)
+{
+    return new TypeTuple((Parameters *)arguments);
+}
+
 /****************
  * Form TypeTuple from the types of the expressions.
  * Assume exps[] is already tuple expanded.
