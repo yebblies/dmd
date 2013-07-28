@@ -4268,7 +4268,7 @@ void StringExp::toMangleBuffer(OutBuffer *buf)
                 else
                     tmp.writeUTF8(c);
             }
-            q = tmp.data;
+            q = (utf8_t *)tmp.data;
             qlen = tmp.offset;
             break;
         case 4:
@@ -4281,7 +4281,7 @@ void StringExp::toMangleBuffer(OutBuffer *buf)
                 else
                     tmp.writeUTF8(c);
             }
-            q = tmp.data;
+            q = (utf8_t *)tmp.data;
             qlen = tmp.offset;
             break;
         default:
@@ -4291,7 +4291,7 @@ void StringExp::toMangleBuffer(OutBuffer *buf)
     buf->writeByte(m);
     buf->printf("%d_", (int)qlen); // nbytes <= 11
 
-    for (utf8_t *p = buf->data + buf->offset, *pend = p + 2 * qlen;
+    for (utf8_t *p = (utf8_t *)buf->data + buf->offset, *pend = p + 2 * qlen;
          p < pend; p += 2, ++q)
     {
         utf8_t hi = *q >> 4 & 0xF;

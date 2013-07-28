@@ -2503,7 +2503,7 @@ unsigned Lexer::decodeUTF()
         ;
 
     idx = 0;
-    msg = utf_decodeChar((unsigned char*)s, len, &idx, &u);
+    msg = utf_decodeChar(s, len, &idx, &u);
     p += idx - 1;
     if (msg)
     {

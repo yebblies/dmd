@@ -317,7 +317,7 @@ void Module::gendocfile()
     {
         buf.setsize(0);
         buf.reserve(buf2.offset);
-        utf8_t *p = buf2.data;
+        utf8_t *p = (utf8_t *)buf2.data;
         for (size_t j = 0; j < buf2.offset; j++)
         {
             utf8_t c = p[j];
@@ -2154,8 +2154,8 @@ void highlightText(Scope *sc, Dsymbol *s, OutBuffer *buf, size_t offset)
 
                         // Remove leading indentations from all lines
                         bool lineStart = true;
-                        utf8_t *endp = codebuf.data + codebuf.offset;
-                        for (utf8_t *p = codebuf.data; p < endp; )
+                        utf8_t *endp = (utf8_t *)codebuf.data + codebuf.offset;
+                        for (utf8_t *p = (utf8_t *)codebuf.data; p < endp; )
                         {
                             if (lineStart)
                             {
@@ -2163,11 +2163,11 @@ void highlightText(Scope *sc, Dsymbol *s, OutBuffer *buf, size_t offset)
                                 utf8_t *q = p;
                                 while (j-- > 0 && q < endp && isIndentWS((const utf8_t *)q))
                                     ++q;
-                                codebuf.remove(p - codebuf.data, q - p);
-                                assert(codebuf.data <= p);
-                                assert(p < codebuf.data + codebuf.offset);
+                                codebuf.remove(p - (utf8_t *)codebuf.data, q - p);
+                                assert((utf8_t *)codebuf.data <= p);
+                                assert(p < (utf8_t *)codebuf.data + codebuf.offset);
                                 lineStart = false;
-                                endp = codebuf.data + codebuf.offset; // update
+                                endp = (utf8_t *)codebuf.data + codebuf.offset; // update
                                 continue;
                             }
                             if (*p == '\n')
@@ -2437,7 +2437,7 @@ int isIdStart(const utf8_t *p)
         return 1;
     if (c >= 0x80)
     {   size_t i = 0;
-        if (utf_decodeChar((unsigned char*)p, 4, &i, &c))
+        if (utf_decodeChar(p, 4, &i, &c))
             return 0;   // ignore errors
         if (isUniAlpha(c))
             return 1;
@@ -2456,7 +2456,7 @@ int isIdTail(const utf8_t *p)
         return 1;
     if (c >= 0x80)
     {   size_t i = 0;
-        if (utf_decodeChar((unsigned char *)p, 4, &i, &c))
+        if (utf_decodeChar(p, 4, &i, &c))
             return 0;   // ignore errors
         if (isUniAlpha(c))
             return 1;
@@ -2483,6 +2483,6 @@ int utfStride(const utf8_t *p)
     if (c < 0x80)
         return 1;
     size_t i = 0;
-    utf_decodeChar((unsigned char *)p, 4, &i, &c);       // ignore errors, but still consume input
+    utf_decodeChar(p, 4, &i, &c);       // ignore errors, but still consume input
     return i;
 }
