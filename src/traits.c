@@ -136,67 +136,131 @@ Expression *TraitsExp::semantic(Scope *sc)
     size_t dim = args ? args->dim : 0;
     Declaration *d;
 
-#define ISTYPE(cond) \
-        for (size_t i = 0; i < dim; i++)        \
-        {   Type *t = getType((*args)[i]);      \
-            if (!t)                             \
-                goto Lfalse;                    \
-            if (!(cond))                        \
-                goto Lfalse;                    \
-        }                                       \
-        if (!dim)                               \
-            goto Lfalse;                        \
-        goto Ltrue;
-
-#define ISDSYMBOL(cond) \
-        for (size_t i = 0; i < dim; i++)        \
-        {   Dsymbol *s = getDsymbol((*args)[i]); \
-            if (!s)                             \
-                goto Lfalse;                    \
-            if (!(cond))                        \
-                goto Lfalse;                    \
-        }                                       \
-        if (!dim)                               \
-            goto Lfalse;                        \
-        goto Ltrue;
-
-
-
     if (ident == Id::isArithmetic)
     {
-        ISTYPE(t->isintegral() || t->isfloating())
+        for (size_t i = 0; i < dim; i++)
+        {   Type *t = getType((*args)[i]);
+            if (!t)
+                goto Lfalse;
+            if (!((t->isintegral() || t->isfloating())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
+
     }
     else if (ident == Id::isFloating)
     {
-        ISTYPE(t->isfloating())
+        for (size_t i = 0; i < dim; i++)
+        {   Type *t = getType((*args)[i]);
+            if (!t)
+                goto Lfalse;
+            if (!((t->isfloating())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
+
     }
     else if (ident == Id::isIntegral)
     {
-        ISTYPE(t->isintegral())
+        for (size_t i = 0; i < dim; i++)
+        {   Type *t = getType((*args)[i]);
+            if (!t)
+                goto Lfalse;
+            if (!((t->isintegral())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
+
     }
     else if (ident == Id::isScalar)
     {
-        ISTYPE(t->isscalar())
+        for (size_t i = 0; i < dim; i++)
+        {   Type *t = getType((*args)[i]);
+            if (!t)
+                goto Lfalse;
+            if (!((t->isscalar())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
+
     }
     else if (ident == Id::isUnsigned)
     {
-        ISTYPE(t->isunsigned())
+        for (size_t i = 0; i < dim; i++)
+        {   Type *t = getType((*args)[i]);
+            if (!t)
+                goto Lfalse;
+            if (!((t->isunsigned())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
+
     }
     else if (ident == Id::isAssociativeArray)
     {
-        ISTYPE(t->toBasetype()->ty == Taarray)
+        for (size_t i = 0; i < dim; i++)
+        {   Type *t = getType((*args)[i]);
+            if (!t)
+                goto Lfalse;
+            if (!((t->toBasetype()->ty == Taarray)))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
+
     }
     else if (ident == Id::isStaticArray)
     {
-        ISTYPE(t->toBasetype()->ty == Tsarray)
+        for (size_t i = 0; i < dim; i++)
+        {   Type *t = getType((*args)[i]);
+            if (!t)
+                goto Lfalse;
+            if (!((t->toBasetype()->ty == Tsarray)))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
+
     }
     else if (ident == Id::isAbstractClass)
     {
-        ISTYPE(t->toBasetype()->ty == Tclass && ((TypeClass *)t->toBasetype())->sym->isAbstract())
+        for (size_t i = 0; i < dim; i++)
+        {   Type *t = getType((*args)[i]);
+            if (!t)
+                goto Lfalse;
+            if (!((t->toBasetype()->ty == Tclass && ((TypeClass *)t->toBasetype())->sym->isAbstract())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
+
     }
     else if (ident == Id::isFinalClass)
     {
-        ISTYPE(t->toBasetype()->ty == Tclass && ((TypeClass *)t->toBasetype())->sym->storage_class & STCfinal)
+        for (size_t i = 0; i < dim; i++)
+        {   Type *t = getType((*args)[i]);
+            if (!t)
+                goto Lfalse;
+            if (!((t->toBasetype()->ty == Tclass && ((TypeClass *)t->toBasetype())->sym->storage_class & STCfinal)))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
+
     }
     else if (ident == Id::isPOD)
     {
@@ -251,40 +315,112 @@ Expression *TraitsExp::semantic(Scope *sc)
     else if (ident == Id::isAbstractFunction)
     {
         FuncDeclaration *f;
-        ISDSYMBOL((f = s->isFuncDeclaration()) != NULL && f->isAbstract())
+        for (size_t i = 0; i < dim; i++)
+        {   Dsymbol *s = getDsymbol((*args)[i]);
+            if (!s)
+                goto Lfalse;
+            if (!(((f = s->isFuncDeclaration()) != NULL && f->isAbstract())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
     }
     else if (ident == Id::isVirtualFunction)
     {
         FuncDeclaration *f;
-        ISDSYMBOL((f = s->isFuncDeclaration()) != NULL && f->isVirtual())
+        for (size_t i = 0; i < dim; i++)
+        {   Dsymbol *s = getDsymbol((*args)[i]);
+            if (!s)
+                goto Lfalse;
+            if (!(((f = s->isFuncDeclaration()) != NULL && f->isVirtual())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
     }
     else if (ident == Id::isVirtualMethod)
     {
         FuncDeclaration *f;
-        ISDSYMBOL((f = s->isFuncDeclaration()) != NULL && f->isVirtualMethod())
+        for (size_t i = 0; i < dim; i++)
+        {   Dsymbol *s = getDsymbol((*args)[i]);
+            if (!s)
+                goto Lfalse;
+            if (!(((f = s->isFuncDeclaration()) != NULL && f->isVirtualMethod())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
     }
     else if (ident == Id::isFinalFunction)
     {
         FuncDeclaration *f;
-        ISDSYMBOL((f = s->isFuncDeclaration()) != NULL && f->isFinalFunc())
+        for (size_t i = 0; i < dim; i++)
+        {   Dsymbol *s = getDsymbol((*args)[i]);
+            if (!s)
+                goto Lfalse;
+            if (!(((f = s->isFuncDeclaration()) != NULL && f->isFinalFunc())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
     }
 #if DMDV2
     else if (ident == Id::isStaticFunction)
     {
         FuncDeclaration *f;
-        ISDSYMBOL((f = s->isFuncDeclaration()) != NULL && !f->needThis() && !f->isNested())
+        for (size_t i = 0; i < dim; i++)
+        {   Dsymbol *s = getDsymbol((*args)[i]);
+            if (!s)
+                goto Lfalse;
+            if (!(((f = s->isFuncDeclaration()) != NULL && !f->needThis() && !f->isNested())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
     }
     else if (ident == Id::isRef)
     {
-        ISDSYMBOL((d = s->isDeclaration()) != NULL && d->isRef())
+        for (size_t i = 0; i < dim; i++)
+        {   Dsymbol *s = getDsymbol((*args)[i]);
+            if (!s)
+                goto Lfalse;
+            if (!(((d = s->isDeclaration()) != NULL && d->isRef())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
     }
     else if (ident == Id::isOut)
     {
-        ISDSYMBOL((d = s->isDeclaration()) != NULL && d->isOut())
+        for (size_t i = 0; i < dim; i++)
+        {   Dsymbol *s = getDsymbol((*args)[i]);
+            if (!s)
+                goto Lfalse;
+            if (!(((d = s->isDeclaration()) != NULL && d->isOut())))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
     }
     else if (ident == Id::isLazy)
     {
-        ISDSYMBOL((d = s->isDeclaration()) != NULL && d->storage_class & STClazy)
+        for (size_t i = 0; i < dim; i++)
+        {   Dsymbol *s = getDsymbol((*args)[i]);
+            if (!s)
+                goto Lfalse;
+            if (!(((d = s->isDeclaration()) != NULL && d->storage_class & STClazy)))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
     }
     else if (ident == Id::identifier)
     {   // Get identifier for symbol as a string literal
@@ -757,7 +893,16 @@ Expression *TraitsExp::semantic(Scope *sc)
     else if (ident == Id::isOverrideFunction)
     {
         FuncDeclaration *f;
-        ISDSYMBOL((f = s->isFuncDeclaration()) != NULL && f->isOverride())
+        for (size_t i = 0; i < dim; i++)
+        {   Dsymbol *s = getDsymbol((*args)[i]);
+            if (!s)
+                goto Lfalse;
+            if (!((f = s->isFuncDeclaration()) != NULL && f->isOverride()))
+                goto Lfalse;
+        }
+        if (!dim)
+            goto Lfalse;
+        goto Ltrue;
     }
     else
     {   error("unrecognized trait %s", ident->toChars());
