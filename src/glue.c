@@ -1000,13 +1000,13 @@ void FuncDeclaration::toObjFile(int multiobj)
             StringExp *se = StringExp::factory(Loc(), s->Sident);
             se->type = Type::tstring;
             se->type = se->type->semantic(Loc(), NULL);
-            FuncDeclaration *fdpro = FuncDeclaration::genCfunc(NULL, Type::tvoid, "trace_pro");
+            FuncDeclaration *fdpro = FuncDeclaration::genCfunc(Type::tvoid, "trace_pro");
             Expression *ec = VarExp::factory(Loc(), fdpro);
             Expression *e = CallExp::factory(Loc(), ec, se);
             e->type = Type::tvoid;
             Statement *sp = ExpStatement::factory(loc, e);
 
-            FuncDeclaration *fdepi = FuncDeclaration::genCfunc(NULL, Type::tvoid, "_c_trace_epi");
+            FuncDeclaration *fdepi = FuncDeclaration::genCfunc(Type::tvoid, "_c_trace_epi");
             ec = VarExp::factory(Loc(), fdepi);
             e = CallExp::factory(Loc(), ec);
             e->type = Type::tvoid;

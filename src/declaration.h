@@ -723,6 +723,7 @@ public:
     Parameters *getParameters(int *pvarargs);
 
     static FuncDeclaration *genCfunc(Parameters *args, Type *treturn, const char *name);
+    static FuncDeclaration *genCfunc(Type *treturn, const char *name);
     static FuncDeclaration *genCfunc(Parameters *args, Type *treturn, Identifier *id);
 
     Symbol *toSymbol();

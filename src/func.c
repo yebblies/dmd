@@ -3466,6 +3466,11 @@ FuncDeclaration *FuncDeclaration::genCfunc(Parameters *args, Type *treturn, cons
     return genCfunc(args, treturn, Lexer::idPool(name));
 }
 
+FuncDeclaration *FuncDeclaration::genCfunc(Type *treturn, const char *name)
+{
+    return genCfunc(NULL, treturn, Lexer::idPool(name));
+}
+
 FuncDeclaration *FuncDeclaration::genCfunc(Parameters *args, Type *treturn, Identifier *id)
 {
     FuncDeclaration *fd;
