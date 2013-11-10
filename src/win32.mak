@@ -149,7 +149,7 @@ FRONTOBJ= enum.obj struct.obj dsymbol.obj import.obj id.obj \
 	interpret.obj ctfeexpr.obj traits.obj aliasthis.obj \
 	builtin.obj clone.obj arrayop.obj \
 	json.obj unittests.obj imphint.obj argtypes.obj apply.obj sapply.obj \
-	sideeffect.obj intrange.obj canthrow.obj target.obj
+	sideeffect.obj intrange.obj canthrow.obj target.obj visitor.obj
 
 # Glue layer
 GLUEOBJ=glue.obj msc.obj s2ir.obj todt.obj e2ir.obj tocsym.obj \
@@ -196,7 +196,7 @@ SRCS= mars.c enum.c struct.c dsymbol.c import.c idgen.c impcnvgen.c utf.h \
 	clone.c lib.h arrayop.c \
 	aliasthis.h aliasthis.c json.h json.c unittests.c imphint.c argtypes.c \
 	apply.c sapply.c sideeffect.c ctfe.h \
-	intrange.h intrange.c canthrow.c target.c target.h
+	intrange.h intrange.c canthrow.c target.c target.h visitor.h visitor.c
 
 # Glue layer
 GLUESRC= glue.c msc.c s2ir.c todt.c e2ir.c tocsym.c \
@@ -400,7 +400,7 @@ verstr.h : ..\VERSION
 total.sym : $(ROOT)\root.h mars.h lexer.h parse.h enum.h dsymbol.h \
 	mtype.h expression.h attrib.h init.h cond.h version.h \
 	declaration.h statement.h scope.h import.h module.h id.h \
-	template.h aggregate.h arraytypes.h lib.h total.h
+	template.h aggregate.h arraytypes.h lib.h total.h visitor.h
 	$(CC) -c $(CFLAGS) -HFtotal.sym total.h
 
 # Generated source
@@ -724,3 +724,4 @@ mtype.obj : $(TOTALH) mtype.h mtype.c
 utf.obj : utf.h utf.c
 template.obj : $(TOTALH) template.h template.c
 version.obj : $(TOTALH) identifier.h dsymbol.h cond.h version.h version.c
+visitor.obj : $(TOTALH) visitor.h visitor.c

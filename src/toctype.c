@@ -19,6 +19,7 @@
 #include "declaration.h"
 #include "enum.h"
 #include "aggregate.h"
+#include "visitor.h"
 
 #include "cc.h"
 #include "global.h"
@@ -27,6 +28,24 @@
 void slist_add(Symbol *s);
 void slist_reset();
 
+class ToCTypeVisitor : SuperVisitor
+{
+public:
+    type *result;
+
+    void visit(Type *t);
+    void visit(TypeVector *t);
+    void visit(TypeSArray *t);
+    void visit(TypeDArray *t);
+    void visit(TypeAArray *t);
+    void visit(TypePointer *t);
+    void visit(TypeFunction *t);
+    void visit(TypeDelegate *t);
+    void visit(TypeStruct *t);
+    void visit(TypeEnum *t);
+    void visit(TypeTypedef *t);
+    void visit(TypeClass *t);
+};
 
 /***************************************
  * Convert from D type to C type.
@@ -35,11 +54,18 @@ void slist_reset();
 
 type *Type::toCtype()
 {
-    if (!ctype)
-    {   ctype = type_fake(totym());
-        ctype->Tcount++;
+    ToCTypeVisitor v;
+    accept(&v);
+    return v.result;
+}
+
+void ToCTypeVisitor::visit(Type *t)
+{
+    if (!t->ctype)
+    {   t->ctype = type_fake(t->totym());
+        t->ctype->Tcount++;
     }
-    return ctype;
+    result = t->ctype;
 }
 
 type *Type::toCParamtype()
@@ -52,50 +78,49 @@ type *TypeSArray::toCParamtype()
     return toCtype();
 }
 
-type *TypeVector::toCtype()
+void ToCTypeVisitor::visit(TypeVector *t)
 {
-    return Type::toCtype();
+    visit((Type *)t);
 }
 
-type *TypeSArray::toCtype()
+void ToCTypeVisitor::visit(TypeSArray *t)
 {
-    if (!ctype)
-        ctype = type_static_array(dim->toInteger(), next->toCtype());
-    return ctype;
+    if (!t->ctype)
+        t->ctype = type_static_array(t->dim->toInteger(), t->next->toCtype());
+    result = t->ctype;
 }
 
-type *TypeDArray::toCtype()
+void ToCTypeVisitor::visit(TypeDArray *t)
 {
-    if (!ctype)
+    if (!t->ctype)
     {
-        ctype = type_dyn_array(next->toCtype());
-        ctype->Tident = toChars(); // needed to generate sensible debug info for cv8
+        t->ctype = type_dyn_array(t->next->toCtype());
+        t->ctype->Tident = t->toChars(); // needed to generate sensible debug info for cv8
     }
-    return ctype;
+    result = t->ctype;
 }
 
-
-type *TypeAArray::toCtype()
+void ToCTypeVisitor::visit(TypeAArray *t)
 {
-    if (!ctype)
-        ctype = type_assoc_array(index->toCtype(), next->toCtype());
-    return ctype;
+    if (!t->ctype)
+        t->ctype = type_assoc_array(t->index->toCtype(), t->next->toCtype());
+    result = t->ctype;
 }
 
 
-type *TypePointer::toCtype()
+void ToCTypeVisitor::visit(TypePointer *t)
 {
     //printf("TypePointer::toCtype() %s\n", toChars());
-    if (!ctype)
-        ctype = type_pointer(next->toCtype());
-    return ctype;
+    if (!t->ctype)
+        t->ctype = type_pointer(t->next->toCtype());
+    result = t->ctype;
 }
 
-type *TypeFunction::toCtype()
+void ToCTypeVisitor::visit(TypeFunction *t)
 {
-    if (!ctype)
+    if (!t->ctype)
     {
-        size_t nparams = Parameter::dim(parameters);
+        size_t nparams = Parameter::dim(t->parameters);
 
         type *tmp[10];
         type **ptypes = tmp;
@@ -103,154 +128,154 @@ type *TypeFunction::toCtype()
             ptypes = (type **)malloc(sizeof(type*) * nparams);
 
         for (size_t i = 0; i < nparams; i++)
-        {   Parameter *arg = Parameter::getNth(parameters, i);
+        {   Parameter *arg = Parameter::getNth(t->parameters, i);
             type *tp = arg->type->toCtype();
             if (arg->storageClass & (STCout | STCref))
                 tp = type_allocn(TYref, tp);
             ptypes[i] = tp;
         }
 
-        ctype = type_function(totym(), ptypes, nparams, varargs == 1, next->toCtype());
+        t->ctype = type_function(t->totym(), ptypes, nparams, t->varargs == 1, t->next->toCtype());
 
         if (nparams > 10)
             free(ptypes);
     }
-    return ctype;
+    result = t->ctype;
 }
 
-type *TypeDelegate::toCtype()
+void ToCTypeVisitor::visit(TypeDelegate *t)
 {
-    if (!ctype)
-        ctype = type_delegate(next->toCtype());
-    return ctype;
+    if (!t->ctype)
+        t->ctype = type_delegate(t->next->toCtype());
+    result = t->ctype;
 }
 
-
-type *TypeStruct::toCtype()
+void ToCTypeVisitor::visit(TypeStruct *t)
 {
-    if (ctype)
-        return ctype;
+    if (t->ctype)
+    {
+        result = t->ctype;
+        return;
+    }
 
     //printf("TypeStruct::toCtype() '%s'\n", sym->toChars());
-    Type *tm = mutableOf();
+    Type *tm = t->mutableOf();
     if (tm->ctype)
     {
         Symbol *s = tm->ctype->Ttag;
-        type *t = type_alloc(TYstruct);
-        t->Ttag = (Classsym *)s;            // structure tag name
-        t->Tcount++;
+        t->ctype = type_alloc(TYstruct);
+        t->ctype->Ttag = (Classsym *)s;            // structure tag name
+        t->ctype->Tcount++;
         // Add modifiers
-        switch (mod)
+        switch (t->mod)
         {
             case 0:
                 assert(0);
                 break;
             case MODconst:
             case MODwild:
-                t->Tty |= mTYconst;
+                t->ctype->Tty |= mTYconst;
                 break;
             case MODimmutable:
-                t->Tty |= mTYimmutable;
+                t->ctype->Tty |= mTYimmutable;
                 break;
             case MODshared:
-                t->Tty |= mTYshared;
+                t->ctype->Tty |= mTYshared;
                 break;
             case MODshared | MODwild:
             case MODshared | MODconst:
-                t->Tty |= mTYshared | mTYconst;
+                t->ctype->Tty |= mTYshared | mTYconst;
                 break;
             default:
                 assert(0);
         }
-        ctype = t;
     }
     else
     {
-        type *t = type_struct_class(sym->toPrettyChars(), sym->alignsize, sym->structsize,
-                sym->arg1type ? sym->arg1type->toCtype() : NULL,
-                sym->arg2type ? sym->arg2type->toCtype() : NULL,
-                sym->isUnionDeclaration() != 0,
+        t->ctype = type_struct_class(t->sym->toPrettyChars(), t->sym->alignsize, t->sym->structsize,
+                t->sym->arg1type ? t->sym->arg1type->toCtype() : NULL,
+                t->sym->arg2type ? t->sym->arg2type->toCtype() : NULL,
+                t->sym->isUnionDeclaration() != 0,
                 false,
-                sym->isPOD() != 0);
+                t->sym->isPOD() != 0);
 
-        tm->ctype = t;
-        ctype = t;
+        tm->ctype = t->ctype;
 
         /* Add in fields of the struct
          * (after setting ctype to avoid infinite recursion)
          */
         if (global.params.symdebug)
-            for (size_t i = 0; i < sym->fields.dim; i++)
-            {   VarDeclaration *v = sym->fields[i];
+            for (size_t i = 0; i < t->sym->fields.dim; i++)
+            {   VarDeclaration *v = t->sym->fields[i];
 
-                symbol_struct_addField(t->Ttag, v->ident->toChars(), v->type->toCtype(), v->offset);
+                symbol_struct_addField(t->ctype->Ttag, v->ident->toChars(), v->type->toCtype(), v->offset);
             }
     }
 
     //printf("t = %p, Tflags = x%x\n", ctype, ctype->Tflags);
-    return ctype;
+    result = t->ctype;
 }
 
-type *TypeEnum::toCtype()
+void ToCTypeVisitor::visit(TypeEnum *t)
 {
-    if (ctype)
-        return ctype;
+    if (t->ctype)
+    {
+        result = t->ctype;
+        return;
+    }
 
     //printf("TypeEnum::toCtype() '%s'\n", sym->toChars());
-    type *t;
-    Type *tm = mutableOf();
+    Type *tm = t->mutableOf();
     if (tm->ctype && tybasic(tm->ctype->Tty) == TYenum)
     {
         Symbol *s = tm->ctype->Ttag;
         assert(s);
-        t = type_alloc(TYenum);
-        t->Ttag = (Classsym *)s;            // enum tag name
-        t->Tcount++;
-        t->Tnext = tm->ctype->Tnext;
-        t->Tnext->Tcount++;
+        t->ctype = type_alloc(TYenum);
+        t->ctype->Ttag = (Classsym *)s;            // enum tag name
+        t->ctype->Tcount++;
+        t->ctype->Tnext = tm->ctype->Tnext;
+        t->ctype->Tnext->Tcount++;
         // Add modifiers
-        switch (mod)
+        switch (t->mod)
         {
             case 0:
                 assert(0);
                 break;
             case MODconst:
             case MODwild:
-                t->Tty |= mTYconst;
+                t->ctype->Tty |= mTYconst;
                 break;
             case MODimmutable:
-                t->Tty |= mTYimmutable;
+                t->ctype->Tty |= mTYimmutable;
                 break;
             case MODshared:
-                t->Tty |= mTYshared;
+                t->ctype->Tty |= mTYshared;
                 break;
             case MODshared | MODwild:
             case MODshared | MODconst:
-                t->Tty |= mTYshared | mTYconst;
+                t->ctype->Tty |= mTYshared | mTYconst;
                 break;
             default:
                 assert(0);
         }
-        ctype = t;
     }
-    else if (sym->memtype->toBasetype()->ty == Tint32)
+    else if (t->sym->memtype->toBasetype()->ty == Tint32)
     {
-        t = type_enum(sym->toPrettyChars(), sym->memtype->toCtype());
-        tm->ctype = t;
-        ctype = t;
+        t->ctype = type_enum(t->sym->toPrettyChars(), t->sym->memtype->toCtype());
+        tm->ctype = t->ctype;
     }
     else
     {
-        t = ctype = sym->memtype->toCtype();
+        t->ctype = t->sym->memtype->toCtype();
     }
 
     //printf("t = %p, Tflags = x%x\n", t, t->Tflags);
-    return t;
+    result = t->ctype;
 }
 
-type *TypeTypedef::toCtype()
+void ToCTypeVisitor::visit(TypeTypedef *t)
 {
-    return sym->basetype->toCtype();
+    result = t->sym->basetype->toCtype();
 }
 
 type *TypeTypedef::toCParamtype()
@@ -258,31 +283,34 @@ type *TypeTypedef::toCParamtype()
     return sym->basetype->toCParamtype();
 }
 
-type *TypeClass::toCtype()
+void ToCTypeVisitor::visit(TypeClass *t)
 {
     //printf("TypeClass::toCtype() %s\n", toChars());
-    if (ctype)
-        return ctype;
+    if (t->ctype)
+    {
+        result = t->ctype;
+        return;
+    }
 
-    type *t = type_struct_class(sym->toPrettyChars(), sym->alignsize, sym->structsize,
+    t->ctype = type_struct_class(t->sym->toPrettyChars(), t->sym->alignsize, t->sym->structsize,
             NULL,
             NULL,
             false,
             true,
             true);
 
-    ctype = type_pointer(t);
+    t->ctype = type_pointer(t->ctype);
 
     /* Add in fields of the class
      * (after setting ctype to avoid infinite recursion)
      */
     if (global.params.symdebug)
-        for (size_t i = 0; i < sym->fields.dim; i++)
-        {   VarDeclaration *v = sym->fields[i];
+        for (size_t i = 0; i < t->sym->fields.dim; i++)
+        {   VarDeclaration *v = t->sym->fields[i];
 
-            symbol_struct_addField(t->Ttag, v->ident->toChars(), v->type->toCtype(), v->offset);
+            symbol_struct_addField(t->ctype->Ttag, v->ident->toChars(), v->type->toCtype(), v->offset);
         }
 
-    return ctype;
+    result = t->ctype;
 }
 
