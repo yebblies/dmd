@@ -570,11 +570,7 @@ void TryCatchStatement::ctfeCompile(CompiledCtfeFunction *ccf)
         body->ctfeCompile(ccf);
     for (size_t i = 0; i < catches->dim; i++)
     {
-#if DMDV1
-        Catch *ca = (Catch *)catches->data[i];
-#else
         Catch *ca = catches->tdata()[i];
-#endif
         if (ca->var)
             ccf->onDeclaration(ca->var);
         if (ca->handler)
@@ -1760,11 +1756,7 @@ Expression *TryCatchStatement::interpret(InterState *istate)
     // Search for an appropriate catch clause.
     for (size_t i = 0; i < catches->dim; i++)
     {
-#if DMDV1
-        Catch *ca = (Catch *)catches->data[i];
-#else
         Catch *ca = (*catches)[i];
-#endif
         Type *catype = ca->type;
 
         if (catype->equals(extype) || catype->isBaseOf(extype, NULL))
@@ -6314,28 +6306,6 @@ Expression *evaluateIfBuiltin(InterState *istate, Loc loc,
             return interpret_aaApply(istate, firstarg, (Expression *)(arguments->data[2]));
         if (nargs==3 && isAssocArray(firstarg->type) &&!strcmp(fd->ident->string, "_aaApply2"))
             return interpret_aaApply(istate, firstarg, (Expression *)(arguments->data[2]));
-    }
-#endif
-#if DMDV1
-    if (!pthis)
-    {
-        Expression *firstarg =  nargs > 0 ? (Expression *)(arguments->data[0]) : NULL;
-        if (firstarg && firstarg->type->toBasetype()->ty == Taarray)
-        {
-            TypeAArray *firstAAtype = (TypeAArray *)firstarg->type;
-            if (fd->ident == Id::aaLen && nargs == 1)
-                return interpret_length(istate, firstarg);
-            else if (fd->ident == Id::aaKeys)
-                return interpret_keys(istate, firstarg, new DArray(firstAAtype->index));
-            else if (fd->ident == Id::aaValues)
-                return interpret_values(istate, firstarg, new DArray(firstAAtype->nextOf()));
-            else if (nargs==2 && fd->ident == Id::aaRehash)
-                return firstarg->interpret(istate, ctfeNeedLvalue); //no-op
-            else if (nargs==3 && !strcmp(fd->ident->string, "_aaApply"))
-                return interpret_aaApply(istate, firstarg, (Expression *)(arguments->data[2]));
-            else if (nargs==3 && !strcmp(fd->ident->string, "_aaApply2"))
-                return interpret_aaApply(istate, firstarg, (Expression *)(arguments->data[2]));
-        }
     }
 #endif
 #if DMDV2
