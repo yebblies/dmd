@@ -71,6 +71,33 @@ void test8()
 
 /*********************************************************/
 
+
+static assert(is(typeof('X'c) == char));
+static assert(is(typeof('X'w) == wchar));
+static assert(is(typeof('X'd) == dchar));
+
+static assert(is(typeof('\u0041') == wchar));
+static assert(is(typeof('\u0041'c) == char));
+static assert(is(typeof('\u0041'w) == wchar));
+static assert(is(typeof('\u0041'd) == dchar));
+
+static assert(is(typeof('\U00000041') == dchar));
+static assert(is(typeof('\U00000041'c) == char));
+static assert(is(typeof('\U00000041'w) == wchar));
+static assert(is(typeof('\U00000041'd) == dchar));
+
+static assert(is(typeof('\u2028') == wchar));
+// static assert(is(typeof('\u2028'c) == char));
+static assert(is(typeof('\u2028'w) == wchar));
+static assert(is(typeof('\u2028'd) == dchar));
+
+static assert(is(typeof('\U00FFFFFF') == dchar));
+// static assert(is(typeof('\U00FFFFFF'c) == char));
+// static assert(is(typeof('\U00FFFFFF'w) == wchar));
+static assert(is(typeof('\U00FFFFFF'd) == dchar));
+
+/*********************************************************/
+
 // bug 6584
 version(9223372036854775807){}
 debug(9223372036854775807){}

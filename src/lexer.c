@@ -1806,6 +1806,27 @@ TOK Lexer::charConstant(Token *t, int wide)
         return tk;
     }
     p++;
+    t->value = tk;
+    stringPostfix(t);
+    if (t->postfix)
+    {
+        if (t->postfix == 'c')
+        {
+            if (t->uns64value > 0xFF)
+                error("character constant '%s' does not fit in utf-8 character", t->toChars());
+            tk = TOKcharv;
+        }
+        else if (t->postfix == 'w')
+        {
+            if (!(t->uns64value < 0xD800 || (t->uns64value >= 0xE000 && t->uns64value < 0xFFFE)))
+                error("character constant '%s' does not fit in utf-16 character", t->toChars());
+            tk = TOKwcharv;
+        }
+        else if (t->postfix == 'd')
+        {
+            tk = TOKdcharv;
+        }
+    }
     return tk;
 }
 
