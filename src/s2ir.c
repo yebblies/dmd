@@ -372,8 +372,8 @@ void GotoStatement::toIR(IRState *irs)
     Blockx *blx = irs->blx;
 
     if (!label->statement)
-    {   error("label %s is undefined", label->toChars());
-        return;
+    {   error("Internal error: label %s is undefined", label->toChars());
+        assert(0);
     }
     if (tf != label->statement->tf)
         error("cannot goto forward out of or into finally block");
