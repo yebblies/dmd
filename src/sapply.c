@@ -48,12 +48,15 @@ bool PeelStatement::apply(sapply_fp_t fp, void *param)
 
 bool CompoundStatement::apply(sapply_fp_t fp, void *param)
 {
-    for (size_t i = 0; i < statements->dim; i++)
-    {   Statement *s = (*statements)[i];
+    if (statements)
+    {
+        for (size_t i = 0; i < statements->dim; i++)
+        {   Statement *s = (*statements)[i];
 
-        bool r = scondApply(s, fp, param);
-        if (r)
-            return r;
+            bool r = scondApply(s, fp, param);
+            if (r)
+                return r;
+        }
     }
     return (*fp)(this, param);
 }

@@ -89,6 +89,7 @@ struct Scope
     int noctor;                 // set if constructor calls aren't allowed
     int intypeof;               // in typeof(exp)
     bool speculative;            // in __traits(compiles) or typeof(exp)
+    VarDeclaration *lastVar;    // Previous symbol used to prevent goto-skips-init
 
     unsigned callSuper;         // primitive flow analysis for constructors
     unsigned *fieldinit;
@@ -136,6 +137,7 @@ struct Scope
 
     ClassDeclaration *getClassScope();
     AggregateDeclaration *getStructClassScope();
+    size_t getSymbolCount();
     void setNoFree();
 };
 

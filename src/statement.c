@@ -4457,6 +4457,7 @@ Statement *WithStatement::semantic(Scope *sc)
             return new ErrorStatement();
         }
     }
+    sc->insert(sym);
 
     if (body)
     {
@@ -5027,6 +5028,8 @@ GotoStatement::GotoStatement(Loc loc, Identifier *ident)
     this->ident = ident;
     this->label = NULL;
     this->tf = NULL;
+    this->lastVar = NULL;
+    this->fd = NULL;
 }
 
 Statement *GotoStatement::syntaxCopy()
@@ -5041,6 +5044,8 @@ Statement *GotoStatement::semantic(Scope *sc)
     //printf("GotoStatement::semantic()\n");
     ident = fixupLabelName(sc, ident);
 
+    this->lastVar = sc->lastVar;
+    this->fd = sc->func;
     tf = sc->tf;
     label = fd->searchLabel(ident);
     if (!label->statement && sc->fes)
@@ -5083,6 +5088,25 @@ void GotoStatement::checkLabel()
     {
         error("label '%s' is undefined", label->toChars());
     }
+
+    // printf("======================\n");
+    // printf("%s: goto %s\n", gs->loc.toChars(), gs->label->toChars());
+    // printf("Last symbol: %s\n", gs->lastVar->toPrettyChars());
+    // printf("%s: label %s\n", ls->loc.toChars(), ls->ident->toChars());
+    // printf("Last symbol: %s\n", ls->lastVar->toPrettyChars());
+
+    VarDeclaration *last = lastVar;
+    VarDeclaration *vd = label->statement->lastVar;
+    while (last && last != vd)
+        last = last->lastVar;
+    if (last == vd)
+    {
+        // All good, the label's scope has no variables
+    }
+    else
+    {
+        error("goto skips declaration of variable %s at %s", vd->toPrettyChars(), vd->loc.toChars());
+    }
 }
 
 int GotoStatement::blockExit(bool mustNotThrow)
@@ -5109,6 +5133,7 @@ LabelStatement::LabelStatement(Loc loc, Identifier *ident, Statement *statement)
     this->statement = statement;
     this->tf = NULL;
     this->gotoTarget = NULL;
+    this->lastVar = NULL;
     this->lblock = NULL;
     this->fwdrefs = NULL;
 }
@@ -5123,6 +5148,7 @@ Statement *LabelStatement::semantic(Scope *sc)
 {   LabelDsymbol *ls;
     FuncDeclaration *fd = sc->parent->isFuncDeclaration();
 
+    this->lastVar = sc->lastVar;
     //printf("LabelStatement::semantic()\n");
     ident = fixupLabelName(sc, ident);
 

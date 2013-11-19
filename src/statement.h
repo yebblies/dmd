@@ -138,6 +138,7 @@ public:
     virtual CaseStatement *isCaseStatement() { return NULL; }
     virtual DefaultStatement *isDefaultStatement() { return NULL; }
     virtual LabelStatement *isLabelStatement() { return NULL; }
+    virtual GotoStatement *isGotoStatement() { return NULL; }
 };
 
 /** Any Statement that fails semantic() or has a component that is an ErrorExp or
@@ -886,6 +887,8 @@ public:
     Identifier *ident;
     LabelDsymbol *label;
     TryFinallyStatement *tf;
+    VarDeclaration *lastVar;
+    FuncDeclaration *fd;
 
     GotoStatement(Loc loc, Identifier *ident);
     Statement *syntaxCopy();
@@ -897,6 +900,7 @@ public:
 
     void toIR(IRState *irs);
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
+    GotoStatement *isGotoStatement() { return this; }
 };
 
 class LabelStatement : public Statement
@@ -906,6 +910,7 @@ public:
     Statement *statement;
     TryFinallyStatement *tf;
     Statement *gotoTarget;      // interpret
+    VarDeclaration *lastVar;
     block *lblock;              // back end
 
     Blocks *fwdrefs;            // forward references to this LabelStatement
