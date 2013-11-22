@@ -3601,11 +3601,15 @@ Expression *TypeArray::dotExp(Scope *sc, Expression *e, Identifier *ident, int f
     printf("TypeArray::dotExp(e = '%s', ident = '%s')\n", e->toChars(), ident->toChars());
 #endif
 
-    if (!n->isMutable())
-        if (ident == Id::sort || ident == Id::reverse)
-        {   error(e->loc, "can only %s a mutable array", ident->toChars());
+    if (ident == Id::sort || ident == Id::reverse)
+    {
+        if (!n->isMutable())
+        {
+            error(e->loc, "can only %s a mutable array", ident->toChars());
             goto Lerror;
         }
+        warning(e->loc, "array property '%s' is deprecated", ident->toChars());
+    }
 
     if (ident == Id::reverse && (n->ty == Tchar || n->ty == Twchar))
     {
