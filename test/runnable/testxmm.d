@@ -559,6 +559,21 @@ float4 test3()
 
 /*****************************************/
 
+void test9115()
+{
+    float4 a = 0;
+    float4 b = 1;
+    writefln ("a = %(%s %)", a.array);
+    writefln ("b = %(%s %)", b.array);
+
+    float4 c = a - b; //this works
+    writefln ("a - b = %(%s %)", c.array); //this doesn't
+
+    writefln ("a - b = %(%s %)", (a-b).array); //this doesn't
+}
+
+/*****************************************/
+
 void test4()
 {
     int4 c = 7;
@@ -1172,6 +1187,7 @@ int main()
     test2f();
     test2g();
     test2h();
+    test9115();
     test2i();
     test2j();
 

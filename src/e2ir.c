@@ -4564,6 +4564,8 @@ Lret:
     // Adjust for any type paints
     t = type->toBasetype();
     e->Ety = t->totym();
+    if (tybasic(e->Ety) == TYstruct)
+        e->ET = t->toCtype();
 
     el_setLoc(e,loc);
     return e;
