@@ -2106,7 +2106,7 @@ Lagain:
                     {   error("foreach: index cannot be ref");
                         goto Lerror2;
                     }
-                    if (!arg->type->equals(taa->index))
+                    if (!taa->index->implicitConvTo(arg->type))
                     {   error("foreach: index must be type %s, not %s", taa->index->toChars(), arg->type->toChars());
                         goto Lerror2;
                     }
