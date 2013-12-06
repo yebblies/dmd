@@ -130,6 +130,7 @@ void cpp_mangle_name(OutBuffer *buf, CppMangleState *cms, Dsymbol *s)
 
         FuncDeclaration *fd = s->isFuncDeclaration();
         VarDeclaration *vd = s->isVarDeclaration();
+        StructDeclaration *sd = s->isStructDeclaration();
         if (fd && fd->type->isConst())
         {
             buf->writeByte('K');
@@ -138,13 +139,14 @@ void cpp_mangle_name(OutBuffer *buf, CppMangleState *cms, Dsymbol *s)
         {
             s->error("C++ static non- __gshared non-extern variables not supported");
         }
-        if (vd || fd)
+        if (vd || fd || sd)
         {
             prefix_name(buf, cms, p);
             source_name(buf, s);
         }
         else
         {
+            printf("%s\n", s->kind());
             assert(0);
         }
         buf->writeByte('E');
@@ -167,10 +169,18 @@ char *cpp_mangle(Dsymbol *s)
     memset(&cms, 0, sizeof(cms));
     cms.components.setDim(0);
 
-    OutBuffer buf;
-    buf.writestring(global.params.isOSX ? "__Z" : "_Z");
+    VarDeclaration *vd = s->isVarDeclaration();
 
-    cpp_mangle_name(&buf, &cms, s);
+    OutBuffer buf;
+    if (vd && vd->toParent() && vd->toParent()->isModule())
+    {
+        buf.writestring(vd->ident->toChars());
+    }
+    else
+    {
+        buf.writestring(global.params.isOSX ? "__Z" : "_Z");
+        cpp_mangle_name(&buf, &cms, s);
+    }
 
     FuncDeclaration *fd = s->isFuncDeclaration();
     if (fd)
@@ -237,7 +247,7 @@ void TypeBasic::toCppMangle(OutBuffer *buf, CppMangleState *cms)
         case Tuns32:    c = 'j';        break;
         case Tfloat32:  c = 'f';        break;
         case Tint64:    c = 'x';        break;
-        case Tuns64:    c = 'y';        break;
+        case Tuns64:    c = 'm';        break;
         case Tfloat64:  c = 'd';        break;
         case Tfloat80:  c = 'e';        break;
         case Tbool:     c = 'b';        break;
