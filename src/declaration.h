@@ -329,6 +329,7 @@ public:
 
     SymbolDeclaration(Loc loc, StructDeclaration *dsym);
 
+    virtual void dummy();
     Symbol *toSymbol();
 
     // Eliminate need for dynamic_cast
@@ -377,6 +378,7 @@ public:
     TypeInfoStructDeclaration(Type *tinfo);
     static TypeInfoStructDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -385,8 +387,9 @@ class TypeInfoClassDeclaration : public TypeInfoDeclaration
 public:
     TypeInfoClassDeclaration(Type *tinfo);
     static TypeInfoClassDeclaration *factory(Type *tinfo);
-    Symbol *toSymbol();
 
+    virtual void dummy();
+    Symbol *toSymbol();
     void toDt(dt_t **pdt);
 };
 
@@ -396,6 +399,7 @@ public:
     TypeInfoInterfaceDeclaration(Type *tinfo);
     static TypeInfoInterfaceDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -405,6 +409,7 @@ public:
     TypeInfoTypedefDeclaration(Type *tinfo);
     static TypeInfoTypedefDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -414,6 +419,7 @@ public:
     TypeInfoPointerDeclaration(Type *tinfo);
     static TypeInfoPointerDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -423,6 +429,7 @@ public:
     TypeInfoArrayDeclaration(Type *tinfo);
     static TypeInfoArrayDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -432,6 +439,7 @@ public:
     TypeInfoStaticArrayDeclaration(Type *tinfo);
     static TypeInfoStaticArrayDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -441,6 +449,7 @@ public:
     TypeInfoAssociativeArrayDeclaration(Type *tinfo);
     static TypeInfoAssociativeArrayDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -450,6 +459,7 @@ public:
     TypeInfoEnumDeclaration(Type *tinfo);
     static TypeInfoEnumDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -459,6 +469,7 @@ public:
     TypeInfoFunctionDeclaration(Type *tinfo);
     static TypeInfoFunctionDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -468,6 +479,7 @@ public:
     TypeInfoDelegateDeclaration(Type *tinfo);
     static TypeInfoDelegateDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -477,6 +489,7 @@ public:
     TypeInfoTupleDeclaration(Type *tinfo);
     static TypeInfoTupleDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -486,6 +499,7 @@ public:
     TypeInfoConstDeclaration(Type *tinfo);
     static TypeInfoConstDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -495,6 +509,7 @@ public:
     TypeInfoInvariantDeclaration(Type *tinfo);
     static TypeInfoInvariantDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -504,6 +519,7 @@ public:
     TypeInfoSharedDeclaration(Type *tinfo);
     static TypeInfoSharedDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -513,6 +529,7 @@ public:
     TypeInfoWildDeclaration(Type *tinfo);
     static TypeInfoWildDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 
@@ -522,6 +539,7 @@ public:
     TypeInfoVectorDeclaration(Type *tinfo);
     static TypeInfoVectorDeclaration *factory(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
 };
 

@@ -5526,6 +5526,10 @@ SymbolExp::SymbolExp(Loc loc, TOK op, int size, Declaration *var, bool hasOverlo
     this->hasOverloads = hasOverloads;
 }
 
+void SymbolExp::dummy()
+{
+}
+
 /********************** SymOffExp **************************************/
 
 SymOffExp::SymOffExp(Loc loc, Declaration *var, dinteger_t offset, bool hasOverloads)

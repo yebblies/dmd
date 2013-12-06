@@ -678,6 +678,7 @@ public:
 
     SymbolExp(Loc loc, TOK op, int size, Declaration *var, bool hasOverloads);
 
+    virtual void dummy();
     elem *toElem(IRState *irs);
 };
 
