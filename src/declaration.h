@@ -330,6 +330,7 @@ public:
 
     SymbolDeclaration(Loc loc, StructDeclaration *dsym);
 
+    virtual void dummy();
     Symbol *toSymbol();
 
     // Eliminate need for dynamic_cast
@@ -379,6 +380,7 @@ public:
     TypeInfoStructDeclaration(Type *tinfo);
     static TypeInfoStructDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -390,6 +392,7 @@ public:
     static TypeInfoClassDeclaration *create(Type *tinfo);
     Symbol *toSymbol();
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -400,6 +403,7 @@ public:
     TypeInfoInterfaceDeclaration(Type *tinfo);
     static TypeInfoInterfaceDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -410,6 +414,7 @@ public:
     TypeInfoTypedefDeclaration(Type *tinfo);
     static TypeInfoTypedefDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -420,6 +425,7 @@ public:
     TypeInfoPointerDeclaration(Type *tinfo);
     static TypeInfoPointerDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -430,6 +436,7 @@ public:
     TypeInfoArrayDeclaration(Type *tinfo);
     static TypeInfoArrayDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -440,6 +447,7 @@ public:
     TypeInfoStaticArrayDeclaration(Type *tinfo);
     static TypeInfoStaticArrayDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -450,6 +458,7 @@ public:
     TypeInfoAssociativeArrayDeclaration(Type *tinfo);
     static TypeInfoAssociativeArrayDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -460,6 +469,7 @@ public:
     TypeInfoEnumDeclaration(Type *tinfo);
     static TypeInfoEnumDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -470,6 +480,7 @@ public:
     TypeInfoFunctionDeclaration(Type *tinfo);
     static TypeInfoFunctionDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -480,6 +491,7 @@ public:
     TypeInfoDelegateDeclaration(Type *tinfo);
     static TypeInfoDelegateDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -490,6 +502,7 @@ public:
     TypeInfoTupleDeclaration(Type *tinfo);
     static TypeInfoTupleDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -500,6 +513,7 @@ public:
     TypeInfoConstDeclaration(Type *tinfo);
     static TypeInfoConstDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -510,6 +524,7 @@ public:
     TypeInfoInvariantDeclaration(Type *tinfo);
     static TypeInfoInvariantDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -520,6 +535,7 @@ public:
     TypeInfoSharedDeclaration(Type *tinfo);
     static TypeInfoSharedDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -530,6 +546,7 @@ public:
     TypeInfoWildDeclaration(Type *tinfo);
     static TypeInfoWildDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };
@@ -540,6 +557,7 @@ public:
     TypeInfoVectorDeclaration(Type *tinfo);
     static TypeInfoVectorDeclaration *create(Type *tinfo);
 
+    virtual void dummy();
     void toDt(dt_t **pdt);
     void accept(Visitor *v) { v->visit(this); }
 };

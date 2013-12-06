@@ -2137,6 +2137,10 @@ SymbolDeclaration::SymbolDeclaration(Loc loc, StructDeclaration *dsym)
     storage_class |= STCconst;
 }
 
+void SymbolDeclaration::dummy()
+{
+}
+
 /********************************* ClassInfoDeclaration ****************************/
 
 ClassInfoDeclaration::ClassInfoDeclaration(ClassDeclaration *cd)
@@ -2211,6 +2215,10 @@ TypeInfoConstDeclaration *TypeInfoConstDeclaration::create(Type *tinfo)
     return new TypeInfoConstDeclaration(tinfo);
 }
 
+void TypeInfoConstDeclaration::dummy()
+{
+}
+
 /***************************** TypeInfoInvariantDeclaration **********************/
 
 TypeInfoInvariantDeclaration::TypeInfoInvariantDeclaration(Type *tinfo)
@@ -2226,6 +2234,10 @@ TypeInfoInvariantDeclaration::TypeInfoInvariantDeclaration(Type *tinfo)
 TypeInfoInvariantDeclaration *TypeInfoInvariantDeclaration::create(Type *tinfo)
 {
     return new TypeInfoInvariantDeclaration(tinfo);
+}
+
+void TypeInfoInvariantDeclaration::dummy()
+{
 }
 
 /***************************** TypeInfoSharedDeclaration **********************/
@@ -2245,6 +2257,10 @@ TypeInfoSharedDeclaration *TypeInfoSharedDeclaration::create(Type *tinfo)
     return new TypeInfoSharedDeclaration(tinfo);
 }
 
+void TypeInfoSharedDeclaration::dummy()
+{
+}
+
 /***************************** TypeInfoWildDeclaration **********************/
 
 TypeInfoWildDeclaration::TypeInfoWildDeclaration(Type *tinfo)
@@ -2260,6 +2276,10 @@ TypeInfoWildDeclaration::TypeInfoWildDeclaration(Type *tinfo)
 TypeInfoWildDeclaration *TypeInfoWildDeclaration::create(Type *tinfo)
 {
     return new TypeInfoWildDeclaration(tinfo);
+}
+
+void TypeInfoWildDeclaration::dummy()
+{
 }
 
 /***************************** TypeInfoStructDeclaration **********************/
@@ -2279,6 +2299,10 @@ TypeInfoStructDeclaration *TypeInfoStructDeclaration::create(Type *tinfo)
     return new TypeInfoStructDeclaration(tinfo);
 }
 
+void TypeInfoStructDeclaration::dummy()
+{
+}
+
 /***************************** TypeInfoClassDeclaration ***********************/
 
 TypeInfoClassDeclaration::TypeInfoClassDeclaration(Type *tinfo)
@@ -2294,6 +2318,10 @@ TypeInfoClassDeclaration::TypeInfoClassDeclaration(Type *tinfo)
 TypeInfoClassDeclaration *TypeInfoClassDeclaration::create(Type *tinfo)
 {
     return new TypeInfoClassDeclaration(tinfo);
+}
+
+void TypeInfoClassDeclaration::dummy()
+{
 }
 
 /***************************** TypeInfoInterfaceDeclaration *******************/
@@ -2313,6 +2341,10 @@ TypeInfoInterfaceDeclaration *TypeInfoInterfaceDeclaration::create(Type *tinfo)
     return new TypeInfoInterfaceDeclaration(tinfo);
 }
 
+void TypeInfoInterfaceDeclaration::dummy()
+{
+}
+
 /***************************** TypeInfoTypedefDeclaration *********************/
 
 TypeInfoTypedefDeclaration::TypeInfoTypedefDeclaration(Type *tinfo)
@@ -2328,6 +2360,10 @@ TypeInfoTypedefDeclaration::TypeInfoTypedefDeclaration(Type *tinfo)
 TypeInfoTypedefDeclaration *TypeInfoTypedefDeclaration::create(Type *tinfo)
 {
     return new TypeInfoTypedefDeclaration(tinfo);
+}
+
+void TypeInfoTypedefDeclaration::dummy()
+{
 }
 
 /***************************** TypeInfoPointerDeclaration *********************/
@@ -2347,6 +2383,10 @@ TypeInfoPointerDeclaration *TypeInfoPointerDeclaration::create(Type *tinfo)
     return new TypeInfoPointerDeclaration(tinfo);
 }
 
+void TypeInfoPointerDeclaration::dummy()
+{
+}
+
 /***************************** TypeInfoArrayDeclaration ***********************/
 
 TypeInfoArrayDeclaration::TypeInfoArrayDeclaration(Type *tinfo)
@@ -2362,6 +2402,10 @@ TypeInfoArrayDeclaration::TypeInfoArrayDeclaration(Type *tinfo)
 TypeInfoArrayDeclaration *TypeInfoArrayDeclaration::create(Type *tinfo)
 {
     return new TypeInfoArrayDeclaration(tinfo);
+}
+
+void TypeInfoArrayDeclaration::dummy()
+{
 }
 
 /***************************** TypeInfoStaticArrayDeclaration *****************/
@@ -2381,6 +2425,10 @@ TypeInfoStaticArrayDeclaration *TypeInfoStaticArrayDeclaration::create(Type *tin
     return new TypeInfoStaticArrayDeclaration(tinfo);
 }
 
+void TypeInfoStaticArrayDeclaration::dummy()
+{
+}
+
 /***************************** TypeInfoAssociativeArrayDeclaration ************/
 
 TypeInfoAssociativeArrayDeclaration::TypeInfoAssociativeArrayDeclaration(Type *tinfo)
@@ -2396,6 +2444,10 @@ TypeInfoAssociativeArrayDeclaration::TypeInfoAssociativeArrayDeclaration(Type *t
 TypeInfoAssociativeArrayDeclaration *TypeInfoAssociativeArrayDeclaration::create(Type *tinfo)
 {
     return new TypeInfoAssociativeArrayDeclaration(tinfo);
+}
+
+void TypeInfoAssociativeArrayDeclaration::dummy()
+{
 }
 
 /***************************** TypeInfoVectorDeclaration ***********************/
@@ -2415,6 +2467,10 @@ TypeInfoVectorDeclaration *TypeInfoVectorDeclaration::create(Type *tinfo)
     return new TypeInfoVectorDeclaration(tinfo);
 }
 
+void TypeInfoVectorDeclaration::dummy()
+{
+}
+
 /***************************** TypeInfoEnumDeclaration ***********************/
 
 TypeInfoEnumDeclaration::TypeInfoEnumDeclaration(Type *tinfo)
@@ -2430,6 +2486,10 @@ TypeInfoEnumDeclaration::TypeInfoEnumDeclaration(Type *tinfo)
 TypeInfoEnumDeclaration *TypeInfoEnumDeclaration::create(Type *tinfo)
 {
     return new TypeInfoEnumDeclaration(tinfo);
+}
+
+void TypeInfoEnumDeclaration::dummy()
+{
 }
 
 /***************************** TypeInfoFunctionDeclaration ********************/
@@ -2449,6 +2509,10 @@ TypeInfoFunctionDeclaration *TypeInfoFunctionDeclaration::create(Type *tinfo)
     return new TypeInfoFunctionDeclaration(tinfo);
 }
 
+void TypeInfoFunctionDeclaration::dummy()
+{
+}
+
 /***************************** TypeInfoDelegateDeclaration ********************/
 
 TypeInfoDelegateDeclaration::TypeInfoDelegateDeclaration(Type *tinfo)
@@ -2466,6 +2530,10 @@ TypeInfoDelegateDeclaration *TypeInfoDelegateDeclaration::create(Type *tinfo)
     return new TypeInfoDelegateDeclaration(tinfo);
 }
 
+void TypeInfoDelegateDeclaration::dummy()
+{
+}
+
 /***************************** TypeInfoTupleDeclaration **********************/
 
 TypeInfoTupleDeclaration::TypeInfoTupleDeclaration(Type *tinfo)
@@ -2481,6 +2549,10 @@ TypeInfoTupleDeclaration::TypeInfoTupleDeclaration(Type *tinfo)
 TypeInfoTupleDeclaration *TypeInfoTupleDeclaration::create(Type *tinfo)
 {
     return new TypeInfoTupleDeclaration(tinfo);
+}
+
+void TypeInfoTupleDeclaration::dummy()
+{
 }
 
 /********************************* ThisDeclaration ****************************/
