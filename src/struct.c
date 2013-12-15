@@ -989,7 +989,7 @@ bool StructDeclaration::fill(Loc loc, Expressions *elements, bool ctorinit)
  */
 bool StructDeclaration::isPOD()
 {
-    if (enclosing || cpctor || postblit || ctor || dtor)
+    if (enclosing || cpctor || postblit || dtor)
         return false;
 
     /* Recursively check any fields have a constructor.
