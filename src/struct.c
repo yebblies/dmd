@@ -1001,7 +1001,7 @@ bool StructDeclaration::isPOD()
 
     ispod = ISPODyes;
 
-    if (enclosing || cpctor || postblit || ctor || dtor)
+    if (enclosing || cpctor || postblit || dtor)
         ispod = ISPODno;
 
     // Recursively check all fields are POD.
