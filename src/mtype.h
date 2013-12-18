@@ -669,6 +669,7 @@ public:
 
     int inuse;
 
+    TypeFunction(Type *treturn, int varargs, LINK linkage, StorageClass stc = 0);
     TypeFunction(Parameters *parameters, Type *treturn, int varargs, LINK linkage, StorageClass stc = 0);
     const char *kind();
     Type *syntaxCopy();

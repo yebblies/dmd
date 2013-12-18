@@ -999,11 +999,9 @@ void FuncDeclaration::toObjFile(int multiobj)
             StringExp *se = new StringExp(Loc(), s->Sident);
             se->type = new TypeDArray(Type::tchar->immutableOf());
             se->type = se->type->semantic(Loc(), NULL);
-            Expressions *exps = new Expressions();
-            exps->push(se);
             FuncDeclaration *fdpro = FuncDeclaration::genCfunc(NULL, Type::tvoid, "trace_pro");
             Expression *ec = new VarExp(Loc(), fdpro);
-            Expression *e = new CallExp(Loc(), ec, exps);
+            Expression *e = new CallExp(Loc(), ec, se);
             e->type = Type::tvoid;
             Statement *sp = new ExpStatement(loc, e);
 

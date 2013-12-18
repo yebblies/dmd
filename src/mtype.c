@@ -5144,6 +5144,42 @@ int TypeReference::isZeroInit(Loc loc)
 
 /***************************** TypeFunction *****************************/
 
+TypeFunction::TypeFunction(Type *treturn, int varargs, LINK linkage, StorageClass stc)
+    : TypeNext(Tfunction, treturn)
+{
+//if (!treturn) *(char*)0=0;
+//    assert(treturn);
+    assert(0 <= varargs && varargs <= 2);
+    this->parameters = NULL;
+    this->varargs = varargs;
+    this->linkage = linkage;
+    this->inuse = 0;
+    this->isnothrow = false;
+    this->purity = PUREimpure;
+    this->isproperty = false;
+    this->isref = false;
+    this->iswild = false;
+    this->fargs = NULL;
+
+    if (stc & STCpure)
+        this->purity = PUREfwdref;
+    if (stc & STCnothrow)
+        this->isnothrow = true;
+    if (stc & STCproperty)
+        this->isproperty = true;
+
+    if (stc & STCref)
+        this->isref = true;
+
+    this->trust = TRUSTdefault;
+    if (stc & STCsafe)
+        this->trust = TRUSTsafe;
+    if (stc & STCsystem)
+        this->trust = TRUSTsystem;
+    if (stc & STCtrusted)
+        this->trust = TRUSTtrusted;
+}
+
 TypeFunction::TypeFunction(Parameters *parameters, Type *treturn, int varargs, LINK linkage, StorageClass stc)
     : TypeNext(Tfunction, treturn)
 {
