@@ -9136,8 +9136,7 @@ TypeTuple::TypeTuple(Parameters *arguments)
  * Assume exps[] is already tuple expanded.
  */
 
-TypeTuple::TypeTuple(Expressions *exps)
-    : Type(Ttuple)
+TypeTuple *TypeTuple::fromExps(Expressions *exps)
 {
     Parameters *arguments = new Parameters;
     if (exps)
@@ -9151,7 +9150,8 @@ TypeTuple::TypeTuple(Expressions *exps)
             (*arguments)[i] = arg;
         }
     }
-    this->arguments = arguments;
+    arguments = arguments;
+    return new TypeTuple(arguments);
     //printf("TypeTuple() %p, %s\n", this, toChars());
 }
 

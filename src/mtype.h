@@ -1017,7 +1017,8 @@ public:
     Parameters *arguments;      // types making up the tuple
 
     TypeTuple(Parameters *arguments);
-    TypeTuple(Expressions *exps);
+    //TypeTuple(Expressions *exps);
+    static TypeTuple *fromExps(Expressions *exps);
     TypeTuple();
     TypeTuple(Type *t1);
     TypeTuple(Type *t1, Type *t2);

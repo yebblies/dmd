@@ -741,7 +741,7 @@ Expression *ctfeInterpretForPragmaMsg(Expression *e)
     {
         TupleExp *te = new TupleExp(e->loc, expsx);
         expandTuples(te->exps);
-        te->type = new TypeTuple(te->exps);
+        te->type = TypeTuple::fromExps(te->exps);
         return te;
     }
     return e;
@@ -2635,7 +2635,7 @@ Expression *TupleExp::interpret(InterState *istate, CtfeGoal goal)
     if (expsx)
     {   TupleExp *te = new TupleExp(loc, expsx);
         expandTuples(te->exps);
-        te->type = new TypeTuple(te->exps);
+        te->type = TypeTuple::fromExps(te->exps);
         return te;
     }
     return this;
