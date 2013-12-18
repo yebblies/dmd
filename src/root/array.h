@@ -26,7 +26,7 @@ template <typename TYPE>
 struct Array
 {
     size_t dim;
-    TYPE **data;
+    TYPE *data;
 
   private:
     size_t allocdim;
@@ -79,11 +79,11 @@ struct Array
             if (allocdim == 0)
             {   // Not properly initialized, someone memset it to zero
                 allocdim = nentries;
-                data = (TYPE **)mem.malloc(allocdim * sizeof(*data));
+                data = (TYPE *)mem.malloc(allocdim * sizeof(*data));
             }
             else
             {   allocdim = dim + nentries;
-                data = (TYPE **)mem.realloc(data, allocdim * sizeof(*data));
+                data = (TYPE *)mem.realloc(data, allocdim * sizeof(*data));
             }
         }
     }
@@ -97,12 +97,12 @@ struct Array
         dim = newdim;
     }
 
-    TYPE *pop()
+    TYPE pop()
     {
         return data[--dim];
     }
 
-    void shift(TYPE *ptr)
+    void shift(TYPE ptr)
     {
         reserve(1);
         memmove(data + 1, data, dim * sizeof(*data));
@@ -122,7 +122,7 @@ struct Array
         memset(data,0,dim * sizeof(data[0]));
     }
 
-    TYPE *tos()
+    TYPE tos()
     {
         return dim ? data[dim - 1] : NULL;
     }
@@ -150,12 +150,12 @@ struct Array
         }
     }
 
-    TYPE **tdata()
+    TYPE *tdata()
     {
         return data;
     }
 
-    TYPE*& operator[] (size_t index)
+    TYPE& operator[] (size_t index)
     {
 #ifdef DEBUG
         assert(index < dim);
@@ -163,7 +163,7 @@ struct Array
         return data[index];
     }
 
-    void insert(size_t index, TYPE *v)
+    void insert(size_t index, TYPE v)
     {
         reserve(1);
         memmove(data + index + 1, data + index, (dim - index) * sizeof(*data));
@@ -189,7 +189,7 @@ struct Array
         insert(dim, a);
     }
 
-    void push(TYPE *a)
+    void push(TYPE a)
     {
         reserve(1);
         data[dim++] = a;
@@ -204,11 +204,11 @@ struct Array
         return a;
     }
 
-    typedef int (*Array_apply_ft_t)(TYPE *, void *);
+    typedef int (*Array_apply_ft_t)(TYPE, void *);
     int apply(Array_apply_ft_t fp, void *param)
     {
         for (size_t i = 0; i < dim; i++)
-        {   TYPE *e = (*this)[i];
+        {   TYPE e = (*this)[i];
 
             if (e)
             {

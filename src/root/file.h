@@ -18,8 +18,8 @@
 
 #include "array.h"
 
-template <typename TYPE> struct Array;
-typedef Array<struct File> Files;
+struct File;
+typedef Array<File *> Files;
 
 struct FileName;
 
