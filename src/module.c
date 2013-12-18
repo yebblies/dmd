@@ -250,6 +250,11 @@ Module *Module::load(Loc loc, Identifiers *packages, Identifier *ident)
     return m;
 }
 
+void *Module::get_amodules()
+{
+    return (void *)&amodules;
+}
+
 bool Module::read(Loc loc)
 {
     //printf("Module::read('%s') file '%s'\n", toChars(), srcfile->toChars());

@@ -612,24 +612,25 @@ void FuncDeclaration::toObjFile(int multiobj)
         Module *mi = ti->instantiatingModule;
 
         // If mi imports any root modules, we still need to generate the code.
-        for (size_t i = 0; i < Module::amodules.dim; ++i)
+        Modules *amodules = (Modules *)Module::get_amodules();
+        for (size_t i = 0; i < amodules->dim; ++i)
         {
-            Module *m = Module::amodules[i];
+            Module *m = (*amodules)[i];
             m->insearch = 0;
         }
         bool importsRoot = false;
-        for (size_t i = 0; i < Module::amodules.dim; ++i)
+        for (size_t i = 0; i < amodules->dim; ++i)
         {
-            Module *m = Module::amodules[i];
+            Module *m = (*amodules)[i];
             if (m->isRoot() && mi->imports(m))
             {
                 importsRoot = true;
                 break;
             }
         }
-        for (size_t i = 0; i < Module::amodules.dim; ++i)
+        for (size_t i = 0; i < amodules->dim; ++i)
         {
-            Module *m = Module::amodules[i];
+            Module *m = (*amodules)[i];
             m->insearch = 0;
         }
         if (!importsRoot)
