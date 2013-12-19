@@ -275,7 +275,6 @@ type *type_alloc(tym_t ty)
  * Allocate a TYtemplate.
  */
 
-#if !MARS
 type *type_alloc_template(symbol *s)
 {   type *t;
 
@@ -297,7 +296,6 @@ type *type_alloc_template(symbol *s)
 #endif
     return t;
 }
-#endif
 
 /*****************************
  * Fake a type & initialize it.
@@ -1572,6 +1570,11 @@ static int paramlstmatch(param_t *p1,param_t *p2)
             ;
 }
 
+int matchtemplate(type *t1, type *t2, tym_t t1ty, tym_t t2ty)
+{
+    return tybasic(t1ty) != TYtemplate || ((typetemp_t *)t1)->Tsym == ((typetemp_t *)t2)->Tsym;
+}
+
 /*************************************************
  * A cheap version of exp2.typematch() and exp2.paramlstmatch(),
  * so that we can get cpp_mangle() to work for MARS.
@@ -1613,7 +1616,8 @@ int typematch(type *t1,type *t2,int relax)
 
             (!tyfunc(t1ty) ||
              ((t1->Tflags & TFfixed) == (t2->Tflags & TFfixed) &&
-                 paramlstmatch(t1->Tparamtypes,t2->Tparamtypes) ))
+                 paramlstmatch(t1->Tparamtypes,t2->Tparamtypes) &&
+                 matchtemplate(t1, t2, t1ty, t2ty)))
          ;
 }
 

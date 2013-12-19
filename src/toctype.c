@@ -19,6 +19,7 @@
 #include "declaration.h"
 #include "enum.h"
 #include "aggregate.h"
+#include "template.h"
 
 #include "cc.h"
 #include "global.h"
@@ -82,6 +83,21 @@ type *TypeAArray::toCtype()
     return ctype;
 }
 
+type *toCppType(Type *t)
+{
+    if (t->ty == Tpointer)
+    {
+        return type_pointer(toCppType(t->nextOf()));
+    }
+    else if (t->ty == Tstruct)
+    {
+        if (TemplateInstance *ti = t->toDsymbol(NULL)->toParent()->isTemplateInstance())
+        {
+            return ti->toCtype();
+        }
+    }
+    return t->toCtype();
+}
 
 type *TypePointer::toCtype()
 {
@@ -104,13 +120,14 @@ type *TypeFunction::toCtype()
 
         for (size_t i = 0; i < nparams; i++)
         {   Parameter *arg = Parameter::getNth(parameters, i);
-            type *tp = arg->type->toCtype();
+            type *tp = (linkage == LINKcpp) ? toCppType(arg->type) : arg->type->toCtype();
             if (arg->storageClass & (STCout | STCref))
                 tp = type_allocn(TYref, tp);
             ptypes[i] = tp;
         }
 
-        ctype = type_function(totym(), ptypes, nparams, varargs == 1, next->toCtype());
+        type *tn = (linkage == LINKcpp) ? toCppType(next) : next->toCtype();
+        ctype = type_function(totym(), ptypes, nparams, varargs == 1, tn);
 
         if (nparams > 10)
             free(ptypes);
@@ -288,3 +305,7 @@ type *TypeClass::toCtype()
     return ctype;
 }
 
+type *TemplateInstance::toCtype()
+{
+    return toSymbol()->Stype;
+}

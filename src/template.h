@@ -41,6 +41,12 @@ class Parameter;
 enum MATCH;
 enum PASS;
 
+#ifdef IN_GCC
+typedef union tree_node type;
+#else
+typedef struct TYPE type;
+#endif
+
 class Tuple : public RootObject
 {
 public:
@@ -339,6 +345,9 @@ public:
     hash_t hashCode();
 
     void toObjFile(int multiobj);                       // compile to .obj file
+    Symbol *csym;
+    Symbol *toSymbol();
+    type *toCtype();
 
     // Internal
     bool findTemplateDeclaration(Scope *sc);

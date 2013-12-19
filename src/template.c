@@ -5153,6 +5153,7 @@ TemplateInstance::TemplateInstance(Loc loc, Identifier *ident)
     this->speculative = false;
     this->hash = 0;
     this->fargs = NULL;
+    this->csym = NULL;
 }
 
 /*****************

@@ -589,7 +589,7 @@ STATIC int cpp_protection(symbol *s)
  * Create mangled name for template instantiation.
  */
 
-#if SCPP
+#if SCPP || MARS
 
 char *template_mangle(symbol *s,param_t *arglist)
 {
@@ -697,13 +697,17 @@ char *template_mangle(symbol *s,param_t *arglist)
                         STR("$S");
                     else
                         CHAR('S');
+#if !MARS
                     if (e->EV.ss.Voffset)
                         synerr(EM_const_init);          // constant initializer expected
+#endif
                     cpp_string(e->EV.ss.Vstring,e->EV.ss.Vstrlen);
                     break;
                 case OPrelconst:
+#if !MARS
                     if (e->EV.sp.Voffset)
                         synerr(EM_const_init);          // constant initializer expected
+#endif
                     s = e->EV.sp.Vsym;
                     if (NEWTEMPMANGLE)
                     {   STR("$1");
@@ -1056,6 +1060,22 @@ STATIC void cpp_basic_data_type(type *t)
             }
             else
                 goto Ldefault;
+            break;
+#endif
+#if MARS
+        case TYtemplate:
+            CHAR('U');
+            Mangle save = mangle;
+            Symbol *s = ((typetemp_t *)t)->Tsym;
+            char *p = template_mangle(s, s->Stemplate->TMptpl);
+            int len = mangle.np - mangle.buf;
+            char *q = (char *)malloc(len + 1);
+            memcpy(q, p, len);
+            q[len] = '\0';
+            //printf("%d\t%s\n", len, q);
+            mangle = save;
+            cpp_zname(q);
+            CHAR('@');
             break;
 #endif
 

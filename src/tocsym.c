@@ -27,6 +27,7 @@
 #include "id.h"
 #include "ctfe.h"
 #include "rmem.h"
+#include "template.h"
 
 // Back end
 #include "cc.h"
@@ -551,6 +552,53 @@ Symbol *Module::toSymbol()
         s->Sflags |= SFLnodebug;
         csym = s;
         slist_add(s);
+    }
+    return csym;
+}
+
+/*************************************
+ * Symbol for c++ mangling of templates
+ */
+Symbol *TemplateInstance::toSymbol()
+{
+    if (!csym)
+    {
+        TYPE *t;
+        Symbol *scc;
+
+        scc = symbol_calloc(name->toChars());
+        scc->Sclass = SCtemplate;
+        scc->Stemplate = ((template_t *) mem_fcalloc(sizeof(template_t)));
+
+        param_t *paramtypes = NULL;
+        if (tiargs->dim)
+        {
+            for (size_t i = 0; i < tiargs->dim; i++)
+            {
+                RootObject *o = (*tiargs)[i];
+                Type *ta = isType(o);
+                Expression *ea = isExpression(o);
+                Dsymbol *sa = isDsymbol(o);
+                if (ta)
+                {
+                    param_append_type(&paramtypes, ta->toCtype());
+                }
+                else
+                {
+                    const char *s = ea ? ea->toChars() : sa->toChars();
+                    error("only template type parameters are currently supported when linking with c++, not '%s'", s);
+                    assert(0);
+                }
+            }
+        }
+        scc->Stemplate->TMptpl = paramtypes;
+
+        t = type_alloc_template(scc);
+        t->Tmangle = mTYman_cpp;
+        t->Tcount++;
+        scc->Stype = t;
+        slist_add(scc);
+        csym = scc;
     }
     return csym;
 }
