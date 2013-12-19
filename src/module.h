@@ -111,6 +111,7 @@ public:
     size_t namelen;             // length of module name in characters
 
     Module(const char *arg, Identifier *ident, int doDocComment, int doHdrGen);
+    static Module* factory(const char *arg, Identifier *ident, int doDocComment, int doHdrGen);
 
     static Module *load(Loc loc, Identifiers *packages, Identifier *ident);
     static void *get_amodules();

@@ -117,10 +117,10 @@ void obj_write_deferred(Library *library)
         else
         {
             idbuf.data = NULL;
-            Identifier *id = new Identifier(idstr, TOKidentifier);
+            Identifier *id = Identifier::factory(idstr, TOKidentifier);
 
-            Module *md = new Module(mname, id, 0, 0);
-            md->members = new Dsymbols();
+            Module *md = Module::factory(mname, id, 0, 0);
+            md->members = Dsymbols::factory();
             md->members->push(s);   // its only 'member' is s
             md->doppelganger = 1;       // identify this module as doppelganger
             md->md = m->md;
@@ -146,7 +146,7 @@ void obj_write_deferred(Library *library)
         fname = (char *)namebuf.extractData();
 
         //printf("writing '%s'\n", fname);
-        File *objfile = new File(fname);
+        File *objfile = File::factory(fname);
         obj_end(library, objfile);
     }
     obj_symbols_towrite.dim = 0;
@@ -996,27 +996,27 @@ void FuncDeclaration::toObjFile(int multiobj)
              *   finally
              *     _c_trace_epi();
              */
-            StringExp *se = new StringExp(Loc(), s->Sident);
-            se->type = new TypeDArray(Type::tchar->immutableOf());
+            StringExp *se = StringExp::factory(Loc(), s->Sident);
+            se->type = Type::tstring;
             se->type = se->type->semantic(Loc(), NULL);
             FuncDeclaration *fdpro = FuncDeclaration::genCfunc(NULL, Type::tvoid, "trace_pro");
-            Expression *ec = new VarExp(Loc(), fdpro);
-            Expression *e = new CallExp(Loc(), ec, se);
+            Expression *ec = VarExp::factory(Loc(), fdpro);
+            Expression *e = CallExp::factory(Loc(), ec, se);
             e->type = Type::tvoid;
-            Statement *sp = new ExpStatement(loc, e);
+            Statement *sp = ExpStatement::factory(loc, e);
 
             FuncDeclaration *fdepi = FuncDeclaration::genCfunc(NULL, Type::tvoid, "_c_trace_epi");
-            ec = new VarExp(Loc(), fdepi);
-            e = new CallExp(Loc(), ec);
+            ec = VarExp::factory(Loc(), fdepi);
+            e = CallExp::factory(Loc(), ec);
             e->type = Type::tvoid;
-            Statement *sf = new ExpStatement(loc, e);
+            Statement *sf = ExpStatement::factory(loc, e);
 
             Statement *stf;
             if (sbody->blockExit(tf->isnothrow) == BEfallthru)
-                stf = new CompoundStatement(Loc(), sbody, sf);
+                stf = CompoundStatement::factory(Loc(), sbody, sf);
             else
-                stf = new TryFinallyStatement(Loc(), sbody, sf);
-            sbody = new CompoundStatement(Loc(), sp, stf);
+                stf = TryFinallyStatement::factory(Loc(), sbody, sf);
+            sbody = CompoundStatement::factory(Loc(), sp, stf);
         }
 
         buildClosure(&irs);

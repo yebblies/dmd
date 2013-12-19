@@ -2173,6 +2173,11 @@ TypeInfoDeclaration::TypeInfoDeclaration(Type *tinfo, int internal)
     linkage = LINKc;
 }
 
+TypeInfoDeclaration *TypeInfoDeclaration::factory(Type *tinfo, int internal)
+{
+    return new TypeInfoDeclaration(tinfo, internal);
+}
+
 Dsymbol *TypeInfoDeclaration::syntaxCopy(Dsymbol *s)
 {
     assert(0);          // should never be produced by syntax
@@ -2207,6 +2212,11 @@ TypeInfoConstDeclaration::TypeInfoConstDeclaration(Type *tinfo)
     type = Type::typeinfoconst->type;
 }
 
+TypeInfoConstDeclaration *TypeInfoConstDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoConstDeclaration(tinfo);
+}
+
 /***************************** TypeInfoInvariantDeclaration **********************/
 
 TypeInfoInvariantDeclaration::TypeInfoInvariantDeclaration(Type *tinfo)
@@ -2217,6 +2227,11 @@ TypeInfoInvariantDeclaration::TypeInfoInvariantDeclaration(Type *tinfo)
         ObjectNotFound(Id::TypeInfo_Invariant);
     }
     type = Type::typeinfoinvariant->type;
+}
+
+TypeInfoInvariantDeclaration *TypeInfoInvariantDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoInvariantDeclaration(tinfo);
 }
 
 /***************************** TypeInfoSharedDeclaration **********************/
@@ -2231,6 +2246,11 @@ TypeInfoSharedDeclaration::TypeInfoSharedDeclaration(Type *tinfo)
     type = Type::typeinfoshared->type;
 }
 
+TypeInfoSharedDeclaration *TypeInfoSharedDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoSharedDeclaration(tinfo);
+}
+
 /***************************** TypeInfoWildDeclaration **********************/
 
 TypeInfoWildDeclaration::TypeInfoWildDeclaration(Type *tinfo)
@@ -2241,6 +2261,11 @@ TypeInfoWildDeclaration::TypeInfoWildDeclaration(Type *tinfo)
         ObjectNotFound(Id::TypeInfo_Wild);
     }
     type = Type::typeinfowild->type;
+}
+
+TypeInfoWildDeclaration *TypeInfoWildDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoWildDeclaration(tinfo);
 }
 
 /***************************** TypeInfoStructDeclaration **********************/
@@ -2255,6 +2280,11 @@ TypeInfoStructDeclaration::TypeInfoStructDeclaration(Type *tinfo)
     type = Type::typeinfostruct->type;
 }
 
+TypeInfoStructDeclaration *TypeInfoStructDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoStructDeclaration(tinfo);
+}
+
 /***************************** TypeInfoClassDeclaration ***********************/
 
 TypeInfoClassDeclaration::TypeInfoClassDeclaration(Type *tinfo)
@@ -2265,6 +2295,11 @@ TypeInfoClassDeclaration::TypeInfoClassDeclaration(Type *tinfo)
         ObjectNotFound(Id::TypeInfo_Class);
     }
     type = Type::typeinfoclass->type;
+}
+
+TypeInfoClassDeclaration *TypeInfoClassDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoClassDeclaration(tinfo);
 }
 
 /***************************** TypeInfoInterfaceDeclaration *******************/
@@ -2279,6 +2314,11 @@ TypeInfoInterfaceDeclaration::TypeInfoInterfaceDeclaration(Type *tinfo)
     type = Type::typeinfointerface->type;
 }
 
+TypeInfoInterfaceDeclaration *TypeInfoInterfaceDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoInterfaceDeclaration(tinfo);
+}
+
 /***************************** TypeInfoTypedefDeclaration *********************/
 
 TypeInfoTypedefDeclaration::TypeInfoTypedefDeclaration(Type *tinfo)
@@ -2289,6 +2329,11 @@ TypeInfoTypedefDeclaration::TypeInfoTypedefDeclaration(Type *tinfo)
         ObjectNotFound(Id::TypeInfo_Typedef);
     }
     type = Type::typeinfotypedef->type;
+}
+
+TypeInfoTypedefDeclaration *TypeInfoTypedefDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoTypedefDeclaration(tinfo);
 }
 
 /***************************** TypeInfoPointerDeclaration *********************/
@@ -2303,6 +2348,11 @@ TypeInfoPointerDeclaration::TypeInfoPointerDeclaration(Type *tinfo)
     type = Type::typeinfopointer->type;
 }
 
+TypeInfoPointerDeclaration *TypeInfoPointerDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoPointerDeclaration(tinfo);
+}
+
 /***************************** TypeInfoArrayDeclaration ***********************/
 
 TypeInfoArrayDeclaration::TypeInfoArrayDeclaration(Type *tinfo)
@@ -2313,6 +2363,11 @@ TypeInfoArrayDeclaration::TypeInfoArrayDeclaration(Type *tinfo)
         ObjectNotFound(Id::TypeInfo_Array);
     }
     type = Type::typeinfoarray->type;
+}
+
+TypeInfoArrayDeclaration *TypeInfoArrayDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoArrayDeclaration(tinfo);
 }
 
 /***************************** TypeInfoStaticArrayDeclaration *****************/
@@ -2327,6 +2382,11 @@ TypeInfoStaticArrayDeclaration::TypeInfoStaticArrayDeclaration(Type *tinfo)
     type = Type::typeinfostaticarray->type;
 }
 
+TypeInfoStaticArrayDeclaration *TypeInfoStaticArrayDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoStaticArrayDeclaration(tinfo);
+}
+
 /***************************** TypeInfoAssociativeArrayDeclaration ************/
 
 TypeInfoAssociativeArrayDeclaration::TypeInfoAssociativeArrayDeclaration(Type *tinfo)
@@ -2337,6 +2397,11 @@ TypeInfoAssociativeArrayDeclaration::TypeInfoAssociativeArrayDeclaration(Type *t
         ObjectNotFound(Id::TypeInfo_AssociativeArray);
     }
     type = Type::typeinfoassociativearray->type;
+}
+
+TypeInfoAssociativeArrayDeclaration *TypeInfoAssociativeArrayDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoAssociativeArrayDeclaration(tinfo);
 }
 
 /***************************** TypeInfoVectorDeclaration ***********************/
@@ -2351,6 +2416,11 @@ TypeInfoVectorDeclaration::TypeInfoVectorDeclaration(Type *tinfo)
     type = Type::typeinfovector->type;
 }
 
+TypeInfoVectorDeclaration *TypeInfoVectorDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoVectorDeclaration(tinfo);
+}
+
 /***************************** TypeInfoEnumDeclaration ***********************/
 
 TypeInfoEnumDeclaration::TypeInfoEnumDeclaration(Type *tinfo)
@@ -2361,6 +2431,11 @@ TypeInfoEnumDeclaration::TypeInfoEnumDeclaration(Type *tinfo)
         ObjectNotFound(Id::TypeInfo_Enum);
     }
     type = Type::typeinfoenum->type;
+}
+
+TypeInfoEnumDeclaration *TypeInfoEnumDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoEnumDeclaration(tinfo);
 }
 
 /***************************** TypeInfoFunctionDeclaration ********************/
@@ -2375,6 +2450,11 @@ TypeInfoFunctionDeclaration::TypeInfoFunctionDeclaration(Type *tinfo)
     type = Type::typeinfofunction->type;
 }
 
+TypeInfoFunctionDeclaration *TypeInfoFunctionDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoFunctionDeclaration(tinfo);
+}
+
 /***************************** TypeInfoDelegateDeclaration ********************/
 
 TypeInfoDelegateDeclaration::TypeInfoDelegateDeclaration(Type *tinfo)
@@ -2387,6 +2467,11 @@ TypeInfoDelegateDeclaration::TypeInfoDelegateDeclaration(Type *tinfo)
     type = Type::typeinfodelegate->type;
 }
 
+TypeInfoDelegateDeclaration *TypeInfoDelegateDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoDelegateDeclaration(tinfo);
+}
+
 /***************************** TypeInfoTupleDeclaration **********************/
 
 TypeInfoTupleDeclaration::TypeInfoTupleDeclaration(Type *tinfo)
@@ -2397,6 +2482,11 @@ TypeInfoTupleDeclaration::TypeInfoTupleDeclaration(Type *tinfo)
         ObjectNotFound(Id::TypeInfo_Tuple);
     }
     type = Type::typeinfotypelist->type;
+}
+
+TypeInfoTupleDeclaration *TypeInfoTupleDeclaration::factory(Type *tinfo)
+{
+    return new TypeInfoTupleDeclaration(tinfo);
 }
 
 /********************************* ThisDeclaration ****************************/

@@ -3255,6 +3255,11 @@ IdentifierExp::IdentifierExp(Loc loc, Identifier *ident)
     this->ident = ident;
 }
 
+IdentifierExp *IdentifierExp::factory(Loc loc, Identifier *ident)
+{
+    return new IdentifierExp(loc, ident);
+}
+
 Expression *IdentifierExp::semantic(Scope *sc)
 {
     Dsymbol *s;
@@ -3902,6 +3907,11 @@ StringExp::StringExp(Loc loc, void *string, size_t len, utf8_t postfix)
     this->ownedByCtfe = false;
 }
 
+StringExp *StringExp::factory(Loc loc, char *s)
+{
+    return new StringExp(loc, s);
+}
+
 #if 0
 Expression *StringExp::syntaxCopy()
 {
@@ -4521,6 +4531,11 @@ StructLiteralExp::StructLiteralExp(Loc loc, StructDeclaration *sd, Expressions *
     this->stageflags = 0;
     this->inlinecopy = NULL;
     //printf("StructLiteralExp::StructLiteralExp(%s)\n", toChars());
+}
+
+StructLiteralExp *StructLiteralExp::factory(Loc loc, StructDeclaration *sd, void *elements, Type *stype)
+{
+    return new StructLiteralExp(loc, sd, (Expressions *)elements, stype);
 }
 
 bool StructLiteralExp::equals(RootObject *o)
@@ -5579,6 +5594,11 @@ VarExp::VarExp(Loc loc, Declaration *var, bool hasOverloads)
     //printf("VarExp(this = %p, '%s', loc = %s)\n", this, var->toChars(), loc.toChars());
     //if (strcmp(var->ident->toChars(), "func") == 0) halt();
     this->type = var->type;
+}
+
+VarExp *VarExp::factory(Loc loc, Declaration *var, bool hasOverloads)
+{
+    return new VarExp(loc, var, hasOverloads);
 }
 
 bool VarExp::equals(RootObject *o)
@@ -7330,6 +7350,11 @@ DotIdExp::DotIdExp(Loc loc, Expression *e, Identifier *ident)
     this->ident = ident;
 }
 
+DotIdExp *DotIdExp::factory(Loc loc, Expression *e, Identifier *ident)
+{
+    return new DotIdExp(loc, e, ident);
+}
+
 Expression *DotIdExp::semantic(Scope *sc)
 {
 #if LOGSEMANTIC
@@ -8331,6 +8356,16 @@ CallExp::CallExp(Loc loc, Expression *e, Expression *earg1, Expression *earg2)
     (*arguments)[1] = earg2;
 
     this->arguments = arguments;
+}
+
+CallExp *CallExp::factory(Loc loc, Expression *e)
+{
+    return new CallExp(loc, e);
+}
+
+CallExp *CallExp::factory(Loc loc, Expression *e, Expression *earg1)
+{
+    return new CallExp(loc, e, earg1);
 }
 
 Expression *CallExp::syntaxCopy()

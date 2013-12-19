@@ -311,6 +311,7 @@ public:
     Declaration *var;
 
     IdentifierExp(Loc loc, Identifier *ident);
+    static IdentifierExp *factory(Loc loc, Identifier *ident);
     Expression *semantic(Scope *sc);
     char *toChars();
     void dump(int indent);
@@ -405,6 +406,7 @@ public:
     StringExp(Loc loc, char *s);
     StringExp(Loc loc, void *s, size_t len);
     StringExp(Loc loc, void *s, size_t len, utf8_t postfix);
+    static StringExp *factory(Loc loc, char *s);
     //Expression *syntaxCopy();
     bool equals(RootObject *o);
     Expression *semantic(Scope *sc);
@@ -557,6 +559,7 @@ public:
                                   // (with infinite recursion) of this expression.
 
     StructLiteralExp(Loc loc, StructDeclaration *sd, Expressions *elements, Type *stype = NULL);
+    static StructLiteralExp *factory(Loc loc, StructDeclaration *sd, void *elements, Type *stype = NULL);
     bool equals(RootObject *o);
     Expression *syntaxCopy();
     int apply(apply_fp_t fp, void *param);
@@ -706,6 +709,7 @@ class VarExp : public SymbolExp
 {
 public:
     VarExp(Loc loc, Declaration *var, bool hasOverloads = false);
+    static VarExp *factory(Loc loc, Declaration *var, bool hasOverloads = false);
     bool equals(RootObject *o);
     Expression *semantic(Scope *sc);
     Expression *optimize(int result, bool keepLvalue = false);
@@ -978,6 +982,7 @@ public:
     Identifier *ident;
 
     DotIdExp(Loc loc, Expression *e, Identifier *ident);
+    static DotIdExp *factory(Loc loc, Expression *e, Identifier *ident);
     Expression *semantic(Scope *sc);
     Expression *semanticX(Scope *sc);
     Expression *semanticY(Scope *sc, int flag);
@@ -1066,6 +1071,9 @@ public:
     CallExp(Loc loc, Expression *e);
     CallExp(Loc loc, Expression *e, Expression *earg1);
     CallExp(Loc loc, Expression *e, Expression *earg1, Expression *earg2);
+
+    static CallExp *factory(Loc loc, Expression *e);
+    static CallExp *factory(Loc loc, Expression *e, Expression *earg1);
 
     Expression *syntaxCopy();
     int apply(apply_fp_t fp, void *param);

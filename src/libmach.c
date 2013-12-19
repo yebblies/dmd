@@ -321,8 +321,7 @@ void LibMach::addObject(const char *module_name, void *buf, size_t buflen)
     int fromfile = 0;
     if (!buf)
     {   assert(module_name[0]);
-        FileName f((char *)module_name);
-        File *file = new File(&f);
+        File *file = File::factory(module_name);
         readFile(Loc(), file);
         buf = file->buffer;
         buflen = file->len;

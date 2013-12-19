@@ -33,6 +33,7 @@ struct File
     FileName *name;             // name of our file
 
     File(const char *);
+    static File *factory(const char *);
     File(const FileName *);
     ~File();
 
