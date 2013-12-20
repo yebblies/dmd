@@ -109,7 +109,7 @@ DMD_OBJS = \
 	builtin.o ctfeexpr.o clone.o aliasthis.o \
 	arrayop.o async.o json.o unittests.o \
 	imphint.o argtypes.o apply.o sapply.o sideeffect.o \
-	intrange.o canthrow.o target.o
+	intrange.o canthrow.o target.o visitor.o
 
 ROOT_OBJS = \
 	rmem.o port.o man.o stringtable.o response.o \
@@ -166,7 +166,7 @@ SRC = win32.mak posix.mak \
 	aliasthis.h aliasthis.c json.h json.c unittests.c imphint.c \
 	argtypes.c apply.c sapply.c sideeffect.c \
 	intrange.h intrange.c canthrow.c target.c target.h \
-	ctfe.h ctfeexpr.c
+	ctfe.h ctfeexpr.c visitor.c
 
 ROOT_SRC = $(ROOT)/root.h \
 	$(ROOT)/array.h \
@@ -724,6 +724,9 @@ var.o: $C/var.c optab.c tytab.c
 version.o: version.c
 	$(CC) -c $(CFLAGS) $<
 
+visitor.o: visitor.c visitor.h statement.h
+	$(CC) -c $(CFLAGS) $<
+
 ######################################################
 
 install: all
@@ -805,6 +808,7 @@ endif
 	gcov version.c
 	gcov intrange.c
 	gcov target.c
+	gcov visitor.c
 
 #	gcov hdrgen.c
 #	gcov tocvdebug.c
