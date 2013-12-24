@@ -3501,9 +3501,9 @@ bool FuncDeclaration::addPostInvariant()
  * Generate a FuncDeclaration for a runtime library function.
  */
 
-FuncDeclaration *FuncDeclaration::genCfunc(Parameters *args, Type *treturn, const char *name)
+FuncDeclaration *FuncDeclaration::genCfunc(void *args, Type *treturn, const char *name)
 {
-    return genCfunc(args, treturn, Lexer::idPool(name));
+    return genCfunc((Parameters *)args, treturn, Lexer::idPool(name));
 }
 
 FuncDeclaration *FuncDeclaration::genCfunc(Parameters *args, Type *treturn, Identifier *id)

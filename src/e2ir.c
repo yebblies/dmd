@@ -51,7 +51,7 @@ elem *eval_Darray(IRState *irs, Expression *e, bool alwaysCopy = false);
 elem *array_toPtr(Type *t, elem *e);
 elem *appendDtors(IRState *irs, elem *er, size_t starti, size_t endi);
 elem *ExpressionsToStaticArray(IRState *irs, Loc loc, Expressions *exps, symbol **psym);
-VarDeclarations *VarDeclarations_create();
+void *VarDeclarations_create();
 type *Type_toCtype(Type *t);
 
 #define el_setLoc(e,loc)        ((e)->Esrcpos.Sfilename = (char *)(loc).filename, \
@@ -1172,7 +1172,7 @@ elem *Dsymbol_toElem(Dsymbol *s, IRState *irs)
 
                 // Put vd on list of things needing destruction
                 if (!irs->varsInScope)
-                    irs->varsInScope = VarDeclarations_create();
+                    irs->varsInScope = (VarDeclarations *)VarDeclarations_create();
                 irs->varsInScope->push(vd);
             }
         }

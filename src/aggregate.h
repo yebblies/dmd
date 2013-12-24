@@ -173,7 +173,7 @@ public:
     const char *mangle(bool isv = false);
     const char *kind();
     void finalizeSize(Scope *sc);
-    bool fill(Loc loc, Expressions *elements, bool ctorinit);
+    bool fill(Loc loc, void *elements, bool ctorinit);
     bool isPOD();
     int needOpAssign();
     int needOpEquals();
@@ -223,7 +223,7 @@ struct BaseClass
     BaseClass();
     BaseClass(Type *type, PROT protection);
 
-    int fillVtbl(ClassDeclaration *cd, FuncDeclarations *vtbl, int newinstance);
+    int fillVtbl(ClassDeclaration *cd, void *vtbl, int newinstance);
     void copyBaseInterfaces(BaseClasses *);
 };
 

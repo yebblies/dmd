@@ -857,8 +857,9 @@ void StructDeclaration::finalizeSize(Scope *sc)
     fill(loc, NULL, true);
 }
 
-bool StructDeclaration::fill(Loc loc, Expressions *elements, bool ctorinit)
+bool StructDeclaration::fill(Loc loc, void *_elements, bool ctorinit)
 {
+    Expressions *elements = (Expressions *)_elements;
     assert(sizeok == SIZEOKdone);
     size_t nfields = fields.dim - isNested();
 

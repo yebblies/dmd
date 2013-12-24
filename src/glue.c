@@ -46,8 +46,8 @@ void Statement_toIR(Statement *s, IRState *irs);
 #define STATICCTOR      0
 
 typedef Array<symbol *> symbols;
-Dsymbols *Dsymbols_create();
-Expressions *Expressions_create();
+void *Dsymbols_create();
+void *Expressions_create();
 type *Type_toCtype(Type *t);
 
 elem *eictor;
@@ -124,7 +124,7 @@ void obj_write_deferred(Library *library)
             Identifier *id = Identifier::create(idstr, TOKidentifier);
 
             Module *md = Module::create(mname, id, 0, 0);
-            md->members = Dsymbols_create();
+            md->members = (Dsymbols *)Dsymbols_create();
             md->members->push(s);   // its only 'member' is s
             md->doppelganger = 1;       // identify this module as doppelganger
             md->md = m->md;
@@ -1000,7 +1000,7 @@ void FuncDeclaration::toObjFile(int multiobj)
             StringExp *se = StringExp::create(Loc(), s->Sident);
             se->type = Type::tstring;
             se->type = se->type->semantic(Loc(), NULL);
-            Expressions *exps = Expressions_create();
+            Expressions *exps = (Expressions *)Expressions_create();
             exps->push(se);
             FuncDeclaration *fdpro = FuncDeclaration::genCfunc(NULL, Type::tvoid, "trace_pro");
             Expression *ec = VarExp::create(Loc(), fdpro);

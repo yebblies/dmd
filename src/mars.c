@@ -1913,9 +1913,9 @@ static bool parse_arch(size_t argc, const char** argv, bool is64bit)
     return is64bit;
 }
 
-Dsymbols *Dsymbols_create() { return new Dsymbols(); }
-Parameters *Parameters_create() { return new Parameters(); }
-Symbols *Symbols_create() { return new Symbols(); }
-VarDeclarations *VarDeclarations_create() { return new VarDeclarations(); }
-Blocks *Blocks_create() { return new Blocks(); }
-Expressions *Expressions_create() { return new Expressions(); }
+void *Dsymbols_create() { return new Dsymbols(); }
+void *Parameters_create() { return new Parameters(); }
+void *Symbols_create() { return new Symbols(); }
+void *VarDeclarations_create() { return new VarDeclarations(); }
+void *Blocks_create() { return new Blocks(); }
+void *Expressions_create() { return new Expressions(); }

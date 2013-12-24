@@ -1096,7 +1096,7 @@ public:
     CallExp(Loc loc, Expression *e, Expression *earg1);
     CallExp(Loc loc, Expression *e, Expression *earg1, Expression *earg2);
 
-    static CallExp *create(Loc loc, Expression *e, Expressions *exps);
+    static CallExp *create(Loc loc, Expression *e, void *exps);
     static CallExp *create(Loc loc, Expression *e);
     static CallExp *create(Loc loc, Expression *e, Expression *earg1);
 

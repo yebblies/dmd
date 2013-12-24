@@ -8383,9 +8383,9 @@ CallExp::CallExp(Loc loc, Expression *e, Expression *earg1, Expression *earg2)
     this->arguments = arguments;
 }
 
-CallExp *CallExp::create(Loc loc, Expression *e, Expressions *exps)
+CallExp *CallExp::create(Loc loc, Expression *e, void *exps)
 {
-    return new CallExp(loc, e, exps);
+    return new CallExp(loc, e, (Expressions *)exps);
 }
 
 CallExp *CallExp::create(Loc loc, Expression *e)

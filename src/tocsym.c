@@ -43,7 +43,7 @@ void slist_add(Symbol *s);
 void slist_reset();
 
 Classsym *fake_classsym(Identifier *id);
-Symbols *Symbols_create();
+void *Symbols_create();
 type *Type_toCtype(Type *t);
 
 /********************************* SymbolDeclaration ****************************/
@@ -709,7 +709,7 @@ Symbol *TypeAArray::aaGetSymbol(const char *func, int flags)
         char *id = (char *)alloca(3 + strlen(func) + 1);
         sprintf(id, "_aa%s", func);
         if (!sarray)
-            sarray = Symbols_create();
+            sarray = (Symbols *)Symbols_create();
 
         // See if symbol is already in sarray
         for (size_t i = 0; i < sarray->dim; i++)

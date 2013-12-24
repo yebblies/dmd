@@ -748,7 +748,7 @@ public:
     Statement *mergeFensure(Statement *, Identifier *oid);
     Parameters *getParameters(int *pvarargs);
 
-    static FuncDeclaration *genCfunc(Parameters *args, Type *treturn, const char *name);
+    static FuncDeclaration *genCfunc(void *args, Type *treturn, const char *name);
     static FuncDeclaration *genCfunc(Parameters *args, Type *treturn, Identifier *id);
 
     Symbol *toSymbol();

@@ -9343,9 +9343,9 @@ TypeTuple::TypeTuple(Expressions *exps)
     //printf("TypeTuple() %p, %s\n", this, toChars());
 }
 
-TypeTuple *TypeTuple::create(Parameters *arguments)
+TypeTuple *TypeTuple::create(void *arguments)
 {
-    return new TypeTuple(arguments);
+    return new TypeTuple((Parameters *)arguments);
 }
 
 /*******************************************
@@ -9763,13 +9763,13 @@ Parameters *Parameter::arraySyntaxCopy(Parameters *args)
     return a;
 }
 
-char *Parameter::argsTypesToChars(Parameters *args, int varargs)
+char *Parameter::argsTypesToChars(void *args, int varargs)
 {
     OutBuffer buf;
     buf.reserve(16);
 
     HdrGenState hgs;
-    argsToCBuffer(&buf, &hgs, args, varargs);
+    argsToCBuffer(&buf, &hgs, (Parameters *)args, varargs);
 
     buf.writebyte(0);
     return buf.extractData();
@@ -9947,10 +9947,10 @@ static int dimDg(void *ctx, size_t n, Parameter *)
     return 0;
 }
 
-size_t Parameter::dim(Parameters *args)
+size_t Parameter::dim(void *args)
 {
     size_t n = 0;
-    foreach(args, &dimDg, &n);
+    foreach((Parameters *)args, &dimDg, &n);
     return n;
 }
 
@@ -9978,10 +9978,10 @@ static int getNthParamDg(void *ctx, size_t n, Parameter *arg)
     return 0;
 }
 
-Parameter *Parameter::getNth(Parameters *args, size_t nth, size_t *pn)
+Parameter *Parameter::getNth(void *args, size_t nth, size_t *pn)
 {
     GetNthParamCtx ctx = { nth, NULL };
-    int res = foreach(args, &getNthParamDg, &ctx);
+    int res = foreach((Parameters *)args, &getNthParamDg, &ctx);
     return res ? ctx.arg : NULL;
 }
 
