@@ -29,14 +29,8 @@ class FuncDeclaration;
 struct DocComment;
 class TemplateInstance;
 
-#if __GNUC__
-// Requires a full definition for PROT and LINK
 #include "dsymbol.h"    // PROT
 #include "mars.h"       // LINK
-#else
-enum LINK;
-enum PROT;
-#endif
 
 #define CSXthis_ctor    1       // called this()
 #define CSXsuper_ctor   2       // called super()
