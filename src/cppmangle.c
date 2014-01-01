@@ -453,6 +453,9 @@ char *toCppMangle(Dsymbol *s)
      *         ::= <data name>
      *         ::= <special-name>
      */
+    VarDeclaration *vd = s->isVarDeclaration();
+    if (vd && vd->toParent() && vd->toParent()->isModule())
+        return vd->ident->toChars();
 
     CppMangleVisitor v(global.params.isOSX ? "__Z" : "_Z");
 
