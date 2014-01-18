@@ -25,6 +25,7 @@
 #include "enum.h"
 #include "import.h"
 #include "aggregate.h"
+#include "target.h"
 
 #if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
 
@@ -98,7 +99,153 @@ class CppMangleVisitor : public Visitor
     void source_name(Dsymbol *s)
     {
         char *name = s->ident->toChars();
-        buf.printf("%d%s", strlen(name), name);
+        TemplateInstance *ti = s->isTemplateInstance();
+        if ((!s->parent || s->parent->isModule()) && !strcmp(name, "std"))
+        {
+            /*
+             *       <substitution> ::= St # ::std::
+             *       <substitution> ::= Sa # ::std::allocator
+             *       <substitution> ::= Sb # ::std::basic_string
+             *       <substitution> ::= Ss # ::std::basic_string < char,
+             *                               ::std::char_traits<char>,
+             *                               ::std::allocator<char> >
+             *       <substitution> ::= Si # ::std::basic_istream<char,  std::char_traits<char> >
+             *       <substitution> ::= So # ::std::basic_ostream<char,  std::char_traits<char> >
+             *       <substitution> ::= Sd # ::std::basic_iostream<char, std::char_traits<char> >
+             */
+            buf.writestring("St");
+        }
+        else if (ti)
+        {
+            if (!substitute(ti->tempdecl))
+            {
+                char *name = ti->name->toChars();
+                buf.printf("%d%s", strlen(name), name);
+            }
+            buf.writeByte('I');
+            bool is_var_arg = false;
+            for (size_t i = 0; i < ti->tiargs->dim; i++)
+            {
+                RootObject *o = (RootObject *)(*ti->tiargs)[i];
+
+                TemplateParameter *tp = NULL;
+                TemplateValueParameter *tv = NULL;
+                TemplateTupleParameter *tt = NULL;
+                if(!is_var_arg)
+                {
+                    TemplateDeclaration *td = ti->tempdecl->isTemplateDeclaration();
+                    tp = (*td->parameters)[i];
+                    tv = tp->isTemplateValueParameter();
+                    tt = tp->isTemplateTupleParameter();
+                }
+                /*
+                 *           <template-arg> ::= <type>            # type or template
+                 *                          ::= <expr-primary>   # simple expressions
+                 */
+
+                if (tt)
+                {
+                    buf.writeByte('I');
+                    is_var_arg = true;
+                    tp = NULL;
+                }
+
+                if (tv)
+                {
+                    // <expr-primary> ::= L <type> <value number> E                   # integer literal
+                    if (tv->valType->isintegral())
+                    {
+                        Expression* e = isExpression(o);
+                        assert(e);
+                        buf.writeByte('L');
+                        tv->valType->accept(this);
+                        if (tv->valType->isunsigned())
+                        {
+                            buf.printf("%llu", e->toUInteger());
+                        }
+                        else
+                        {
+                            dinteger_t val = e->toInteger();
+                            if (val < 0)
+                            {
+                                val = -val;
+                                buf.writeByte('n');
+                            }
+                            buf.printf("%lld", val);
+                        }
+                        buf.writeByte('E');
+                    }
+                    else
+                    {
+                        s->error("ICE: C++ %s template value parameter is not supported", tv->valType->toChars());
+                        assert(0);
+                    }
+                }
+                else if (!tp || tp->isTemplateTypeParameter())
+                {
+                    Type *t = isType(o);
+                    assert(t);
+                    t->accept(this);
+                }
+                else if (tp->isTemplateAliasParameter())
+                {
+                    Dsymbol* d = isDsymbol(o);
+                    Expression* e = isExpression(o);
+                    if(!d && !e)
+                    {
+                        s->error("ICE: %s is unsupported parameter for C++ template: (%s)", o->toChars());
+                        assert(0);
+                    }
+                    if (d && d->isFuncDeclaration())
+                    {
+                        bool is_nested = d->toParent() && !d->toParent()->isModule() && ((TypeFunction *)d->isFuncDeclaration()->type)->linkage == LINKcpp;
+                        if (is_nested) buf.writeByte('X');
+                        buf.writeByte('L');
+                        mangle_function(d->isFuncDeclaration());
+                        buf.writeByte('E');
+                        if (is_nested) buf.writeByte('E');
+                    }
+                    else if (e && e->op == TOKvar && ((VarExp*)e)->var->isVarDeclaration())
+                    {
+                        VarDeclaration *vd = ((VarExp*)e)->var->isVarDeclaration();
+                        buf.writeByte('L');
+                        mangle_variable(vd, true);
+                        buf.writeByte('E');
+                    }
+                    else if (d && d->isTemplateDeclaration() && d->isTemplateDeclaration()->onemember)
+                    {
+                        if (!exist(d))
+                        {
+                            cpp_mangle_name(d);
+                            store(d);
+                        }
+                        else
+                            substitute(d);
+                    }
+                    else
+                    {
+                        s->error("ICE: %s is unsupported parameter for C++ template", o->toChars());
+                        assert(0);
+                    }
+
+                }
+                else
+                {
+                    s->error("ICE: C++ templates support only integral value , type parameters, alias templates and alias function parameters");
+                    assert(0);
+                }
+            }
+            if (is_var_arg)
+            {
+                buf.writeByte('E');
+            }
+            buf.writeByte('E');
+            return;
+        }
+        else
+        {
+            buf.printf("%d%s", strlen(name), name);
+        }
     }
 
     void prefix_name(Dsymbol *s)
@@ -106,6 +253,19 @@ class CppMangleVisitor : public Visitor
         if (!substitute(s))
         {
             Dsymbol *p = s->toParent();
+            if (p && p->isTemplateInstance())
+            {
+                s = p;
+                if (exist(p->isTemplateInstance()->tempdecl))
+                {
+                    p = NULL;
+                }
+                else
+                {
+                    p = p->toParent();
+                }
+            }
+
             if (p && !p->isModule())
             {
                 prefix_name(p);
@@ -114,61 +274,175 @@ class CppMangleVisitor : public Visitor
         }
     }
 
-public:
-    CppMangleVisitor(const char *prefix)
-        : buf(), components()
-    {
-        buf.writestring(prefix);
-    }
-
-    char *finish()
-    {
-        buf.writeByte(0);
-        return (char *)buf.extractData();
-    }
-
     void cpp_mangle_name(Dsymbol *s)
     {
         Dsymbol *p = s->toParent();
+        bool dont_write_prefix = false;
+        if (p && p->isTemplateInstance())
+        {
+            s = p;
+            if (exist(p->isTemplateInstance()->tempdecl))
+                dont_write_prefix = true;
+            p = p->toParent();
+        }
+
         if (p && !p->isModule())
         {
             buf.writeByte('N');
-
-            FuncDeclaration *fd = s->isFuncDeclaration();
-            VarDeclaration *vd = s->isVarDeclaration();
-            if (fd && fd->type->isConst())
-            {
-                buf.writeByte('K');
-            }
-            if (vd && !(vd->storage_class & (STCextern | STCgshared)))
-            {
-                s->error("C++ static non- __gshared non-extern variables not supported");
-            }
-            if (vd || fd)
-            {
+            if (!dont_write_prefix)
                 prefix_name(p);
-                source_name(s);
-            }
-            else
-            {
-                assert(0);
-            }
+            source_name(s);
             buf.writeByte('E');
         }
         else
             source_name(s);
     }
 
+
+    void mangle_variable(VarDeclaration *d, bool is_temp_arg_ref)
+    {
+
+        if (!(d->storage_class & (STCextern | STCgshared)))
+        {
+            d->error("ICE: C++ static non- __gshared non-extern variables not supported");
+            assert(0);
+        }
+
+        Dsymbol *p = d->toParent();
+        if (p && !p->isModule()) //for example: char Namespace1::beta[6] should be mangled as "_ZN10Namespace14betaE"
+        {
+            buf.writestring(global.params.isOSX ? "__ZN" : "_ZN");      // "__Z" for OSX, "_Z" for other
+            prefix_name(p);
+            source_name(d);
+            buf.writeByte('E');
+        }
+        else //char beta[6] should mangle as "beta"
+        {
+            if(!is_temp_arg_ref)
+            {
+                if (global.params.isOSX)
+                    buf.writeByte('_');
+                buf.writestring(d->ident->toChars());
+            }
+            else
+            {
+                buf.writestring(global.params.isOSX ? "__Z" : "_Z");
+                source_name(d);
+            }
+        }
+    }
+
+
+    void mangle_function(FuncDeclaration *d)
+    {
+        /*
+         * <mangled-name> ::= _Z <encoding>
+         * <encoding> ::= <function name> <bare-function-type>
+         *         ::= <data name>
+         *         ::= <special-name>
+         */
+        TypeFunction *tf = (TypeFunction *)d->type;
+
+        buf.writestring(global.params.isOSX ? "__Z" : "_Z");      // "__Z" for OSX, "_Z" for other
+        Dsymbol *p = d->toParent();
+        if (p && !p->isModule() && tf->linkage == LINKcpp)
+        {
+            buf.writeByte('N');
+            if (d->type->isConst())
+                buf.writeByte('K');
+            prefix_name(p);
+            if (d->isCtorDeclaration())
+            {
+                buf.writestring("C1");
+            }
+            else if (d->isDtorDeclaration())
+            {
+                buf.writestring("D1");
+            }
+            else
+            {
+                source_name(d);
+            }
+            buf.writeByte('E');
+        }
+        else
+        {
+            source_name(d);
+        }
+
+        if (tf->linkage == LINKcpp) //Template args accept extern "C" symbols with special mangling
+        {
+            assert(tf->ty == Tfunction);
+            argsCppMangle(tf->parameters, tf->varargs);
+        }
+    }
+
+    static int argsCppMangleDg(void *ctx, size_t n, Parameter *arg)
+    {
+        CppMangleVisitor *mangler = (CppMangleVisitor *)ctx;
+
+        Type *t = arg->type->merge2();
+        if (arg->storageClass & (STCout | STCref))
+            t = t->referenceTo();
+        else if (arg->storageClass & STClazy)
+        {   // Mangle as delegate
+            Type *td = new TypeFunction(NULL, t, 0, LINKd);
+            td = new TypeDelegate(td);
+            t = t->merge();
+        }
+        if (t->ty == Tsarray)
+        {   // Mangle static arrays as pointers
+            t = t->nextOf()->pointerTo();
+        }
+
+        /* If it is a basic, enum or struct type,
+         * then don't mark it const
+         */
+        if ((t->ty == Tenum || t->ty == Tstruct || t->ty == Tpointer || t->isTypeBasic()) && (t->isConst() || t->isShared()))
+            t->mutableOf()->accept(mangler);
+        else
+            t->accept(mangler);
+
+        return 0;
+    }
+
+    void argsCppMangle(Parameters *arguments, int varargs)
+    {
+        if (arguments)
+            Parameter::foreach(arguments, &argsCppMangleDg, this);
+
+        if (varargs)
+            buf.writestring("z");
+        else if (!arguments || !arguments->dim)
+            buf.writeByte('v');            // encode ( ) arguments
+    }
+
+public:
+    CppMangleVisitor()
+        : buf(), components()
+    {
+    }
+
+    char* mangleOf(Dsymbol *s)
+    {
+        VarDeclaration *vd = s->isVarDeclaration();
+        FuncDeclaration *fd = s->isFuncDeclaration();
+        if (vd)
+        {
+            mangle_variable(vd, false);
+        }
+        else
+        {
+            mangle_function(fd);
+        }
+        buf.writeByte(0);
+        return (char *)buf.extractData();
+    }
+
     void visit(Type *t)
     {
-        /* Make this the 'vendor extended type' when there is no
-         * C++ analog.
-         * u <source-name>
-         */
-        if (!substitute(t))
-        {   assert(t->deco);
-            buf.printf("u%d%s", strlen(t->deco), t->deco);
-        }
+        t->error(Loc(), "ICE: Unsupported type %s\n", t->toChars());
+        assert(0); //Assert, because this error should be handled in frontend
     }
 
     void visit(TypeBasic *t)
@@ -213,7 +487,7 @@ public:
             case Tint64:    c = 'x';        break;
             case Tuns64:    c = 'y';        break;
             case Tfloat64:  c = 'd';        break;
-            case Tfloat80:  c = 'e';        break;
+            case Tfloat80:  c = (Target::realsize == 16) ? 'g' : 'e'; break;
             case Tbool:     c = 'b';        break;
             case Tchar:     c = 'c';        break;
             case Twchar:    c = 't';        break;
@@ -226,13 +500,15 @@ public:
             case Tcomplex64:   p = 'C'; c = 'd';    break;
             case Tcomplex80:   p = 'C'; c = 'e';    break;
 
-            default:        assert(0);
+            default:        visit((Type *)t); return;
         }
-        if (p || t->isConst())
-        {
+
+        if (p || t->isConst() || t->isShared())
             if (substitute(t))
                 return;
-        }
+
+        if (t->isShared())
+            buf.writeByte('V'); //shared -> volatile
 
         if (t->isConst())
             buf.writeByte('K');
@@ -248,8 +524,15 @@ public:
     {
         if (!substitute(t))
         {
-            buf.writestring("U8__vector");
-            t->basetype->accept(this);
+            if (t->isShared())
+                buf.writeByte('V');
+            if (t->isConst())
+                buf.writeByte('K');
+            assert(t->basetype && t->basetype->ty == Tsarray);
+            assert(((TypeSArray *)t->basetype)->dim);
+            buf.printf("Dv%llu_", ((TypeSArray *)t->basetype)->dim->toInteger());// -- Gnu ABI v.4
+            //buf.writestring("U8__vector"); -- Gnu ABI v.3
+            t->basetype->nextOf()->accept(this);
         }
     }
 
@@ -257,6 +540,10 @@ public:
     {
         if (!substitute(t))
         {
+            if (t->isShared())
+                buf.writeByte('V');
+            if (t->isConst())
+                buf.writeByte('K');
             buf.printf("A%llu_", t->dim ? t->dim->toInteger() : 0);
             t->next->accept(this);
         }
@@ -276,6 +563,10 @@ public:
     {
         if (!exist(t))
         {
+            if (t->isShared())
+                buf.writeByte('V');
+            if (t->isConst())
+                buf.writeByte('K');
             buf.writeByte('P');
             t->next->accept(this);
             store(t);
@@ -325,7 +616,10 @@ public:
             buf.writeByte('F');
             if (t->linkage == LINKc)
                 buf.writeByte('Y');
-            t->next->accept(this);
+            Type *tn = t->next;
+            if (t->isref)
+                tn  = tn->referenceTo();
+            tn->accept(this);
             argsCppMangle(t->parameters, t->varargs);
             buf.writeByte('E');
             store(t);
@@ -343,13 +637,22 @@ public:
     {
         if (!exist(t))
         {
+            if (t->isShared())
+                buf.writeByte('V');
             if (t->isConst())
                 buf.writeByte('K');
 
-            if (!substitute(t->sym))
+            if (!exist(t->sym))
+            {
                 cpp_mangle_name(t->sym);
+                store(t->sym);
+            }
+            else
+            {
+                substitute(t->sym);
+            }
 
-            if (t->isConst())
+            if (t->isShared() || t->isConst())
                 store(t);
         }
         else
@@ -360,13 +663,22 @@ public:
     {
         if (!exist(t))
         {
+            if (t->isShared())
+                buf.writeByte('V');
             if (t->isConst())
                 buf.writeByte('K');
 
-            if (!substitute(t->sym))
+            if (!exist(t->sym))
+            {
                 cpp_mangle_name(t->sym);
+                store(t->sym);
+            }
+            else
+            {
+                substitute(t->sym);
+            }
 
-            if (t->isConst())
+            if (t->isShared() || t->isConst())
                 store(t);
         }
         else
@@ -382,90 +694,52 @@ public:
     {
         if (!exist(t))
         {
-            buf.writeByte('P');
-
-            if (!substitute(t->sym))
+            if (!exist(t->sym))
+            {
+                buf.writeByte('P');
+                if (t->isShared())
+                    buf.writeByte('V');
+                if (t->isConst())
+                    buf.writeByte('K');
                 cpp_mangle_name(t->sym);
 
-            store(t);
+                //in next row we store type "pointer to class"
+                //we can't access to class by value from D, but we
+                //should store "value type" before pointer
+                store(t->sym + 1);
+                store(t->sym);
+            }
+            else
+            {
+
+                if (t->isShared() || t->isConst())
+                {
+                    buf.writeByte('P');
+                    if (t->isShared())
+                        buf.writeByte('V');
+                    if (t->isConst())
+                        buf.writeByte('K');
+                    substitute(t->sym + 1);
+                }
+                else
+                {
+                    substitute(t->sym);
+                }
+
+            }
+
+            if (t->isShared() || t->isConst())
+                store(t);
         }
         else
             substitute(t);
-    }
-
-    struct ArgsCppMangleCtx
-    {
-        CppMangleVisitor *v;
-        size_t cnt;
-    };
-
-    void argsCppMangle(Parameters *arguments, int varargs)
-    {
-        size_t n = 0;
-        if (arguments)
-        {
-            ArgsCppMangleCtx ctx = { this, 0 };
-            Parameter::foreach(arguments, &argsCppMangleDg, &ctx);
-            n = ctx.cnt;
-        }
-        if (varargs)
-            buf.writestring("z");
-        else if (!n)
-            buf.writeByte('v');            // encode ( ) arguments
-    }
-
-    static int argsCppMangleDg(void *ctx, size_t n, Parameter *arg)
-    {
-        ArgsCppMangleCtx *p = (ArgsCppMangleCtx *)ctx;
-
-        Type *t = arg->type->merge2();
-        if (arg->storageClass & (STCout | STCref))
-            t = t->referenceTo();
-        else if (arg->storageClass & STClazy)
-        {   // Mangle as delegate
-            Type *td = new TypeFunction(NULL, t, 0, LINKd);
-            td = new TypeDelegate(td);
-            t = t->merge();
-        }
-        if (t->ty == Tsarray)
-        {   // Mangle static arrays as pointers
-            t = t->pointerTo();
-        }
-
-        /* If it is a basic, enum or struct type,
-         * then don't mark it const
-         */
-        if ((t->ty == Tenum || t->ty == Tstruct || t->isTypeBasic()) && t->isConst())
-            t->mutableOf()->accept(p->v);
-        else
-            t->accept(p->v);
-
-        p->cnt++;
-        return 0;
     }
 };
 
 char *toCppMangle(Dsymbol *s)
 {
-    /*
-     * <mangled-name> ::= _Z <encoding>
-     * <encoding> ::= <function name> <bare-function-type>
-     *         ::= <data name>
-     *         ::= <special-name>
-     */
-
-    CppMangleVisitor v(global.params.isOSX ? "__Z" : "_Z");
-
-    v.cpp_mangle_name(s);
-
-    FuncDeclaration *fd = s->isFuncDeclaration();
-    if (fd)
-    {   // add <bare-function-type>
-        assert(fd->type->ty == Tfunction);
-        TypeFunction *tf = (TypeFunction *)fd->type;
-        v.argsCppMangle(tf->parameters, tf->varargs);
-    }
-    return v.finish();
+    CppMangleVisitor v;
+    return v.mangleOf(s);
 }
 
 #else
