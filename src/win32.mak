@@ -172,23 +172,26 @@ ROOTOBJS= man.obj port.obj \
 	object.obj filename.obj file.obj \
 	$(GCOBJS)
 
+FRONTH = utf.h template.h cond.h aggregate.h staticassert.h version.h init.h \
+		 attrib.h complex_t.h identifier.h parse.h scope.h enum.h import.h \
+		 mars.h module.h mtype.h dsymbol.h declaration.h lexer.h expression.h \
+		 statement.h doc.h macro.h hdrgen.h arraytypes.h lib.h aliasthis.h \
+		 json.h ctfe.h intrange.h target.h visitor.h
+
 # D front end
-SRCS= mars.c enum.c struct.c dsymbol.c import.c idgen.c impcnvgen.c utf.h \
+SRCS= mars.c enum.c struct.c dsymbol.c import.c idgen.c impcnvgen.c \
 	utf.c entity.c identifier.c mtype.c expression.c optimize.c \
-	template.h template.c lexer.c declaration.c cast.c \
-	cond.h cond.c link.c aggregate.h staticassert.h parse.c statement.c \
-	constfold.c version.h version.c inifile.c staticassert.c \
-	module.c scope.c init.h init.c attrib.h attrib.c opover.c \
-	class.c mangle.c func.c inline.c access.c complex_t.h cppmangle.c \
-	identifier.h parse.h scope.h enum.h import.h \
-	mars.h module.h mtype.h dsymbol.h \
-	declaration.h lexer.h expression.h statement.h doc.h doc.c \
-	macro.h macro.c hdrgen.h hdrgen.c arraytypes.h \
+	template.c lexer.c declaration.c cast.c \
+	cond.c link.c parse.c statement.c \
+	constfold.c version.c inifile.c staticassert.c \
+	module.c scope.c init.c attrib.c opover.c \
+	class.c mangle.c func.c inline.c access.c cppmangle.c \
+	doc.c macro.c hdrgen.c \
 	delegatize.c interpret.c ctfeexpr.c traits.c builtin.c \
-	clone.c lib.h arrayop.c \
-	aliasthis.h aliasthis.c json.h json.c unittests.c imphint.c argtypes.c \
-	apply.c sapply.c sideeffect.c ctfe.h \
-	intrange.h intrange.c canthrow.c target.c target.h visitor.h
+	clone.c arrayop.c \
+	aliasthis.c json.c unittests.c imphint.c argtypes.c \
+	apply.c sapply.c sideeffect.c \
+	intrange.c canthrow.c target.c $(FRONTH)
 
 # Glue layer
 GLUESRC= glue.c msc.c s2ir.c todt.c e2ir.c tocsym.c \
@@ -248,7 +251,7 @@ ROOTSRC= $(ROOT)\root.h \
 #	$(ROOT)\gc\win32.c
 
 # Header files
-TOTALH=id.h
+TOTALH=id.h $(FRONTH)
 CH= $C\cc.h $C\global.h $C\oper.h $C\code.h $C\code_x86.h $C\type.h $C\dt.h $C\cgcv.h \
 	$C\el.h $C\iasm.h $C\obj.h
 
