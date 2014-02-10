@@ -4383,6 +4383,7 @@ AssocArrayLiteralExp::AssocArrayLiteralExp(Loc loc,
     assert(keys->dim == values->dim);
     this->keys = keys;
     this->values = values;
+    this->hashes = hashes;
     this->ownedByCtfe = false;
 }
 
@@ -4488,6 +4489,42 @@ void AssocArrayLiteralExp::toMangleBuffer(OutBuffer *buf)
 
         key->toMangleBuffer(buf);
         value->toMangleBuffer(buf);
+    }
+}
+
+void AssocArrayLiteralExp::calcHashes(Scope *sc)
+{
+    hashes = new Expressions();
+    for(size_t i = 0; i < keys->dim; i++)
+    {
+        Expression *key = (*keys)[i];
+
+        // (T key) { import rt.util.hash; return hashOf(key) }
+
+        Parameters *parameters = new Parameters();
+        parameters->push(new Parameter(0, ((TypeAArray *)type)->index, Lexer::idPool("key"), NULL));
+        TypeFunction *tf = new TypeFunction(parameters, Type::thash_t, 0, LINKd, 0);
+        FuncLiteralDeclaration *fd = new FuncLiteralDeclaration(Loc(), Loc(), tf, TOKfunction, NULL);
+
+        Identifiers *pkg = new Identifiers();
+        pkg->push(Lexer::idPool("core"));
+        pkg->push(Lexer::idPool("internal"));
+        Dsymbols *imports = new Dsymbols();
+        imports->push(new Import(Loc(), pkg, Lexer::idPool("hash"), NULL, 0));
+        Statement *simp = new ImportStatement(Loc(), imports);
+
+        Expression *ec = new CallExp(Loc(), new IdentifierExp(Loc(), Lexer::idPool("hashOf")), new IdentifierExp(Loc(), Lexer::idPool("key")));
+        Statement *sret = new ReturnStatement(Loc(), ec);
+        fd->fbody = new CompoundStatement(Loc(), simp, sret);
+
+        Expression *hash = new CallExp(Loc(), new FuncExp(Loc(), fd), key);
+        sc = sc->startCTFE();
+        hash = hash->semantic(sc);
+        sc = sc->endCTFE();
+        hash = hash->ctfeInterpret();
+
+        hashes->push(hash);
+        printf("hash: %s\n", hash->toChars());
     }
 }
 

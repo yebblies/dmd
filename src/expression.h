@@ -476,6 +476,7 @@ class AssocArrayLiteralExp : public Expression
 public:
     Expressions *keys;
     Expressions *values;
+    Expressions *hashes;
     bool ownedByCtfe;   // true = created in CTFE
 
     AssocArrayLiteralExp(Loc loc, Expressions *keys, Expressions *values);
@@ -487,6 +488,7 @@ public:
     void toCBuffer(OutBuffer *buf, HdrGenState *hgs);
     void toMangleBuffer(OutBuffer *buf);
     Expression *interpret(InterState *istate, CtfeGoal goal = ctfeNeedRvalue);
+    void calcHashes(Scope *sc);
     Expression *castTo(Scope *sc, Type *t);
     Expression *inferType(Type *t, int flag = 0, Scope *sc = NULL, TemplateParameters *tparams = NULL);
 

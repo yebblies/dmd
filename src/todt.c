@@ -418,6 +418,16 @@ dt_t **Expression_toDt(Expression *e, dt_t **pdt)
             }
         }
 
+        void visit(AssocArrayLiteralExp *e)
+        {
+            for(size_t i = 0; i < e->keys->dim; i++)
+            {
+                Expression *key = (*e->keys)[i];
+                printf("%s\n", key->toChars());
+            }
+            visit((Expression *)e);
+        }
+
         void visit(StructLiteralExp *se)
         {
             //printf("StructLiteralExp::toDt() %s, ctfe = %d\n", toChars(), ownedByCtfe);

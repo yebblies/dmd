@@ -23,6 +23,7 @@
 #include "hdrgen.h"
 #include "template.h"
 #include "id.h"
+#include "import.h"
 
 /********************************** Initializer *******************************/
 
@@ -824,7 +825,14 @@ Initializer *ExpInitializer::semantic(Scope *sc, Type *t, NeedInterpret needInte
 
     int olderrors = global.errors;
     if (needInterpret)
+    {
         exp = exp->ctfeInterpret();
+        if (exp->op == TOKassocarrayliteral)
+        {
+            AssocArrayLiteralExp *e = (AssocArrayLiteralExp *)exp;
+            e->calcHashes(sc);
+        }
+    }
     else
         exp = exp->optimize(WANTvalue);
     if (!global.gag && olderrors != global.errors)
