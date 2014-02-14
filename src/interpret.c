@@ -261,6 +261,59 @@ Expression *evaluateIfBuiltin(InterState *istate, Loc loc,
     FuncDeclaration *fd, Expressions *arguments, Expression *pthis);
 Expression *scrubReturnValue(Loc loc, Expression *e);
 
+enum IOP
+{
+    IOP_EXP,
+    IOP_GOTO,
+    IOP_BRANCH,
+    IOP_NBRANCH,
+    IOP_RET,
+    IOP_FAIL
+};
+
+struct Inst
+{
+    IOP op;
+    Expression *e;
+    size_t v;
+
+    Inst()
+        : op(IOP_FAIL), e(NULL), v(0)
+    {
+    }
+
+    Inst(IOP op, Expression *e = NULL, size_t v = 0)
+        : op(op), e(e), v(v)
+    {
+    }
+
+    void toBuffer(OutBuffer *buf)
+    {
+        switch(op)
+        {
+        case IOP_EXP:
+            buf->printf("eval %s", e->toChars());
+            break;
+        case IOP_GOTO:
+            buf->printf("goto %lld", (longlong)v);
+            break;
+        case IOP_BRANCH:
+            buf->printf("if (%s) goto %lld", e->toChars(), (longlong)v);
+            break;
+        case IOP_NBRANCH:
+            buf->printf("if (!%s) goto %lld", e->toChars(), (longlong)v);
+            break;
+        case IOP_RET:
+            buf->printf("return %s", e->toChars());
+            break;
+        case IOP_FAIL:
+            buf->writestring("fail!");
+            break;
+        }
+        if (buf->data[buf->offset-1] == '\n')
+            buf->offset--;
+    }
+};
 
 /*************************************
  * CTFE-object code for a single function
@@ -272,6 +325,7 @@ struct CompiledCtfeFunction
     FuncDeclaration *func; // Function being compiled, NULL if global scope
     int numVars;           // Number of variables declared in this function
     Loc callingloc;
+    Array<Inst> insts;
 
     CompiledCtfeFunction(FuncDeclaration *f)
     {
@@ -365,12 +419,71 @@ struct CompiledCtfeFunction
         VarWalker v(this);
         walkPostorder(e, &v);
     }
+
+    void print()
+    {
+        printf("Function ========= %s =============\n", func->toPrettyChars());
+        OutBuffer buf;
+        for(size_t i = 0; i < insts.dim; i++)
+        {
+            buf.reset();
+            insts[i].toBuffer(&buf);
+            printf("%lld: %s\n", (longlong)i, buf.peekString());
+        }
+    }
+
+    // ###
+    Expression *interpret(InterState *istate)
+    {
+        size_t pc = 0;
+        Expression *e;
+        while(pc < insts.dim)
+        {
+            Inst *i = &insts[pc];
+            switch(i->op)
+            {
+            case IOP_EXP:
+                assert(i->e);
+                e = i->e->interpret(istate, ctfeNeedNothing);
+                pc++;
+                break;
+            case IOP_GOTO:
+                pc = i->v;
+                break;
+            case IOP_BRANCH:
+                assert(i->e);
+                e = i->e->interpret(istate, ctfeNeedNothing);
+                if (isTrueBool(e))
+                    pc = i->v;
+                else
+                    pc++;
+                break;
+            case IOP_NBRANCH:
+                assert(i->e);
+                e = i->e->interpret(istate, ctfeNeedNothing);
+                if (!isTrueBool(e))
+                    pc = i->v;
+                else
+                    pc++;
+                break;
+            case IOP_RET:
+                assert(i->e);
+                e = i->e->interpret(istate, ctfeNeedNothing);
+                return e;
+            default:
+                assert(0);
+            }
+        }
+        return EXP_CANT_INTERPRET;
+    }
 };
 
 class CtfeCompiler : public Visitor
 {
 public:
     CompiledCtfeFunction *ccf;
+    Array<LabelStatement*> labels;
+    Array<size_t> labeloffs;
 
     CtfeCompiler(CompiledCtfeFunction *ccf)
         : ccf(ccf)
@@ -392,6 +505,7 @@ public:
     #endif
         if (s->exp)
             ccf->onExpression(s->exp);
+        ccf->insts.push(Inst(IOP_EXP, s->exp));
     }
 
     void visit(CompoundStatement *s)
@@ -427,10 +541,18 @@ public:
     #endif
 
         ccf->onExpression(s->condition);
+
+        size_t branch = ccf->insts.dim;
+        ccf->insts.push(Inst(IOP_NBRANCH, s->condition));
         if (s->ifbody)
             ctfeCompile(s->ifbody);
+        ccf->insts[branch].v = ccf->insts.dim;
+
+        branch = ccf->insts.dim;
+        ccf->insts.push(Inst(IOP_GOTO));
         if (s->elsebody)
             ctfeCompile(s->elsebody);
+        ccf->insts[branch].v = ccf->insts.dim;
     }
 
     void visit(ScopeStatement *s)
@@ -456,9 +578,11 @@ public:
     #if LOGCOMPILE
         printf("%s DoStatement::ctfeCompile\n", s->loc.toChars());
     #endif
-        ccf->onExpression(s->condition);
+        size_t start = ccf->insts.dim;
         if (s->body)
             ctfeCompile(s->body);
+        ccf->onExpression(s->condition);
+        ccf->insts.push(Inst(IOP_BRANCH, s->condition, start));
     }
 
     void visit(WhileStatement *s)
@@ -478,12 +602,22 @@ public:
 
         if (s->init)
             ctfeCompile(s->init);
+        size_t cond = ccf->insts.dim;
         if (s->condition)
+        {
             ccf->onExpression(s->condition);
-        if (s->increment)
-            ccf->onExpression(s->increment);
+            ccf->insts.push(Inst(IOP_NBRANCH, s->condition));
+        }
         if (s->body)
             ctfeCompile(s->body);
+        if (s->increment)
+        {
+            ccf->onExpression(s->increment);
+            ccf->insts.push(Inst(IOP_EXP, s->increment));
+        }
+        ccf->insts.push(Inst(IOP_GOTO, NULL, cond));
+        if (s->condition)
+            ccf->insts[cond].v = ccf->insts.dim;
     }
 
     void visit(ForeachStatement *s)
@@ -500,6 +634,7 @@ public:
     #if LOGCOMPILE
         printf("%s SwitchStatement::ctfeCompile\n", s->loc.toChars());
     #endif
+        ccf->insts.push(Inst(IOP_FAIL));
         ccf->onExpression(s->condition);
         // Note that the body contains the the Case and Default
         // statements, so we only need to compile the expressions
@@ -516,6 +651,7 @@ public:
     #if LOGCOMPILE
         printf("%s CaseStatement::ctfeCompile\n", s->loc.toChars());
     #endif
+        ccf->insts.push(Inst(IOP_FAIL));
         if (s->statement)
             ctfeCompile(s->statement);
     }
@@ -525,6 +661,7 @@ public:
     #if LOGCOMPILE
         printf("%s DefaultStatement::ctfeCompile\n", s->loc.toChars());
     #endif
+        ccf->insts.push(Inst(IOP_FAIL));
         if (s->statement)
             ctfeCompile(s->statement);
     }
@@ -534,6 +671,7 @@ public:
     #if LOGCOMPILE
         printf("%s GotoDefaultStatement::ctfeCompile\n", s->loc.toChars());
     #endif
+        ccf->insts.push(Inst(IOP_FAIL));
     }
 
     void visit(GotoCaseStatement *s)
@@ -541,6 +679,7 @@ public:
     #if LOGCOMPILE
         printf("%s GotoCaseStatement::ctfeCompile\n", s->loc.toChars());
     #endif
+        ccf->insts.push(Inst(IOP_FAIL));
     }
 
     void visit(SwitchErrorStatement *s)
@@ -548,6 +687,7 @@ public:
     #if LOGCOMPILE
         printf("%s SwitchErrorStatement::ctfeCompile\n", s->loc.toChars());
     #endif
+        ccf->insts.push(Inst(IOP_FAIL));
     }
 
     void visit(ReturnStatement *s)
@@ -557,6 +697,7 @@ public:
     #endif
         if (s->exp)
             ccf->onExpression(s->exp);
+        ccf->insts.push(Inst(IOP_RET, s->exp));
     }
 
     void visit(BreakStatement *s)
@@ -564,6 +705,7 @@ public:
     #if LOGCOMPILE
         printf("%s BreakStatement::ctfeCompile\n", s->loc.toChars());
     #endif
+        ccf->insts.push(Inst(IOP_FAIL));
     }
 
     void visit(ContinueStatement *s)
@@ -571,6 +713,7 @@ public:
     #if LOGCOMPILE
         printf("%s ContinueStatement::ctfeCompile\n", s->loc.toChars());
     #endif
+        ccf->insts.push(Inst(IOP_FAIL));
     }
 
     void visit(WithStatement *s)
@@ -586,6 +729,7 @@ public:
         {
             ccf->onDeclaration(s->wthis);
             ccf->onExpression(s->exp);
+            ccf->insts.push(Inst(IOP_EXP, s->exp));
         }
         if (s->body)
             ctfeCompile(s->body);
@@ -606,6 +750,7 @@ public:
             if (ca->handler)
                 ctfeCompile(ca->handler);
         }
+        ccf->insts.push(Inst(IOP_FAIL));
     }
 
     void visit(TryFinallyStatement *s)
@@ -617,6 +762,7 @@ public:
             ctfeCompile(s->body);
         if (s->finalbody)
             ctfeCompile(s->finalbody);
+        ccf->insts.push(Inst(IOP_FAIL));
     }
 
     void visit(ThrowStatement *s)
@@ -625,6 +771,7 @@ public:
         printf("%s ThrowStatement::ctfeCompile\n", s->loc.toChars());
     #endif
         ccf->onExpression(s->exp);
+        ccf->insts.push(Inst(IOP_FAIL));
     }
 
     void visit(GotoStatement *s)
@@ -632,6 +779,15 @@ public:
     #if LOGCOMPILE
         printf("%s GotoStatement::ctfeCompile\n", s->loc.toChars());
     #endif
+        for(size_t i = 0; i < labels.dim; i++)
+        {
+            if (labels[i] == s->label->statement)
+            {
+                ccf->insts.push(Inst(IOP_GOTO, NULL, labeloffs[i]));
+                return;
+            }
+        }
+        ccf->insts.push(Inst(IOP_FAIL));
     }
 
     void visit(LabelStatement *s)
@@ -639,6 +795,8 @@ public:
     #if LOGCOMPILE
         printf("%s LabelStatement::ctfeCompile\n", s->loc.toChars());
     #endif
+        labels.push(s);
+        labeloffs.push(ccf->insts.dim);
         if (s->statement)
             ctfeCompile(s->statement);
     }
@@ -666,6 +824,7 @@ public:
         printf("%s AsmStatement::ctfeCompile\n", s->loc.toChars());
     #endif
         // we can't compile asm statements
+        ccf->insts.push(Inst(IOP_FAIL));
     }
 
     void ctfeCompile(Statement *s)
@@ -703,6 +862,7 @@ void ctfeCompile(FuncDeclaration *fd)
         fd->ctfeCode->onDeclaration(fd->vresult);
     CtfeCompiler v(fd->ctfeCode);
     v.ctfeCompile(fd->fbody);
+    fd->ctfeCode->print();
 }
 
 /*************************************
@@ -983,7 +1143,8 @@ Expression *interpret(FuncDeclaration *fd, InterState *istate, Expressions *argu
             e = EXP_CANT_INTERPRET;
             break;
         }
-        e = fd->fbody->interpret(&istatex);
+        e = ctfeCode->interpret(&istatex);
+        //e = fd->fbody->interpret(&istatex);
         if (e == EXP_CANT_INTERPRET)
         {
 #if LOG
