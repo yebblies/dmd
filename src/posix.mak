@@ -243,7 +243,8 @@ clean:
 	rm -f $(DMD_OBJS) $(ROOT_OBJS) $(GLUE_OBJS) $(BACK_OBJS) dmd optab.o id.o impcnvgen idgen id.c id.h \
 	impcnvtab.c optabgen debtab.c optab.c cdxxx.c elxxx.c fltables.c \
 	tytab.c verstr.h core \
-	*.cov *.deps *.gcda *.gcno *.a
+	*.cov *.deps *.gcda *.gcno *.a \
+	$(GENSRC)
 
 ######## optabgen generates some source
 
@@ -436,3 +437,46 @@ endif
 zip:
 	-rm -f dmdsrc.zip
 	zip dmdsrc $(SRC) $(ROOT_SRC) $(GLUE_SRC) $(BACK_SRC) $(TK_SRC)
+
+
+############################# DDMD stuff ############################
+
+MAGICPORT = ../../magicport2/magicport2
+
+GENSRC=access.d aggregate.d aliasthis.d apply.d \
+	argtypes.d arrayop.d arraytypes.d \
+	attrib.d builtin.d canthrow.d dcast.d \
+	dclass.d clone.d cond.d constfold.d \
+	cppmangle.d ctfeexpr.d declaration.d \
+	delegatize.d doc.d dsymbol.d \
+	denum.d expression.d func.d \
+	hdrgen.d id.d identifier.d imphint.d \
+	dimport.d dinifile.d inline.d init.d \
+	dinterpret.d json.d lexer.d link.d \
+	dmacro.d dmangle.d mars.d \
+	dmodule.d mtype.d opover.d optimize.d \
+	parse.d sapply.d dscope.d sideeffect.d \
+	statement.d staticassert.d dstruct.d \
+	target.d dtemplate.d traits.d dunittest.d \
+	utf.d dversion.d visitor.d lib.d \
+	nogc.d \
+	$(ROOT)/file.d $(ROOT)/filename.d $(ROOT)/speller.d
+
+MANUALSRC= \
+	intrange.d complex.d longdouble.d \
+	libomf.d scanomf.d \
+	libmscoff.d scanmscoff.d \
+	libelf.d scanelf.d \
+	libmach.d scanmach.d \
+	entity.d \
+	$(ROOT)/aav.d $(ROOT)/array.d \
+	$(ROOT)/man.d $(ROOT)/rootobject.d $(ROOT)/outbuffer.d $(ROOT)/port.d \
+	$(ROOT)/response.d $(ROOT)/rmem.d  $(ROOT)/stringtable.d
+
+$(GENSRC) : $(SRCS) $(ROOTSRC) settings.json
+	$(MAGICPORT) . .
+
+DSRC= $(GENSRC) $(MANUALSRC)
+
+ddmd: $(TARGETEXE) $(DSRC) glue.lib backend.lib outbuffer.o
+	$(TARGETEXE) $(DSRC) -ofddmd glue.lib backend.lib outbuffer.o -debug -vtls -J.. -d -version=DMDV2 -g
