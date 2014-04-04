@@ -478,5 +478,5 @@ $(GENSRC) : $(SRCS) $(ROOTSRC) settings.json
 
 DSRC= $(GENSRC) $(MANUALSRC)
 
-ddmd: $(TARGETEXE) $(DSRC) glue.lib backend.lib outbuffer.o
-	$(TARGETEXE) $(DSRC) -ofddmd glue.lib backend.lib outbuffer.o -debug -vtls -J.. -d -version=DMDV2 -g
+ddmd: dmd $(DSRC) glue.a backend.a outbuffer.o
+	dmd $(DSRC) -ofddmd glue.a backend.a outbuffer.o -debug -vtls -J.. -d -version=DMDV2 -g
