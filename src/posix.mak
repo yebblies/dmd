@@ -479,4 +479,4 @@ $(GENSRC) : $(SRCS) $(ROOTSRC) settings.json
 DSRC= $(GENSRC) $(MANUALSRC)
 
 ddmd: dmd $(DSRC) glue.a backend.a outbuffer.o
-	dmd $(DSRC) -ofddmd glue.a backend.a outbuffer.o -debug -vtls -J.. -d -version=DMDV2 -g
+	CC=$(HOST_CC) ./dmd $(DSRC) -ofddmd glue.a backend.a outbuffer.o -debug -vtls -J.. -d -version=DMDV2 -g
