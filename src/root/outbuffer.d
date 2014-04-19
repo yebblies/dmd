@@ -39,11 +39,13 @@ struct OutBuffer
     void _align(size_t size);
     version(Windows)
     {
+        static assert(is(va_list == void*));
         void vprintf(const(char)* format, va_list args) { vprintf(format, cast(char*)args); }
         void vprintf(const(char)* format, char* args);
     }
     else
     {
+        static assert(is(va_list == char*));
         void vprintf(const(char)* format, va_list args) { vprintf(format, cast(void*)args); }
         void vprintf(const(char)* format, void* args);
     }
