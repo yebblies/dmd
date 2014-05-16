@@ -880,6 +880,25 @@ static unsigned setMangleOverride(Dsymbol *s, char *sym)
         return 0;
 }
 
+static void addCppNamespace(Dsymbol *s, StringExp *se)
+{
+    AttribDeclaration *ad = s->isAttribDeclaration();
+
+    if (ad)
+    {
+        Dsymbols *decls = ad->include(NULL, NULL);
+        unsigned nestedCount = 0;
+
+        if (decls && decls->dim)
+            for (size_t i = 0; i < decls->dim; ++i)
+                addCppNamespace((*decls)[i], se);
+    }
+    else if (s->isFuncDeclaration() || s->isVarDeclaration())
+    {
+        s->isDeclaration()->cpp_namespaces.push((char *)se->string);
+    }
+}
+
 void PragmaDeclaration::semantic(Scope *sc)
 {
     // Should be merged with PragmaStatement
@@ -1055,6 +1074,37 @@ void PragmaDeclaration::semantic(Scope *sc)
 #endif
         }
     }
+    else if (ident == Id::cpp_namespace)
+    {
+        if (!args || args->dim < 1)
+            error("strings expected for c++ namespace");
+        else
+        {
+            for (size_t i = 0; i < args->dim; i++)
+            {
+                Expression *e = (*args)[i];
+                e = e->semantic(sc);
+                e = e->ctfeInterpret();
+                (*args)[i] = e;
+
+                if (e->op == TOKerror)
+                    goto Lnodecl;
+
+                StringExp *se = e->toStringExp();
+                if (!se)
+                {
+                    error("string expected for c++ namespace, not '%s'", e->toChars());
+                    return;
+                }
+
+                if (!se->len)
+                    error("zero-length string not allowed for c++ namespace");
+
+                if (se->sz != 1)
+                    error("c++ namespace characters can only be of type char");
+            }
+        }
+    }
     else if (global.params.ignoreUnsupportedPragmas)
     {
         if (global.params.verbose)
@@ -1111,6 +1161,14 @@ Ldecl:
 
                 if (cnt > 1)
                     error("can only apply to a single declaration");
+            }
+            else if (ident == Id::cpp_namespace)
+            {
+                for (size_t j = 0; j < args->dim; j++)
+                {
+                    StringExp *se = (*args)[args->dim - j - 1]->toStringExp();
+                    addCppNamespace(s, se);
+                }
             }
         }
     }

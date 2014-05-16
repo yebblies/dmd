@@ -267,6 +267,24 @@ void test10()
 
 /****************************************/
 
+pragma(cpp_namespace, "N11", "M") extern(C++) void bar11();
+
+pragma(cpp_namespace, "A11", "B")
+{
+    pragma(cpp_namespace, "C")
+    {
+        extern(C++)
+        void bar();
+    }
+}
+
+void test11()
+{
+    bar11();
+    bar();
+}
+/****************************************/
+
 void main()
 {
     test1();
@@ -280,6 +298,7 @@ void main()
     test11802();
     test9();
     test10();
+    test11();
 
     printf("Success\n");
 }

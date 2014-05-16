@@ -260,6 +260,7 @@ Msgtable msgtable[] =
     { "msg" },
     { "startaddress" },
     { "mangle" },
+    { "cpp_namespace" },
 
     // For special functions
     { "tohash", "toHash" },

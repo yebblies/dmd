@@ -128,6 +128,7 @@ public:
     LINK linkage;
     int inuse;                  // used to detect cycles
     const char *mangleOverride;      // overridden symbol with pragma(mangle, "...")
+    Strings cpp_namespaces;
     Semantic sem;
 
     Declaration(Identifier *id);

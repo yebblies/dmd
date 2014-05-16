@@ -1389,6 +1389,15 @@ private:
         }
         buf.writestring(name);
         buf.writeByte('@');
+
+        if (Declaration *d = sym->isDeclaration())
+        {
+            for (size_t i = 0; i < d->cpp_namespaces.dim; i++)
+            {
+                buf.writestring(d->cpp_namespaces[i]);
+                buf.writeByte('@');
+            }
+        }
     }
 
     // returns true if name already saved
