@@ -163,3 +163,37 @@ unsigned Target::critsecsize()
     return 0;
 }
 
+Type *Target::abi_va_type()
+{
+    if (global.params.isWindows)
+    {
+        if (global.params.is64bit)
+        {
+            return Type::tvoid->pointerTo();
+        }
+        else
+        {
+            return Type::tchar->pointerTo();
+        }
+    }
+    else if (global.params.isLinux ||
+             global.params.isFreeBSD ||
+             global.params.isOpenBSD ||
+             global.params.isSolaris ||
+             global.params.isOSX)
+    {
+        if (global.params.is64bit)
+        {
+            return (new TypeIdentifier(Loc(), Lexer::idPool("__va_list_tag")))->pointerTo();
+        }
+        else
+        {
+            return Type::tvoid->pointerTo();
+        }
+    }
+    else
+    {
+        assert(0);
+        return NULL;
+    }
+}
