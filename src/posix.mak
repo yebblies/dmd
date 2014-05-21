@@ -441,7 +441,20 @@ zip:
 
 ############################# DDMD stuff ############################
 
-MAGICPORT = ../../magicport2/magicport2
+DC = ./dmd
+
+MAGICPORTDIR = magicport
+MAGICPORTSRC = \
+	$(MAGICPORTDIR)/magicport2.d $(MAGICPORTDIR)/ast.d \
+	$(MAGICPORTDIR)/scanner.d $(MAGICPORTDIR)/tokens.d \
+	$(MAGICPORTDIR)/parser.d $(MAGICPORTDIR)/dprinter.d \
+	$(MAGICPORTDIR)/typenames.d $(MAGICPORTDIR)/visitor.d \
+	$(MAGICPORTDIR)/namer.d
+
+MAGICPORT = $(MAGICPORTDIR)/magicport2
+
+$(MAGICPORT) : $(MAGICPORTSRC)
+	$(DC) -of$(MAGICPORT) $(MAGICPORTSRC)
 
 GENSRC=access.d aggregate.d aliasthis.d apply.d \
 	argtypes.d arrayop.d arraytypes.d \
@@ -473,10 +486,10 @@ MANUALSRC= \
 	$(ROOT)/man.d $(ROOT)/rootobject.d $(ROOT)/outbuffer.d $(ROOT)/port.d \
 	$(ROOT)/response.d $(ROOT)/rmem.d  $(ROOT)/stringtable.d
 
-$(GENSRC) : $(SRCS) $(ROOTSRC) settings.json
+$(GENSRC) : $(SRCS) $(ROOTSRC) settings.json $(MAGICPORT)
 	$(MAGICPORT) . .
 
 DSRC= $(GENSRC) $(MANUALSRC)
 
-ddmd: dmd $(DSRC) glue.a backend.a outbuffer.o
-	CC=$(HOST_CC) ./dmd $(DSRC) -ofddmd glue.a backend.a outbuffer.o -debug -vtls -J.. -d -version=DMDV2 -g
+ddmd: $(DC) $(DSRC) glue.a backend.a outbuffer.o
+	CC=$(HOST_CC) $(DC) $(DSRC) -ofddmd glue.a backend.a outbuffer.o -debug -vtls -J.. -d -version=DMDV2 -g

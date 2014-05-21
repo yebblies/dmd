@@ -386,7 +386,20 @@ verstr.h : ..\VERSION
 
 ############################# DDMD stuff ############################
 
-MAGICPORT = ..\..\magicport2\magicport2
+DC = $(TARGETEXE)
+
+MAGICPORTDIR = magicport
+MAGICPORTSRC = \
+	$(MAGICPORTDIR)\magicport2.d $(MAGICPORTDIR)\ast.d \
+	$(MAGICPORTDIR)\scanner.d $(MAGICPORTDIR)\tokens.d \
+	$(MAGICPORTDIR)\parser.d $(MAGICPORTDIR)\dprinter.d \
+	$(MAGICPORTDIR)\typenames.d $(MAGICPORTDIR)\visitor.d \
+	$(MAGICPORTDIR)\namer.d
+
+MAGICPORT = $(MAGICPORTDIR)\magicport2.exe
+
+$(MAGICPORT) : $(MAGICPORTSRC)
+	$(DC) -of$(MAGICPORT) $(MAGICPORTSRC)
 
 GENSRC=access.d aggregate.d aliasthis.d apply.d \
 	argtypes.d arrayop.d arraytypes.d \
@@ -418,14 +431,14 @@ MANUALSRC= \
 	$(ROOT)\man.d $(ROOT)\rootobject.d $(ROOT)\outbuffer.d $(ROOT)\port.d \
 	$(ROOT)\response.d $(ROOT)\rmem.d  $(ROOT)\stringtable.d
 
-$(GENSRC) : $(SRCS) $(ROOTSRC) settings.json
+$(GENSRC) : $(SRCS) $(ROOTSRC) settings.json $(MAGICPORT)
 	$(MAGICPORT) . .
 
 DSRC= $(GENSRC) $(MANUALSRC)
 
 ddmd: ddmd.exe
-ddmd.exe: $(TARGETEXE) $(DSRC) glue.lib backend.lib outbuffer.obj
-	$(TARGETEXE) $(DSRC) -ofddmd.exe glue.lib backend.lib outbuffer.obj -debug -vtls -J.. -d -version=DMDV2 -L/STACK:8388608 -g
+ddmd.exe: $(DC) $(DSRC) glue.lib backend.lib outbuffer.obj
+	$(DC) $(DSRC) -ofddmd.exe glue.lib backend.lib outbuffer.obj -debug -vtls -J.. -d -version=DMDV2 -L/STACK:8388608 -g
 
 ############################# Intermediate Rules ############################
 
