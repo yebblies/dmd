@@ -37,6 +37,11 @@ struct OutBuffer
     void write(RootObject obj);
     void fill0(size_t nbytes);
     void _align(size_t size);
+    version(OSX)
+    {
+        void vprintf(const(char)* format, void* args);
+    }
+    else
     version(Windows)
     {
         static assert(is(va_list == void*));

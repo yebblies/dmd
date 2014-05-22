@@ -11,5 +11,11 @@
 module libmach;
 
 import mars;
+import lib;
 
 static if (TARGET_OSX):
+
+Library LibMach_factory()
+{
+    return null;
+}

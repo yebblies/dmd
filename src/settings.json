@@ -1228,6 +1228,7 @@
                 "root.rmem",
                 "root.rootobject",
                 "core.sys.windows.windows",
+                "core.sys.posix.unistd",
                 "core.sys.posix.sys.stat"
             ],
             "extra" :
@@ -1236,7 +1237,9 @@
                 "version(Windows) alias _mkdir = mkdir;",
                 "version(Posix) extern(C) char *canonicalize_file_name(const char*);",
                 "version(Windows) extern(C) int stricmp(const char*, const char*);",
-                "version(Windows) extern(Windows) DWORD GetFullPathNameA(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR *lpFilePart);"
+                "version(Windows) extern(Windows) DWORD GetFullPathNameA(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR *lpFilePart);",
+                "version(OSX) extern(C) char * realpath(const char *file_name, char *resolved_name);",
+                "version(OSX) enum PATH_MAX = 1024;"
             ],
             "members" :
             [
@@ -1805,7 +1808,8 @@
                 "version(Windows) extern(C) int putenv(const char*);",
                 "version(Windows) extern(C) int spawnlp(int, const char*, const char*, const char*, const char*);",
                 "version(Windows) extern(C) int spawnl(int, const char*, const char*, const char*, const char*);",
-                "version(Windows) extern(C) int spawnv(int, const char*, const char**);"
+                "version(Windows) extern(C) int spawnv(int, const char*, const char**);",
+                "version(OSX) extern(C) char*** _NSGetEnviron();"
             ],
             "members" :
             [

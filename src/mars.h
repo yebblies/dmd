@@ -271,8 +271,13 @@ extern Global global;
 #include "complex_t.h"
 
 // Be careful not to care about sign when using dinteger_t
-typedef uint64_t dinteger_t;    // use this instead of integer_t to
+#ifdef __LP64__
+typedef unsigned long dinteger_t;    // use this instead of integer_t to
                                 // avoid conflicts with system #include's
+#else
+typedef unsigned long long dinteger_t;    // use this instead of integer_t to
+                                // avoid conflicts with system #include's
+#endif
 
 // Signed and unsigned variants
 typedef int64_t sinteger_t;

@@ -472,7 +472,7 @@ GENSRC=access.d aggregate.d aliasthis.d apply.d \
 	statement.d staticassert.d dstruct.d \
 	target.d dtemplate.d traits.d dunittest.d \
 	utf.d dversion.d visitor.d lib.d \
-	nogc.d \
+	nogc.d nspace.d \
 	$(ROOT)/file.d $(ROOT)/filename.d $(ROOT)/speller.d
 
 MANUALSRC= \
