@@ -2265,7 +2265,6 @@
                 "core.stdc.errno",
                 "core.stdc.limits",
                 "core.stdc.stdarg",
-                "core.vararg",
                 "core.stdc.stdint",
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
