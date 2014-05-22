@@ -4576,7 +4576,7 @@ elem *toElem(Expression *e, IRState *irs)
             if (tb->ty == Tsarray && tb->nextOf()->toBasetype()->ty == Tvoid)
             {
                 // Convert void[n] to ubyte[n]
-                tb = Type::tuns8->sarrayOf(((TypeSArray *)tb)->dim->toUInteger());
+                tb = Type_sarrayOf(Type::tuns8, ((TypeSArray *)tb)->dim->toUInteger());
             }
             if (tb->ty == Tsarray && ale->elements && ale->elements->dim)
             {
@@ -4785,7 +4785,7 @@ elem *toElem(Expression *e, IRState *irs)
                     szelem = telem->size();
                     te = Type_toCtype(telem);
 
-                    tsarray = telem->sarrayOf(dim);
+                    tsarray = Type_sarrayOf(telem, dim);
                     stmp = symbol_genauto(Type_toCtype(tsarray));
                     *psym = stmp;
                 }

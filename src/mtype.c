@@ -1260,6 +1260,11 @@ Type *Type::arrayOf()
 }
 
 // Make corresponding static array type without semantic
+extern "C" Type *Type_sarrayOf(Type *type, dinteger_t dim)
+{
+    return type->sarrayOf(dim);
+}
+
 Type *Type::sarrayOf(dinteger_t dim)
 {
     assert(deco);

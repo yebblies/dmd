@@ -39,7 +39,7 @@ struct OutBuffer
     void _align(size_t size);
     version(OSX)
     {
-        void vprintf(const(char)* format, void* args);
+        void vprintf(const(char)* format, va_list args);
     }
     else
     version(Windows)

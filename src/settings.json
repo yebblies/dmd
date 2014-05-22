@@ -347,6 +347,7 @@
             "imports" :
             [
                 "mars",
+                "lexer",
                 "mtype"
             ],
             "members" :
@@ -971,7 +972,8 @@
                 "struct TypeTuple",
                 "struct TypeSlice",
                 "struct TypeNull",
-                "struct Parameter"
+                "struct Parameter",
+                "externc function Type_sarrayOf"
             ]
         },
         {
@@ -2263,6 +2265,7 @@
                 "core.stdc.errno",
                 "core.stdc.limits",
                 "core.stdc.stdarg",
+                "core.vararg",
                 "core.stdc.stdint",
                 "core.stdc.stdio",
                 "core.stdc.stdlib",

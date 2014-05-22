@@ -354,6 +354,8 @@ public:
     virtual void accept(Visitor *v) { v->visit(this); }
 };
 
+extern "C" Type *Type_sarrayOf(Type *type, dinteger_t dim);
+
 class TypeError : public Type
 {
 public:
