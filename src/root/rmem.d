@@ -29,6 +29,38 @@ struct Mem
 }
 extern(C++) __gshared Mem mem;
 
+version(Windows)
+{
+    extern(C++)
+    pragma(mangle, "??2@YAPAXI@Z")
+    void* operator_new(size_t n)
+    {
+        return GC.malloc(n);
+    }
+
+    extern(C++)
+    pragma(mangle, "??3@YAPAXI@Z")
+    void operator_delete(void* p)
+    {
+    }
+    extern(C++)
+    pragma(mangle, "??_P@YAPAXI@Z")
+    void* operator_new_array(size_t n)
+    {
+        return GC.malloc(n);
+    }
+
+    extern(C++)
+    pragma(mangle, "??_Q@YAXPAX@Z")
+    void operator_delete_array(void* p)
+    {
+    }
+}
+else
+{
+    static assert(0);
+}
+
 }
 else
 {

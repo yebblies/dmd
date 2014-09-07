@@ -229,7 +229,10 @@ struct Array
 
     Array *copy()
     {
-        Array *a = new Array();
+        Array *a = (Array *)mem.malloc(sizeof(Array));
+        a->data = SMALLARRAYCAP ? &a->smallarray[0] : NULL;
+        a->dim = 0;
+        a->allocdim = SMALLARRAYCAP;
 
         a->setDim(dim);
         memcpy(a->data, data, dim * sizeof(*data));

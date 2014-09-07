@@ -2303,7 +2303,7 @@ ILLEGAL_ADDRESS_ERROR:
     if (o2->ajt && !o1->ajt)
         o1->ajt = o2->ajt;
 
-    delete o2;
+    // delete o2;
 #ifdef EXTRA_DEBUG
     printf("Result = %d\n",
             o1->uchMultiplier);
@@ -4768,7 +4768,7 @@ Statement* asmSemantic(AsmStatement *s, Scope *sc)
             else if (asmstate.ucItype == ITshift && (ptb.pptb2->usOp2 == 0 ||
                     (ptb.pptb2->usOp2 & _cl)))
             {
-                delete o2;
+                // delete o2;
                 o2 = NULL;
                 usNumops = 1;
             }
@@ -4783,9 +4783,9 @@ Statement* asmSemantic(AsmStatement *s, Scope *sc)
     }
 
 AFTER_EMIT:
-    delete o1;
-    delete o2;
-    delete o3;
+    // delete o1;
+    // delete o2;
+    // delete o3;
     o1 = o2 = o3 = NULL;
 
     if (tok_value != TOKeof)
