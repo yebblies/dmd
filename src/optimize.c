@@ -161,6 +161,95 @@ Expression *fromConstInitializer(int result, Expression *e1)
     return e;
 }
 
+bool isEquivalentExps(Expression *e1, Expression *e2)
+{
+    if (e1->op != e2->op)
+        return false;
+
+    //printf("eq e1 = %s, e2 = %s\n", e1->toChars(), e2->toChars());
+    switch (e1->op)
+    {
+        case TOKint64:
+        case TOKfloat64:
+        case TOKcomplex80:
+        case TOKnull:
+        case TOKstring:
+        case TOKarrayliteral:
+        case TOKassocarrayliteral:
+        case TOKstructliteral:
+        case TOKvar:
+        case TOKtuple:
+            return e1->equals(e2);
+
+        case TOKdotvar:
+        {
+            DotVarExp *dve1 = (DotVarExp *)e1;
+            DotVarExp *dve2 = (DotVarExp *)e2;
+            return dve1->var == dve2->var &&
+                   isEquivalentExps(dve1->e1, dve2->e1);
+        }
+        case TOKslice:
+        {
+            SliceExp *se1 = (SliceExp *)e1;
+            SliceExp *se2 = (SliceExp *)e2;
+            if (!se1->lwr && !se1->upr)
+                return isEquivalentExps(se1->e1, se2->e1);
+            if (se1->lwr && se1->upr)
+            {
+                return isEquivalentExps(se1->e1,  se2->e1) &&
+                       isEquivalentExps(se1->lwr, se2->lwr) &&
+                       isEquivalentExps(se1->upr, se2->upr);
+            }
+            return false;
+        }
+        case TOKuadd:
+        case TOKneg:
+        {
+            UnaExp *ue1 = (UnaExp *)e1;
+            UnaExp *ue2 = (UnaExp *)e2;
+            return isEquivalentExps(ue1->e1, ue2->e1);
+        }
+        case TOKadd:
+        case TOKmin:
+        case TOKmul:
+        case TOKdiv:
+        case TOKmod:
+        case TOKpow:
+        case TOKand:
+        case TOKor:
+        case TOKxor:
+        case TOKshl:
+        case TOKshr:
+        case TOKushr:
+        case TOKoror:
+        case TOKandand:
+        case TOKlt:
+        case TOKle:
+        case TOKgt:
+        case TOKge:
+        case TOKunord:
+        case TOKlg:
+        case TOKleg:
+        case TOKule:
+        case TOKul:
+        case TOKuge:
+        case TOKug:
+        case TOKue:
+        case TOKin:
+        case TOKindex:
+        {
+            BinExp *be1 = (BinExp *)e1;
+            BinExp *be2 = (BinExp *)e2;
+            return isEquivalentExps(be1->e1, be2->e1) &&
+                   isEquivalentExps(be1->e2, be2->e2);
+        }
+
+        default:
+            break;
+    }
+    return false;
+}
+
 Expression *Expression_optimize(Expression *e, int result, bool keepLvalue)
 {
     class OptimizeVisitor : public Visitor
@@ -667,6 +756,18 @@ Expression *Expression_optimize(Expression *e, int result, bool keepLvalue)
             {
                 ret = e->e2;
                 return;
+            }
+            if (e->e1->op == TOKadd && e->e2->op == TOKadd &&
+                ((BinExp *)e->e1)->e2->isConst() && ((BinExp *)e->e2)->e2->isConst() &&
+                isEquivalentExps(((BinExp *)e->e1)->e1, ((BinExp *)e->e2)->e1))
+            {
+                uinteger_t a = ((BinExp *)e->e1)->e2->toUInteger();
+                uinteger_t b = ((BinExp *)e->e2)->e2->toUInteger();
+                if (a >= b)
+                {
+                    ret = new IntegerExp(e->loc, a - b, e->type);
+                    return;
+                }
             }
             if (e->e1->isConst() && e->e2->isConst())
             {

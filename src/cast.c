@@ -1312,9 +1312,12 @@ Type *toStaticArrayType(SliceExp *e)
         // (eg. $ in lwr and upr should be already resolved, if possible)
         Expression *lwr = e->lwr->optimize(WANTvalue);
         Expression *upr = e->upr->optimize(WANTvalue);
-        if (lwr->isConst() && upr->isConst())
+        Expression *diff = new MinExp(Loc(), upr, lwr);
+        diff->type = Type::tsize_t;
+        diff = diff->optimize(WANTvalue);
+        if (diff->isConst())
         {
-            size_t len = (size_t)(upr->toUInteger() - lwr->toUInteger());
+            size_t len = (size_t)diff->toUInteger();
             return e->type->toBasetype()->nextOf()->sarrayOf(len);
         }
     }
