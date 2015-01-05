@@ -514,7 +514,7 @@ GENSRC=access.d aggregate.d aliasthis.d apply.d \
 	target.d dtemplate.d traits.d dunittest.d \
 	utf.d dversion.d visitor.d lib.d \
 	nogc.d nspace.d errors.d tokens.d \
-	globals.d backend.d \
+	globals.d backend.d abitestd.d \
 	$(ROOT)/aav.d $(ROOT)/outbuffer.d $(ROOT)/stringtable.d \
 	$(ROOT)/file.d $(ROOT)/filename.d $(ROOT)/speller.d
 
@@ -526,9 +526,12 @@ MANUALSRC= \
 	$(ROOT)/rmem.d
 
 MANUALOBJ= \
-	man.o response.o
+	man.o response.o abitestc.o
 
-$(GENSRC) : $(SRC) $(ROOT_SRC) settings.json $(MAGICPORT)
+abitestc.o : abitestc.c
+	$(CC) $(CFLAGS) -I$(ROOT) abitestc.c -o abitestc.o -c
+
+$(GENSRC) abitestc.c : $(SRC) $(ROOT_SRC) settings.json $(MAGICPORT)
 	$(MAGICPORT) . .
 
 DSRC= $(GENSRC) $(MANUALSRC)

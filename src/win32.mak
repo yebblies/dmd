@@ -419,7 +419,7 @@ GENSRC=access.d aggregate.d aliasthis.d apply.d \
 	target.d dtemplate.d traits.d dunittest.d \
 	utf.d dversion.d visitor.d lib.d \
 	nogc.d nspace.d errors.d tokens.d \
-	globals.d backend.d \
+	globals.d backend.d abitestd.d \
 	$(ROOT)\aav.d $(ROOT)\outbuffer.d $(ROOT)\stringtable.d \
 	$(ROOT)\file.d $(ROOT)\filename.d $(ROOT)\speller.d
 
@@ -430,17 +430,20 @@ MANUALSRC= \
 	$(ROOT)\rootobject.d $(ROOT)\port.d \
 	$(ROOT)\rmem.d
 
-MANUALOBJ= \
-	man.obj response.obj
+abitestc.obj : abitestc.c
+	$(CC) -c $(CFLAGS) abitestc.c
 
-$(GENSRC) : $(SRCS) $(ROOTSRC) settings.json $(MAGICPORT)
+MANUALOBJ= \
+	man.obj response.obj abitestc.obj
+
+$(GENSRC) abitestc.c : $(SRCS) $(ROOTSRC) settings.json $(MAGICPORT)
 	$(MAGICPORT) . .
 
 DSRC= $(GENSRC) $(MANUALSRC)
 
 ddmd: ddmd.exe
 ddmd.exe: $(HOST_DC) $(DSRC) glue.lib backend.lib $(MANUALOBJ)
-	$(HOST_DC) $(DSRC) -ofddmd.exe glue.lib backend.lib $(MANUALOBJ) -debug -vtls -J.. -d -version=DMDV2 -L/STACK:8388608 -g -map
+	$(HOST_DC) $(DSRC) -ofddmd.exe glue.lib backend.lib $(MANUALOBJ) -debug -vtls -J.. -d -version=DMDV2 -L/STACK:8388608 -map
 
 ############################# Intermediate Rules ############################
 

@@ -221,6 +221,182 @@ void main(string[] args)
             writeln("duplicate: ", d.d.getName);
         }
     }
+    bool badIdent(string s)
+    {
+        switch(s)
+        {
+        case "import", "module", "version", "ref", "scope",
+            "body", "alias", "is",
+            "delegate", "cast", "mangleof",
+            "foreach", "super", "init", "tupleof":
+            return true;
+        default:
+            return false;
+        }
+    }
+    auto skiplist =
+    [
+        "TypeDeduced", "PostorderExpressionVisitor", "CtfeStack", "InterState", "CompiledCtfeFunction", "CtfeCompiler",
+        "Interpreter", "PrefixAttributes", "Ptrait", "PushAttributes", "GetNthSymbolCtx", "PostorderStatementVisitor",
+        "PrettyPrintVisitor", "Escape", "Section", "DocComment", "GetNthParamCtx", "StatementRewriteWalker",
+        "TemplateCandidateWalker", "NrvoWalker", "FuncCandidateWalker", "ToJsonVisitor", "Mangler", "aaA",
+        "AA", "InlineCostVisitor", "InlineDoState", "InlineScanVisitor", "StringEntry", "Keyword", "NOGCVisitor",
+        "ParamSection", "MacroSection", "ParamDeduce", "DeduceType", "ReliesOnTident", "ParamBest", "ParamNeedsInf",
+        "BlockExit", "StringTable", "VarWalker", "SCstring", "BuildArrayIdentVisitor", "BuildArrayLoopVisitor",
+        "PointerBitmapVisitor", "EnumDeclaration", "CppMangleVisitor", "LambdaSetParent", "LambdaCheckForNestedRef",
+        "ImplicitCastTo", "ImplicitConvTo", "CastTo", "InferType", "IntRangeVisitor", "CommutativeVisitor",
+        "OpIdVisitor", "OpIdRVisitor", "OpOverload", "ParamOpOver", "ScopeDsymbol", "PrePostAppendStrings",
+        "OptimizeVisitor", "EmitComment", "ToDocBuffer", "Macro", "ParamExact", "CountWalker", "PrevSibling",
+        "RetWalker", "ToArgTypes", "FullTypeInfoVisitor", "Ctxt", "CanThrow", "LambdaInlineCost", "InlineAsStatement",
+        "InlineStatement", "InlineExpression", "ParamFwdTi", "ParamFwdResTm", "UsesEH", "ComeFrom", "HasCode",
+        "PushIdentsDg", "PushBaseMembers", "ClassCheck", "ParamUniqueSym", "IsTrivialExp", "LambdaHasSideEffect",
+        "ParamUnique", "N", "SV"
+    ];
+    {
+        auto fn = buildPath(destdir, "abitestd").setExtension(".d");
+        auto f = File(fn, "wb");
+        writeln("writing -- ", fn);
+
+        f.writeln("module ddmd.abitest;");
+        f.writeln();
+        foreach(m; mapping)
+        {
+            if (m.p.length)
+                f.writefln("import ddmd.%s.%s;", m.p, m.m);
+            else
+                f.writefln("import ddmd.%s;", m.m);
+        }
+        f.writeln();
+        f.writeln("extern(C++) size_t getOffset(const(char)* agg, const(char)* member);");
+        f.writeln("extern(C++) size_t getSize(const(char)* agg);");
+        f.writeln();
+        f.writeln("void checkOffset(string sd, string vd)()");
+        f.writeln("{");
+        f.writeln("    auto doff = cast(int)mixin(sd ~ \".\" ~ vd).offsetof;");
+        f.writeln("    auto coff = cast(int)getOffset(sd, vd);");
+        f.writeln("    if (doff != coff)");
+        f.writeln("    {");
+        f.writeln("        import core.stdc.stdio;");
+        f.writeln("        printf(\"Offset mismatch - %s:%s %d (d) %d (c++)\n\", sd.ptr, vd.ptr, doff, coff);");
+        f.writeln("    }");
+        f.writeln("}");
+        f.writeln();
+        f.writeln("static this()");
+        f.writeln("{");
+
+        foreach(sd; scan.structDeclarations)
+        {writeln(sd.id);
+            if (skiplist.canFind(sd.id))
+                continue;
+            foreach(d; sd.decls)
+            {
+                if (auto vd = cast(VarDeclaration)d)
+                {
+                    if (!(vd.stc & (STCstatic | STCconst)) && !badIdent(vd.id))
+                    {
+                        f.writefln("    checkOffset!(\"%s\", \"%s\")();", sd.id, vd.id);
+                    }
+                }
+            }
+            if (sd.kind == "class"){}
+                // f.writefln("    assert(getSize(\"%s\") == __traits(classInstanceSize, %s));", sd.id, sd.id);
+            else
+                f.writefln("    assert(getSize(\"%s\") == %s.sizeof);", sd.id, sd.id);
+        }
+
+        f.writeln("}");
+        f.writeln();
+    }
+    {
+        auto fn = buildPath(destdir, "abitestc").setExtension(".c");
+        auto f = File(fn, "wb");
+        writeln("writing -- ", fn);
+        f.writeln();
+        f.writeln("#include <stdio.h>");
+        f.writeln();
+        f.writeln("#include \"aggregate.h\"");
+        f.writeln("#include \"aliasthis.h\"");
+        f.writeln("#include \"arraytypes.h\"");
+        f.writeln("#include \"attrib.h\"");
+        f.writeln("#include \"complex_t.h\"");
+        f.writeln("#include \"cond.h\"");
+        f.writeln("#include \"ctfe.h\"");
+        f.writeln("#include \"declaration.h\"");
+        f.writeln("#include \"doc.h\"");
+        f.writeln("#include \"dsymbol.h\"");
+        f.writeln("#include \"enum.h\"");
+        f.writeln("#include \"errors.h\"");
+        f.writeln("#include \"expression.h\"");
+        f.writeln("#include \"globals.h\"");
+        f.writeln("#include \"hdrgen.h\"");
+        f.writeln("#include \"id.h\"");
+        f.writeln("#include \"identifier.h\"");
+        f.writeln("#include \"import.h\"");
+        f.writeln("#include \"init.h\"");
+        f.writeln("#include \"intrange.h\"");
+        f.writeln("#include \"irstate.h\"");
+        f.writeln("#include \"json.h\"");
+        f.writeln("#include \"lexer.h\"");
+        f.writeln("#include \"lib.h\"");
+        f.writeln("#include \"macro.h\"");
+        f.writeln("#include \"module.h\"");
+        f.writeln("#include \"mtype.h\"");
+        f.writeln("#include \"nspace.h\"");
+        f.writeln("#include \"parse.h\"");
+        f.writeln("#include \"scope.h\"");
+        f.writeln("#include \"statement.h\"");
+        f.writeln("#include \"staticassert.h\"");
+        f.writeln("#include \"target.h\"");
+        f.writeln("#include \"template.h\"");
+        f.writeln("#include \"toir.h\"");
+        f.writeln("#include \"tokens.h\"");
+        f.writeln("#include \"utf.h\"");
+        f.writeln("#include \"version.h\"");
+        f.writeln("#include \"visitor.h\"");
+        f.writeln();
+        f.writeln("size_t getOffset(const char *agg, const char *member)");
+        f.writeln("{");
+        foreach(sd; scan.structDeclarations)
+        {
+            if (skiplist.canFind(sd.id))
+                continue;
+            f.writefln("    if (!strcmp(agg, \"%s\"))", sd.id);
+            f.writefln("    {");
+            foreach(d; sd.decls)
+            {
+                if (auto vd = cast(VarDeclaration)d)
+                {
+                    if (!(vd.stc & (STCstatic | STCconst)) && !badIdent(vd.id))
+                    {
+                        f.writefln("        if (!strcmp(member, \"%s\"))", vd.id);
+                        f.writefln("        {");
+                        f.writefln("            return (size_t)((char*)&((%s*)NULL)->%s);", sd.id, vd.id);
+                        f.writefln("        }");
+                    }
+                }
+            }
+            f.writefln("        printf(\"%s.%%s\", member);", sd.id);
+            f.writefln("        assert(0);");
+            f.writefln("    }");
+        }
+        f.writeln("    assert(0);");
+        f.writeln("    return 0;");
+        f.writeln("}");
+        f.writeln();
+        f.writeln("size_t getSize(const char *agg)");
+        f.writeln("{");
+        foreach(sd; scan.structDeclarations)
+        {
+            if (skiplist.canFind(sd.id))
+                continue;
+            f.writefln("    if (!strcmp(agg, \"%s\"))", sd.id);
+            f.writefln("        return sizeof(%s);", sd.id);
+        }
+        f.writeln("    assert(0);");
+        f.writeln("    return 0;");
+        f.writeln("}");
+        f.writeln();
+    }
     if (failed)
         assert(0);
 }

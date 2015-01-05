@@ -774,10 +774,10 @@ class DPrinter : Visitor
 
     override void visit(ProtDeclaration ast)
     {
-        indent--;
-        print(ast.id);
-        println(":");
-        indent++;
+        // indent--;
+        // print(ast.id);
+        // println(":");
+        // indent++;
     }
 
     override void visit(LitExpr ast)

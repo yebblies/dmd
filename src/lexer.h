@@ -49,6 +49,7 @@ public:
     static Identifier *uniqueId(const char *s);
     static Identifier *uniqueId(const char *s, int num);
 
+    virtual void dummy() {}
     TOK nextToken();
     TOK peekNext();
     TOK peekNext2();
