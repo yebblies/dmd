@@ -275,7 +275,8 @@ clean:
 	rm -f $(DMD_OBJS) $(ROOT_OBJS) $(GLUE_OBJS) $(BACK_OBJS) dmd optab.o id.o impcnvgen idgen id.c id.h \
 	impcnvtab.c optabgen debtab.c optab.c cdxxx.c elxxx.c fltables.c \
 	tytab.c verstr.h core \
-	*.cov *.deps *.gcda *.gcno *.a
+	*.cov *.deps *.gcda *.gcno *.a \
+	$(GENSRC) $(MAGICPORT)
 
 ######## generate a default dmd.conf
 
@@ -483,3 +484,60 @@ endif
 zip:
 	-rm -f dmdsrc.zip
 	zip dmdsrc $(SRC) $(ROOT_SRC) $(GLUE_SRC) $(BACK_SRC) $(TK_SRC)
+
+
+############################# DDMD stuff ############################
+
+HOST_DC = ./dmd
+
+MAGICPORTDIR = magicport
+MAGICPORTSRC = \
+	$(MAGICPORTDIR)/magicport2.d $(MAGICPORTDIR)/ast.d \
+	$(MAGICPORTDIR)/scanner.d $(MAGICPORTDIR)/tokens.d \
+	$(MAGICPORTDIR)/parser.d $(MAGICPORTDIR)/dprinter.d \
+	$(MAGICPORTDIR)/typenames.d $(MAGICPORTDIR)/visitor.d \
+	$(MAGICPORTDIR)/namer.d
+
+MAGICPORT = $(MAGICPORTDIR)/magicport2
+
+$(MAGICPORT) : $(MAGICPORTSRC)
+	$(HOST_DC) $(MODEL_FLAG) -of$(MAGICPORT) $(MAGICPORTSRC)
+
+GENSRC=access.d aggregate.d aliasthis.d apply.d \
+	argtypes.d arrayop.d arraytypes.d \
+	attrib.d builtin.d canthrow.d dcast.d \
+	dclass.d clone.d cond.d constfold.d \
+	cppmangle.d ctfeexpr.d declaration.d \
+	delegatize.d doc.d dsymbol.d \
+	denum.d expression.d func.d \
+	hdrgen.d id.d identifier.d imphint.d \
+	dimport.d dinifile.d inline.d init.d \
+	dinterpret.d json.d lexer.d link.d \
+	dmacro.d dmangle.d mars.d \
+	dmodule.d mtype.d opover.d optimize.d \
+	parse.d sapply.d dscope.d sideeffect.d \
+	statement.d staticassert.d dstruct.d \
+	target.d dtemplate.d traits.d dunittest.d \
+	utf.d dversion.d visitor.d lib.d \
+	nogc.d nspace.d errors.d tokens.d \
+	globals.d backend.d escape.d \
+	$(ROOT)/aav.d $(ROOT)/outbuffer.d $(ROOT)/stringtable.d \
+	$(ROOT)/file.d $(ROOT)/filename.d $(ROOT)/speller.d
+
+MANUALSRC= \
+	intrange.d complex.d longdouble.d \
+	entity.d \
+	$(ROOT)/array.d \
+	$(ROOT)/rootobject.d $(ROOT)/port.d \
+	$(ROOT)/rmem.d
+
+MANUALOBJ= \
+	man.o response.o
+
+$(GENSRC) : $(SRC) $(ROOT_SRC) settings.json $(MAGICPORT)
+	$(MAGICPORT) . .
+
+DSRC= $(GENSRC) $(MANUALSRC)
+
+ddmd: $(HOST_DC) $(DSRC) glue.a backend.a $(MANUALOBJ)
+	CC=$(HOST_CC) $(HOST_DC) $(MODEL_FLAG) $(DSRC) -ofddmd glue.a backend.a $(MANUALOBJ) -debug -vtls -J.. -d -version=DMDV2 -g
