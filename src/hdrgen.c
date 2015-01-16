@@ -1048,6 +1048,11 @@ public:
         buf->writestring("typeof(null)");
     }
 
+    void visit(TypeVaList *t)
+    {
+        buf->writestring("va_list");
+    }
+
     ////////////////////////////////////////////////////////////////////////////
 
     void visit(Dsymbol *s)

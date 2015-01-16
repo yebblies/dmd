@@ -278,7 +278,8 @@ void Type::init()
     tstring = tchar->immutableOf()->arrayOf();
     twstring = twchar->immutableOf()->arrayOf();
     tdstring = tdchar->immutableOf()->arrayOf();
-    tvalist = Target::va_listType();
+    tvalist = new TypeVaList();
+    tvalist->deco = (char *)Target::va_listMangle();
 
     if (global.params.isLP64)
     {
@@ -1635,6 +1636,7 @@ Type *Type::merge()
 {
     if (ty == Terror) return this;
     if (ty == Ttypeof) return this;
+    if (ty == Tvalist) return this;
     if (ty == Tident) return this;
     if (ty == Tinstance) return this;
     if (ty == Taarray && !((TypeAArray *)this)->index->merge()->deco)
@@ -6629,6 +6631,13 @@ void TypeIdentifier::resolve(Loc loc, Scope *sc, Expression **pe, Type **pt, Dsy
         *pt = Type::terror;
         return;
     }
+    if (ident == Id::va_list)
+    {
+        *pe = NULL;
+        *ps = NULL;
+        *pt = Type::tvalist->addMod(mod);
+        return;
+    }
 
     Dsymbol *scopesym;
     Dsymbol *s = sc->search(loc, ident, &scopesym);
@@ -8864,6 +8873,34 @@ bool TypeNull::checkBoolean()
 
 d_uns64 TypeNull::size(Loc loc) { return tvoidptr->size(loc); }
 Expression *TypeNull::defaultInit(Loc loc) { return new NullExp(Loc(), Type::tnull); }
+
+/***************************** TypeVaList *****************************/
+
+TypeVaList::TypeVaList()
+        : Type(Tvalist)
+{
+}
+
+const char *TypeVaList::kind()
+{
+    return "va_list";
+}
+
+Type *TypeVaList::syntaxCopy()
+{
+    // No semantic analysis done, no need to copy
+    return this;
+}
+
+d_uns64 TypeVaList::size(Loc loc)
+{
+    return Target::va_listSize();
+}
+
+Expression *TypeVaList::defaultInit(Loc loc)
+{
+    return new NullExp(Loc(), this);
+}
 
 /***************************** Parameter *****************************/
 

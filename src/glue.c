@@ -1418,6 +1418,13 @@ unsigned totym(Type *tx)
             t = TYnptr;
             break;
 
+        case Tvalist:
+            // if (Target::va_listIsPointer())
+                t = TYnptr;
+            // else
+                // t = TYstruct;
+            break;
+
         case Tvector:
         {
             TypeVector *tv = (TypeVector *)tx;

@@ -98,6 +98,7 @@ enum ENUMTY
     Treturn,
 
     Tnull,
+    Tvalist,
     Tvector,
     Tint128,
     Tuns128,
@@ -188,7 +189,7 @@ public:
     static Type *tstring;               // immutable(char)[]
     static Type *twstring;              // immutable(wchar)[]
     static Type *tdstring;              // immutable(dchar)[]
-    static Type *tvalist;               // va_list alias
+    static Type *tvalist;               // va_list bulitin type
     static Type *terror;                // for error recovery
     static Type *tnull;                 // for null type
 
@@ -896,6 +897,19 @@ public:
     Type *syntaxCopy();
     MATCH implicitConvTo(Type *to);
     bool checkBoolean();
+
+    d_uns64 size(Loc loc);
+    Expression *defaultInit(Loc loc);
+    void accept(Visitor *v) { v->visit(this); }
+};
+
+class TypeVaList : public Type
+{
+public:
+    TypeVaList();
+    const char *kind();
+
+    Type *syntaxCopy();
 
     d_uns64 size(Loc loc);
     Expression *defaultInit(Loc loc);

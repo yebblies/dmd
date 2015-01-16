@@ -210,6 +210,12 @@ elem *callfunc(Loc loc,
                     ea = addressElem(ea, arg->type->pointerTo());
                     goto L1;
                 }
+                else if (p->type->ty == Tvalist)
+                {
+                    ea = toElem(arg, irs);
+                    ea = addressElem(ea, arg->type->pointerTo());
+                    goto L1;
+                }
             }
             if (config.exe == EX_WIN64 && arg->type->size(arg->loc) > REGSIZE && op == -1)
             {

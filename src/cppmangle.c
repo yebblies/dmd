@@ -1003,6 +1003,14 @@ public:
         flags &= ~IGNORE_CONST;
     }
 
+    void visit(TypeVaList *type)
+    {
+        if (checkTypeSaved(type)) return;
+        buf.writestring(Target::va_listCppMangle());
+        flags &= ~IS_NOT_TOP_TYPE;
+        flags &= ~IGNORE_CONST;
+    }
+
     void visit(TypeVector *type)
     {
         //printf("visit(TypeVector); is_not_top_type = %d\n", (int)(flags & IS_NOT_TOP_TYPE));

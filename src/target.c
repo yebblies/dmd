@@ -174,11 +174,39 @@ unsigned Target::critsecsize()
  * NOTE: For Posix/x86_64 this returns the type which will really
  * be used for passing an argument of type va_list.
  */
-Type *Target::va_listType()
+// Type *Target::va_listType()
+// {
+    // if (global.params.isWindows)
+    // {
+        // return Type::tchar->pointerTo();
+    // }
+    // else if (global.params.isLinux ||
+             // global.params.isFreeBSD ||
+             // global.params.isOpenBSD ||
+             // global.params.isSolaris ||
+             // global.params.isOSX)
+    // {
+        // if (global.params.is64bit)
+        // {
+            // return (new TypeIdentifier(Loc(), Identifier::idPool("__va_list_tag")))->pointerTo();
+        // }
+        // else
+        // {
+            // return Type::tchar->pointerTo();
+        // }
+    // }
+    // else
+    // {
+        // assert(0);
+        // return NULL;
+    // }
+// }
+
+unsigned Target::va_listSize()
 {
     if (global.params.isWindows)
     {
-        return Type::tchar->pointerTo();
+        return ptrsize;
     }
     else if (global.params.isLinux ||
              global.params.isFreeBSD ||
@@ -188,11 +216,95 @@ Type *Target::va_listType()
     {
         if (global.params.is64bit)
         {
-            return (new TypeIdentifier(Loc(), Identifier::idPool("__va_list_tag")))->pointerTo();
+            return 2 * 4 + 2 * 8;
         }
         else
         {
-            return Type::tchar->pointerTo();
+            return ptrsize;
+        }
+    }
+    else
+    {
+        assert(0);
+        return 0;
+    }
+}
+
+bool Target::va_listIsPointer()
+{
+    if (global.params.isWindows)
+    {
+        return true;
+    }
+    else if (global.params.isLinux ||
+             global.params.isFreeBSD ||
+             global.params.isOpenBSD ||
+             global.params.isSolaris ||
+             global.params.isOSX)
+    {
+        if (global.params.is64bit)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    else
+    {
+        assert(0);
+        return NULL;
+    }
+}
+
+const char *Target::va_listMangle()
+{
+    if (global.params.isWindows)
+    {
+        return "Pa";
+    }
+    else if (global.params.isLinux ||
+             global.params.isFreeBSD ||
+             global.params.isOpenBSD ||
+             global.params.isSolaris ||
+             global.params.isOSX)
+    {
+        if (global.params.is64bit)
+        {
+            return "PS13__va_list_tag";
+        }
+        else
+        {
+            return "Pa";
+        }
+    }
+    else
+    {
+        assert(0);
+        return NULL;
+    }
+}
+
+const char *Target::va_listCppMangle()
+{
+    if (global.params.isWindows)
+    {
+        return "Pa";
+    }
+    else if (global.params.isLinux ||
+             global.params.isFreeBSD ||
+             global.params.isOpenBSD ||
+             global.params.isSolaris ||
+             global.params.isOSX)
+    {
+        if (global.params.is64bit)
+        {
+            return "PU__va_list_tag";
+        }
+        else
+        {
+            return "Pa";
         }
     }
     else

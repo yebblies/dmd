@@ -157,6 +157,14 @@ Symbol *toSymbol(Dsymbol *s)
                         t = Type_toCtype(vd->type);
                         t->Tcount++;
                     }
+                    if (vd->type->ty == Tvalist)
+                    {
+                        t = type_pointer(t);
+                    }
+                }
+                else if (vd->type->ty == Tvalist)
+                {
+                    t = type_static_array(3, type_fake(TYnptr));
                 }
                 else
                 {

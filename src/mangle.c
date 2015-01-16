@@ -27,6 +27,7 @@
 #include "enum.h"
 #include "expression.h"
 #include "utf.h"
+#include "target.h"
 
 char *toCppMangle(Dsymbol *s);
 void mangleToBuffer(Type *t, OutBuffer *buf);
@@ -83,6 +84,7 @@ void initTypeMangle()
     mangleChar[Tvector] = '@';
     mangleChar[Tint128] = '@';
     mangleChar[Tuns128] = '@';
+    mangleChar[Tvalist] = '#'; // The actual mangling is target-dependent
 
     mangleChar[Tnull] = 'n';    // same as TypeNone
 
@@ -167,6 +169,11 @@ public:
     {
         visit((Type *)t);
         visitWithMask(t->next, t->mod);
+    }
+
+    void visit(TypeVaList *t)
+    {
+        buf->writestring(Target::va_listMangle());
     }
 
     void visit(TypeVector *t)
@@ -442,11 +449,18 @@ public:
         assert(len > 0);
         for (size_t i = 0; i < len; i++)
         {
-            assert(buf->data[i] == '_' ||
-                   buf->data[i] == '@' ||
-                   buf->data[i] == '?' ||
-                   buf->data[i] == '$' ||
-                   isalnum(buf->data[i]) || buf->data[i] & 0x80);
+            if (buf->data[i] == '_' ||
+                buf->data[i] == '@' ||
+                buf->data[i] == '?' ||
+                buf->data[i] == '$' ||
+                isalnum(buf->data[i]) || buf->data[i] & 0x80)
+            {
+            }
+            else
+            {
+                printf("Invalid character in mangle - '%c'\n", buf->data[i]);
+                assert(0);
+            }
         }
     #endif
     }

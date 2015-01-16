@@ -79,6 +79,7 @@ class TypeClass;
 class TypeTuple;
 class TypeSlice;
 class TypeNull;
+class TypeVaList;
 
 class Dsymbol;
 
@@ -366,6 +367,7 @@ public:
     virtual void visit(TypeTuple *t) { visit((Type *)t); }
     virtual void visit(TypeSlice *t) { visit((TypeNext *)t); }
     virtual void visit(TypeNull *t) { visit((Type *)t); }
+    virtual void visit(TypeVaList *t) { visit((Type *)t); }
 
     virtual void visit(Dsymbol *) { assert(0); }
 

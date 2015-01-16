@@ -3178,6 +3178,10 @@ Expression *IdentifierExp::semantic(Scope *sc)
         e = e->semantic(sc);
         return e;
     }
+    if (ident == Id::va_list)
+    {
+        return new TypeExp(loc, Type::tvalist);
+    }
 
     const char *n = importHint(ident->toChars());
     if (n)

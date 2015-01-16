@@ -34,7 +34,10 @@ struct Target
     static unsigned alignsize(Type* type);
     static unsigned fieldalign(Type* type);
     static unsigned critsecsize();
-    static Type *va_listType();  // get type of va_list
+    static unsigned va_listSize();
+    static bool va_listIsPointer();
+    static const char *va_listMangle();
+    static const char *va_listCppMangle();
     static Expression *paintAsType(Expression *e, Type *type);
     static int checkVectorType(int sz, Type *type);
     static void loadModule(Module *m);
