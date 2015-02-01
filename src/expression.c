@@ -10046,6 +10046,13 @@ Lagain:
         lwr = lwr->optimize(WANTvalue);
         upr = upr->optimize(WANTvalue);
 
+        Expression *length = new VarExp(Loc(), lengthVar);
+        length->type = Type::tsize_t;
+        Expression *uprLessThanLength = new CmpExp(TOKle, Loc(), upr, length);
+        uprLessThanLength->type = Type::tbool;
+        uprLessThanLength = uprLessThanLength->optimize(WANTvalue);
+        printf("%s -> %s\n", toChars(), uprLessThanLength->toChars());
+
         IntRange lwrRange = getIntRange(lwr);
         IntRange uprRange = getIntRange(upr);
 

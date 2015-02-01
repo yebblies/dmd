@@ -888,6 +888,10 @@ UnionExp Equal(TOK op, Type *type, Expression *e1, Expression *e2)
                 cmp = 0;
         }
     }
+    else if (e1->op == TOKvar && e2->op == TOKvar && e1->type->isintegral())
+    {
+        cmp = ((VarExp *)e1)->var == ((VarExp *)e2)->var;
+    }
     else if (e1->isConst() != 1 || e2->isConst() != 1)
     {
         new(&ue) CTFEExp(TOKcantexp);
@@ -1029,6 +1033,11 @@ UnionExp Cmp(TOK op, Type *type, Expression *e1, Expression *e2)
             default:
                 assert(0);
         }
+    }
+    else if (e1->op == TOKvar && e2->op == TOKvar && e1->type->isintegral() &&
+        ((VarExp *)e1)->var == ((VarExp *)e2)->var)
+    {
+        n = (op == TOKle || op == TOKge);
     }
     else if (e1->isConst() != 1 || e2->isConst() != 1)
     {
