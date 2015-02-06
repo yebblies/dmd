@@ -123,7 +123,7 @@ CFLAGS=-I$(INCLUDE) $(OPT) $(CFLAGS) $(DEBUG) -cpp -DTARGET_WINDOS=1 -DDM_TARGET
 # Compile flags for modules with backend/toolkit dependencies
 MFLAGS=-I$C;$(TK) $(OPT) -DMARS -cpp $(DEBUG) -e -wx -DTARGET_WINDOS=1 -DDM_TARGET_CPU_X86=1 -DDMDV2=1
 # Recursive make
-DMDMAKE=$(MAKE) -fwin32.mak C=$C TK=$(TK) ROOT=$(ROOT)
+DMDMAKE=$(MAKE) -fwin32.mak C=$C TK=$(TK) ROOT=$(ROOT) HOST_DC=$(HOST_DC)
 
 ############################### Rule Variables ###############################
 
@@ -263,7 +263,7 @@ MAKEFILES=win32.mak posix.mak osmodel.mak
 
 defaulttarget: debdmd
 
-dmd: reldmd
+dmd: ddmd
 
 release:
 	$(DMDMAKE) clean
@@ -295,8 +295,8 @@ root.lib : $(ROOTOBJS)
 
 LIBS= frontend.lib glue.lib backend.lib root.lib
 
-$(TARGETEXE): mars.obj $(LIBS) win32.mak
-	$(CC) -o$(TARGETEXE) mars.obj $(LIBS) -cpp -mn -Ar -L/STACK:8388608 $(LFLAGS)
+# $(TARGETEXE): mars.obj $(LIBS) win32.mak
+	# $(CC) -o$(TARGETEXE) mars.obj $(LIBS) -cpp -mn -Ar -L/STACK:8388608 $(LFLAGS)
 
 ############################ Maintenance Targets #############################
 
@@ -387,8 +387,6 @@ verstr.h : ..\VERSION
 
 ############################# DDMD stuff ############################
 
-HOST_DC = $(TARGETEXE)
-
 MAGICPORTDIR = magicport
 MAGICPORTSRC = \
 	$(MAGICPORTDIR)\magicport2.d $(MAGICPORTDIR)\ast.d \
@@ -400,7 +398,9 @@ MAGICPORTSRC = \
 MAGICPORT = $(MAGICPORTDIR)\magicport2.exe
 
 $(MAGICPORT) : $(MAGICPORTSRC)
-	$(HOST_DC) $(MODEL_FLAG) -of$(MAGICPORT) $(MAGICPORTSRC)
+	rename sc.ini _sc.ini
+	$(HOST_DC) -of$(MAGICPORT) $(MAGICPORTSRC)
+	rename _sc.ini sc.ini
 
 GENSRC=access.d aggregate.d aliasthis.d apply.d \
 	argtypes.d arrayop.d arraytypes.d \
@@ -433,14 +433,16 @@ MANUALSRC= \
 MANUALOBJ= \
 	man.obj response.obj
 
-$(GENSRC) : $(SRCS) $(ROOTSRC) settings.json $(MAGICPORT)
+$(GENSRC) : $(SRCS) $(ROOTSRC) settings.json $(MAGICPORT) id.c impcnvtab.c
 	$(MAGICPORT) . .
 
 DSRC= $(GENSRC) $(MANUALSRC)
 
-ddmd: ddmd.exe
-ddmd.exe: $(HOST_DC) $(DSRC) glue.lib backend.lib $(MANUALOBJ)
-	$(HOST_DC) $(DSRC) -ofddmd.exe glue.lib backend.lib $(MANUALOBJ) -debug -vtls -J.. -d -version=DMDV2 -L/STACK:8388608 -g -map
+ddmd: dmd.exe
+dmd.exe: $(DSRC) glue.lib backend.lib $(MANUALOBJ)
+	rename sc.ini _sc.ini
+	$(HOST_DC) $(DSRC) -ofdmd.exe glue.lib backend.lib $(MANUALOBJ) -debug -vtls -J.. -d -version=DMDV2 -L/STACK:8388608 -g -map
+	rename _sc.ini sc.ini
 
 ############################# Intermediate Rules ############################
 

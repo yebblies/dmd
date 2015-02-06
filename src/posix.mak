@@ -268,8 +268,11 @@ glue.a: $(GLUE_OBJS)
 backend.a: $(BACK_OBJS)
 	ar rcs backend.a $(BACK_OBJS)
 
-dmd: frontend.a root.a glue.a backend.a
-	$(HOST_CC) -o dmd $(MODEL_FLAG) frontend.a root.a glue.a backend.a $(LDFLAGS)
+.PHONY: dmd
+dmd: ddmd
+
+#frontend.a root.a glue.a backend.a
+#$(HOST_CC) -o dmd $(MODEL_FLAG) frontend.a root.a glue.a backend.a $(LDFLAGS)
 
 clean:
 	rm -f $(DMD_OBJS) $(ROOT_OBJS) $(GLUE_OBJS) $(BACK_OBJS) dmd optab.o id.o impcnvgen idgen id.c id.h \
@@ -488,7 +491,7 @@ zip:
 
 ############################# DDMD stuff ############################
 
-HOST_DC = ./dmd
+HOST_DC = dmd
 
 MAGICPORTDIR = magicport
 MAGICPORTSRC = \
@@ -501,7 +504,7 @@ MAGICPORTSRC = \
 MAGICPORT = $(MAGICPORTDIR)/magicport2
 
 $(MAGICPORT) : $(MAGICPORTSRC)
-	$(HOST_DC) $(MODEL_FLAG) -of$(MAGICPORT) $(MAGICPORTSRC)
+	$(HOST_DC) -conf=$(HOST_DC:dmd=dmd.conf) $(MODEL_FLAG) -of$(MAGICPORT) $(MAGICPORTSRC)
 
 GENSRC=access.d aggregate.d aliasthis.d apply.d \
 	argtypes.d arrayop.d arraytypes.d \
@@ -534,10 +537,10 @@ MANUALSRC= \
 MANUALOBJ= \
 	man.o response.o
 
-$(GENSRC) : $(SRC) $(ROOT_SRC) settings.json $(MAGICPORT)
+mars.d : $(SRC) $(ROOT_SRC) settings.json $(MAGICPORT) id.c impcnvtab.c
 	$(MAGICPORT) . .
 
 DSRC= $(GENSRC) $(MANUALSRC)
 
-ddmd: $(HOST_DC) $(DSRC) glue.a backend.a $(MANUALOBJ)
-	CC=$(HOST_CC) $(HOST_DC) $(MODEL_FLAG) $(DSRC) -ofddmd glue.a backend.a $(MANUALOBJ) -debug -vtls -J.. -d -version=DMDV2 -g
+ddmd : mars.d $(MANUALSRC) glue.a backend.a $(MANUALOBJ)
+	CC=$(HOST_CC) $(HOST_DC) -conf=$(HOST_DC:dmd=dmd.conf) $(MODEL_FLAG) $(DSRC) -ofdmd glue.a backend.a $(MANUALOBJ) -debug -vtls -J.. -d -version=DMDV2 -g
