@@ -441,7 +441,7 @@ DSRC= $(GENSRC) $(MANUALSRC)
 ddmd: dmd.exe
 dmd.exe: $(DSRC) glue.lib backend.lib $(MANUALOBJ)
 	rename sc.ini _sc.ini
-	$(HOST_DC) $(DSRC) -ofdmd.exe glue.lib backend.lib $(MANUALOBJ) -debug -vtls -J.. -d -version=DMDV2 -L/STACK:8388608 -g -map
+	$(HOST_DC) $(DSRC) -ofdmd.exe glue.lib backend.lib $(MANUALOBJ) -vtls -J.. -d -version=DMDV2 -L/STACK:8388608 -inline -release -O
 	rename _sc.ini sc.ini
 
 ############################# Intermediate Rules ############################

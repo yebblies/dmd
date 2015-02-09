@@ -543,4 +543,4 @@ mars.d : $(SRC) $(ROOT_SRC) settings.json $(MAGICPORT) id.c impcnvtab.c
 DSRC= $(GENSRC) $(MANUALSRC)
 
 ddmd : mars.d $(MANUALSRC) glue.a backend.a $(MANUALOBJ)
-	CC=$(HOST_CC) $(HOST_DC) -conf=$(HOST_DC:dmd=dmd.conf) $(MODEL_FLAG) $(DSRC) -ofdmd glue.a backend.a $(MANUALOBJ) -debug -vtls -J.. -d -version=DMDV2 -g
+	CC=$(HOST_CC) $(HOST_DC) -conf=$(HOST_DC:dmd=dmd.conf) $(MODEL_FLAG) $(DSRC) -ofdmd glue.a backend.a $(MANUALOBJ) -vtls -J.. -d -version=DMDV2 -inline -release -O
