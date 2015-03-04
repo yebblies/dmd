@@ -69,9 +69,7 @@ Expression *getTypeInfo(Type *t, Scope *sc);
 int callSideEffectLevel(FuncDeclaration *f);
 int callSideEffectLevel(Type *t);
 
-#define el_setLoc(e,loc)        ((e)->Esrcpos.Sfilename = (char *)(loc).filename, \
-                                 (e)->Esrcpos.Slinnum = (loc).linnum, \
-                                 (e)->Esrcpos.Scharnum = (loc).charnum)
+#define el_setLoc(e,loc)        ((e)->Esrcpos.Sfilename = (char *)(loc).filename, (e)->Esrcpos.Slinnum = (loc).linnum, (e)->Esrcpos.Scharnum = (loc).charnum)
 
 /* If variable var of type typ is a reference
  */
@@ -112,13 +110,13 @@ elem *useOPstrpar(elem *e)
 
 elem *callfunc(Loc loc,
         IRState *irs,
-        int directcall,         // 1: don't do virtual call
-        Type *tret,             // return type
-        elem *ec,               // evaluates to function address
-        Type *ectype,           // original type of ec
-        FuncDeclaration *fd,    // if !=NULL, this is the function being called
-        Type *t,                // TypeDelegate or TypeFunction for this function
-        elem *ehidden,          // if !=NULL, this is the 'hidden' argument
+        int directcall,
+        Type *tret,
+        elem *ec,
+        Type *ectype,
+        FuncDeclaration *fd,
+        Type *t,
+        elem *ehidden,
         Expressions *arguments)
 {
     elem *ep;
@@ -259,12 +257,7 @@ elem *callfunc(Loc loc,
         {
             if (ep)
             {
-#if 0 // BUG: implement
-                if (reverse && type_mangle(tfunc) == mTYman_cpp)
-                    ep = el_param(ehidden,ep);
-                else
-#endif
-                    ep = el_param(ep,ehidden);
+                ep = el_param(ep,ehidden);
             }
             else
                 ep = ehidden;
@@ -292,11 +285,11 @@ elem *callfunc(Loc loc,
         }
         Symbol *sfunc = toSymbol(fd);
 
+       /* Future optimization: || (whole program analysis && not overridden)
+        */
         if (!fd->isVirtual() ||
-            directcall ||               // BUG: fix
+            directcall ||
             fd->isFinalFunc()
-           /* Future optimization: || (whole program analysis && not overridden)
-            */
            )
         {
             // make static call
@@ -1151,7 +1144,7 @@ elem *toElem(Expression *e, IRState *irs)
         void visit(RealExp *re)
         {
             //printf("RealExp::toElem(%p) %s\n", re, re->toChars());
-            union eve c;
+            eve c;
             memset(&c, 0, sizeof(c));
             tym_t ty = totym(re->type->toBasetype());
             switch (tybasic(ty))
@@ -1205,7 +1198,7 @@ elem *toElem(Expression *e, IRState *irs)
 
             //printf("ComplexExp::toElem(%p) %s\n", ce, ce->toChars());
 
-            union eve c;
+            eve c;
             memset(&c, 0, sizeof(c));
             real_t re = creall(ce->value);
             real_t im = cimagl(ce->value);
@@ -2753,7 +2746,8 @@ elem *toElem(Expression *e, IRState *irs)
                  * as:
                  *      e1[0] = x, e1[1..2] = a, e1[3] = b, ...;
                  */
-                if (ae->op == TOKconstruct &&   // Bugzilla 11238: avoid aliasing issue
+                // Bugzilla 11238: avoid aliasing issue
+                if (ae->op == TOKconstruct &&
                     ae->e2->op == TOKarrayliteral)
                 {
                     ArrayLiteralExp *ale = (ArrayLiteralExp *)ae->e2;

@@ -53,9 +53,6 @@
 
 //#define EXTRA_DEBUG 1
 
-#undef ADDFWAIT
-#define ADDFWAIT()      0
-
 // Additional tokens for the inline assembler
 enum ASMTK
 {
@@ -105,7 +102,6 @@ struct ASM_STATE
     bool bInit;
     LabelDsymbol *psDollar;
     Dsymbol *psLocalsize;
-    jmp_buf env;
     bool bReturnax;
     AsmStatement *statement;
     Scope *sc;
@@ -441,9 +437,7 @@ static void asm_token_trans(Token *tok);
 static bool asm_match_flags(opflag_t usOp , opflag_t usTable );
 static bool asm_match_float_flags(opflag_t usOp, opflag_t usTable);
 static void asm_make_modrm_byte(
-#ifdef DEBUG
         unsigned char *puchOpcode, unsigned *pusIdx,
-#endif
         code *pc,
         unsigned usFlags,
         OPND *popnd, OPND *popnd2);
@@ -1151,7 +1145,7 @@ static opflag_t asm_determine_operand_flags(OPND *popnd)
         else
             return CONSTRUCT_FLAGS(sz, _m, _normal, 0);
     }
-    if (popnd->segreg /*|| popnd->bPtr*/)
+    if (popnd->segreg) /*|| popnd->bPtr*/
     {
         amod = _addr32;
         if (asmstate.ucItype == ITjump)
@@ -1164,8 +1158,8 @@ static opflag_t asm_determine_operand_flags(OPND *popnd)
         }
         else
             us = CONSTRUCT_FLAGS(sz,
-//                               _rel, amod, 0);
                                  _m, amod, 0);
+//                               _rel, amod, 0);
     }
 
     else if (popnd->ptype)
@@ -1191,9 +1185,9 @@ static code *asm_emit(Loc loc,
     OP *pop,
     OPND *popnd1, OPND *popnd2, OPND *popnd3, OPND *popnd4)
 {
-#ifdef DEBUG
     unsigned char auchOpcode[16];
     unsigned usIdx = 0;
+#ifdef DEBUG
     #define emit(op)        (auchOpcode[usIdx++] = op)
 #else
     #define emit(op)        ((void)(op))
@@ -1407,17 +1401,13 @@ static code *asm_emit(Loc loc,
             if ((aoptyTable1 == _m || aoptyTable1 == _rm) &&
                 aoptyTable2 == _reg)
                 asm_make_modrm_byte(
-#ifdef DEBUG
                     auchOpcode, &usIdx,
-#endif
                     pc,
                     ptb.pptb1->usFlags,
                     popnd1, popnd2);
             else if (usNumops == 2 || usNumops == 3 && aoptyTable3 == _imm)
                 asm_make_modrm_byte(
-#ifdef DEBUG
                     auchOpcode, &usIdx,
-#endif
                     pc,
                     ptb.pptb1->usFlags,
                     popnd2, popnd1);
@@ -1437,9 +1427,7 @@ static code *asm_emit(Loc loc,
             pc->Ivex.vvvv = ~popnd1->base->val;
 
             asm_make_modrm_byte(
-#ifdef DEBUG
                 auchOpcode, &usIdx,
-#endif
                 pc,
                 ptb.pptb1->usFlags,
                 popnd2, NULL);
@@ -1458,9 +1446,7 @@ static code *asm_emit(Loc loc,
             pc->Ivex.vvvv = ~popnd2->base->val;
 
             asm_make_modrm_byte(
-#ifdef DEBUG
                 auchOpcode, &usIdx,
-#endif
                 pc,
                 ptb.pptb1->usFlags,
                 popnd3, popnd1);
@@ -1471,17 +1457,13 @@ static code *asm_emit(Loc loc,
 
             if (aoptyTable1 == _m || aoptyTable1 == _rm)
                 asm_make_modrm_byte(
-#ifdef DEBUG
                     auchOpcode, &usIdx,
-#endif
                     pc,
                     ptb.pptb1->usFlags,
                     popnd1, popnd3);
             else
                 asm_make_modrm_byte(
-#ifdef DEBUG
                     auchOpcode, &usIdx,
-#endif
                     pc,
                     ptb.pptb1->usFlags,
                     popnd3, popnd1);
@@ -1616,8 +1598,8 @@ static code *asm_emit(Loc loc,
 L3: ;
 
     // If CALL, Jxx or LOOPx to a symbolic location
-    if (/*asmstate.ucItype == ITjump &&*/
-        popnd1 && popnd1->s && popnd1->s->isLabel())
+    /*asmstate.ucItype == ITjump &&*/
+    if (popnd1 && popnd1->s && popnd1->s->isLabel())
     {
         Dsymbol *s = popnd1->s;
         if (s == asmstate.psDollar)
@@ -1675,9 +1657,7 @@ L3: ;
             else
             {
                 asm_make_modrm_byte(
-#ifdef DEBUG
                     auchOpcode, &usIdx,
-#endif
                     pc,
                     ptb.pptb1->usFlags,
                     popnd1, NULL);
@@ -1710,10 +1690,7 @@ L1:
                         }
                         else if (d)
                         {
-#if 0
-                            if ((pc->IFL2 = d->Sfl) == 0)
-#endif
-                                pc->IFL2 = FLdsymbol;
+                            pc->IFL2 = FLdsymbol;
                             pc->Iflags &= ~(CFseg | CFoff);
                             if (popndTmp->bSeg)
                                 pc->Iflags |= CFseg;
@@ -1745,9 +1722,9 @@ L1:
                 pc->IFL2 = FLconst;
                 break;
         }
+        // If not MMX register (_mm) or XMM register (_xmm)
         if (aoptyTable2 == _m ||
             aoptyTable2 == _rel ||
-            // If not MMX register (_mm) or XMM register (_xmm)
             (amodTable1 == _rspecial && !(uRegmaskTable1 & (0x08 | 0x10)) && !uSizemaskTable1) ||
             aoptyTable2 == _rm ||
             (popnd1->usFlags == _r32 && popnd2->usFlags == _xmm) ||
@@ -1762,14 +1739,13 @@ L1:
                 );
             printf("usOpcode = %x\n", usOpcode);
 #endif
-            if (ptb.pptb0->usOpcode == 0x0F7E ||    // MOVD _rm32,_mm
-                ptb.pptb0->usOpcode == 0x660F7E     // MOVD _rm32,_xmm
+            // MOVD _rm32,_mm or MOVD _rm32,_xmm
+            if (ptb.pptb0->usOpcode == 0x0F7E ||
+                ptb.pptb0->usOpcode == 0x660F7E
                )
             {
                 asm_make_modrm_byte(
-#ifdef DEBUG
                     auchOpcode, &usIdx,
-#endif
                     pc,
                     ptb.pptb1->usFlags,
                     popnd1, popnd2);
@@ -1777,9 +1753,7 @@ L1:
             else
             {
                 asm_make_modrm_byte(
-#ifdef DEBUG
                     auchOpcode, &usIdx,
-#endif
                     pc,
                     ptb.pptb1->usFlags,
                     popnd2, popnd1);
@@ -1848,9 +1822,7 @@ L1:
                      ptb.pptb0->usOpcode == 0x0FD7)
             {
                 asm_make_modrm_byte(
-#ifdef DEBUG
                     auchOpcode, &usIdx,
-#endif
                     pc,
                     ptb.pptb1->usFlags,
                     popnd2, popnd1);
@@ -1858,9 +1830,7 @@ L1:
             else
             {
                 asm_make_modrm_byte(
-#ifdef DEBUG
                     auchOpcode, &usIdx,
-#endif
                     pc,
                     ptb.pptb1->usFlags,
                     popnd1, popnd2);
@@ -1882,17 +1852,19 @@ L1:
         goto L1;
 
     case 3:
+        // pextrw  _r32,  _mm,    _imm8
+        // pextrw  _r32, _xmm,    _imm8
+        // pinsrb  _xmm, _r32/m8, _imm8
+        // pinsrd  _xmm, _rm32,   _imm8
         if (aoptyTable2 == _m || aoptyTable2 == _rm ||
-            usOpcode == 0x0FC5     ||    // pextrw  _r32,  _mm,    _imm8
-            usOpcode == 0x660FC5   ||    // pextrw  _r32, _xmm,    _imm8
-            usOpcode == 0x660F3A20 ||    // pinsrb  _xmm, _r32/m8, _imm8
-            usOpcode == 0x660F3A22       // pinsrd  _xmm, _rm32,   _imm8
+            usOpcode == 0x0FC5     ||
+            usOpcode == 0x660FC5   ||
+            usOpcode == 0x660F3A20 ||
+            usOpcode == 0x660F3A22
            )
         {
             asm_make_modrm_byte(
-#ifdef DEBUG
                 auchOpcode, &usIdx,
-#endif
                 pc,
                 ptb.pptb1->usFlags,
                 popnd2, popnd1);
@@ -1943,9 +1915,7 @@ L1:
             }
             else
                 asm_make_modrm_byte(
-#ifdef DEBUG
                     auchOpcode, &usIdx,
-#endif
                     pc,
                     ptb.pptb1->usFlags,
                     popnd1, popnd2);
@@ -1959,11 +1929,7 @@ L1:
     }
 L2:
 
-    if ((pc->Iop & ~7) == 0xD8 &&
-        ADDFWAIT() &&
-        !(ptb.pptb0->usFlags & _nfwait))
-            pc->Iflags |= CFwait;
-    else if ((ptb.pptb0->usFlags & _fwait) &&
+    if ((ptb.pptb0->usFlags & _fwait) &&
         config.target_cpu >= TARGET_80386)
             pc->Iflags |= CFwait;
 
@@ -2360,9 +2326,7 @@ L2:
  */
 
 static void asm_make_modrm_byte(
-#ifdef DEBUG
         unsigned char *puchOpcode, unsigned *pusIdx,
-#endif
         code *pc,
         unsigned usFlags,
         OPND *popnd, OPND *popnd2)

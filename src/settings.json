@@ -27,7 +27,8 @@
         "root/speller.h", "root/speller.c",
         "root/outbuffer.h", "root/outbuffer.c",
         "root/stringtable.h", "root/stringtable.c",
-        "root/man.c", "root/response.c"
+        "root/man.c", "root/response.c",
+        "e2ir.c", "iasm.c"
     ],
     "mapping" :
     [
@@ -3301,7 +3302,25 @@
         "TRUST",
         "RET",
         "PKG",
-        "TRUSTformat"
+        "TRUSTformat",
+
+        "tym_t",
+        "targ_llong",
+        "targ_ullong",
+        "targ_long",
+        "targ_ulong",
+        "targ_short",
+        "targ_ushort",
+        "targ_char",
+        "targ_uchar",
+        "targ_size_t",
+        "OPER",
+        "OP",
+        "opflag_t",
+        "ASM_JUMPTYPE",
+        "ASM_OPERAND_TYPE",
+        "ASM_MODIFIERS",
+        "regm_t"
     ],
     "structTypes" :
     [
@@ -3332,7 +3351,16 @@
         "AsyncRead",
 
         "Strings",
-        "Sections"
+        "Sections",
+
+        "elem",
+        "dt_t",
+        "IRState",
+        "eve",
+        "Elems",
+        "symbol",
+        "PTRNTAB",
+        "Srcpos"
     ],
     "classTypes" :
     [
