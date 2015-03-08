@@ -1078,8 +1078,11 @@ class DPrinter : Visitor
             visitX(ast.t);
             print(")(");
             visitX(ast.placement);
-            print(", ");
-            printArgs(ast.args);
+            if (ast.args.length)
+            {
+                print(", ");
+                printArgs(ast.args);
+            }
             print(")");
         }
         else
