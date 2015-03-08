@@ -366,7 +366,7 @@ class DPrinter : Visitor
         }
         if (isClass(ast.type) && !ast.xinit)
         {
-            print(" scope ");
+            print("scope ");
         }
         ExprInit ei = ast.xinit ? cast(ExprInit)ast.xinit : null;
         NewExpr ne = ei ? cast(NewExpr)ei.e : null;
