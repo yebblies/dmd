@@ -94,7 +94,7 @@ class DPrinter : Visitor
     }
     void visitX()(int stc)
     {
-        static immutable names = ["static", "enum", "extern", "extern(C)", "virtual", "__cdecl", "abstract", "__inline", "register"];
+        static immutable names = ["static", "enum", "extern", "extern (C)", "virtual", "__cdecl", "abstract", "__inline", "register"];
         bool one;
         assert(!(stc & STCconst));
         /*if (!(stc & STCvirtual))
@@ -221,11 +221,11 @@ class DPrinter : Visitor
         if (!isvirtual && !(ast.stc & STCabstract) && nonfinalclass)
             print("final ");
         if (!inexternc && (!P || !classTypes.lookup(P.id)) && ast.type.id != ast.id)
-            print("extern(C++) ");
+            print("extern (C++) ");
         visitX(ast.stc);
         if (ast.type.id == ast.id)
         {
-            print("extern(D) this");
+            print("extern (D) this");
         } else if (ast.id[0] == '~')
         {
             print("~this");
@@ -344,7 +344,7 @@ class DPrinter : Visitor
                     // ast.xinit = vd.xinit;
                 // }
             // }
-            if (!manifest) print("extern(C++) ");
+            if (!manifest) print("extern (C++) ");
             if (!manifest) gshared = true;
         }
         else if (ast.stc & STCstatic)
@@ -353,7 +353,7 @@ class DPrinter : Visitor
         }
         else if (!P && !fd && !manifest)
         {
-            print("extern(C++) ");
+            print("extern (C++) ");
             gshared = true;
         }
         if (manifest)
@@ -511,18 +511,18 @@ class DPrinter : Visitor
                     switch(ie.id)
                     {
                     case "DEBUG":          println("debug"); break;
-                    case "UNITTEST":       println("version(unittest)"); break;
+                    case "UNITTEST":       println("version (unittest)"); break;
 
-                    case "_WIN32":         println("version(Windows)"); break;
-                    case "POSIX":          println("version(Posix)"); break;
-                    case "__linux__":      println("version(linux)"); break;
+                    case "_WIN32":         println("version (Windows)"); break;
+                    case "POSIX":          println("version (Posix)"); break;
+                    case "__linux__":      println("version (linux)"); break;
                     case "__APPLE__":
-                    case "MACINTOSH":      println("version(OSX)"); break;
-                    case "__FreeBSD__":    println("version(FreeBSD)"); break;
-                    case "__OpenBSD__":    println("version(OpenBSD)"); break;
-                    case "__sun":          println("version(Solaris)"); break;
+                    case "MACINTOSH":      println("version (OSX)"); break;
+                    case "__FreeBSD__":    println("version (FreeBSD)"); break;
+                    case "__OpenBSD__":    println("version (OpenBSD)"); break;
+                    case "__sun":          println("version (Solaris)"); break;
 
-                    case "IN_GCC":         println("version(GNU)"); break;
+                    case "IN_GCC":         println("version (GNU)"); break;
 
                     default:               println("static if (" ~ ie.id ~ ")"); break;
                     }
@@ -531,8 +531,8 @@ class DPrinter : Visitor
                 {
                     switch(le.val)
                     {
-                    case "0": println("version(none)"); break;
-                    case "1": println("version(all)"); break;
+                    case "0": println("version (none)"); break;
+                    case "1": println("version (all)"); break;
                     default:  assert(0);
                     }
                 }
@@ -584,9 +584,9 @@ class DPrinter : Visitor
         if (auto ft = cast(FunctionType)ast.t)
         {
             if (ft.cdecl)
-                print("extern(C) ");
+                print("extern (C) ");
             else
-                print("extern(C++) ");
+                print("extern (C++) ");
         }
         if (ast.id == "utf8_t")
             return;
@@ -646,7 +646,7 @@ class DPrinter : Visitor
             isclass = true;
         if (isclass)
         {
-            print("extern(C++) ");
+            print("extern (C++) ");
             if (!nonFinalClasses.canFind(ast.id))
                 print("final ");
             print("class");
@@ -710,7 +710,7 @@ class DPrinter : Visitor
     {
         if (ast.comment)
             printComment(ast.comment);
-        println("extern(C) {");
+        println("extern (C) {");
         inexternc++;
         foreach(d; ast.decls)
             visitX(d);
