@@ -623,9 +623,14 @@ class DPrinter : Visitor
             if (i != ast.params.length - 1)
                 print(", ");
         }
-        print(") { return ");
+        println(")");
+        println("{");
+        indent++;
+        print("return ");
         visitX(ast.e);
-        println("; }");
+        println(";");
+        indent--;
+        println("}");
     }
 
     override void visit(MacroUnDeclaration ast)
