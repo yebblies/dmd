@@ -1370,7 +1370,8 @@ Statement parseDoWhileStatement()
     enter("(");
     auto e = parseExpr();
     exit(")");
-    return new DoWhileStatement(sbody, e);
+    auto tc = trailingComment(";");
+    return new DoWhileStatement(sbody, e, tc);
 }
 
 Statement parseExpressionStatement()

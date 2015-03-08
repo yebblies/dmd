@@ -718,7 +718,8 @@ class DoWhileStatement : Statement
 {
     Expression e;
     Statement sbody;
-    this(Statement sbody, Expression e) { this.e = e; this.sbody = sbody; }
+    string trailingcomment;
+    this(Statement sbody, Expression e, string trailingcomment) { this.e = e; this.sbody = sbody; this.trailingcomment = trailingcomment; }
     mixin(visitor_str);
 }
 

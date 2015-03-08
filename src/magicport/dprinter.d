@@ -1614,7 +1614,13 @@ class DPrinter : Visitor
             indent--;
         print("while (");
         visitX(ast.e);
-        println(");");
+        if (ast.trailingcomment)
+        {
+            print("); ");
+            println(ast.trailingcomment);
+        }
+        else
+            println(");");
     }
 
     override void visit(GotoStatement ast)
