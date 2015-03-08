@@ -121,8 +121,8 @@ void main(string[] args)
         auto f = File(fn, "wb");
         writeln("writing -- ", fn);
 
-        f.writeln("
-// Compiler implementation of the D programming language
+        f.writeln(
+"// Compiler implementation of the D programming language
 // Copyright (c) 1999-2015 by Digital Mars
 // All Rights Reserved
 // written by Walter Bright
