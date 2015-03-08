@@ -429,7 +429,7 @@ class DPrinter : Visitor
         foreach(i; 0..ast.types.length)
         {
             if (i)
-                println(", ");
+                print(", ");
             else
             {
                 visitX(ast.stc | STCvirtual);
