@@ -756,6 +756,7 @@ class DPrinter : Visitor
         println("}");
         if (ast.id)
         {
+            println("");
             foreach(m; ast.members)
             {
                 if (!m.id)
