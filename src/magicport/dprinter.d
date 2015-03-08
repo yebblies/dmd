@@ -720,8 +720,12 @@ class DPrinter : Visitor
 
     override void visit(EnumDeclaration ast)
     {
-        print("enum ");
-        visitIdent(ast.id);
+        print("enum");
+        if (ast.id.length)
+        {
+            print(" ");
+            visitIdent(ast.id);
+        }
         println(" : int");
         println("{");
         indent++;
