@@ -1582,11 +1582,26 @@ class DPrinter : Visitor
         print("while (");
         visitX(ast.e);
         println(")");
-        if (!cast(CompoundStatement)ast.sbody)
-            indent++;
-        visitX(ast.sbody);
-        if (!cast(CompoundStatement)ast.sbody)
-            indent--;
+        auto es = cast(ExpressionStatement)ast.sbody;
+        if (es && !es.e)
+        {
+            println("{");
+            if (es.trailingcomment)
+            {
+                indent++;
+                println(es.trailingcomment);
+                indent--;
+            }
+            println("}");
+        }
+        else
+        {
+            if (!cast(CompoundStatement)ast.sbody)
+                indent++;
+            visitX(ast.sbody);
+            if (!cast(CompoundStatement)ast.sbody)
+                indent--;
+        }
     }
 
     override void visit(DoWhileStatement ast)
