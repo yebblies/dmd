@@ -584,7 +584,6 @@ class DPrinter : Visitor
             println("// Signed and unsigned variants");
             println("alias sinteger_t = long;");
             println("alias uinteger_t = ulong;");
-            println("");
             return;
         }
         versionCommon(ast);
