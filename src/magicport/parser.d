@@ -1448,9 +1448,9 @@ Statement parseWhileStatement()
     check("while");
     enter("(");
     auto e = parseExpr();
-    exit(")");
+    auto tc = trailingComment(")");
     auto sbody = parseStatement();
-    return new WhileStatement(e, sbody);
+    return new WhileStatement(e, sbody, tc);
 }
 
 Statement parseCaseStatement()

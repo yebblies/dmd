@@ -711,7 +711,8 @@ class WhileStatement : Statement
 {
     Expression e;
     Statement sbody;
-    this(Expression e, Statement sbody) { this.e = e; this.sbody = sbody; }
+    string trailingcomment;
+    this(Expression e, Statement sbody, string trailingcomment) { this.e = e; this.sbody = sbody; this.trailingcomment = trailingcomment; }
     mixin(visitor_str);
 }
 
