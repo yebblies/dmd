@@ -12,8 +12,7 @@ import ddmd.aggregate, ddmd.arraytypes, ddmd.dcast, ddmd.declaration, ddmd.dscop
 
 enum NeedInterpret : int
 {
-    INITnointerpret,
-    INITinterpret,
+    INITnointerpret, INITinterpret,
 }
 
 alias INITnointerpret = NeedInterpret.INITnointerpret;
@@ -98,6 +97,8 @@ extern (C++) final class VoidInitializer : Initializer
 {
 public:
     Type type; // type that this will initialize to
+
+    
 
     /********************************** VoidInitializer ***************************/
     extern (D) this(Loc loc)
@@ -186,6 +187,8 @@ extern (C++) final class StructInitializer : Initializer
 public:
     Identifiers field; // of Identifier *'s
     Initializers value; // parallel array of Initializer *'s
+
+    
 
     /********************************** StructInitializer *************************/
     extern (D) this(Loc loc)
@@ -367,6 +370,8 @@ public:
     Type type; // type that array will be used to initialize
     bool sem; // true if semantic() is run
 
+    
+
     /********************************** ArrayInitializer ************************************/
     extern (D) this(Loc loc)
     {
@@ -465,8 +470,8 @@ public:
     Lno:
         if (keys)
         {
-            /*delete*/;
-            /*delete*/;
+            /*delete*/ ;
+            /*delete*/ ;
             error(loc, "not an associative array initializer");
         }
         else
@@ -512,9 +517,9 @@ public:
                 auto ei = new ExpInitializer(e.loc, e);
                 return ei.semantic(sc, t, needInterpret);
             }
-        case Tpointer:
-            if (t.nextOf().ty != Tfunction)
-                break;
+            case Tpointer:
+                if (t.nextOf().ty != Tfunction)
+                    break;
         default:
             error(loc, "cannot use array to initialize %s", t.toChars());
             goto Lerr;
@@ -717,8 +722,8 @@ public:
         e = new AssocArrayLiteralExp(loc, keys, values);
         return e;
     Lno:
-        /*delete*/;
-        /*delete*/;
+        /*delete*/ ;
+        /*delete*/ ;
         error(loc, "not an associative array initializer");
         return new ErrorExp();
     }

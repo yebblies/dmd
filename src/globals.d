@@ -285,6 +285,8 @@ struct Global
 // correct size, we have to explicitly ask for the correct
 // integer type to get the correct mangling with ddmd
 
+
+
 // Be careful not to care about sign when using dinteger_t
 // use this instead of integer_t to
 // avoid conflicts with system #include's
@@ -315,7 +317,6 @@ struct Loc
     const(char)* filename;
     uint linnum;
     uint charnum;
-
 
     extern (D) this(const(char)* filename, uint linnum, uint charnum)
     {
@@ -349,12 +350,7 @@ struct Loc
 
 enum LINK : int
 {
-    LINKdefault,
-    LINKd,
-    LINKc,
-    LINKcpp,
-    LINKwindows,
-    LINKpascal,
+    LINKdefault, LINKd, LINKc, LINKcpp, LINKwindows, LINKpascal,
 }
 
 alias LINKdefault = LINK.LINKdefault;
@@ -366,13 +362,7 @@ alias LINKpascal = LINK.LINKpascal;
 
 enum DYNCAST : int
 {
-    DYNCAST_OBJECT,
-    DYNCAST_EXPRESSION,
-    DYNCAST_DSYMBOL,
-    DYNCAST_TYPE,
-    DYNCAST_IDENTIFIER,
-    DYNCAST_TUPLE,
-    DYNCAST_PARAMETER,
+    DYNCAST_OBJECT, DYNCAST_EXPRESSION, DYNCAST_DSYMBOL, DYNCAST_TYPE, DYNCAST_IDENTIFIER, DYNCAST_TUPLE, DYNCAST_PARAMETER,
 }
 
 alias DYNCAST_OBJECT = DYNCAST.DYNCAST_OBJECT;

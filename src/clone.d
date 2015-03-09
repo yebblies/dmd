@@ -211,6 +211,7 @@ extern (C++) FuncDeclaration buildOpAssign(StructDeclaration sd, Scope* sc)
         /* Do swap this and rhs
          *    tmp = this; this = s; tmp.dtor();
          */
+        
         //printf("\tswap copy\n");
         Identifier idtmp = Identifier.generateId("__swap");
         VarDeclaration tmp = null;
@@ -240,6 +241,7 @@ extern (C++) FuncDeclaration buildOpAssign(StructDeclaration sd, Scope* sc)
     {
         /* Do memberwise copy
          */
+        
         //printf("\tmemberwise copy\n");
         for (size_t i = 0; i < sd.fields.dim; i++)
         {

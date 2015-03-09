@@ -64,23 +64,7 @@ public:
     {
         if (namelen)
         {
-            static __gshared const(char)** table = 
-            [
-                "AUTHORS",
-                "BUGS",
-                "COPYRIGHT",
-                "DATE",
-                "DEPRECATED",
-                "EXAMPLES",
-                "HISTORY",
-                "LICENSE",
-                "RETURNS",
-                "SEE_ALSO",
-                "STANDARDS",
-                "THROWS",
-                "VERSION",
-                null
-            ];
+            static __gshared const(char)** table = ["AUTHORS", "BUGS", "COPYRIGHT", "DATE", "DEPRECATED", "EXAMPLES", "HISTORY", "LICENSE", "RETURNS", "SEE_ALSO", "STANDARDS", "THROWS", "VERSION", null];
             for (size_t i = 0; table[i]; i++)
             {
                 if (icmp(table[i], name, namelen) == 0)
@@ -225,8 +209,7 @@ public:
             while (*p == ' ' || *p == '\t')
                 p++;
             textstart = p;
-        Ltext:
-            while (*p != '\n')
+            Ltext: while (*p != '\n')
                 p++;
             textlen = p - textstart;
             p++;
@@ -510,13 +493,13 @@ extern (C++) void escapeStrayParenthesis(OutBuffer* buf, size_t start, Dsymbol s
                 // For this to work, loc must be set to the beginning of the passed
                 // text which is currently not possible
                 // (loc is set to the Loc of the Dsymbol)
-            case '\n':
-                loc.linnum++;
-                break;
-            }
-        default:
-            break;
-        }
+                case '\n':
+                    loc.linnum++;
+                    break;
+                }
+                default:
+                    break;
+                }
     }
     if (par_open) // if any unmatched lparens
     {
@@ -1349,7 +1332,6 @@ struct DocComment
     Macro** pmacrotable;
     Escape** pescapetable;
 
-
     /********************************* DocComment *********************************/
     extern (C++) static DocComment* parse(Scope* sc, Dsymbol s, const(char)* comment)
     {
@@ -1467,8 +1449,7 @@ struct DocComment
             while (p < pend && (*p == ' ' || *p == '\t'))
                 p++;
             textstart = p;
-        Ltext:
-            while (p < pend && *p != '\r' && *p != '\n')
+            Ltext: while (p < pend && *p != '\r' && *p != '\n')
                 p++;
             textlen = p - textstart;
             p++;
@@ -1936,43 +1917,7 @@ extern (C++) TemplateParameter isTemplateParameter(Dsymbol s, const(char)* p, si
 /** Return true if str is a reserved symbol name that starts with a double underscore. */
 extern (C++) bool isReservedName(char* str, size_t len)
 {
-    static __gshared const(char)** table = 
-    [
-        "__ctor",
-        "__dtor",
-        "__postblit",
-        "__invariant",
-        "__unitTest",
-        "__require",
-        "__ensure",
-        "__dollar",
-        "__ctfe",
-        "__withSym",
-        "__result",
-        "__returnLabel",
-        "__vptr",
-        "__monitor",
-        "__gate",
-        "__xopEquals",
-        "__xopCmp",
-        "__LINE__",
-        "__FILE__",
-        "__MODULE__",
-        "__FUNCTION__",
-        "__PRETTY_FUNCTION__",
-        "__DATE__",
-        "__TIME__",
-        "__TIMESTAMP__",
-        "__VENDOR__",
-        "__VERSION__",
-        "__EOF__",
-        "__LOCAL_SIZE",
-        "___tls_get_addr",
-        "__entrypoint",
-        "__va_argsave_t",
-        "__va_argsave",
-        null
-    ];
+    static __gshared const(char)** table = ["__ctor", "__dtor", "__postblit", "__invariant", "__unitTest", "__require", "__ensure", "__dollar", "__ctfe", "__withSym", "__result", "__returnLabel", "__vptr", "__monitor", "__gate", "__xopEquals", "__xopCmp", "__LINE__", "__FILE__", "__MODULE__", "__FUNCTION__", "__PRETTY_FUNCTION__", "__DATE__", "__TIME__", "__TIMESTAMP__", "__VENDOR__", "__VERSION__", "__EOF__", "__LOCAL_SIZE", "___tls_get_addr", "__entrypoint", "__va_argsave_t", "__va_argsave", null];
     for (int i = 0; table[i]; i++)
     {
         if (cmp(table[i], str, len) == 0)
@@ -2120,6 +2065,7 @@ extern (C++) void highlightText(Scope* sc, Dsymbol s, OutBuffer* buf, size_t off
             }
             break;
         case '`':
+            
             {
                 if (inBacktick)
                 {
@@ -2149,100 +2095,100 @@ extern (C++) void highlightText(Scope* sc, Dsymbol s, OutBuffer* buf, size_t off
                 iCodeStart = i;
                 break;
             }
-        case '-':
-            /* A line beginning with --- delimits a code section.
+            case '-':
+                /* A line beginning with --- delimits a code section.
              * inCode tells us if it is start or end of a code section.
              */
-            if (leadingBlank)
-            {
-                size_t istart = i;
-                size_t eollen = 0;
-                leadingBlank = 0;
-                while (1)
+                if (leadingBlank)
                 {
-                    ++i;
-                    if (i >= buf.offset)
-                        break;
-                    c = buf.data[i];
-                    if (c == '\n')
+                    size_t istart = i;
+                    size_t eollen = 0;
+                    leadingBlank = 0;
+                    while (1)
                     {
-                        eollen = 1;
-                        break;
-                    }
-                    if (c == '\r')
-                    {
-                        eollen = 1;
-                        if (i + 1 >= buf.offset)
+                        ++i;
+                        if (i >= buf.offset)
                             break;
-                        if (buf.data[i + 1] == '\n')
+                        c = buf.data[i];
+                        if (c == '\n')
                         {
-                            eollen = 2;
+                            eollen = 1;
                             break;
                         }
+                        if (c == '\r')
+                        {
+                            eollen = 1;
+                            if (i + 1 >= buf.offset)
+                                break;
+                            if (buf.data[i + 1] == '\n')
+                            {
+                                eollen = 2;
+                                break;
+                            }
+                        }
+                        // BUG: handle UTF PS and LS too
+                        if (c != '-')
+                            goto Lcont;
                     }
-                    // BUG: handle UTF PS and LS too
-                    if (c != '-')
+                    if (i - istart < 3)
                         goto Lcont;
-                }
-                if (i - istart < 3)
-                    goto Lcont;
-                // We have the start/end of a code section
-                // Remove the entire --- line, including blanks and \n
-                buf.remove(iLineStart, i - iLineStart + eollen);
-                i = iLineStart;
-                if (inCode && (i <= iCodeStart))
-                {
-                    // Empty code section, just remove it completely.
-                    inCode = 0;
-                    break;
-                }
-                if (inCode)
-                {
-                    inCode = 0;
-                    // The code section is from iCodeStart to i
-                    OutBuffer codebuf;
-                    codebuf.write(buf.data + iCodeStart, i - iCodeStart);
-                    codebuf.writeByte(0);
-                    // Remove leading indentations from all lines
-                    bool lineStart = true;
-                    char* endp = cast(char*)codebuf.data + codebuf.offset;
-                    for (p = cast(char*)codebuf.data; p < endp;)
+                    // We have the start/end of a code section
+                    // Remove the entire --- line, including blanks and \n
+                    buf.remove(iLineStart, i - iLineStart + eollen);
+                    i = iLineStart;
+                    if (inCode && (i <= iCodeStart))
                     {
-                        if (lineStart)
-                        {
-                            size_t j = codeIndent;
-                            char* q = p;
-                            while (j-- > 0 && q < endp && isIndentWS(q))
-                                ++q;
-                            codebuf.remove(p - cast(char*)codebuf.data, q - p);
-                            assert(cast(char*)codebuf.data <= p);
-                            assert(p < cast(char*)codebuf.data + codebuf.offset);
-                            lineStart = false;
-                            endp = cast(char*)codebuf.data + codebuf.offset; // update
-                            continue;
-                        }
-                        if (*p == '\n')
-                            lineStart = true;
-                        ++p;
+                        // Empty code section, just remove it completely.
+                        inCode = 0;
+                        break;
                     }
-                    highlightCode2(sc, s, &codebuf, 0);
-                    buf.remove(iCodeStart, i - iCodeStart);
-                    i = buf.insert(iCodeStart, codebuf.data, codebuf.offset);
-                    i = buf.insert(i, cast(const(char)*)")\n", 2);
-                    i -= 2; // in next loop, c should be '\n'
+                    if (inCode)
+                    {
+                        inCode = 0;
+                        // The code section is from iCodeStart to i
+                        OutBuffer codebuf;
+                        codebuf.write(buf.data + iCodeStart, i - iCodeStart);
+                        codebuf.writeByte(0);
+                        // Remove leading indentations from all lines
+                        bool lineStart = true;
+                        char* endp = cast(char*)codebuf.data + codebuf.offset;
+                        for (p = cast(char*)codebuf.data; p < endp;)
+                        {
+                            if (lineStart)
+                            {
+                                size_t j = codeIndent;
+                                char* q = p;
+                                while (j-- > 0 && q < endp && isIndentWS(q))
+                                    ++q;
+                                codebuf.remove(p - cast(char*)codebuf.data, q - p);
+                                assert(cast(char*)codebuf.data <= p);
+                                assert(p < cast(char*)codebuf.data + codebuf.offset);
+                                lineStart = false;
+                                endp = cast(char*)codebuf.data + codebuf.offset; // update
+                                continue;
+                            }
+                            if (*p == '\n')
+                                lineStart = true;
+                            ++p;
+                        }
+                        highlightCode2(sc, s, &codebuf, 0);
+                        buf.remove(iCodeStart, i - iCodeStart);
+                        i = buf.insert(iCodeStart, codebuf.data, codebuf.offset);
+                        i = buf.insert(i, cast(const(char)*)")\n", 2);
+                        i -= 2; // in next loop, c should be '\n'
+                    }
+                    else
+                    {
+                        static __gshared const(char)* d_code = "$(D_CODE ";
+                        inCode = 1;
+                        codeIndent = istart - iLineStart; // save indent count
+                        i = buf.insert(i, d_code, strlen(d_code));
+                        iCodeStart = i;
+                        i--; // place i on >
+                        leadingBlank = true;
+                    }
                 }
-                else
-                {
-                    static __gshared const(char)* d_code = "$(D_CODE ";
-                    inCode = 1;
-                    codeIndent = istart - iLineStart; // save indent count
-                    i = buf.insert(i, d_code, strlen(d_code));
-                    iCodeStart = i;
-                    i--; // place i on >
-                    leadingBlank = true;
-                }
-            }
-            break;
+                break;
         default:
             leadingBlank = 0;
             if (!sc._module.isDocFile && !inCode && isIdStart(cast(char*)&buf.data[i]))

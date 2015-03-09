@@ -37,7 +37,6 @@ struct BaseClass
     // are a copy of the InterfaceDeclaration::interfaces
     BaseClass* baseInterfaces;
 
-
     extern (D) this(Type type, Prot protection)
     {
         //printf("BaseClass(this = %p, '%s')\n", this, type->toChars());
@@ -136,15 +135,7 @@ struct ClassFlags
 
     enum Enum : int
     {
-        isCOMclass = 0x1,
-        noPointers = 0x2,
-        hasOffTi = 0x4,
-        hasCtor = 0x8,
-        hasGetMembers = 0x10,
-        hasTypeInfo = 0x20,
-        isAbstract = 0x40,
-        isCPPclass = 0x80,
-        hasDtor = 0x100,
+        isCOMclass = 0x1, noPointers = 0x2, hasOffTi = 0x4, hasCtor = 0x8, hasGetMembers = 0x10, hasTypeInfo = 0x20, isAbstract = 0x40, isCPPclass = 0x80, hasDtor = 0x100,
     }
 
     alias isCOMclass = Enum.isCOMclass;
@@ -185,6 +176,8 @@ public:
     bool isabstract; // true if abstract class
     int inuse; // to prevent recursive attempts
     Semantic doAncestorsSemantic; // Before searching symbol, whole ancestors should finish
+
+    
 
     // calling semantic() at least once, due to fill symtab
     // and do addMember(). [== Semantic(Start,In,Done)]

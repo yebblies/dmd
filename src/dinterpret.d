@@ -2234,7 +2234,7 @@ public:
             if (e.op == TOKerror)
                 e = CTFEExp.cantexp;
             else // Convert NULL to CTFEExp
-                e = interpret(e, istate, goal);
+            e = interpret(e, istate, goal);
         }
         else
             error(loc, "cannot interpret declaration %s at compile time", d.toChars());
@@ -2266,7 +2266,7 @@ public:
                 if (!v.isCTFE() && v.isDataseg())
                     e.error("static variable %s cannot be read at compile time", v.toChars());
                 else // CTFE initiated from inside a function
-                    e.error("variable %s cannot be read at compile time", v.toChars());
+                e.error("variable %s cannot be read at compile time", v.toChars());
                 result = CTFEExp.cantexp;
                 return;
             }
@@ -2296,6 +2296,7 @@ public:
              *  S s;
              *  foo(s); // VarExp('s') will have const(S)
              */
+            
             // A VarExp may include an implicit cast. It must be done explicitly.
             result = paintTypeOntoLiteral(e.type, result);
         }
@@ -3144,6 +3145,7 @@ public:
 
     /* Helper functions for BinExp::interpretAssignCommon
      */
+    
     // Returns the variable which is eventually modified, or NULL if an rvalue.
     // thisval is the current value of 'this'.
     static VarDeclaration findParentVar(Expression e)
@@ -3422,6 +3424,7 @@ public:
                  * We rewrite the assignment from: aggregate[i][j] = newval;
                  *                           into: aggregate = [i:[j: newval]];
                  */
+                
                 // Determine the return value
                 result = ctfeCast(e.loc, e.type, e.type, fp && post ? oldval : newval);
                 if (exceptionOrCant(result))
@@ -3455,6 +3458,7 @@ public:
              * into:
              *  arr = new_length_array; (result is n)
              */
+            
             // Determine the return value
             result = ctfeCast(e.loc, e.type, e.type, fp && post ? oldval : newval);
             if (exceptionOrCant(result))
@@ -4181,6 +4185,7 @@ public:
          *  any runtime values. This allows a JIT implementation to compile a
          *  special AndAndPossiblyInside, keeping the normal AndAnd case efficient.
          */
+        
         // Save the pointer expressions and the comparison directions,
         // so we can use them later.
         Expression p1 = null;
@@ -6094,6 +6099,7 @@ extern (C++) Expression foreachApplyUtf(InterState* istate, Expression str, Expr
                 errmsg = utf_decodeWchar(&utf16buf[0], buflen, &n, &rawvalue);
                 break;
             case 4:
+                
                 {
                     if (rvs)
                         --indx;

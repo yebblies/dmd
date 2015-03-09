@@ -1154,7 +1154,7 @@ extern (C++) int tryMain(size_t argc, const(char)** argv)
     static if (ASYNCREAD)
     {
         // Multi threaded
-        AsyncRead * aw = AsyncRead.create(modules.dim);
+        AsyncRead* aw = AsyncRead.create(modules.dim);
         for (size_t i = 0; i < modules.dim; i++)
         {
             Module m = modules[i];
@@ -1558,12 +1558,12 @@ extern (C++) void getenv_setargv(const(char)* envvar, size_t* pargc, const(char)
                 default:
                 Laddc:
                     slash = 0;
-                    *p++ = c;
-                    continue;
-                }
+                *p++ = c;
+                continue;
+            }
                 break;
             }
-        }
+                }
     }
 Ldone:
     *pargc = argc;

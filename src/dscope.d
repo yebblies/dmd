@@ -201,7 +201,6 @@ struct Scope
         return sc;
     }
 
-
     extern (C++) Scope* copy()
     {
         Scope* sc = Scope.alloc();
@@ -293,6 +292,7 @@ struct Scope
              *   assert(x.toString() == "instantiated");
              * }
              */
+            
             // If a template is instantiated from CT evaluated expression,
             // compiler can elide its code generation.
             sc.tinst = null;

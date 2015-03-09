@@ -158,6 +158,7 @@ extern (C++) bool lambdaHasSideEffect(Expression e)
     case TOKnewanonclass:
         return true;
     case TOKcall:
+        
         {
             CallExp ce = cast(CallExp)e;
             /* Calling a function or delegate that is pure nothrow
@@ -176,19 +177,20 @@ extern (C++) bool lambdaHasSideEffect(Expression e)
             }
             break;
         }
-    case TOKcast:
-        {
-            CastExp ce = cast(CastExp)e;
-            /* if:
+        case TOKcast:
+            
+            {
+                CastExp ce = cast(CastExp)e;
+                /* if:
              *  cast(classtype)func()  // because it may throw
              */
-            if (ce.to.ty == Tclass && ce.e1.op == TOKcall && ce.e1.type.ty == Tclass)
-                return true;
-            break;
-        }
-    default:
-        break;
-    }
+                if (ce.to.ty == Tclass && ce.e1.op == TOKcall && ce.e1.type.ty == Tclass)
+                    return true;
+                break;
+            }
+            default:
+                break;
+            }
     return false;
 }
 
@@ -203,6 +205,7 @@ extern (C++) void discardValue(Expression e)
     switch (e.op)
     {
     case TOKcast:
+        
         {
             CastExp ce = cast(CastExp)e;
             if (ce.to.equals(Type.tvoid))
@@ -215,9 +218,10 @@ extern (C++) void discardValue(Expression e)
             break;
             // complain
         }
-    case TOKerror:
-        return;
+        case TOKerror:
+            return;
     case TOKvar:
+        
         {
             VarDeclaration v = (cast(VarExp)e).var.isVarDeclaration();
             if (v && (v.storage_class & STCtemp))
@@ -227,62 +231,65 @@ extern (C++) void discardValue(Expression e)
             }
             break;
         }
-    case TOKcall:
-        /* Issue 3882: */
-        if (global.params.warnings && !global.gag)
-        {
-            CallExp ce = cast(CallExp)e;
-            if (e.type.ty == Tvoid)
+        case TOKcall:
+            /* Issue 3882: */
+            if (global.params.warnings && !global.gag)
             {
-                /* Don't complain about calling void-returning functions with no side-effect,
+                CallExp ce = cast(CallExp)e;
+                if (e.type.ty == Tvoid)
+                {
+                    /* Don't complain about calling void-returning functions with no side-effect,
                  * because purity and nothrow are inferred, and because some of the
                  * runtime library depends on it. Needs more investigation.
                  *
                  * One possible solution is to restrict this message to only be called in hierarchies that
                  * never call assert (and or not called from inside unittest blocks)
                  */
-            }
-            else if (ce.e1.type)
-            {
-                Type t = ce.e1.type.toBasetype();
-                if (t.ty == Tdelegate)
-                    t = (cast(TypeDelegate)t).next;
-                if (t.ty == Tfunction && (ce.f ? callSideEffectLevel(ce.f) : callSideEffectLevel(ce.e1.type)) > 0)
+                }
+                else if (ce.e1.type)
                 {
-                    const(char)* s;
-                    if (ce.f)
-                        s = ce.f.toPrettyChars();
-                    else if (ce.e1.op == TOKstar)
+                    Type t = ce.e1.type.toBasetype();
+                    if (t.ty == Tdelegate)
+                        t = (cast(TypeDelegate)t).next;
+                    if (t.ty == Tfunction && (ce.f ? callSideEffectLevel(ce.f) : callSideEffectLevel(ce.e1.type)) > 0)
                     {
-                        // print 'fp' if ce->e1 is (*fp)
-                        s = (cast(PtrExp)ce.e1).e1.toChars();
+                        const(char)* s;
+                        if (ce.f)
+                            s = ce.f.toPrettyChars();
+                        else if (ce.e1.op == TOKstar)
+                        {
+                            // print 'fp' if ce->e1 is (*fp)
+                            s = (cast(PtrExp)ce.e1).e1.toChars();
+                        }
+                        else
+                            s = ce.e1.toChars();
+                        e.warning("calling %s without side effects discards return value of type %s, prepend a cast(void)if intentional", s, e.type.toChars());
                     }
-                    else
-                        s = ce.e1.toChars();
-                    e.warning("calling %s without side effects discards return value of type %s, prepend a cast(void) if intentional", s, e.type.toChars());
                 }
             }
-        }
-        return;
+            return;
     case TOKimport:
         e.error("%s has no effect", e.toChars());
         return;
     case TOKandand:
+        
         {
             AndAndExp aae = cast(AndAndExp)e;
             discardValue(aae.e2);
             return;
         }
-    case TOKoror:
-        {
-            OrOrExp ooe = cast(OrOrExp)e;
-            discardValue(ooe.e2);
-            return;
-        }
-    case TOKquestion:
-        {
-            CondExp ce = cast(CondExp)e;
-            /* Bugzilla 6178 & 14089: Either CondExp::e1 or e2 may have
+        case TOKoror:
+            
+            {
+                OrOrExp ooe = cast(OrOrExp)e;
+                discardValue(ooe.e2);
+                return;
+            }
+            case TOKquestion:
+                
+                {
+                    CondExp ce = cast(CondExp)e;
+                    /* Bugzilla 6178 & 14089: Either CondExp::e1 or e2 may have
              * redundant expression to make those types common. For example:
              *
              *  struct S { this(int n); int v; alias v this; }
@@ -300,41 +307,42 @@ extern (C++) void discardValue(Expression e)
              * To avoid false error, discardValue() should be called only when
              * the both tops of e1 and e2 have actually no side effects.
              */
-            if (!lambdaHasSideEffect(ce.e1) && !lambdaHasSideEffect(ce.e2))
-            {
-                discardValue(ce.e1);
-                discardValue(ce.e2);
-            }
-            return;
-        }
-    case TOKcomma:
-        {
-            CommaExp ce = cast(CommaExp)e;
-            /* Check for compiler-generated code of the form  auto __tmp, e, __tmp;
+                    if (!lambdaHasSideEffect(ce.e1) && !lambdaHasSideEffect(ce.e2))
+                    {
+                        discardValue(ce.e1);
+                        discardValue(ce.e2);
+                    }
+                    return;
+                }
+                case TOKcomma:
+                    
+                    {
+                        CommaExp ce = cast(CommaExp)e;
+                        /* Check for compiler-generated code of the form  auto __tmp, e, __tmp;
              * In such cases, only check e for side effect (it's OK for __tmp to have
              * no side effect).
              * See Bugzilla 4231 for discussion
              */
-            CommaExp firstComma = ce;
-            while (firstComma.e1.op == TOKcomma)
-                firstComma = cast(CommaExp)firstComma.e1;
-            if (firstComma.e1.op == TOKdeclaration && ce.e2.op == TOKvar && (cast(DeclarationExp)firstComma.e1).declaration == (cast(VarExp)ce.e2).var)
-            {
-                return;
-            }
-            // Don't check e1 until we cast(void) the a,b code generation
-            //discardValue(ce->e1);
-            discardValue(ce.e2);
-            return;
-        }
-    case TOKtuple:
-        /* Pass without complaint if any of the tuple elements have side effects.
+                        CommaExp firstComma = ce;
+                        while (firstComma.e1.op == TOKcomma)
+                            firstComma = cast(CommaExp)firstComma.e1;
+                        if (firstComma.e1.op == TOKdeclaration && ce.e2.op == TOKvar && (cast(DeclarationExp)firstComma.e1).declaration == (cast(VarExp)ce.e2).var)
+                        {
+                            return;
+                        }
+                        // Don't check e1 until we cast(void)the a,b code generation
+                        //discardValue(ce->e1);
+                        discardValue(ce.e2);
+                        return;
+                    }
+                    case TOKtuple:
+                        /* Pass without complaint if any of the tuple elements have side effects.
          * Ideally any tuple elements with no side effects should raise an error,
          * this needs more investigation as to what is the right thing to do.
          */
-        if (!hasSideEffect(e))
-            break;
-        return;
+                        if (!hasSideEffect(e))
+                            break;
+                        return;
     default:
         break;
     }

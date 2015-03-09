@@ -279,9 +279,8 @@ public:
     Dsymbol search(Loc loc, Identifier ident, int flags = IgnoreNone)
     {
         //printf("%s.EnumDeclaration::search('%s')\n", toChars(), ident->toChars());
-        if (_scope)
-            // Try one last time to resolve this enum
-        semantic(_scope);
+        if (_scope)// Try one last time to resolve this enum
+            semantic(_scope);
         if (!members || !symtab || _scope)
         {
             error("is forward referenced when looking for '%s'", ident.toChars());
@@ -354,6 +353,7 @@ public:
                  * and let the semantic analyzer and constant
                  * folder give us the result.
                  */
+                
                 /* Compute:
                  *   if (e > maxval)
                  *      maxval = e;

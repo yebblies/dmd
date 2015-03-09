@@ -250,50 +250,7 @@ struct PushAttributes
     }
 }
 
-extern (C++) __gshared const(char)** traits = 
-[
-    "isAbstractClass",
-    "isArithmetic",
-    "isAssociativeArray",
-    "isFinalClass",
-    "isPOD",
-    "isNested",
-    "isFloating",
-    "isIntegral",
-    "isScalar",
-    "isStaticArray",
-    "isUnsigned",
-    "isVirtualFunction",
-    "isVirtualMethod",
-    "isAbstractFunction",
-    "isFinalFunction",
-    "isOverrideFunction",
-    "isStaticFunction",
-    "isRef",
-    "isOut",
-    "isLazy",
-    "hasMember",
-    "identifier",
-    "getProtection",
-    "parent",
-    "getMember",
-    "getOverloads",
-    "getVirtualFunctions",
-    "getVirtualMethods",
-    "classInstanceSize",
-    "allMembers",
-    "derivedMembers",
-    "isSame",
-    "compiles",
-    "parameters",
-    "getAliasThis",
-    "getAttributes",
-    "getFunctionAttributes",
-    "getUnitTests",
-    "getVirtualIndex",
-    "getPointerBitmap",
-    null
-];
+extern (C++) __gshared const(char)** traits = ["isAbstractClass", "isArithmetic", "isAssociativeArray", "isFinalClass", "isPOD", "isNested", "isFloating", "isIntegral", "isScalar", "isStaticArray", "isUnsigned", "isVirtualFunction", "isVirtualMethod", "isAbstractFunction", "isFinalFunction", "isOverrideFunction", "isStaticFunction", "isRef", "isOut", "isLazy", "hasMember", "identifier", "getProtection", "parent", "getMember", "getOverloads", "getVirtualFunctions", "getVirtualMethods", "classInstanceSize", "allMembers", "derivedMembers", "isSame", "compiles", "parameters", "getAliasThis", "getAttributes", "getFunctionAttributes", "getUnitTests", "getVirtualIndex", "getPointerBitmap", null];
 extern (C++) __gshared StringTable traitsStringTable;
 
 extern (C++) void initTraitsStringTable()
@@ -885,6 +842,7 @@ extern (C++) Expression semanticTraits(TraitsExp e, Scope* sc)
                 e.error("%s cannot be resolved", eorig.toChars());
             /* Create tuple of functions of ex
              */
+            
             //ex->print();
             auto exps = new Expressions();
             FuncDeclaration f;

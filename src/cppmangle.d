@@ -61,11 +61,11 @@ static if (TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TAR
                         buf.writeByte('S');
                         if (i)
                             writeBase36(i - 1);
-                        buf.writeByte('_');
-                        return true;
+                    buf.writeByte('_');
+                    return true;
                     }
                 }
-            return false;
+                return false;
         }
 
         bool exist(RootObject p)
@@ -79,7 +79,7 @@ static if (TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TAR
                         return true;
                     }
                 }
-            return false;
+                return false;
         }
 
         void store(RootObject p)
@@ -742,6 +742,7 @@ static if (TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TAR
              *  <bare-function-type> ::= <signature type>+
              *  # types are possible return type, then parameter types
              */
+            
             /* ABI says:
              "The type of a non-static member function is considered to be different,
              for the purposes of substitution, from the type of a namespace-scope or
@@ -895,10 +896,7 @@ else static if (TARGET_WINDOS)
 
         enum Flags : int
         {
-            IS_NOT_TOP_TYPE = 0x1,
-            MANGLE_RETURN_TYPE = 0x2,
-            IGNORE_CONST = 0x4,
-            IS_DMC = 0x8,
+            IS_NOT_TOP_TYPE = 0x1, MANGLE_RETURN_TYPE = 0x2, IGNORE_CONST = 0x4, IS_DMC = 0x8,
         }
 
         alias IS_NOT_TOP_TYPE = Flags.IS_NOT_TOP_TYPE;

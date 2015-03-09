@@ -122,7 +122,7 @@ extern (C++) bool response_expand(size_t* pargc, const(char)*** pargv)
                 {
                     comment = 0;
                 }
-            case 0:
+                case 0:
             case ' ':
             case '\t':
                 continue;
@@ -197,18 +197,18 @@ extern (C++) bool response_expand(size_t* pargc, const(char)*** pargv)
                     case ' ':
                     case '\t':
                         if (!instring)
-                        {
+                    {
                         case '\n':
                         case 0:
                             *d = 0; // terminate argument
                             goto Lnextarg;
                         }
-                    default:
-                    Ladd:
-                        if (c == '\\')
-                            num_slashes++;
-                        else
-                            num_slashes = 0;
+                        default:
+                        Ladd:
+                            if (c == '\\')
+                                num_slashes++;
+                            else
+                                num_slashes = 0;
                         *d++ = c;
                         break;
                     }

@@ -48,6 +48,7 @@ extern (C++) int isConst(Expression e)
 /* The constFold() functions were redundant with the optimize() ones,
  * and so have been folded in with them.
  */
+
 /* ========================================================================== */
 extern (C++) UnionExp Neg(Type type, Expression e1)
 {

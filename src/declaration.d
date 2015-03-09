@@ -385,6 +385,8 @@ public:
     bool isexp; // true: expression tuple
     TypeTuple tupletype; // !=NULL if this is a type tuple
 
+    
+
     /********************************* TupleDeclaration ****************************/
     extern (D) this(Loc loc, Identifier id, Objects* objects)
     {
@@ -411,6 +413,7 @@ public:
     {
         /* If this tuple represents a type, return that type
          */
+        
         //printf("TupleDeclaration::getType() %s\n", toChars());
         if (isexp)
             return null;
@@ -710,6 +713,7 @@ public:
         /* Don't know yet what the aliased symbol is, so assume it can
          * be overloaded and check later for correctness.
          */
+        
         //printf("AliasDeclaration::overloadInsert('%s')\n", s->toChars());
         if (aliassym) // see test/test56.d
         {
@@ -982,6 +986,8 @@ public:
     // dtor calls on postblitted vars
     Expression edtor; // if !=NULL, does the destruction of the variable
     IntRange* range; // if !NULL, the variable is known to be within the range
+
+    
 
     /********************************* VarDeclaration ****************************/
     final extern (D) this(Loc loc, Type type, Identifier id, Initializer _init)
@@ -1623,6 +1629,7 @@ public:
                             /* Look to see if initializer involves a copy constructor
                              * (which implies a postblit)
                              */
+                            
                             // there is a copy constructor
                             // and exp is the same struct
                             if (sd.postblit && tb2.toDsymbol(null) == sd)
@@ -2021,6 +2028,7 @@ public:
                  * classes to determine if there's no way the monitor
                  * could be set.
                  */
+                
                 //if (cd->isInterfaceDeclaration())
                 //error("interface %s cannot be scope", cd->toChars());
                 if (cd.cpp)
@@ -2130,6 +2138,7 @@ public:
                     /* __ensure is always called directly,
                      * so it never becomes closure.
                      */
+                    
                     //printf("\tfdv = %s\n", fdv->toChars());
                     //printf("\tfdthis = %s\n", fdthis->toChars());
                     if (loc.filename)

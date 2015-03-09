@@ -1958,14 +1958,15 @@ public:
             switch (t.ty)
             {
             case Tenum:
+                
                 {
                     TypeEnum te = cast(TypeEnum)t;
                     buf.printf("cast(%s)", te.sym.toChars());
                     t = te.sym.memtype;
                     goto L1;
                 }
-            case Twchar:
-                // BUG: need to cast(wchar)
+                case Twchar:
+                    // BUG: need to cast(wchar)
             case Tdchar:
                 // BUG: need to cast(dchar)
                 if (cast(uinteger_t)v > 0xFF)
@@ -1973,29 +1974,30 @@ public:
                     buf.printf("'\\U%08x'", v);
                     break;
                 }
-            case Tchar:
-                {
-                    size_t o = buf.offset;
-                    if (v == '\'')
-                        buf.writestring("'\\''");
-                    else if (isprint(cast(int)v) && v != '\\')
-                        buf.printf("'%c'", cast(int)v);
-                    else
-                        buf.printf("'\\x%02x'", cast(int)v);
-                    if (hgs.ddoc)
-                        escapeDdocString(buf, o);
-                    break;
-                }
-            case Tint8:
-                buf.writestring("cast(byte)");
-                goto L2;
+                case Tchar:
+                    
+                    {
+                        size_t o = buf.offset;
+                        if (v == '\'')
+                            buf.writestring("'\\''");
+                        else if (isprint(cast(int)v) && v != '\\')
+                            buf.printf("'%c'", cast(int)v);
+                        else
+                            buf.printf("'\\x%02x'", cast(int)v);
+                        if (hgs.ddoc)
+                            escapeDdocString(buf, o);
+                        break;
+                    }
+                    case Tint8:
+                        buf.writestring("cast(byte)");
+                        goto L2;
             case Tint16:
                 buf.writestring("cast(short)");
                 goto L2;
             case Tint32:
             L2:
                 buf.printf("%d", cast(int)v);
-                break;
+            break;
             case Tuns8:
                 buf.writestring("cast(ubyte)");
                 goto L3;
@@ -2005,14 +2007,14 @@ public:
             case Tuns32:
             L3:
                 buf.printf("%uu", cast(uint)v);
-                break;
+            break;
             case Tint64:
                 buf.printf("%lldL", v);
                 break;
             case Tuns64:
             L4:
                 buf.printf("%lluLU", v);
-                break;
+            break;
             case Tbool:
                 buf.writestring(v ? "true" : "false");
                 break;

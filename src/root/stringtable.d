@@ -27,7 +27,7 @@ extern (C++) static uint32_t calcHash(const(char)* key, size_t len)
     // Initialize the hash to a 'random' value
     uint32_t h = cast(uint32_t)len;
     // Mix 4 bytes at a time into the hash
-    const(uint8_t)* data = cast(const(uint8_t)*)key;
+    const(uint8_t)* data = cast(const(uint8_t)*) key;
     while (len >= 4)
     {
         uint32_t k = data[3] << 24 | data[2] << 16 | data[1] << 8 | data[0];
@@ -193,7 +193,7 @@ private:
         const(size_t) nbytes = (StringValue).sizeof + length + 1;
         if (!npools || nfill + nbytes > POOL_SIZE)
         {
-            pools = cast(uint8_t**)mem.xrealloc(pools, ++npools * (pools[0]).sizeof);
+            pools = cast(uint8_t**) mem.xrealloc(pools, ++npools * (pools[0]).sizeof);
             pools[npools - 1] = cast(uint8_t*)mem.xmalloc(nbytes > POOL_SIZE ? nbytes : POOL_SIZE);
             nfill = 0;
         }

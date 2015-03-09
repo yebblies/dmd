@@ -55,7 +55,7 @@ extern (C++) Value* dmd_aaGet(AA** paa, Key key)
     if (!*paa)
     {
         AA* a = cast(AA*)mem.xmalloc((AA).sizeof);
-        a.b = cast(aaA**)a.binit;
+        a.b = cast(aaA**) a.binit;
         a.b_length = 4;
         a.nodes = 0;
         a.binit[0] = null;
@@ -133,7 +133,7 @@ extern (C++) void dmd_aaRehash(AA** paa)
                 len = 32;
             else
                 len *= 4;
-            aaA** newb = cast(aaA**)mem.xmalloc((aaA).sizeof * len);
+            aaA** newb = cast(aaA**) mem.xmalloc((aaA).sizeof * len);
             memset(newb, 0, len * (aaA*).sizeof);
             for (size_t k = 0; k < aa.b_length; k++)
             {
@@ -147,7 +147,7 @@ extern (C++) void dmd_aaRehash(AA** paa)
                     e = enext;
                 }
             }
-            if (aa.b != cast(aaA**)aa.binit)
+            if (aa.b != cast(aaA**) aa.binit)
                 mem.xfree(aa.b);
             aa.b = newb;
             aa.b_length = len;

@@ -28,6 +28,8 @@ public:
     Package pkg; // leftmost package/module
     AliasDeclarations aliasdecls; // corresponding AliasDeclarations for alias=name pairs
 
+    
+
     /********************************* Import ****************************/
     extern (D) this(Loc loc, Identifiers* packages, Identifier id, Identifier aliasId, int isstatic)
     {

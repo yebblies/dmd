@@ -1902,6 +1902,7 @@ extern (C++) Expression inlineCopy(Expression e, Scope* sc)
 {
     /* See Bugzilla 2935 for explanation of why just a copy() is broken
      */
+    
     //return e->copy();
     if (e.op == TOKdelegate)
     {

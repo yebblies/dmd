@@ -92,23 +92,23 @@ struct FileName
             case '.':
                 return e + 1;
                 version (Posix)
-                {
+            {
                 case '/':
                     break;
                 }
                 version (Windows)
-                {
+            {
                 case '\\':
                 case ':':
                 case '/':
                     break;
                 }
-            default:
-                if (e == str)
-                    break;
-                e--;
-                continue;
-            }
+                default:
+                    if (e == str)
+                        break;
+                    e--;
+                    continue;
+                }
             return null;
         }
     }
@@ -147,30 +147,30 @@ struct FileName
             switch (*e)
             {
                 version (Posix)
-                {
+            {
                 case '/':
                     return e + 1;
                 }
                 version (Windows)
-                {
+            {
                 case '/':
                 case '\\':
                     return e + 1;
-                case ':':
-                    /* The ':' is a drive letter only if it is the second
+                    case ':':
+                        /* The ':' is a drive letter only if it is the second
                      * character or the last character,
                      * otherwise it is an ADS (Alternate Data Stream) separator.
                      * Consider ADS separators as part of the file name.
                      */
-                    if (e == str + 1 || e == str + len - 1)
-                        return e + 1;
-                }
-            default:
-                if (e == str)
-                    break;
-                e--;
-                continue;
-            }
+                        if (e == str + 1 || e == str + len - 1)
+                            return e + 1;
+                    }
+                    default:
+                        if (e == str)
+                            break;
+                        e--;
+                        continue;
+                    }
             return e;
         }
     }
@@ -313,21 +313,21 @@ struct FileName
                         instring ^= 1; // toggle inside/outside of string
                         continue;
                         version (OSX)
-                        {
+                    {
                         case ',':
-                        }
-                        version (Windows)
-                        {
+                    }
+                    version (Windows)
+                    {
                         case ';':
-                        }
-                        version (Posix)
-                        {
+                    }
+                    version (Posix)
+                    {
                         case ':':
-                        }
-                        p++;
-                        break;
-                        // note that ; cannot appear as part
-                        // of a path, quotes won't protect it
+                    }
+                    p++;
+                    break;
+                    // note that ; cannot appear as part
+                    // of a path, quotes won't protect it
                     case 0x1A:
                         // ^Z means end of file
                     case 0:
@@ -336,8 +336,9 @@ struct FileName
                         continue;
                         // ignore carriage returns
                         version (Posix)
-                        {
+                    {
                         case '~':
+                            
                             {
                                 char* home = getenv("HOME");
                                 if (home)
@@ -348,7 +349,7 @@ struct FileName
                             }
                         }
                         version (none)
-                        {
+                    {
                         case ' ':
                         case '\t':
                             // tabs in filenames?
@@ -356,10 +357,10 @@ struct FileName
                                 break;
                             // treat as end of path
                         }
-                    default:
-                        buf.writeByte(c);
-                        continue;
-                    }
+                        default:
+                            buf.writeByte(c);
+                            continue;
+                        }
                     break;
                 }
                 if (buf.offset) // if path is not empty

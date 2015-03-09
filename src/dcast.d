@@ -359,25 +359,26 @@ extern (C++) MATCH implicitConvTo(Expression e, Type t)
                 break;
             case Tint32:
                 if (ty == Tuns32)
-                {
-                }
-                else if (ty == Tuns64 && value & ~0x7FFFFFFFU)
-                    return;
-                else if (cast(int)value != value)
-                    return;
-                break;
+            {
+            }
+            else if (ty == Tuns64 && value & ~0x7FFFFFFFU)
+                return;
+            else if (cast(int)value != value)
+                return;
+            break;
             case Tuns32:
                 if (ty == Tint32)
-                {
-                }
-                else if (cast(uint)value != value)
-                    return;
-                break;
+            {
+            }
+            else if (cast(uint)value != value)
+                return;
+            break;
             case Tdchar:
                 if (value > 0x10FFFFU)
                     return;
                 break;
             case Tfloat32:
+                
                 {
                     float f;
                     if (e.type.isunsigned())
@@ -394,55 +395,57 @@ extern (C++) MATCH implicitConvTo(Expression e, Type t)
                     }
                     break;
                 }
-            case Tfloat64:
-                {
-                    double f;
-                    if (e.type.isunsigned())
+                case Tfloat64:
+                    
                     {
-                        f = cast(double)value;
-                        if (f != value)
-                            return;
+                        double f;
+                        if (e.type.isunsigned())
+                        {
+                            f = cast(double)value;
+                            if (f != value)
+                                return;
+                        }
+                        else
+                        {
+                            f = cast(double)cast(sinteger_t)value;
+                            if (f != cast(sinteger_t)value)
+                                return;
+                        }
+                        break;
                     }
-                    else
-                    {
-                        f = cast(double)cast(sinteger_t)value;
-                        if (f != cast(sinteger_t)value)
-                            return;
-                    }
-                    break;
-                }
-            case Tfloat80:
-                {
-                    real f;
-                    if (e.type.isunsigned())
-                    {
-                        f = ldouble(value);
-                        if (f != value) // isn't this a noop, because the compiler prefers ld
-                            return;
-                    }
-                    else
-                    {
-                        f = ldouble(cast(sinteger_t)value);
-                        if (f != cast(sinteger_t)value)
-                            return;
-                    }
-                    break;
-                }
-            case Tpointer:
-                //printf("type = %s\n", type->toBasetype()->toChars());
-                //printf("t = %s\n", t->toBasetype()->toChars());
-                if (ty == Tpointer && e.type.toBasetype().nextOf().ty == t.toBasetype().nextOf().ty)
-                {
-                    /* Allow things like:
+                    case Tfloat80:
+                        
+                        {
+                            real f;
+                            if (e.type.isunsigned())
+                            {
+                                f = ldouble(value);
+                                if (f != value) // isn't this a noop, because the compiler prefers ld
+                                    return;
+                            }
+                            else
+                            {
+                                f = ldouble(cast(sinteger_t)value);
+                                if (f != cast(sinteger_t)value)
+                                    return;
+                            }
+                            break;
+                        }
+                        case Tpointer:
+                            //printf("type = %s\n", type->toBasetype()->toChars());
+                            //printf("t = %s\n", t->toBasetype()->toChars());
+                            if (ty == Tpointer && e.type.toBasetype().nextOf().ty == t.toBasetype().nextOf().ty)
+                            {
+                                /* Allow things like:
                      *      const char* P = cast(char *)3;
                      *      char* q = P;
                      */
-                    break;
-                }
-            default:
-                visit(cast(Expression)e);
-                return;
-            }
+                                break;
+                            }
+                            default:
+                                visit(cast(Expression)e);
+                                return;
+                            }
             //printf("MATCHconvert\n");
             result = MATCHconvert;
         }
@@ -580,8 +583,8 @@ extern (C++) MATCH implicitConvTo(Expression e, Type t)
                                 result = MATCHexact;
                                 return;
                             }
-                        }
-                        /* fall through */
+                    }
+                /* fall through */
                     case Tarray:
                     case Tpointer:
                         Type tn = t.nextOf();
@@ -1023,6 +1026,7 @@ extern (C++) MATCH implicitConvTo(Expression e, Type t)
              *    .init
              * 'member' and 'allocator' need to be pure.
              */
+            
             /* See if fail only because of mod bits
              */
             if (e.type.immutableOf().implicitConvTo(t.immutableOf()) == MATCHnomatch)
@@ -2602,8 +2606,7 @@ Lagain:
     }
     else if (t1.ty == Tclass || t2.ty == Tclass)
     {
-    Lcc:
-        while (1)
+        Lcc: while (1)
         {
             MATCH i1 = e2.implicitConvTo(t1);
             MATCH i2 = e1.implicitConvTo(t2);
@@ -2899,6 +2902,7 @@ Lagain:
         {
             /* Swap operands to minimize number of functions generated
              */
+            
             //printf("swap %s\n", Token::toChars(op));
             Expression tmp = e1;
             e1 = e2;
@@ -3201,6 +3205,7 @@ extern (C++) IntRange getIntRange(Expression e)
              the number 22 is the maximum absolute value in the denomator's range. We
              don't care about divide by zero.
              */
+            
             // Modding on 0 is invalid anyway.
             if (!irDen.imin.negative)
             {

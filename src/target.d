@@ -252,7 +252,7 @@ struct Target
             break;
         default:
             return 3; // wrong base type
-        }
+            }
         return 0;
     }
 
@@ -270,6 +270,7 @@ struct Target
 /******************************
  * Private helpers for Target::paintAsType.
  */
+
 // Write the integer value of 'e' into a unsigned byte buffer.
 extern (C++) static void encodeInteger(Expression e, ubyte* buffer)
 {
@@ -302,20 +303,22 @@ extern (C++) static void encodeReal(Expression e, ubyte* buffer)
     switch (e.type.ty)
     {
     case Tfloat32:
+        
         {
             float* p = cast(float*)buffer;
             *p = cast(float)e.toReal();
             break;
         }
-    case Tfloat64:
-        {
-            double* p = cast(double*)buffer;
-            *p = cast(double)e.toReal();
-            break;
-        }
-    default:
-        assert(0);
-    }
+        case Tfloat64:
+            
+            {
+                double* p = cast(double*)buffer;
+                *p = cast(double)e.toReal();
+                break;
+            }
+            default:
+                assert(0);
+            }
 }
 
 // Write the bytes encoded in 'buffer' into a longdouble and returns
@@ -326,19 +329,21 @@ extern (C++) static Expression decodeReal(Loc loc, Type type, ubyte* buffer)
     switch (type.ty)
     {
     case Tfloat32:
+        
         {
             float* p = cast(float*)buffer;
             value = ldouble(*p);
             break;
         }
-    case Tfloat64:
-        {
-            double* p = cast(double*)buffer;
-            value = ldouble(*p);
-            break;
-        }
-    default:
-        assert(0);
-    }
+        case Tfloat64:
+            
+            {
+                double* p = cast(double*)buffer;
+                value = ldouble(*p);
+                break;
+            }
+            default:
+                assert(0);
+            }
     return new RealExp(loc, value, type);
 }

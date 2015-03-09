@@ -431,6 +431,8 @@ public:
     // called this one
     uint flags; // FUNCFLAGxxxxx
 
+    
+
     /********************************* FuncDeclaration ****************************/
     final extern (D) this(Loc loc, Loc endloc, Identifier id, StorageClass storage_class, Type type)
     {
@@ -886,6 +888,7 @@ public:
                  * This is an 'introducing' function which gets a new
                  * slot in the vtbl[].
                  */
+                
                 // Verify this doesn't override previous final function
                 if (cd.baseClass)
                 {
@@ -948,6 +951,7 @@ public:
                 Module.dprogress = dprogress_save;
                 return;
             default:
+                
                 {
                     FuncDeclaration fdv = cd.baseClass.vtbl[vi].isFuncDeclaration();
                     FuncDeclaration fdc = cd.vtbl[vi].isFuncDeclaration();
@@ -1016,7 +1020,7 @@ public:
                     }
                     break;
                 }
-            }
+                        }
             /* Go through all the interface bases.
              * If this function is covariant with any members of those interface
              * functions, set the tintro.
@@ -1034,6 +1038,7 @@ public:
                     Module.dprogress = dprogress_save;
                     return;
                 default:
+                    
                     {
                         FuncDeclaration fdv = cast(FuncDeclaration)b.base.vtbl[vi];
                         Type ti = null;
@@ -1043,6 +1048,7 @@ public:
                         /* Should we really require 'override' when implementing
                          * an interface function?
                          */
+                        
                         //if (!isOverride())
                         //warning(loc, "overrides base class function %s, but is not marked with 'override'", fdv->toPrettyChars());
                         if (fdv.tintro)
@@ -1083,7 +1089,7 @@ public:
                         }
                         goto L2;
                     }
-                }
+                                }
             }
             if (!doesoverride && isOverride() && (type.nextOf() || !may_override))
             {
@@ -1159,15 +1165,16 @@ public:
             case 0:
                 break;
             case 1:
+                
                 {
                     Parameter fparam0 = Parameter.getNth(f.parameters, 0);
                     if (fparam0.type.ty != Tarray || fparam0.type.nextOf().ty != Tarray || fparam0.type.nextOf().nextOf().ty != Tchar || fparam0.storageClass & (STCout | STCref | STClazy))
                         goto Lmainerr;
                     break;
                 }
-            default:
-                goto Lmainerr;
-            }
+                default:
+                    goto Lmainerr;
+                }
             if (!f.nextOf())
                 error("must return int or void");
             else if (f.nextOf().ty != Tint32 && f.nextOf().ty != Tvoid)
@@ -2205,6 +2212,7 @@ public:
                  * then setting SIZOKfwd is too conservative and would break existing code.
                  * So, just stop method attributes inference until ad->semantic() done.
                  */
+                
                 //ad->sizeok = SIZEOKfwd;
             }
             else
@@ -2628,7 +2636,7 @@ public:
             if (!m.nextf) // better match
                 t = m.lastf.type;
             else // ambiguous match
-                t = null;
+            t = null;
             m.lastf = null;
         }
         else // no match
@@ -3337,6 +3345,7 @@ public:
          * var, the closure still has to be taken. Hence, we check for isThis()
          * instead of isVirtual(). (thanks to David Friedman)
          */
+        
         //printf("FuncDeclaration::needsClosure() %s\n", toChars());
         if (requiresClosure)
             goto Lyes;
@@ -3491,6 +3500,7 @@ public:
          * So if base.in() doesn't throw, derived.in() need not be executed, and the contract is valid.
          * If base.in() throws, then derived.in()'s body is executed.
          */
+        
         /* Implementing this is done by having the overriding function call
          * nested functions (the fdrequire functions) nested inside the overridden
          * function. This requires that the stack layout of the calling function's
@@ -3988,6 +3998,8 @@ struct TemplateCandidateWalker
     Loc loc;
     int numToDisplay; // max num of overloads to print (-v overrides this).
 
+    
+
     /// Count template overloads.
     struct CountWalker
     {
@@ -4028,6 +4040,8 @@ struct FuncCandidateWalker
 {
     Loc loc;
     int numToDisplay; // max num of overloads to print (-v overrides this).
+
+    
 
     /// Count function overloads.
     struct CountWalker
@@ -4268,6 +4282,8 @@ extern (C++) final class FuncLiteralDeclaration : FuncDeclaration
 public:
     TOK tok; // TOKfunction or TOKdelegate
     Type treq; // target of return type inference
+
+    
 
     /****************************** FuncLiteralDeclaration ************************/
     extern (D) this(Loc loc, Loc endloc, Type type, TOK tok, ForeachStatement fes, Identifier id = null)
@@ -4781,6 +4797,8 @@ extern (C++) class StaticDtorDeclaration : FuncDeclaration
 {
 public:
     VarDeclaration vgate; // 'gate' variable
+
+    
 
     /********************************* StaticDtorDeclaration ****************************/
     final extern (D) this(Loc loc, Loc endloc, StorageClass stc)

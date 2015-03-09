@@ -110,6 +110,8 @@ public:
     PKG isPkgMod;
     Module mod; // != NULL if isPkgMod == PKGmodule
 
+    
+
     /* =========================== Package ===================== */
     final extern (D) this(Identifier ident)
     {
@@ -276,6 +278,8 @@ public:
     int needmoduleinfo;
     int selfimports; // 0: don't know, 1: does not, 2: does
 
+    
+
     /*************************************
      * Return true if module imports itself.
      */
@@ -294,6 +298,8 @@ public:
     }
 
     int rootimports; // 0: don't know, 1: does not, 2: does
+
+    
 
     /*************************************
      * Return true if module imports root module.
@@ -1030,6 +1036,7 @@ public:
          * need to stop infinite recursive searches.
          * This is done with the cache.
          */
+        
         //printf("%s Module::search('%s', flags = %d) insearch = %d\n", toChars(), ident->toChars(), flags, insearch);
         if (insearch)
             return null;

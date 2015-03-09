@@ -637,6 +637,7 @@ extern (C++) Expression op_overload(Expression e, Scope* sc)
                     /* Rewrite op(e1) as:
                      *  op(e1.aliasthis)
                      */
+                    
                     //printf("att una %s e1 = %s\n", Token::toChars(op), this->e1->type->toChars());
                     Expression e1 = new DotIdExp(e.loc, e.e1, ad.aliasthis.ident);
                     UnaExp ue = cast(UnaExp)e.copy();
@@ -711,6 +712,7 @@ extern (C++) Expression op_overload(Expression e, Scope* sc)
                     /* Rewrite op(e1) as:
                      *  op(e1.aliasthis)
                      */
+                    
                     //printf("att arr e1 = %s\n", this->e1->type->toChars());
                     Expression e1 = new DotIdExp(ae.loc, ae.e1, ad.aliasthis.ident);
                     UnaExp ue = cast(UnaExp)ae.copy();
@@ -1767,6 +1769,7 @@ extern (C++) bool inferApplyArgTypes(ForeachStatement fes, Scope* sc, ref Dsymbo
         }
         break;
     case Taarray:
+        
         {
             TypeAArray taa = cast(TypeAArray)tab;
             if (fes.parameters.dim == 2)
@@ -1787,9 +1790,9 @@ extern (C++) bool inferApplyArgTypes(ForeachStatement fes, Scope* sc, ref Dsymbo
             }
             break;
         }
-    case Tclass:
-        ad = (cast(TypeClass)tab).sym;
-        goto Laggr;
+        case Tclass:
+            ad = (cast(TypeClass)tab).sym;
+            goto Laggr;
     case Tstruct:
         ad = (cast(TypeStruct)tab).sym;
         goto Laggr;
@@ -1825,14 +1828,15 @@ extern (C++) bool inferApplyArgTypes(ForeachStatement fes, Scope* sc, ref Dsymbo
         }
         break;
     case Tdelegate:
+        
         {
             if (!inferApplyArgTypesY(cast(TypeFunction)tab.nextOf(), fes.parameters))
                 return false;
             break;
         }
-    default:
-        break;
-        // ignore error, caught later
+        default:
+            break;
+            // ignore error, caught later
     }
     return true;
 }

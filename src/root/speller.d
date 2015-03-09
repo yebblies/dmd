@@ -224,25 +224,7 @@ version (unittest)
 
     extern (C++) void unittest_speller()
     {
-        static __gshared const(char)*** cases = 
-        [
-            ["hello", "hell", "y"],
-            ["hello", "hel", "y"],
-            ["hello", "ello", "y"],
-            ["hello", "llo", "y"],
-            ["hello", "hellox", "y"],
-            ["hello", "helloxy", "y"],
-            ["hello", "xhello", "y"],
-            ["hello", "xyhello", "y"],
-            ["hello", "ehllo", "y"],
-            ["hello", "helol", "y"],
-            ["hello", "abcd", "n"],
-            ["hello", "helxxlo", "y"],
-            ["hello", "ehlxxlo", "n"],
-            ["hello", "heaao", "y"],
-            ["_123456789_123456789_123456789_123456789", "_123456789_123456789_123456789_12345678", "y"],
-            [null, null, null]
-        ];
+        static __gshared const(char)*** cases = [["hello", "hell", "y"], ["hello", "hel", "y"], ["hello", "ello", "y"], ["hello", "llo", "y"], ["hello", "hellox", "y"], ["hello", "helloxy", "y"], ["hello", "xhello", "y"], ["hello", "xyhello", "y"], ["hello", "ehllo", "y"], ["hello", "helol", "y"], ["hello", "abcd", "n"], ["hello", "helxxlo", "y"], ["hello", "ehlxxlo", "n"], ["hello", "heaao", "y"], ["_123456789_123456789_123456789_123456789", "_123456789_123456789_123456789_12345678", "y"], [null, null, null]];
         //printf("unittest_speller()\n");
         const(void)* p = speller("hello", &speller_test, cast(void*)"hell", idchars);
         assert(p !is null);

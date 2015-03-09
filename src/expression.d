@@ -986,6 +986,7 @@ extern (C++) bool arrayExpressionToCommonType(Scope* sc, Expressions* exps, Type
      * which works if the array literal is initialized top down with the ubyte[][]
      * type, but fails with this function doing bottom up typing.
      */
+    
     //printf("arrayExpressionToCommonType()\n");
     scope IntegerExp integerexp = new IntegerExp(0);
     scope CondExp condexp = new CondExp(Loc(), integerexp, null, null);
@@ -1332,6 +1333,7 @@ extern (C++) bool functionParameters(Loc loc, Scope* sc, TypeFunction tf, Type t
                 {
                 case Tsarray:
                 case Tarray:
+                    
                     {
                         /* Create a static array variable v of type arg->type:
                          *  T[dim] __arrayArg = [ arguments[i], ..., arguments[nargs-1] ];
@@ -1368,26 +1370,27 @@ extern (C++) bool functionParameters(Loc loc, Scope* sc, TypeFunction tf, Type t
                         arg = Expression.combine(de, ve);
                         break;
                     }
-                case Tclass:
-                    {
-                        /* Set arg to be:
+                    case Tclass:
+                        
+                        {
+                            /* Set arg to be:
                          *      new Tclass(arg0, arg1, ..., argn)
                          */
-                        auto args = new Expressions();
-                        args.setDim(nargs - i);
-                        for (size_t u = i; u < nargs; u++)
-                            (*args)[u - i] = (*arguments)[u];
-                        arg = new NewExp(loc, null, null, p.type, args);
-                        break;
-                    }
-                default:
-                    if (!arg)
-                    {
-                        error(loc, "not enough arguments");
-                        return true;
-                    }
-                    break;
-                }
+                            auto args = new Expressions();
+                            args.setDim(nargs - i);
+                            for (size_t u = i; u < nargs; u++)
+                                (*args)[u - i] = (*arguments)[u];
+                            arg = new NewExp(loc, null, null, p.type, args);
+                            break;
+                        }
+                        default:
+                            if (!arg)
+                            {
+                                error(loc, "not enough arguments");
+                                return true;
+                            }
+                            break;
+                        }
                 arg = arg.semantic(sc);
                 //printf("\targ = '%s'\n", arg->toChars());
                 arguments.setDim(i + 1);
@@ -1435,8 +1438,7 @@ extern (C++) bool functionParameters(Loc loc, Scope* sc, TypeFunction tf, Type t
             else if (fd.isNested())
             {
                 f = fd.toParent2().isFuncDeclaration();
-            Linoutnest:
-                for (; f; f = f.toParent2().isFuncDeclaration())
+                Linoutnest: for (; f; f = f.toParent2().isFuncDeclaration())
                 {
                     if ((cast(TypeFunction)f.type).iswild)
                         goto Linouterr;
@@ -1771,6 +1773,7 @@ extern (C++) bool functionParameters(Loc loc, Scope* sc, TypeFunction tf, Type t
     {
         /* Adjust function return type based on wildmatch
          */
+        
         //printf("wildmatch = x%x, tret = %s\n", wildmatch, tret->toChars());
         tret = tret.substWildTo(wildmatch);
     }
@@ -1786,6 +1789,8 @@ extern (C++) bool functionParameters(Loc loc, Scope* sc, TypeFunction tf, Type t
  */
 struct UnionExp
 {
+
+    
 
     // yes, default constructor does nothing
     extern (D) this(Expression e)
@@ -1840,7 +1845,9 @@ private:
         char[__traits(classInstanceSize, SliceExp)] sliceexp;
         // Ensure that the union is suitably aligned.
         real for_alignment_only;
-    };
+    }
+
+    ;
     __AnonStruct__u u;
 }
 
@@ -2184,6 +2191,8 @@ public:
     Type type; // !=NULL means that semantic() has been run
     ubyte size; // # of bytes in Expression so we can copy() it
     ubyte parens; // if this is a parenthesized expression
+
+    
 
     /******************************** Expression **************************/
     final extern (D) this(Loc loc, TOK op, int size)
@@ -2598,6 +2607,7 @@ public:
          * g() can call h() but not f()
          * i() can call h() and g() but not f()
          */
+        
         // Find the closest pure parent of the calling function
         FuncDeclaration outerfunc = sc.func;
         FuncDeclaration calledparent = f;
@@ -2692,6 +2702,7 @@ public:
              * Therefore, this function and all its immediately enclosing
              * functions must be pure.
              */
+            
             /* Today, static local functions are impure by default, but they cannot
              * violate purity of enclosing functions.
              *
@@ -3456,6 +3467,7 @@ public:
             {
                 /* Disallow shadowing
                  */
+                
                 // First find the scope of the with
                 Scope* scwith = sc;
                 while (scwith.scopesym != scopesym)
@@ -3985,6 +3997,8 @@ extern (C++) final class NullExp : Expression
 public:
     ubyte committed; // !=0 if type is committed
 
+    
+
     /******************************** NullExp **************************/
     extern (D) this(Loc loc, Type type = null)
     {
@@ -4050,6 +4064,8 @@ public:
     ubyte committed; // !=0 if type is committed
     char postfix; // 'c', 'w', 'd'
     bool ownedByCtfe; // true = created in CTFE
+
+    
 
     /******************************** StringExp **************************/
     extern (D) this(Loc loc, char* string)
@@ -4271,6 +4287,7 @@ public:
             case 1:
                 return memcmp(cast(char*)string, cast(char*)se2.string, len1);
             case 2:
+                
                 {
                     d_wchar* s1 = cast(d_wchar*)string;
                     d_wchar* s2 = cast(d_wchar*)se2.string;
@@ -4279,8 +4296,9 @@ public:
                         if (s1[u] != s2[u])
                             return s1[u] - s2[u];
                     }
-                }
+            }
             case 4:
+                
                 {
                     d_dchar* s1 = cast(d_dchar*)string;
                     d_dchar* s2 = cast(d_dchar*)se2.string;
@@ -4491,6 +4509,8 @@ public:
     Expressions* elements;
     bool ownedByCtfe; // true = created in CTFE
 
+    
+
     /************************ ArrayLiteralExp ************************************/
     // [ e1, e2, e3, ... ]
     extern (D) this(Loc loc, Expressions* elements)
@@ -4637,6 +4657,8 @@ public:
     Expressions* keys;
     Expressions* values;
     bool ownedByCtfe; // true = created in CTFE
+
+    
 
     /************************ AssocArrayLiteralExp ************************************/
     // [ key0 : value0, key1 : value1, ... ]
@@ -5202,6 +5224,8 @@ public:
     NewDeclaration allocator; // allocator function
     int onstack; // allocate on stack
 
+    
+
     /********************** NewExp **************************************/
     /* thisexp.new(newargs) newtype(arguments) */
     extern (D) this(Loc loc, Expression thisexp, Expressions* newargs, Type newtype, Expressions* arguments)
@@ -5600,6 +5624,8 @@ public:
     ClassDeclaration cd; // class being instantiated
     Expressions* arguments; // Array of Expression's to call class constructor
 
+    
+
     /********************** NewAnonClassExp **************************************/
     extern (D) this(Loc loc, Expression thisexp, Expressions* newargs, ClassDeclaration cd, Expressions* arguments)
     {
@@ -5767,6 +5793,7 @@ public:
          * problems when instantiating imported templates passing private
          * variables as alias template parameters.
          */
+        
         //checkAccess(loc, sc, NULL, var);
         if (VarDeclaration vd = var.isVarDeclaration())
         {
@@ -5987,6 +6014,7 @@ public:
              * void foo(T)(T delegate(int) dg){}
              * foo(a=>a); // in IFTI, treq == T delegate(int)
              */
+            
             //if (fd->treq)
             //    fd->treq = fd->treq->semantic(loc, sc);
             genIdent(sc);
@@ -6584,6 +6612,7 @@ public:
          * is(targ id :  tok2)
          * is(targ id == tok2)
          */
+        
         //printf("IsExp::semantic(%s)\n", toChars());
         if (id && !(sc.flags & SCOPEcondition))
         {
@@ -6690,6 +6719,7 @@ public:
                 break;
             case TOKfunction:
             case TOKparameters:
+                
                 {
                     if (targ.ty != Tfunction)
                         goto Lno;
@@ -6715,25 +6745,25 @@ public:
                     tded = new TypeTuple(args);
                     break;
                 }
-            case TOKreturn:
-                /* Get the 'return type' for the function,
+                case TOKreturn:
+                    /* Get the 'return type' for the function,
                  * delegate, or pointer to function.
                  */
-                if (targ.ty == Tfunction)
-                    tded = (cast(TypeFunction)targ).next;
-                else if (targ.ty == Tdelegate)
-                {
-                    tded = (cast(TypeDelegate)targ).next;
-                    tded = (cast(TypeFunction)tded).next;
-                }
-                else if (targ.ty == Tpointer && (cast(TypePointer)targ).next.ty == Tfunction)
-                {
-                    tded = (cast(TypePointer)targ).next;
-                    tded = (cast(TypeFunction)tded).next;
-                }
-                else
-                    goto Lno;
-                break;
+                    if (targ.ty == Tfunction)
+                        tded = (cast(TypeFunction)targ).next;
+                    else if (targ.ty == Tdelegate)
+                    {
+                        tded = (cast(TypeDelegate)targ).next;
+                        tded = (cast(TypeFunction)tded).next;
+                    }
+                    else if (targ.ty == Tpointer && (cast(TypePointer)targ).next.ty == Tfunction)
+                    {
+                        tded = (cast(TypePointer)targ).next;
+                        tded = (cast(TypeFunction)tded).next;
+                    }
+                    else
+                        goto Lno;
+                    break;
             case TOKargTypes:
                 /* Generate a type tuple of the equivalent types used to determine if a
                  * function argument of this type can be passed in registers.
@@ -6871,6 +6901,8 @@ public:
     Expression e1;
     Type att1; // Save alias this type to detect recursion
 
+    
+
     /************************************************************/
     final extern (D) this(Loc loc, TOK op, int size, Expression e1)
     {
@@ -6928,6 +6960,8 @@ public:
     Expression e2;
     Type att1; // Save alias this type to detect recursion
     Type att2; // Save alias this type to detect recursion
+
+    
 
     /************************************************************/
     final extern (D) this(Loc loc, TOK op, int size, Expression e1, Expression e2)
@@ -7596,6 +7630,7 @@ public:
                 ds = (cast(OverExp)e1).vars;
                 goto L1;
             case TOKtemplate:
+                
                 {
                     TemplateExp te = cast(TemplateExp)e1;
                     ds = te.fd ? cast(Dsymbol)te.fd : te.td;
@@ -7616,9 +7651,9 @@ public:
                     e = e.semantic(sc);
                     return e;
                 }
-            default:
-                break;
-            }
+                default:
+                    break;
+                }
         }
         if (e1.op == TOKvar && e1.type.toBasetype().ty == Tsarray && ident == Id.length)
         {
@@ -8451,6 +8486,8 @@ extern (C++) final class DotTypeExp : UnaExp
 public:
     Dsymbol sym; // symbol that represents a type
 
+    
+
     /************************************************************/
     extern (D) this(Loc loc, Expression e, Dsymbol s)
     {
@@ -8482,6 +8519,8 @@ public:
     Expressions* arguments; // function arguments
     FuncDeclaration f; // symbol to call
     bool directcall; // true if a virtual call is devirtualized
+
+    
 
     /************************************************************/
     extern (D) this(Loc loc, Expression e, Expressions* exps)
@@ -8685,6 +8724,7 @@ public:
                 }
             }
         }
+
     Lagain:
         //printf("Lagain: %s\n", toChars());
         f = null;
@@ -8721,6 +8761,7 @@ public:
                 if (ex)
                     return ex;
             }
+
             /* Look for e1 being a lazy parameter
              */
             if (e1.op == TOKvar)
@@ -8889,7 +8930,7 @@ public:
                 }
                 else if (arguments.dim == 1)
                 {
-                    e = (*arguments)[0];
+                    e = ( * arguments)[0];
                     e = e.implicitCastTo(sc, t1);
                     e = new CastExp(loc, e, t1);
                 }
@@ -8961,7 +9002,7 @@ public:
                 if (ue.e1.op == TOKtype) // just a FQN
                     e1 = ve;
                 else // things like (new Foo).bar()
-                    e1 = new CommaExp(loc, ue.e1, ve);
+                e1 = new CommaExp(loc, ue.e1, ve);
                 e1.type = f.type;
             }
             else
@@ -9231,10 +9272,10 @@ public:
             {
                 OutBuffer buf;
                 buf.writeByte('(');
-                argExpTypesToCBuffer(&buf, arguments);
+                argExpTypesToCBuffer( & buf, arguments);
                 buf.writeByte(')');
                 if (tthis)
-                    tthis.modToBuffer(&buf);
+                    tthis.modToBuffer( & buf);
                 //printf("tf = %s, args = %s\n", tf->deco, (*arguments)[0]->type->deco);
                 .error(loc, "%s %s %s is not callable using argument types %s", p, e1.toChars(), parametersTypeToChars(tf.parameters, tf.varargs), buf.peekString());
                 return new ErrorExp();
@@ -9294,7 +9335,7 @@ public:
                 {
                     OutBuffer buf;
                     buf.writeByte('(');
-                    argExpTypesToCBuffer(&buf, arguments);
+                    argExpTypesToCBuffer( & buf, arguments);
                     buf.writeByte(')');
                     //printf("tf = %s, args = %s\n", tf->deco, (*arguments)[0]->type->deco);
                     .error(loc, "%s %s is not callable using argument types %s", e1.toChars(), parametersTypeToChars(tf.parameters, tf.varargs), buf.peekString());
@@ -9338,7 +9379,7 @@ public:
         Expression argprefix;
         if (!arguments)
             arguments = new Expressions();
-        if (functionParameters(loc, sc, cast(TypeFunction)t1, tthis, arguments, f, &type, &argprefix))
+        if (functionParameters(loc, sc, cast(TypeFunction)t1, tthis, arguments, f,  & type,  & argprefix))
             return new ErrorExp();
         if (!type)
         {
@@ -9351,7 +9392,7 @@ public:
             Type t = type;
             int offset = 0;
             TypeFunction tf = cast(TypeFunction)f.tintro;
-            if (tf.next.isBaseOf(t, &offset) && offset)
+            if (tf.next.isBaseOf(t,  & offset) && offset)
             {
                 type = tf.next;
                 return combine(argprefix, castTo(sc, t));
@@ -9523,7 +9564,7 @@ public:
                 if (f.needThis())
                     e = new DelegateExp(loc, dve.e1, f, dve.hasOverloads);
                 else // It is a function pointer. Convert &v.f() --> (v, &V.f())
-                    e = new CommaExp(loc, dve.e1, new AddrExp(loc, new VarExp(loc, f)));
+                e = new CommaExp(loc, dve.e1, new AddrExp(loc, new VarExp(loc, f)));
                 e = e.semantic(sc);
                 return e;
             }
@@ -9902,6 +9943,7 @@ public:
         switch (tb.ty)
         {
         case Tclass:
+            
             {
                 TypeClass tc = cast(TypeClass)tb;
                 ClassDeclaration cd = tc.sym;
@@ -9914,56 +9956,57 @@ public:
                 }
                 break;
             }
-        case Tpointer:
-            tb = (cast(TypePointer)tb).next.toBasetype();
-            if (tb.ty == Tstruct)
-            {
-                TypeStruct ts = cast(TypeStruct)tb;
-                StructDeclaration sd = ts.sym;
-                FuncDeclaration f = sd.aggDelete;
-                FuncDeclaration fd = sd.dtor;
-                if (!f)
-                    break;
-                /* Construct:
+            case Tpointer:
+                tb = (cast(TypePointer)tb).next.toBasetype();
+                if (tb.ty == Tstruct)
+                {
+                    TypeStruct ts = cast(TypeStruct)tb;
+                    StructDeclaration sd = ts.sym;
+                    FuncDeclaration f = sd.aggDelete;
+                    FuncDeclaration fd = sd.dtor;
+                    if (!f)
+                        break;
+                    /* Construct:
                  *      ea = copy e1 to a tmp to do side effects only once
                  *      eb = call destructor
                  *      ec = call deallocator
                  */
-                Expression ea = null;
-                Expression eb = null;
-                Expression ec = null;
-                VarDeclaration v;
-                if (fd && f)
-                {
-                    Identifier id = Identifier.idPool("__tmpea");
-                    v = new VarDeclaration(loc, e1.type, id, new ExpInitializer(loc, e1));
-                    v.storage_class |= STCtemp;
-                    v.semantic(sc);
-                    v.parent = sc.parent;
-                    ea = new DeclarationExp(loc, v);
-                    ea.type = v.type;
+                    Expression ea = null;
+                    Expression eb = null;
+                    Expression ec = null;
+                    VarDeclaration v;
+                    if (fd && f)
+                    {
+                        Identifier id = Identifier.idPool("__tmpea");
+                        v = new VarDeclaration(loc, e1.type, id, new ExpInitializer(loc, e1));
+                        v.storage_class |= STCtemp;
+                        v.semantic(sc);
+                        v.parent = sc.parent;
+                        ea = new DeclarationExp(loc, v);
+                        ea.type = v.type;
+                    }
+                    if (fd)
+                    {
+                        Expression e = ea ? new VarExp(loc, v) : e1;
+                        e = new DotVarExp(Loc(), e, fd, 0);
+                        eb = new CallExp(loc, e);
+                        eb = eb.semantic(sc);
+                    }
+                    if (f)
+                    {
+                        Type tpv = Type.tvoid.pointerTo();
+                        Expression e = ea ? new VarExp(loc, v) : e1.castTo(sc, tpv);
+                        e = new CallExp(loc, new VarExp(loc, f), e);
+                        ec = e.semantic(sc);
+                    }
+                    ea = combine(ea, eb);
+                    ea = combine(ea, ec);
+                    assert(ea);
+                    return ea;
                 }
-                if (fd)
-                {
-                    Expression e = ea ? new VarExp(loc, v) : e1;
-                    e = new DotVarExp(Loc(), e, fd, 0);
-                    eb = new CallExp(loc, e);
-                    eb = eb.semantic(sc);
-                }
-                if (f)
-                {
-                    Type tpv = Type.tvoid.pointerTo();
-                    Expression e = ea ? new VarExp(loc, v) : e1.castTo(sc, tpv);
-                    e = new CallExp(loc, new VarExp(loc, f), e);
-                    ec = e.semantic(sc);
-                }
-                ea = combine(ea, eb);
-                ea = combine(ea, ec);
-                assert(ea);
-                return ea;
-            }
-            break;
+                break;
         case Tarray:
+            
             {
                 Type tv = tb.nextOf().baseElemOf();
                 if (tv.ty == Tstruct)
@@ -9975,10 +10018,10 @@ public:
                 }
                 break;
             }
-        default:
-            error("cannot delete type %s", e1.type.toChars());
-            goto Lerr;
-        }
+            default:
+                error("cannot delete type %s", e1.type.toChars());
+                goto Lerr;
+            }
         return this;
     Lerr:
         return new ErrorExp();
@@ -10003,6 +10046,8 @@ public:
     Type to; // type to cast to
     ubyte mod; // MODxxxxx
 
+    
+
     /************************************************************/
     extern (D) this(Loc loc, Expression e, Type t)
     {
@@ -10011,7 +10056,7 @@ public:
         this.mod = cast(ubyte)~0;
     }
 
-    /* For cast(const) and cast(immutable)
+    /* For cast(const)and cast(immutable)
      */
     extern (D) this(Loc loc, Expression e, ubyte mod)
     {
@@ -10045,7 +10090,7 @@ public:
             error("cannot cast %s", e1.toChars());
             return new ErrorExp();
         }
-        if (!to) // Handle cast(const) and cast(immutable), etc.
+        if (!to) // Handle cast(const)and cast(immutable), etc.
             to = e1.type.castMod(mod);
         to = to.semantic(loc, sc);
         if (to == Type.terror)
@@ -10060,7 +10105,7 @@ public:
             error("cannot cast template %s to type %s", e1.toChars(), to.toChars());
             return new ErrorExp();
         }
-        // cast(void) is used to mark e1 as unused, so it is safe
+        // cast(void)is used to mark e1 as unused, so it is safe
         if (to.ty == Tvoid)
         {
             type = to;
@@ -10080,6 +10125,7 @@ public:
              * with:
              *  S(t)
              */
+            
             // Rewrite as to.call(e1)
             Expression e = new TypeExp(loc, to);
             e = new CallExp(loc, e, e1);
@@ -10167,6 +10213,8 @@ public:
     TypeVector to; // the target vector type before semantic()
     uint dim; // number of elements in the vector
 
+    
+
     /************************************************************/
     extern (D) this(Loc loc, Expression e, Type t)
     {
@@ -10215,6 +10263,8 @@ public:
     VarDeclaration lengthVar;
     bool upperIsInBounds; // true if upr <= e1.length
     bool lowerIsLessThanUpper; // true if lwr <= upr
+
+    
 
     /************************************************************/
     extern (D) this(Loc loc, Expression e1, Expression lwr, Expression upr)
@@ -10930,6 +10980,8 @@ public:
     bool modifiable;
     bool indexIsInBounds; // true if 0 <= e2 && e2 <= e1.length - 1
 
+    
+
     /************************** IndexExp **********************************/
     // e1 [ e2 ]
     extern (D) this(Loc loc, Expression e1, Expression e2)
@@ -11017,15 +11069,15 @@ public:
                 return new ErrorExp();
             e2 = e2.optimize(WANTvalue);
             if (e2.op == TOKint64 && e2.toInteger() == 0)
-            {
-            }
-            else if (sc.func && sc.func.setUnsafe())
-            {
-                error("safe function '%s' cannot index pointer '%s'", sc.func.toPrettyChars(), e1.toChars());
-                return new ErrorExp();
-            }
-            type = (cast(TypeNext)t1b).next;
-            break;
+        {
+        }
+        else if (sc.func && sc.func.setUnsafe())
+        {
+            error("safe function '%s' cannot index pointer '%s'", sc.func.toPrettyChars(), e1.toChars());
+            return new ErrorExp();
+        }
+        type = (cast(TypeNext)t1b).next;
+        break;
         case Tarray:
             e2 = e2.implicitCastTo(sc, Type.tsize_t);
             if (e2.type == Type.terror)
@@ -11033,6 +11085,7 @@ public:
             type = (cast(TypeNext)t1b).next;
             break;
         case Tsarray:
+            
             {
                 e2 = e2.implicitCastTo(sc, Type.tsize_t);
                 if (e2.type == Type.terror)
@@ -11040,64 +11093,66 @@ public:
                 type = t1b.nextOf();
                 break;
             }
-        case Taarray:
-            {
-                TypeAArray taa = cast(TypeAArray)t1b;
-                /* We can skip the implicit conversion if they differ only by
+            case Taarray:
+                
+                {
+                    TypeAArray taa = cast(TypeAArray)t1b;
+                    /* We can skip the implicit conversion if they differ only by
                  * constness (Bugzilla 2684, see also bug 2954b)
                  */
-                if (!arrayTypeCompatibleWithoutCasting(e2.loc, e2.type, taa.index))
-                {
-                    e2 = e2.implicitCastTo(sc, taa.index); // type checking
-                    if (e2.type == Type.terror)
+                    if (!arrayTypeCompatibleWithoutCasting(e2.loc, e2.type, taa.index))
+                    {
+                        e2 = e2.implicitCastTo(sc, taa.index); // type checking
+                        if (e2.type == Type.terror)
+                            return new ErrorExp();
+                    }
+                    type = taa.next;
+                    break;
+                }
+                case Ttuple:
+                    
+                    {
+                        e2 = e2.implicitCastTo(sc, Type.tsize_t);
+                        if (e2.type == Type.terror)
+                            return new ErrorExp();
+                        e2 = e2.ctfeInterpret();
+                        uinteger_t index = e2.toUInteger();
+                        TupleExp te;
+                        TypeTuple tup;
+                        size_t length;
+                        if (e1.op == TOKtuple)
+                        {
+                            te = cast(TupleExp)e1;
+                            tup = null;
+                            length = te.exps.dim;
+                        }
+                        else if (e1.op == TOKtype)
+                        {
+                            te = null;
+                            tup = cast(TypeTuple)t1b;
+                            length = Parameter.dim(tup.arguments);
+                        }
+                        else
+                            assert(0);
+                        if (length <= index)
+                        {
+                            error("array index [%llu] is outside array bounds [0 .. %llu]", index, cast(ulong)length);
+                            return new ErrorExp();
+                        }
+                        Expression e;
+                        if (e1.op == TOKtuple)
+                        {
+                            e = (*te.exps)[cast(size_t)index];
+                            e = combine(te.e0, e);
+                        }
+                        else
+                            e = new TypeExp(e1.loc, Parameter.getNth(tup.arguments, cast(size_t)index).type);
+                        return e;
+                    }
+                    default:
+                        error("%s must be an array or pointer type, not %s", e1.toChars(), e1.type.toChars());
                         return new ErrorExp();
-                }
-                type = taa.next;
-                break;
-            }
-        case Ttuple:
-            {
-                e2 = e2.implicitCastTo(sc, Type.tsize_t);
-                if (e2.type == Type.terror)
-                    return new ErrorExp();
-                e2 = e2.ctfeInterpret();
-                uinteger_t index = e2.toUInteger();
-                TupleExp te;
-                TypeTuple tup;
-                size_t length;
-                if (e1.op == TOKtuple)
-                {
-                    te = cast(TupleExp)e1;
-                    tup = null;
-                    length = te.exps.dim;
-                }
-                else if (e1.op == TOKtype)
-                {
-                    te = null;
-                    tup = cast(TypeTuple)t1b;
-                    length = Parameter.dim(tup.arguments);
-                }
-                else
-                    assert(0);
-                if (length <= index)
-                {
-                    error("array index [%llu] is outside array bounds [0 .. %llu]", index, cast(ulong)length);
-                    return new ErrorExp();
-                }
-                Expression e;
-                if (e1.op == TOKtuple)
-                {
-                    e = (*te.exps)[cast(size_t)index];
-                    e = combine(te.e0, e);
-                }
-                else
-                    e = new TypeExp(e1.loc, Parameter.getNth(tup.arguments, cast(size_t)index).type);
-                return e;
-            }
-        default:
-            error("%s must be an array or pointer type, not %s", e1.toChars(), e1.type.toChars());
-            return new ErrorExp();
-        }
+                    }
         if (t1b.ty == Tsarray || t1b.ty == Tarray)
         {
             Expression el = new ArrayLengthExp(loc, e1);
@@ -11218,6 +11273,7 @@ public:
             /* Check for operator overloading,
              * but rewrite in terms of ++e instead of e++
              */
+            
             /* If e1 is not trivial, take a reference to it
              */
             Expression de = null;
@@ -11304,6 +11360,8 @@ extern (C++) class AssignExp : BinExp
 {
 public:
     int ismemset; // !=0 if setting the contents of an array
+
+    
 
     /************************************************************/
     /* op can be TOKassign, TOKconstruct, or TOKblit */
@@ -11643,6 +11701,7 @@ public:
                         /* Look for form of constructor call which is:
                          *    __ctmp.ctor(arguments...)
                          */
+                        
                         /* Before calling the constructor, initialize
                          * variable with a bit copy of the default
                          * initializer
@@ -13753,6 +13812,7 @@ public:
         switch (t2b.ty)
         {
         case Taarray:
+            
             {
                 TypeAArray ta = cast(TypeAArray)t2b;
                 // Special handling for array keys
@@ -13765,8 +13825,8 @@ public:
                 type = ta.nextOf().pointerTo();
                 break;
             }
-        default:
-            error("rvalue of in expression must be an associative array, not %s", e2.type.toChars());
+            default:
+                error("rvalue of in expression must be an associative array, not %s", e2.type.toChars());
         case Terror:
             return new ErrorExp();
         }
@@ -14145,6 +14205,8 @@ extern (C++) class DefaultInitExp : Expression
 {
 public:
     TOK subop; // which of the derived classes this is
+
+    
 
     /****************************************************************/
     final extern (D) this(Loc loc, TOK subop, int size)

@@ -199,15 +199,15 @@ extern (C++) void parseConfFile(const(char)* filename, const(char)* envsectionna
             p = skipspace(p + 1);
             char* pn;
             for (pn = p; isalnum(cast(char)*pn); pn++)
-            {
-            }
-            if (pn - p == envsectionnamelen && Port.memicmp(p, envsectionname, envsectionnamelen) == 0 && *skipspace(pn) == ']')
-            {
-                envsection = true;
-            }
-            else
-                envsection = false;
-            break;
+        {
+        }
+        if (pn - p == envsectionnamelen && Port.memicmp(p, envsectionname, envsectionnamelen) == 0 && *skipspace(pn) == ']')
+        {
+            envsection = true;
+        }
+        else
+            envsection = false;
+        break;
         default:
             if (envsection)
             {

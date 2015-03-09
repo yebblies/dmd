@@ -28,13 +28,8 @@ struct Ungag
 
 enum PROTKIND : int
 {
-    PROTundefined,
-    PROTnone, // no access
-    PROTprivate,
-    PROTpackage,
-    PROTprotected,
-    PROTpublic,
-    PROTexport,
+    PROTundefined, PROTnone, // no access
+    PROTprivate, PROTpackage, PROTprotected, PROTpublic, PROTexport,
 }
 
 alias PROTundefined = PROTKIND.PROTundefined;
@@ -49,7 +44,6 @@ struct Prot
 {
     PROTKIND kind;
     Package pkg;
-
 
     extern (D) this(PROTKIND kind)
     {
@@ -157,6 +151,8 @@ public:
     char* depmsg; // customized deprecation message
     UserAttributeDeclaration userAttribDecl; // user defined attributes
     UnitTestDeclaration ddocUnittest; // !=NULL means there's a ddoc unittest associated with this symbol (only use this with ddoc)
+
+    
 
     /****************************** Dsymbol ******************************/
     final extern (D) this()
@@ -620,6 +616,7 @@ public:
             sm = s.search(loc, cast(Identifier)id);
             break;
         case DYNCAST_DSYMBOL:
+            
             {
                 // It's a template instance
                 //printf("\ttemplate instance id\n");
@@ -648,9 +645,9 @@ public:
                 sm = ti.toAlias();
                 break;
             }
-        default:
-            assert(0);
-        }
+            default:
+                assert(0);
+            }
         return sm;
     }
 
@@ -1832,6 +1829,8 @@ extern (C++) final class OverloadSet : Dsymbol
 {
 public:
     Dsymbols a; // array of Dsymbols
+
+    
 
     /********************************* OverloadSet ****************************/
     extern (D) this(Identifier ident)

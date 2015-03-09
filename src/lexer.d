@@ -319,6 +319,7 @@ public:
             case 'Z':
             case '_':
             case_ident:
+                
                 {
                     char c;
                     while (1)
@@ -332,8 +333,8 @@ public:
                             uint u = decodeUTF();
                             if (isUniAlpha(u))
                                 continue;
-                            error("char 0x%04x not allowed in identifier", u);
-                            p = s;
+                        error("char 0x%04x not allowed in identifier", u);
+                        p = s;
                         }
                         break;
                     }
@@ -377,9 +378,9 @@ public:
                         {
                             t.ustring = cast(char*)timestamp;
                         Lstr:
-                            t.value = TOKstring;
-                            t.postfix = 0;
-                            t.len = cast(uint)strlen(cast(char*)t.ustring);
+                        t.value = TOKstring;
+                        t.postfix = 0;
+                        t.len = cast(uint)strlen(cast(char*)t.ustring);
                         }
                         else if (id == Id.VERSIONX)
                         {
@@ -395,10 +396,10 @@ public:
                                 {
                                     if (point)
                                         break;
-                                    // ignore everything after second '.'
-                                    point = true;
-                                    major = minor;
-                                    minor = 0;
+                                // ignore everything after second '.'
+                                point = true;
+                                major = minor;
+                                minor = 0;
                                 }
                                 else
                                     break;
@@ -417,8 +418,8 @@ public:
                     //printf("t->value = %d\n",t->value);
                     return;
                 }
-            case '/':
-                p++;
+                case '/':
+                    p++;
                 switch (*p)
                 {
                 case '=':
@@ -535,6 +536,7 @@ public:
                     endOfLine();
                     continue;
                 case '+':
+                    
                     {
                         int nest;
                         startLoc = loc();
@@ -603,9 +605,9 @@ public:
                         }
                         continue;
                     }
-                default:
-                    break;
-                }
+                    default:
+                        break;
+                    }
                 t.value = TOKdiv;
                 return;
             case '.':
@@ -916,6 +918,7 @@ public:
                     t.value = TOKmod;
                 return;
             case '#':
+                
                 {
                     p++;
                     Token n;
@@ -930,8 +933,9 @@ public:
                         t.value = TOKpound;
                         return;
                     }
-                }
+            }
             default:
+                
                 {
                     uint c = *p;
                     if (c & 0x80)
@@ -954,7 +958,7 @@ public:
                     p++;
                     continue;
                 }
-            }
+                        }
         }
     }
 
@@ -1032,7 +1036,7 @@ public:
         case '\\':
         Lconsume:
             p++;
-            break;
+        break;
         case 'a':
             c = 7;
             goto Lconsume;
@@ -1324,18 +1328,18 @@ public:
             case '\n':
             Lnextline:
                 endOfLine();
-                startline = 1;
-                if (blankrol)
-                {
-                    blankrol = 0;
-                    continue;
-                }
-                if (hereid)
-                {
-                    stringbuffer.writeUTF8(c);
-                    continue;
-                }
-                break;
+            startline = 1;
+            if (blankrol)
+            {
+                blankrol = 0;
+                continue;
+            }
+            if (hereid)
+            {
+                stringbuffer.writeUTF8(c);
+                continue;
+            }
+            break;
             case '\r':
                 if (*p == '\n')
                     continue;
@@ -1808,7 +1812,7 @@ public:
             case 'i':
             Lreal:
                 p = start;
-                return inreal(t);
+            return inreal(t);
             case '_':
                 ++p;
                 continue;
@@ -1835,8 +1839,7 @@ public:
         }
         enum FLAGS : int
         {
-            FLAGS_none = 0,
-            FLAGS_decimal = 1, // decimal
+            FLAGS_none = 0, FLAGS_decimal = 1, // decimal
             FLAGS_unsigned = 2, // u or U suffix
             FLAGS_long = 4, // L suffix
         }
@@ -2061,6 +2064,7 @@ public:
              * accept 2.22507e-308, while apple gcc will only take
              * 2.22508e-308. Not sure who is right.
              */
+            
             // Only interested in errno return
             cast(void)Port.strtod(cast(char*)stringbuffer.data, null);
             result = TOKfloat64v;
@@ -2183,9 +2187,9 @@ public:
             case '\n':
             Lnewline:
                 this.scanloc.linnum = linnum;
-                if (filespec)
-                    this.scanloc.filename = filespec;
-                return;
+            if (filespec)
+                this.scanloc.filename = filespec;
+            return;
             case '\r':
                 p++;
                 if (*p != '\n')

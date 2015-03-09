@@ -349,6 +349,7 @@ public:
          * the TypeInfo object would be speculatively stored in each object
          * files. To set correct function pointer, run semantic3 for xeq and xcmp.
          */
+        
         //if ((xeq && xeq != xerreq || xcmp && xcmp != xerrcmp) && isImportedSym(this))
         //    Module::addDeferredSemantic3(this);
         /* Defer requesting semantic3 until TypeInfo generation is actually invoked.

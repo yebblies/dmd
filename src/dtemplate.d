@@ -191,6 +191,7 @@ extern (C++) bool match(RootObject o1, RootObject o2)
      * should make it possible to just do o1->equals(o2), but
      * we'll do that another day.
      */
+    
     /* Manifest constants should be compared by their values,
      * at least in template arguments.
      */
@@ -357,6 +358,8 @@ public:
     bool isstatic; // this is static template declaration
     Prot protection;
     TemplatePrevious* previous; // threaded list of previous instantiation attempts on stack
+
+    
 
     /* ======================== TemplateDeclaration ============================= */
     extern (D) this(Loc loc, Identifier id, TemplateParameters* parameters, Expression constraint, Dsymbols* decldefs, bool ismixin = false, bool literal = false)
@@ -623,6 +626,7 @@ public:
          *  static assert(!is(typeof(foo(7))));
          * Recursive attempts are regarded as a constraint failure.
          */
+        
         /* There's a chicken-and-egg problem here. We don't know yet if this template
          * instantiation will be a local one (enclosing is set), and we won't know until
          * after selecting the correct template. Thus, function we're nesting inside
@@ -1468,6 +1472,7 @@ public:
                     // 6764 fix - TypeAArray may be TypeSArray have not yet run semantic().
                 case Tsarray:
                 case Taarray:
+                    
                     {
                         // Perhaps we can do better with this, see TypeFunction::callMatch()
                         if (tb.ty == Tsarray)
@@ -1521,48 +1526,49 @@ public:
                         }
                         /* fall through */
                     }
-                case Tarray:
-                    {
-                        TypeArray ta = cast(TypeArray)tb;
-                        Type tret = fparam.isLazyArray();
-                        for (; argi < nfargs; argi++)
+                    case Tarray:
+                        
                         {
-                            Expression arg = (*fargs)[argi];
-                            assert(arg);
-                            MATCH m;
-                            /* If lazy array of delegates,
+                            TypeArray ta = cast(TypeArray)tb;
+                            Type tret = fparam.isLazyArray();
+                            for (; argi < nfargs; argi++)
+                            {
+                                Expression arg = (*fargs)[argi];
+                                assert(arg);
+                                MATCH m;
+                                /* If lazy array of delegates,
                              * convert arg(s) to delegate(s)
                              */
-                            if (tret)
-                            {
-                                if (ta.next.equals(arg.type))
+                                if (tret)
                                 {
-                                    m = MATCHexact;
+                                    if (ta.next.equals(arg.type))
+                                    {
+                                        m = MATCHexact;
+                                    }
+                                    else
+                                    {
+                                        m = arg.implicitConvTo(tret);
+                                        if (m == MATCHnomatch)
+                                        {
+                                            if (tret.toBasetype().ty == Tvoid)
+                                                m = MATCHconvert;
+                                        }
+                                    }
                                 }
                                 else
                                 {
-                                    m = arg.implicitConvTo(tret);
-                                    if (m == MATCHnomatch)
-                                    {
-                                        if (tret.toBasetype().ty == Tvoid)
-                                            m = MATCHconvert;
-                                    }
+                                    uint wm = 0;
+                                    m = deduceType(arg, paramscope, ta.next, parameters, dedtypes, &wm, inferStart);
+                                    wildmatch |= wm;
                                 }
+                                if (m == MATCHnomatch)
+                                    goto Lnomatch;
+                                if (m < match)
+                                    match = m;
                             }
-                            else
-                            {
-                                uint wm = 0;
-                                m = deduceType(arg, paramscope, ta.next, parameters, dedtypes, &wm, inferStart);
-                                wildmatch |= wm;
-                            }
-                            if (m == MATCHnomatch)
-                                goto Lnomatch;
-                            if (m < match)
-                                match = m;
+                            goto Lmatch;
                         }
-                        goto Lmatch;
-                    }
-                case Tclass:
+                        case Tclass:
                 case Tident:
                     goto Lmatch;
                 default:
@@ -1574,8 +1580,7 @@ public:
             if (argi != nfargs && !fvarargs)
                 goto Lnomatch;
         }
-    Lmatch:
-        for (size_t i = 0; i < dedtypes.dim; i++)
+        Lmatch: for (size_t i = 0; i < dedtypes.dim; i++)
         {
             Type at = isType((*dedtypes)[i]);
             if (at)
@@ -1584,7 +1589,7 @@ public:
                 {
                     TypeDeduced xt = cast(TypeDeduced)at;
                     at = xt.tded; // 'unbox'
-                    /*delete*/;
+                    /*delete*/ ;
                 }
                 (*dedtypes)[i] = at.merge2();
             }
@@ -1932,7 +1937,7 @@ public:
                             newp[newbi] = newinstances = new TemplateInstances();
                         newinstances.push(ti1);
                     }
-                    /*delete*/;
+                    /*delete*/ ;
                 }
             }
             buckets.setDim(newdim);
@@ -2603,6 +2608,7 @@ extern (C++) ubyte deduceWildHelper(Type t, Type* at, Type tparam)
     case X(MODshared | MODwildconst, MODshared):
     case X(MODshared | MODwildconst, MODshared | MODconst):
     case X(MODshared | MODwildconst, MODimmutable):
+        
         {
             ubyte wm = (t.mod & ~MODshared);
             if (wm == 0)
@@ -2611,7 +2617,7 @@ extern (C++) ubyte deduceWildHelper(Type t, Type* at, Type tparam)
             *at = t.unqualify(m);
             return wm;
         }
-    case X(MODwild, MODwild):
+        case X(MODwild, MODwild):
     case X(MODwild, MODwildconst):
     case X(MODwild, MODshared | MODwild):
     case X(MODwild, MODshared | MODwildconst):
@@ -2623,13 +2629,14 @@ extern (C++) ubyte deduceWildHelper(Type t, Type* at, Type tparam)
     case X(MODshared | MODwild, MODshared | MODwildconst):
     case X(MODshared | MODwildconst, MODshared | MODwild):
     case X(MODshared | MODwildconst, MODshared | MODwildconst):
+        
         {
             *at = t.unqualify(tparam.mod & t.mod);
             return MODwild;
         }
-    default:
-        return 0;
-    }
+        default:
+            return 0;
+        }
     ;
 }
 
@@ -2665,7 +2672,7 @@ extern (C++) MATCH deduceTypeHelper(Type t, Type* at, Type tparam)
             *at = t;
             return MATCHexact;
         }
-    case X(MODconst, MODconst):
+        case X(MODconst, MODconst):
     case X(MODwild, MODwild):
     case X(MODwildconst, MODwildconst):
     case X(MODshared, MODshared):
@@ -2685,7 +2692,7 @@ extern (C++) MATCH deduceTypeHelper(Type t, Type* at, Type tparam)
             *at = t.mutableOf().unSharedOf();
             return MATCHexact;
         }
-    case X(MODconst, 0):
+        case X(MODconst, 0):
     case X(MODconst, MODwild):
     case X(MODconst, MODwildconst):
     case X(MODconst, MODshared | MODconst):
@@ -2709,13 +2716,13 @@ extern (C++) MATCH deduceTypeHelper(Type t, Type* at, Type tparam)
             *at = t.mutableOf();
             return MATCHconst;
         }
-    case X(MODconst, MODshared):
-        // foo(const(U))                shared(T)               => shared(T)
-        {
-            *at = t;
-            return MATCHconst;
-        }
-    case X(MODshared, MODshared | MODconst):
+        case X(MODconst, MODshared):
+            // foo(const(U))                shared(T)               => shared(T)
+            {
+                *at = t;
+                return MATCHconst;
+            }
+            case X(MODshared, MODshared | MODconst):
     case X(MODshared, MODshared | MODwild):
     case X(MODshared, MODshared | MODwildconst):
     case X(MODshared | MODconst, MODshared):
@@ -2727,7 +2734,7 @@ extern (C++) MATCH deduceTypeHelper(Type t, Type* at, Type tparam)
             *at = t.unSharedOf();
             return MATCHconst;
         }
-    case X(MODwildconst, MODimmutable):
+        case X(MODwildconst, MODimmutable):
     case X(MODshared | MODconst, MODshared | MODwildconst):
     case X(MODshared | MODwildconst, MODimmutable):
     case X(MODshared | MODwildconst, MODshared | MODwild):
@@ -2739,13 +2746,13 @@ extern (C++) MATCH deduceTypeHelper(Type t, Type* at, Type tparam)
             *at = t.unSharedOf().mutableOf();
             return MATCHconst;
         }
-    case X(MODshared | MODconst, MODshared | MODwild):
-        // foo(shared(const(U)))        shared(inout(T))        => T
-        {
-            *at = t.unSharedOf().mutableOf();
-            return MATCHconst;
-        }
-    case X(MODwild, 0):
+        case X(MODshared | MODconst, MODshared | MODwild):
+            // foo(shared(const(U)))        shared(inout(T))        => T
+            {
+                *at = t.unSharedOf().mutableOf();
+                return MATCHconst;
+            }
+            case X(MODwild, 0):
     case X(MODwild, MODconst):
     case X(MODwild, MODwildconst):
     case X(MODwild, MODimmutable):
@@ -3005,7 +3012,7 @@ extern (C++) MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplatePara
                             if (result > MATCHconst)
                                 result = MATCHconst; // limit level for inout matches
                         }
-                        /*delete*/;
+                        /*delete*/ ;
                         return;
                     }
                     // type vs type
@@ -3046,7 +3053,7 @@ extern (C++) MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplatePara
                         {
                             (*dedtypes)[i] = tt;
                         }
-                        /*delete*/;
+                        /*delete*/ ;
                         return;
                     }
                     // type vs type
@@ -3353,8 +3360,7 @@ extern (C++) MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplatePara
                     result = MATCHnomatch;
                     return;
                 }
-            L2:
-                for (size_t i = 0; i < nfparams; i++)
+                L2: for (size_t i = 0; i < nfparams; i++)
                 {
                     Parameter a = Parameter.getNth(t.parameters, i);
                     Parameter ap = Parameter.getNth(tp.parameters, i);
@@ -3455,8 +3461,7 @@ extern (C++) MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplatePara
                 }
                 else if (tempdecl != tp.tempinst.tempdecl)
                     goto Lnomatch;
-            L2:
-                for (size_t i = 0; 1; i++)
+                L2: for (size_t i = 0; 1; i++)
                 {
                     //printf("\ttest: tempinst->tiargs[%d]\n", i);
                     RootObject o1 = null;
@@ -3492,6 +3497,7 @@ extern (C++) MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplatePara
                          *  static if (is(X Y == A!(Z), Z...)) {}
                          * deduce that Z is a tuple(int, float)
                          */
+                        
                         /* Create tuple from remaining args
                          */
                         auto vt = new Tuple();
@@ -3503,7 +3509,7 @@ extern (C++) MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplatePara
                             if (k < t.tempinst.tiargs.dim)
                                 o = (*t.tempinst.tiargs)[i + k];
                             else // Pick up default arg
-                                o = t.tempinst.tdtypes[i + k];
+                            o = t.tempinst.tdtypes[i + k];
                             vt.objects[k] = o;
                         }
                         Tuple v = cast(Tuple)(*dedtypes)[j];
@@ -3749,7 +3755,7 @@ extern (C++) MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplatePara
                             if ((*tmpdedtypes)[k] != (*best)[k])
                                 (*best)[k] = (*dedtypes)[k];
                         }
-                    ++numBaseClassMatches;
+                        ++numBaseClassMatches;
                 }
             }
             // Now recursively test the inherited interfaces
@@ -4139,6 +4145,7 @@ extern (C++) MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplatePara
                     return;
                 }
             }
+
             visit(cast(Expression)e);
         }
 
@@ -5249,6 +5256,8 @@ public:
     TemplateInstance tnext; // non-first instantiated instances
     Module minst; // the top module that instantiated this instance
 
+    
+
     /* ======================== TemplateInstance ================================ */
     final extern (D) this(Loc loc, Identifier ident)
     {
@@ -5510,6 +5519,7 @@ public:
                  * Therefore, always conservatively insert this instance to the member of
                  * a root module, then calculate the necessity by TemplateInstance::needsCodegen().
                  */
+                
                 //if (sc->scopesym->isModule())
                 //    printf("module level instance %s\n", toChars());
                 //printf("\t1: adding to %s %s\n", sc->scopesym->kind(), sc->scopesym->toChars());
@@ -5609,6 +5619,7 @@ public:
          * member has the same name as the template instance.
          * If so, this template instance becomes an alias for that member.
          */
+        
         //printf("members->dim = %d\n", members->dim);
         if (members.dim)
         {
@@ -5699,6 +5710,7 @@ public:
          * Perhaps VarDeclaration::semantic() should do it like it does
          * for initializers inside a function.
          */
+        
         //if (sc->parent->isFuncDeclaration())
         {
             /* BUG 782: this has problems if the classes this depends on
@@ -5714,6 +5726,7 @@ public:
             /* Template function instantiation should run semantic3 immediately
              * for attribute inference.
              */
+            
             /* If a template is instantiated inside function, the whole instantiation
              * should be done at that position. But, immediate running semantic3 of
              * dependent templates may cause unresolved forward reference (Bugzilla 9050).
@@ -6128,6 +6141,7 @@ public:
          * in the compiled importee when it does not, when the instantiation
          * is behind a conditional debug declaration.
          */
+        
         // workaround for Bugzilla 11239
         if (global.params.useUnitTests || global.params.allInst || global.params.debuglevel)
         {
@@ -6553,6 +6567,7 @@ public:
                     {
                         /* If template argument is a template lambda,
                          * get template declaration itself. */
+                        
                         //sa = fe->td;
                         //goto Ldsym;
                     }
@@ -6834,10 +6849,10 @@ public:
                 errorSupplemental(loc, "while looking for match for %s", toChars());
             else if (tovers)
                 error("does not match template overload set %s", tovers.toChars());
-            else if (tdecl && !tdecl.overnext)
-                // Only one template, so we can give better error message
-            error("does not match template declaration %s", tdecl.toChars());
-            else.error(loc, "%s %s.%s does not match any template declaration", tempdecl.kind(), tempdecl.parent.toPrettyChars(), tempdecl.ident.toChars());
+            else if (tdecl && !tdecl.overnext)// Only one template, so we can give better error message
+                error("does not match template declaration %s", tdecl.toChars());
+            else
+                .error(loc, "%s %s.%s does not match any template declaration", tempdecl.kind(), tempdecl.parent.toPrettyChars(), tempdecl.ident.toChars());
             return false;
         }
         /* The best match is td_last
@@ -6911,6 +6926,7 @@ public:
                 /* Determine if the instance arguments, tiargs, are all that is necessary
                  * to instantiate the template.
                  */
+                
                 //printf("tp = %p, td->parameters->dim = %d, tiargs->dim = %d\n", tp, td->parameters->dim, ti->tiargs->dim);
                 TypeFunction tf = cast(TypeFunction)fd.type;
                 if (size_t dim = Parameter.dim(tf.parameters))
@@ -7368,6 +7384,7 @@ extern (C++) bool definitelyValueParameter(Expression e)
      * But they might also just be a fully qualified name, which should be treated
      * as an alias.
      */
+    
     // x.y.f cannot be a value
     FuncDeclaration f = (cast(DotVarExp)e).var.isFuncDeclaration();
     if (f)
@@ -7619,6 +7636,7 @@ public:
          * Because the members would already call Module::addDeferredSemantic() for themselves.
          * See Struct, Class, Interface, and EnumDeclaration::semantic().
          */
+        
         //if (!sc->func && Module::deferred.dim > deferred_dim) {}
         AggregateDeclaration ad = toParent().isAggregateDeclaration();
         if (sc.func && !ad)

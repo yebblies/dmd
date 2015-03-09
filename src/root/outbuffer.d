@@ -20,7 +20,6 @@ struct OutBuffer
     int level;
     int notlinehead;
 
-
     extern (C++) ~this()
     {
         mem.xfree(data);

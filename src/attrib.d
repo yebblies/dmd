@@ -17,6 +17,8 @@ extern (C++) class AttribDeclaration : Dsymbol
 public:
     Dsymbols* decl; // array of Dsymbol's
 
+    
+
     /********************************* AttribDeclaration ****************************/
     final extern (D) this(Dsymbols* decl)
     {
@@ -349,6 +351,7 @@ public:
                 /* Use storage_class2 instead of storage_class otherwise when we do .di generation
                  * we'll wind up with 'const const' rather than 'const'.
                  */
+                
                 /* Don't think we need to worry about mutually exclusive storage classes here
                  */
                 fd.storage_class2 |= stc;
@@ -372,39 +375,7 @@ public:
             const(char)* id;
         }
 
-        static __gshared SCstring* table = 
-        [
-            SCstring(STCauto, TOKauto),
-            SCstring(STCscope, TOKscope),
-            SCstring(STCstatic, TOKstatic),
-            SCstring(STCextern, TOKextern),
-            SCstring(STCconst, TOKconst),
-            SCstring(STCfinal, TOKfinal),
-            SCstring(STCabstract, TOKabstract),
-            SCstring(STCsynchronized, TOKsynchronized),
-            SCstring(STCdeprecated, TOKdeprecated),
-            SCstring(STCoverride, TOKoverride),
-            SCstring(STClazy, TOKlazy),
-            SCstring(STCalias, TOKalias),
-            SCstring(STCout, TOKout),
-            SCstring(STCin, TOKin),
-            SCstring(STCmanifest, TOKenum),
-            SCstring(STCimmutable, TOKimmutable),
-            SCstring(STCshared, TOKshared),
-            SCstring(STCnothrow, TOKnothrow),
-            SCstring(STCwild, TOKwild),
-            SCstring(STCpure, TOKpure),
-            SCstring(STCref, TOKref),
-            SCstring(STCtls),
-            SCstring(STCgshared, TOKgshared),
-            SCstring(STCnogc, TOKat, "nogc"),
-            SCstring(STCproperty, TOKat, "property"),
-            SCstring(STCsafe, TOKat, "safe"),
-            SCstring(STCtrusted, TOKat, "trusted"),
-            SCstring(STCsystem, TOKat, "system"),
-            SCstring(STCdisable, TOKat, "disable"),
-            SCstring(0, TOKreserved)
-        ];
+        static __gshared SCstring* table = [SCstring(STCauto, TOKauto), SCstring(STCscope, TOKscope), SCstring(STCstatic, TOKstatic), SCstring(STCextern, TOKextern), SCstring(STCconst, TOKconst), SCstring(STCfinal, TOKfinal), SCstring(STCabstract, TOKabstract), SCstring(STCsynchronized, TOKsynchronized), SCstring(STCdeprecated, TOKdeprecated), SCstring(STCoverride, TOKoverride), SCstring(STClazy, TOKlazy), SCstring(STCalias, TOKalias), SCstring(STCout, TOKout), SCstring(STCin, TOKin), SCstring(STCmanifest, TOKenum), SCstring(STCimmutable, TOKimmutable), SCstring(STCshared, TOKshared), SCstring(STCnothrow, TOKnothrow), SCstring(STCwild, TOKwild), SCstring(STCpure, TOKpure), SCstring(STCref, TOKref), SCstring(STCtls), SCstring(STCgshared, TOKgshared), SCstring(STCnogc, TOKat, "nogc"), SCstring(STCproperty, TOKat, "property"), SCstring(STCsafe, TOKat, "safe"), SCstring(STCtrusted, TOKat, "trusted"), SCstring(STCsystem, TOKat, "system"), SCstring(STCdisable, TOKat, "disable"), SCstring(0, TOKreserved)];
         for (int i = 0; table[i].stc; i++)
         {
             StorageClass tbl = table[i].stc;
@@ -653,6 +624,8 @@ public:
     structalign_t alignment;
     int sem; // 1 if successful semantic()
 
+    
+
     /********************************* AnonDeclaration ****************************/
     extern (D) this(Loc loc, bool isunion, Dsymbols* decl)
     {
@@ -771,6 +744,8 @@ extern (C++) final class PragmaDeclaration : AttribDeclaration
 {
 public:
     Expressions* args; // array of Expression's
+
+    
 
     /********************************* PragmaDeclaration ****************************/
     extern (D) this(Loc loc, Identifier ident, Expressions* args, Dsymbols* decl)
@@ -1039,6 +1014,8 @@ extern (C++) class ConditionalDeclaration : AttribDeclaration
 public:
     Condition condition;
     Dsymbols* elsedecl; // array of Dsymbol's for else block
+
+    
 
     /********************************* ConditionalDeclaration ****************************/
     final extern (D) this(Condition condition, Dsymbols* decl, Dsymbols* elsedecl)

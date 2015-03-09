@@ -157,6 +157,8 @@ extern (C++) final class ThrownExceptionExp : Expression
 public:
     ClassReferenceExp thrown; // the thing being tossed
 
+    
+
     /************** ThrownExceptionExp ********************************************/
     extern (D) this(Loc loc, ClassReferenceExp victim)
     {
@@ -944,7 +946,7 @@ extern (C++) int comparePointers(Loc loc, TOK op, Type type, Expression agg1, di
             break;
         default:
             return -1; // memory blocks are different
-        }
+            }
     }
     if (op == TOKnotidentity || op == TOKnotequal)
         cmp ^= 1;
@@ -970,6 +972,7 @@ extern (C++) Expression paintFloatInt(Expression fromVal, Type to)
 /***********************************************
  Primitive integer operations
  ***********************************************/
+
 /**   e = OP e
  */
 extern (C++) void intUnary(TOK op, IntegerExp e)
@@ -1014,6 +1017,7 @@ extern (C++) void intBinary(TOK op, IntegerExp dest, Type type, IntegerExp e1, I
         result = e1.getInteger() * e2.getInteger();
         break;
     case TOKdiv:
+        
         {
             sinteger_t n1 = e1.getInteger();
             sinteger_t n2 = e2.getInteger();
@@ -1028,58 +1032,61 @@ extern (C++) void intBinary(TOK op, IntegerExp dest, Type type, IntegerExp e1, I
                 result = n1 / n2;
             break;
         }
-    case TOKmod:
-        {
-            sinteger_t n1 = e1.getInteger();
-            sinteger_t n2 = e2.getInteger();
-            if (n2 == 0)
+        case TOKmod:
+            
             {
-                e2.error("divide by 0");
-                n2 = 1;
-            }
-            if (n2 == -1 && !type.isunsigned())
-            {
-                // Check for int.min % -1
-                if (n1 == 0xFFFFFFFF80000000UL && type.toBasetype().ty != Tint64)
+                sinteger_t n1 = e1.getInteger();
+                sinteger_t n2 = e2.getInteger();
+                if (n2 == 0)
                 {
-                    e2.error("integer overflow: int.min % -1");
+                    e2.error("divide by 0");
                     n2 = 1;
                 }
-                else if (n1 == 0x8000000000000000L) // long.min % -1
+                if (n2 == -1 && !type.isunsigned())
                 {
-                    e2.error("integer overflow: long.min % -1");
-                    n2 = 1;
+                    // Check for int.min % -1
+                    if (n1 == 0xFFFFFFFF80000000UL && type.toBasetype().ty != Tint64)
+                    {
+                        e2.error("integer overflow: int.min % -1");
+                        n2 = 1;
+                    }
+                    else if (n1 == 0x8000000000000000L) // long.min % -1
+                    {
+                        e2.error("integer overflow: long.min % -1");
+                        n2 = 1;
+                    }
                 }
+                if (e1.type.isunsigned() || e2.type.isunsigned())
+                    result = (cast(d_uns64)n1) % (cast(d_uns64)n2);
+                else
+                    result = n1 % n2;
+                break;
             }
-            if (e1.type.isunsigned() || e2.type.isunsigned())
-                result = (cast(d_uns64)n1) % (cast(d_uns64)n2);
-            else
-                result = n1 % n2;
-            break;
-        }
-    case TOKpow:
-        {
-            dinteger_t n = e2.getInteger();
-            if (!e2.type.isunsigned() && cast(sinteger_t)n < 0)
-            {
-                e2.error("integer ^^ -integer: total loss of precision");
-                n = 1;
-            }
-            uinteger_t r = e1.getInteger();
-            result = 1;
-            while (n != 0)
-            {
-                if (n & 1)
-                    result = result * r;
-                n >>= 1;
-                r = r * r;
-            }
-            break;
-        }
-    case TOKshl:
-        result = e1.getInteger() << e2.getInteger();
-        break;
+            case TOKpow:
+                
+                {
+                    dinteger_t n = e2.getInteger();
+                    if (!e2.type.isunsigned() && cast(sinteger_t)n < 0)
+                    {
+                        e2.error("integer ^^ -integer: total loss of precision");
+                        n = 1;
+                    }
+                    uinteger_t r = e1.getInteger();
+                    result = 1;
+                    while (n != 0)
+                    {
+                        if (n & 1)
+                            result = result * r;
+                        n >>= 1;
+                        r = r * r;
+                    }
+                    break;
+                }
+                case TOKshl:
+                    result = e1.getInteger() << e2.getInteger();
+                    break;
     case TOKshr:
+        
         {
             dinteger_t value = e1.getInteger();
             dinteger_t dcount = e2.getInteger();
@@ -1119,41 +1126,42 @@ extern (C++) void intBinary(TOK op, IntegerExp dest, Type type, IntegerExp e1, I
             }
             break;
         }
-    case TOKushr:
-        {
-            dinteger_t value = e1.getInteger();
-            dinteger_t dcount = e2.getInteger();
-            assert(dcount <= 0xFFFFFFFF);
-            uint count = cast(uint)dcount;
-            switch (e1.type.toBasetype().ty)
+        case TOKushr:
+            
             {
-            case Tint8:
-            case Tuns8:
-            case Tchar:
-                // Possible only with >>>=. >>> always gets promoted to int.
-                result = (value & 0xFF) >> count;
+                dinteger_t value = e1.getInteger();
+                dinteger_t dcount = e2.getInteger();
+                assert(dcount <= 0xFFFFFFFF);
+                uint count = cast(uint)dcount;
+                switch (e1.type.toBasetype().ty)
+                {
+                case Tint8:
+                case Tuns8:
+                case Tchar:
+                    // Possible only with >>>=. >>> always gets promoted to int.
+                    result = (value & 0xFF) >> count;
+                    break;
+                case Tint16:
+                case Tuns16:
+                case Twchar:
+                    // Possible only with >>>=. >>> always gets promoted to int.
+                    result = (value & 0xFFFF) >> count;
+                    break;
+                case Tint32:
+                case Tuns32:
+                case Tdchar:
+                    result = (value & 0xFFFFFFFF) >> count;
+                    break;
+                case Tint64:
+                case Tuns64:
+                    result = cast(d_uns64)value >> count;
+                    break;
+                default:
+                    assert(0);
+                }
                 break;
-            case Tint16:
-            case Tuns16:
-            case Twchar:
-                // Possible only with >>>=. >>> always gets promoted to int.
-                result = (value & 0xFFFF) >> count;
-                break;
-            case Tint32:
-            case Tuns32:
-            case Tdchar:
-                result = (value & 0xFFFFFFFF) >> count;
-                break;
-            case Tint64:
-            case Tuns64:
-                result = cast(d_uns64)value >> count;
-                break;
-            default:
-                assert(0);
             }
-            break;
-        }
-    case TOKequal:
+            case TOKequal:
     case TOKidentity:
         result = (e1.getInteger() == e2.getInteger());
         break;
