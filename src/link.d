@@ -532,10 +532,12 @@ extern (C++) int runLINK()
         {
             const(char)* p = (*global.params.linkswitches)[i];
             if (!p || !p[0] || !(p[0] == '-' && (p[1] == 'l' || p[1] == 'L')))
+            {
                 // Don't need -Xlinker if switch starts with -l or -L.
                 // Eliding -Xlinker is significant for -L since it allows our paths
                 // to take precedence over gcc defaults.
-            argv.push("-Xlinker");
+                argv.push("-Xlinker");
+            }
             argv.push(p);
         }
         /* Add each library, prefixing it with "-l".
@@ -715,8 +717,10 @@ version (Windows)
         }
         status = executearg0(cmd, args);
         if (status == -1)
+        {
             // spawnlp returns intptr_t in some systems, not int
-        status = spawnlp(0, cmd, cmd, args, null);
+            status = spawnlp(0, cmd, cmd, args, null);
+        }
         //    if (global.params.verbose)
         //      fprintf(global.stdmsg, "\n");
         if (status)
