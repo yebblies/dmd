@@ -1404,7 +1404,8 @@ class DPrinter : Visitor
             bool skipsemi;
             if (auto de = cast(DeclarationExpr)ast.e)
             {
-                if (cast(StructDeclaration)de.d)
+                if (cast(StructDeclaration)de.d ||
+                    cast(MacroDeclaration)de.d)
                     skipsemi = true;
             }
             visitX(ast.e);
