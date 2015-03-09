@@ -183,7 +183,13 @@ class DPrinter : Visitor
             println("{");
             indent++;
             println("import core.memory;");
-            println("version(GC) {} else GC.disable();");
+            println("version(GC)");
+            println("{");
+            println("}");
+            println("else");
+            println("{");
+            println("    GC.disable();");
+            println("}");
             println("import core.runtime;");
             println("auto args = Runtime.cArgs();");
             println("return tryMain(args.argc, cast(const(char)**)args.argv);");
