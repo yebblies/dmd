@@ -668,7 +668,8 @@ class ForStatement : Statement
 {
     Expression xinit, cond, inc;
     Statement sbody;
-    this(Expression xinit, Expression cond, Expression inc, Statement sbody) { this.xinit = xinit; this.cond = cond; this.inc = inc; this.sbody = sbody; }
+    string trailingcomment;
+    this(Expression xinit, Expression cond, Expression inc, Statement sbody, string trailingcomment) { this.xinit = xinit; this.cond = cond; this.inc = inc; this.sbody = sbody; this.trailingcomment = trailingcomment; }
     mixin(visitor_str);
 }
 

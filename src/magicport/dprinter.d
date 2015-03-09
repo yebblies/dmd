@@ -1529,7 +1529,13 @@ class DPrinter : Visitor
             print(" ");
             visitX(ast.inc);
         }
-        println(")");
+        if (ast.trailingcomment)
+        {
+            print(") ");
+            println(ast.trailingcomment);
+        }
+        else
+            println(")");
         auto es = cast(ExpressionStatement)ast.sbody;
         if (es && !es.e)
         {

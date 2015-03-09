@@ -27,9 +27,42 @@ string check(string s, size_t line = __LINE__)
 {
     if (t.text != s)
         error("'%s' expected, not '%s'", s, t.text);
+    // if (s == "(" || s == "[" || s == "{")
+    // {
+        // level++;
+        // marker ~= s;
+    // }
+    // else if (s == ")" || s == "]" || s == "}")
+    // {
+        // if (!level)
+            // writeln(line);
+        // level--;
+        // marker = marker[0..$-1];
+    // }
     return nextToken();
 }
-string nextToken() { auto l = t.text; if (tx.empty) t = Token("__file__", 0, null, TOKeof); else { t = tx.front; tx.popFront(); } return l; }
+string nextToken()
+{
+    auto l = t.text;
+    if (tx.empty)
+        t = Token("__file__", 0, null, TOKeof);
+    else
+    {
+        t = tx.front;
+        tx.popFront();
+    }
+    if (l == "(" || l == "[" || l == "{")
+    {
+        level++;
+        marker ~= l;
+    }
+    else if (l == ")" || l == "]" || l == "}")
+    {
+        level--;
+        marker = marker[0..$-1];
+    }
+    return l;
+}
 // void skipComment(size_t line = __LINE__)
 // {
     // while(t.type == TOKcomment)
@@ -48,8 +81,10 @@ string trailingComment(string s = ";")
 
 int level;
 string[] marker;
-void enter(string s, size_t line = __LINE__) { check(s, line); level++; marker ~= s; }
-void exit(string s, size_t line = __LINE__) { check(s, line); level--; marker = marker[0..$-1]; }
+// void enter(string s, size_t line = __LINE__) { check(s, line); level++; marker ~= s; }
+// void exit(string s, size_t line = __LINE__) { check(s, line); level--; marker = marker[0..$-1]; }
+void enter(string s, size_t line = __LINE__) { check(s, line); }
+void exit(string s, size_t line = __LINE__) { check(s, line); }
 
 int inFunc;
 
@@ -1339,9 +1374,9 @@ Statement parseForStatement()
     check(";");
     if (t.text != ")")
         inc = parseExpr();
-    exit(")");
+    auto tc = trailingComment(")");
     auto sbody = parseStatement();
-    return new ForStatement(init, cond, inc, sbody);
+    return new ForStatement(init, cond, inc, sbody, tc);
 }
 
 Statement parseIfStatement()
