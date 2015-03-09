@@ -843,8 +843,7 @@ public:
                             }
                         }
                     }
-                    else
-                        // more than one symbol
+                    else // more than one symbol
                     {
                         *ps = null;
                         //printf("\tfalse 2\n");

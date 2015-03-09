@@ -1192,8 +1192,7 @@ extern (C++) void toDocBuffer(Dsymbol s, OutBuffer* buf, Scope* sc)
             {
                 buf.writestring(s.toPrettyChars());
             }
-            else
-                // nested in a type in this module -> full name w/o module name
+            else // nested in a type in this module -> full name w/o module name
             {
                 // if alias is nested in a user-type use module-scope lookup
                 if (!parent.isModule() && !parent.isPackage())

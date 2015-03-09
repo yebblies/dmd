@@ -2571,8 +2571,7 @@ public:
                     else
                         match = MATCHconst; // keep static funciton in overload candidates
                 }
-                else
-                    // static functions are preferred than non-static ones
+                else // static functions are preferred than non-static ones
                 {
                     if (f.needThis())
                         match = MATCHconvert;
@@ -2628,13 +2627,11 @@ public:
         {
             if (!m.nextf) // better match
                 t = m.lastf.type;
-            else
-                // ambiguous match
-            t = null;
+            else // ambiguous match
+                t = null;
             m.lastf = null;
         }
-        else
-            // no match
+        else // no match
         {
             t = null;
             TypeFunction tf = cast(TypeFunction)this.type;

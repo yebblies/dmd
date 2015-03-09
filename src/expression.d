@@ -6766,8 +6766,7 @@ public:
                 else
                     goto Lno;
             }
-            else
-                /* == */
+            else /* == */
             {
                 if (targ.equals(tspec))
                     goto Lyes;
@@ -8961,9 +8960,8 @@ public:
                 auto ve = new VarExp(loc, f);
                 if (ue.e1.op == TOKtype) // just a FQN
                     e1 = ve;
-                else
-                    // things like (new Foo).bar()
-                e1 = new CommaExp(loc, ue.e1, ve);
+                else // things like (new Foo).bar()
+                    e1 = new CommaExp(loc, ue.e1, ve);
                 e1.type = f.type;
             }
             else
@@ -9524,9 +9522,8 @@ public:
                 Expression e;
                 if (f.needThis())
                     e = new DelegateExp(loc, dve.e1, f, dve.hasOverloads);
-                else
-                    // It is a function pointer. Convert &v.f() --> (v, &V.f())
-                e = new CommaExp(loc, dve.e1, new AddrExp(loc, new VarExp(loc, f)));
+                else // It is a function pointer. Convert &v.f() --> (v, &V.f())
+                    e = new CommaExp(loc, dve.e1, new AddrExp(loc, new VarExp(loc, f)));
                 e = e.semantic(sc);
                 return e;
             }
@@ -11750,8 +11747,7 @@ public:
                             return new ErrorExp();
                     }
                 }
-                else
-                    // Bugzilla 11355
+                else // Bugzilla 11355
                 {
                     Expression e = op_overload(sc);
                     if (e)

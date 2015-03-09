@@ -2233,9 +2233,8 @@ public:
             e = e.semantic(null);
             if (e.op == TOKerror)
                 e = CTFEExp.cantexp;
-            else
-                // Convert NULL to CTFEExp
-            e = interpret(e, istate, goal);
+            else // Convert NULL to CTFEExp
+                e = interpret(e, istate, goal);
         }
         else
             error(loc, "cannot interpret declaration %s at compile time", d.toChars());
@@ -2266,9 +2265,8 @@ public:
             {
                 if (!v.isCTFE() && v.isDataseg())
                     e.error("static variable %s cannot be read at compile time", v.toChars());
-                else
-                    // CTFE initiated from inside a function
-                e.error("variable %s cannot be read at compile time", v.toChars());
+                else // CTFE initiated from inside a function
+                    e.error("variable %s cannot be read at compile time", v.toChars());
                 result = CTFEExp.cantexp;
                 return;
             }

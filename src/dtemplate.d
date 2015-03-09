@@ -3502,9 +3502,8 @@ extern (C++) MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplatePara
                             RootObject o;
                             if (k < t.tempinst.tiargs.dim)
                                 o = (*t.tempinst.tiargs)[i + k];
-                            else
-                                // Pick up default arg
-                            o = t.tempinst.tdtypes[i + k];
+                            else // Pick up default arg
+                                o = t.tempinst.tdtypes[i + k];
                             vt.objects[k] = o;
                         }
                         Tuple v = cast(Tuple)(*dedtypes)[j];

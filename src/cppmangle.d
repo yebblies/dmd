@@ -378,8 +378,7 @@ static if (TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TAR
                 source_name(d);
                 buf.writeByte('E');
             }
-            else
-                //char beta[6] should mangle as "beta"
+            else //char beta[6] should mangle as "beta"
             {
                 if (!is_temp_arg_ref)
                 {
@@ -1358,8 +1357,7 @@ else static if (TARGET_WINDOS)
                     break;
                 }
             }
-            else
-                // top-level function
+            else // top-level function
             {
                 // <flags> ::= Y <calling convention flag>
                 buf.writeByte('Y');

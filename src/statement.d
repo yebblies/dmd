@@ -4056,9 +4056,8 @@ public:
                 else if (fd.nrvo_var != v)
                     fd.nrvo_can = 0;
             }
-            else
-                //if (!exp->isLvalue())    // keep NRVO-ability
-            fd.nrvo_can = 0;
+            else //if (!exp->isLvalue())    // keep NRVO-ability
+                fd.nrvo_can = 0;
         }
         else
         {
