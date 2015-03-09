@@ -19,7 +19,7 @@ import core.stdc.string;
  */
 extern (C++) const(char)* importHint(const(char)* s)
 {
-    static __gshared const(char)** modules = [ "core.stdc.stdio", "std.stdio", "std.math", "core.vararg", null ];
+    static __gshared const(char)** modules = ["core.stdc.stdio", "std.stdio", "std.math", "core.vararg", null];
     static __gshared const(char)** names = 
     [
         "printf",

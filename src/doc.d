@@ -1860,7 +1860,7 @@ Lno:
  */
 extern (C++) bool isKeyword(char* p, size_t len)
 {
-    static __gshared const(char)** table = [ "true", "false", "null", null ];
+    static __gshared const(char)** table = ["true", "false", "null", null];
     for (int i = 0; table[i]; i++)
     {
         if (cmp(table[i], p, len) == 0)

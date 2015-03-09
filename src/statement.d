@@ -2506,9 +2506,9 @@ public:
                      *  extern(C) int _aaApply2(void*, in size_t, int delegate(void*, void*))
                      *      _aaApply2(aggr, keysize, flde)
                      */
-                    static __gshared const(char)** name = [ "_aaApply", "_aaApply2" ];
-                    static __gshared FuncDeclaration* fdapply = [ null, null ];
-                    static __gshared TypeDelegate* fldeTy = [ null, null ];
+                    static __gshared const(char)** name = ["_aaApply", "_aaApply2"];
+                    static __gshared FuncDeclaration* fdapply = [null, null];
+                    static __gshared TypeDelegate* fldeTy = [null, null];
                     ubyte i = (dim == 2 ? 1 : 0);
                     if (!fdapply[i])
                     {
@@ -2544,7 +2544,7 @@ public:
                     /* Call:
                      *      _aApply(aggr, flde)
                      */
-                    static __gshared const(char)** fntab = [ "cc", "cw", "cd", "wc", "cc", "wd", "dc", "dw", "dd" ];
+                    static __gshared const(char)** fntab = ["cc", "cw", "cd", "wc", "cc", "wd", "dc", "dw", "dd"];
                     const(size_t) BUFFER_LEN = 7 + 1 + 2 + (dim).sizeof * 3 + 1;
                     char[BUFFER_LEN] fdname;
                     int flag;

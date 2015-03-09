@@ -9518,7 +9518,7 @@ public:
      void* for the work param and a string representation of the attribute. */
     final int modifiersApply(void* param, int function(void*, const(char)*) fp)
     {
-        static __gshared ubyte* modsArr = [ MODconst, MODimmutable, MODwild, MODshared ];
+        static __gshared ubyte* modsArr = [MODconst, MODimmutable, MODwild, MODshared];
         for (size_t idx = 0; idx < 4; ++idx)
         {
             if (mod & modsArr[idx])
@@ -12672,8 +12672,8 @@ public:
         }
         if (ident == Id.reverse && (n.ty == Tchar || n.ty == Twchar))
         {
-            static __gshared const(char)** reverseName = [ "_adReverseChar", "_adReverseWchar" ];
-            static __gshared FuncDeclaration* reverseFd = [ null, null ];
+            static __gshared const(char)** reverseName = ["_adReverseChar", "_adReverseWchar"];
+            static __gshared FuncDeclaration* reverseFd = [null, null];
             warning(e.loc, "use std.algorithm.reverse instead of .reverse property");
             int i = n.ty == Twchar;
             if (!reverseFd[i])
@@ -12693,8 +12693,8 @@ public:
         }
         else if (ident == Id.sort && (n.ty == Tchar || n.ty == Twchar))
         {
-            static __gshared const(char)** sortName = [ "_adSortChar", "_adSortWchar" ];
-            static __gshared FuncDeclaration* sortFd = [ null, null ];
+            static __gshared const(char)** sortName = ["_adSortChar", "_adSortWchar"];
+            static __gshared FuncDeclaration* sortFd = [null, null];
             warning(e.loc, "use std.algorithm.sort instead of .sort property");
             int i = n.ty == Twchar;
             if (!sortFd[i])
