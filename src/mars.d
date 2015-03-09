@@ -1469,18 +1469,18 @@ extern (C++) int tryMain(size_t argc, const(char)** argv)
 int main()
 {
     import core.memory;
-    version(GC)
+    version (GC)
     {
     }
     else
     {
         GC.disable();
     }
+
     import core.runtime;
     auto args = Runtime.cArgs();
     return tryMain(args.argc, cast(const(char)**)args.argv);
 }
-
 
 /***********************************
  * Parse and append contents of environment variable envvar
