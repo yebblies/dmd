@@ -1487,6 +1487,11 @@ class DPrinter : Visitor
             auto elseisif = cast(IfStatement)ast.selse !is null;
             if (elseisif)
                 print(" ");
+            else if (ast.elsecomment)
+            {
+                print(" ");
+                println(ast.elsecomment);
+            }
             else
                 println("");
             if (!cast(CompoundStatement)ast.selse && !elseisif)

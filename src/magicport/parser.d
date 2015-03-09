@@ -1388,12 +1388,13 @@ Statement parseIfStatement()
     auto comment = trailingComment(")");
     auto sbody = parseStatement();
     Statement selse;
+    string ec;
     if (t.text == "else")
     {
-        nextToken();
+        ec = trailingComment("else");
         selse = parseStatement();
     }
-    return new IfStatement(e, sbody, selse, comment);
+    return new IfStatement(e, sbody, selse, comment, ec);
 }
 
 Statement parseDoWhileStatement()
