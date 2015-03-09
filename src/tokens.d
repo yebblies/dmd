@@ -984,5 +984,4 @@ extern (C++) __gshared Keyword* keywords =
     Keyword("shared", TOKshared),
     Keyword("immutable", TOKimmutable),
     Keyword(null, TOKreserved)
-]
-;
+];

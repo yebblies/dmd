@@ -234,8 +234,7 @@ public:
             "all",
             "none",
             null
-        ]
-        ;
+        ];
         for (uint i = 0; reserved[i]; i++)
         {
             if (strcmp(ident, reserved[i]) == 0)

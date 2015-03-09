@@ -404,8 +404,7 @@ public:
             SCstring(STCsystem, TOKat, "system"),
             SCstring(STCdisable, TOKat, "disable"),
             SCstring(0, TOKreserved)
-        ]
-        ;
+        ];
         for (int i = 0; table[i].stc; i++)
         {
             StorageClass tbl = table[i].stc;

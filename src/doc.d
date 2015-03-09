@@ -80,8 +80,7 @@ public:
                 "THROWS",
                 "VERSION",
                 null
-            ]
-            ;
+            ];
             for (size_t i = 0; table[i]; i++)
             {
                 if (icmp(table[i], name, namelen) == 0)
@@ -1973,8 +1972,7 @@ extern (C++) bool isReservedName(char* str, size_t len)
         "__va_argsave_t",
         "__va_argsave",
         null
-    ]
-    ;
+    ];
     for (int i = 0; table[i]; i++)
     {
         if (cmp(table[i], str, len) == 0)

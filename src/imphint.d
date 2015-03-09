@@ -33,8 +33,7 @@ extern (C++) const(char)* importHint(const(char)* s)
         null,
         "__va_argsave_t",
         null
-    ]
-    ;
+    ];
     int m = 0;
     for (int n = 0; modules[m]; n++)
     {

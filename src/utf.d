@@ -263,8 +263,7 @@ extern (C++) __gshared const(utf16_t)** ALPHA_TABLE =
     [0x3105, 0x312C],
     [0x4E00, 0x9FA5],
     [0xAC00, 0xD7A3]
-]
-;
+];
 extern (C++) __gshared const(const(char)*) UTF8_DECODE_OK = null;
 extern (C++) __gshared const(const(char)*) UTF16_DECODE_OK = null;
 /* The following encodings are valid, except for the 5 and 6 byte
@@ -534,8 +533,7 @@ extern (C++) __gshared const(uint)* UTF8_STRIDE =
     6,
     0xFF,
     0xFF
-]
-;
+];
 // UTF-8 decoding errors
 extern (C++) __gshared const(char)* UTF8_DECODE_OUTSIDE_CODE_SPACE = "Outside Unicode code space";
 extern (C++) __gshared const(char)* UTF8_DECODE_TRUNCATED_SEQUENCE = "Truncated UTF-8 sequence";

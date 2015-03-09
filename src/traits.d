@@ -293,8 +293,7 @@ extern (C++) __gshared const(char)** traits =
     "getVirtualIndex",
     "getPointerBitmap",
     null
-]
-;
+];
 extern (C++) __gshared StringTable traitsStringTable;
 
 extern (C++) void initTraitsStringTable()

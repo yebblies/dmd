@@ -242,8 +242,7 @@ version (unittest)
             ["hello", "heaao", "y"],
             ["_123456789_123456789_123456789_123456789", "_123456789_123456789_123456789_12345678", "y"],
             [null, null, null]
-        ]
-        ;
+        ];
         //printf("unittest_speller()\n");
         const(void)* p = speller("hello", &speller_test, cast(void*)"hell", idchars);
         assert(p !is null);
