@@ -1178,14 +1178,14 @@ class DPrinter : Visitor
             inittype = at.next;
             if (ast.xinit.length < 10)
             {
-                print("[ ");
+                print("[");
                 foreach(i, v; ast.xinit)
                 {
                     if (i)
                         print(", ");
                     visitX(v);
                 }
-                print(" ]");
+                print("]");
             }
             else
             {
