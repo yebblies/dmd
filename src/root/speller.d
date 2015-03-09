@@ -221,6 +221,7 @@ version (unittest)
             return fparg;
         return null;
     }
+
     extern (C++) void unittest_speller()
     {
         static __gshared const(char)*** cases = 

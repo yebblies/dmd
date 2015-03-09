@@ -49,6 +49,7 @@ version (Windows)
             sbi_inited = GetConsoleScreenBufferInfo(h, &sbi) != FALSE;
         return sbi.wAttributes;
     }
+
     enum : int
     {
         FOREGROUND_WHITE = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,

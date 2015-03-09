@@ -873,6 +873,7 @@ static if (TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TAR
             store(t);
         }
     }
+
     extern (C++) char* toCppMangle(Dsymbol s)
     {
         //printf("toCppMangle(%s)\n", s->toChars());
@@ -885,6 +886,7 @@ else static if (TARGET_WINDOS)
     // Windows DMC and Microsoft Visual C++ mangling
     enum VC_SAVED_TYPE_CNT = 10;
     enum VC_SAVED_IDENT_CNT = 10;
+
     extern (C++) final class VisualCPPMangler : Visitor
     {
         alias visit = super.visit;
@@ -1863,6 +1865,7 @@ else static if (TARGET_WINDOS)
             return ret;
         }
     }
+
     extern (C++) char* toCppMangle(Dsymbol s)
     {
         scope VisualCPPMangler v = new VisualCPPMangler(!global.params.mscoff);

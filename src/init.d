@@ -1035,6 +1035,7 @@ version (all)
         }
         return false;
     }
+
     extern (C++) bool arrayHasNonConstPointers(Expressions* elems)
     {
         for (size_t i = 0; i < elems.dim; i++)
