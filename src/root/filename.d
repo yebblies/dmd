@@ -301,9 +301,8 @@ struct FileName
             do
             {
                 char instring = 0;
-                while (isspace(cast(char)*p))
-                    // skip leading whitespace
-                p++;
+                while (isspace(cast(char)*p)) // skip leading whitespace
+                    p++;
                 buf.reserve(strlen(p) + 1); // guess size of path
                 for (;; p++)
                 {

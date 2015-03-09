@@ -1746,8 +1746,7 @@ else static if (TARGET_WINDOS)
             buf.writeByte('Y');
             mangleNumber(i); // count of dimensions
             cur = type;
-            while (cur && cur.ty == Tsarray)
-                // sizes of dimensions
+            while (cur && cur.ty == Tsarray) // sizes of dimensions
             {
                 TypeSArray sa = cast(TypeSArray)cur;
                 mangleNumber(sa.dim ? sa.dim.toInteger() : 0);
