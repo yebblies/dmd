@@ -87,8 +87,10 @@ public:
                 if (c < 0x20)
                     buf.printf("\\u%04x", c);
                 else
+                {
                     // Note that UTF-8 chars pass through here just fine
-                buf.writeByte(c);
+                    buf.writeByte(c);
+                }
                 break;
             }
         }
