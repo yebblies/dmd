@@ -183,19 +183,19 @@ class DPrinter : Visitor
             println("{");
             indent++;
             println("import core.memory;");
-            println("version(GC)");
+            println("version (GC)");
             println("{");
             println("}");
             println("else");
             println("{");
             println("    GC.disable();");
             println("}");
+            println("");
             println("import core.runtime;");
             println("auto args = Runtime.cArgs();");
             println("return tryMain(args.argc, cast(const(char)**)args.argv);");
             indent--;
             println("}");
-            println("");
             return;
         }
         if (!P && !ast.hasbody && ast.skip) return;
