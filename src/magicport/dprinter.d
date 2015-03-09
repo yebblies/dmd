@@ -550,7 +550,21 @@ class DPrinter : Visitor
             }
             println("{");
             indent++;
-            visitX(ast.members[i]);
+            foreach(j, m; ast.members[i])
+            {
+                static if (is(T == VersionDeclaration))
+                {
+                    if (j)
+                    {
+                        if (cast(VarDeclaration)ast.members[i][j-1] && cast(VarDeclaration)m)
+                        {
+                        }
+                        else
+                            println("");
+                    }
+                }
+                visitX(m);
+            }
             indent--;
             println("}");
         }
