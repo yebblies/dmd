@@ -165,6 +165,7 @@ void main(string[] args)
             f.writeln();
 
         auto printer = new DPrinter((string s) { f.write(s); }, scan);
+        Declaration prev;
         foreach(d; m.members)
         {
             if (auto p = d in map)
@@ -182,6 +183,18 @@ void main(string[] args)
                 }
                 else
                 {
+                    if (prev)
+                    {
+                        if (cast(TypedefDeclaration)prev && cast(TypedefDeclaration)p.d)
+                        {
+                        }
+                        else if (cast(VarDeclaration)prev && cast(VarDeclaration)p.d)
+                        {
+                        }
+                        else
+                            printer.println("");
+                    }
+                    prev = p.d;
                     printer.visitX(p.d);
                     p.count++;
                 }
@@ -190,6 +203,18 @@ void main(string[] args)
             {
                 assert(p.d);
                 map[p.d.getName].count++;
+                if (prev)
+                {
+                    if (cast(TypedefDeclaration)prev && cast(TypedefDeclaration)p.d)
+                    {
+                    }
+                    else if (cast(VarDeclaration)prev && cast(VarDeclaration)p.d)
+                    {
+                    }
+                    else
+                        printer.println("");
+                }
+                prev = p.d;
                 printer.visitX(p.d);
                 p.count++;
             }

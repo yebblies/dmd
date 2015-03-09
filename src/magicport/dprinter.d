@@ -281,7 +281,6 @@ class DPrinter : Visitor
         } else {
             println(";");
         }
-        println("");
     }
 
     override void visit(FuncBodyDeclaration ast)
@@ -670,11 +669,24 @@ class DPrinter : Visitor
             // base class aliasing rules are different in C++
             println("alias visit = super.visit;");
         }
-        foreach(d; ast.decls)
+        foreach(i, d; ast.decls)
+        {
+            if (i)
+            {
+                auto prev = ast.decls[i-1];
+                if (cast(ProtDeclaration)prev)
+                {
+                }
+                else if (cast(VarDeclaration)prev && cast(VarDeclaration)d)
+                {
+                }
+                else
+                    println("");
+            }
             visitX(d);
+        }
         indent--;
         println("}");
-        println("");
     }
 
     override void visit(AnonStructDeclaration ast)
@@ -770,7 +782,6 @@ class DPrinter : Visitor
                 println(";");
             }
         }
-        println("");
     }
 
     override void visit(ErrorDeclaration ast)
