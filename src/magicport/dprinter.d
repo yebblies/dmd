@@ -1401,12 +1401,21 @@ class DPrinter : Visitor
     {
         if (ast.e)
         {
+            bool skipsemi;
+            if (auto de = cast(DeclarationExpr)ast.e)
+            {
+                if (cast(StructDeclaration)de.d)
+                    skipsemi = true;
+            }
             visitX(ast.e);
             if (ast.trailingcomment)
             {
+                assert(!skipsemi);
                 print("; ");
                 println(ast.trailingcomment.strip);
             }
+            else if (skipsemi)
+                println("");
             else
                 println(";");
         } else {
