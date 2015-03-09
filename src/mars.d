@@ -1469,6 +1469,8 @@ extern (C++) int tryMain(size_t argc, const(char)** argv)
 int main()
 {
     import core.memory;
+    import core.runtime;
+
     version (GC)
     {
     }
@@ -1477,7 +1479,6 @@ int main()
         GC.disable();
     }
 
-    import core.runtime;
     auto args = Runtime.cArgs();
     return tryMain(args.argc, cast(const(char)**)args.argv);
 }
