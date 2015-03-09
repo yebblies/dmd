@@ -1221,7 +1221,7 @@ class DPrinter : Visitor
                 }
                 println("");
                 indent--;
-                println("]");
+                print("]");
             }
         }
     }
