@@ -67,12 +67,12 @@ int file_createdirs(char *name);
 #if _MSC_VER
 __declspec(noreturn)
 #endif
-void os_error(int line)
+void os_error(char *file, int line)
 {
 #if _WIN32
     dbg_printf("System error: %ldL\n",GetLastError());
 #endif
-    local_assert(line);
+    util_assert(file, line);
 }
 
 #if 1
@@ -80,7 +80,7 @@ void os_error(int line)
 #define dbg_printf      (void)
 #endif
 
-#define os_error() os_error(__LINE__)
+#define os_error() os_error(__FILE__, __LINE__)
 #if __DMC__
 #pragma noreturn(os_error)
 #endif
