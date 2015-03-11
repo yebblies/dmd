@@ -11,10 +11,16 @@ module ddmd.backend;
 import ddmd.aggregate, ddmd.dmodule, ddmd.dscope, ddmd.expression, ddmd.lib, ddmd.mtype, ddmd.root.file;
 
 struct Symbol;
+alias symbol = Symbol;
 struct TYPE;
 alias type = TYPE;
 struct code;
 struct block;
+struct elem;
+struct Outbuffer {}
+struct Blockx;
+struct dt_t;
+struct Classsym;
 
 extern extern (C++) void backend_init();
 extern extern (C++) void backend_term();
@@ -31,3 +37,6 @@ extern extern (C++) Symbol* toInitializer(AggregateDeclaration sd);
 extern extern (C++) Symbol* toModuleArray(Module m);
 extern extern (C++) Symbol* toModuleAssert(Module m);
 extern extern (C++) Symbol* toModuleUnittest(Module m);
+
+alias opflag_t = uint;
+alias targ_llong = long;

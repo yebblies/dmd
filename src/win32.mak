@@ -436,7 +436,7 @@ GENSRC=access.d aggregate.d aliasthis.d apply.d \
 	$(ROOT)\aav.d $(ROOT)\outbuffer.d $(ROOT)\stringtable.d \
 	$(ROOT)\file.d $(ROOT)\filename.d $(ROOT)\speller.d \
 	$(ROOT)\man.d $(ROOT)\response.d \
-	glue.d msc.d s2ir.d todt.d e2ir.d tocsym.d toobj.d \
+	glue.d s2ir.d todt.d e2ir.d tocsym.d toobj.d \
 	toctype.d tocvdebug.d toir.d libmscoff.d scanmscoff.d \
 	irstate.d typinf.d iasm.d libomf.d scanomf.d libelf.d \
 	scanelf.d libmach.d scanmach.d
