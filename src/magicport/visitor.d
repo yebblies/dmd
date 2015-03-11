@@ -87,10 +87,15 @@ class Visitor
 
     void visit(DummyDeclaration ast)
     {
-        assert(0);
+        assert(0, ast.s);
     }
 
     void visit(ErrorDeclaration ast)
+    {
+        assert(0);
+    }
+
+    void visit(AlignDeclaration ast)
     {
         assert(0);
     }

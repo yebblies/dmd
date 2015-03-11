@@ -201,6 +201,11 @@ class Scanner : Visitor
         realdecls++;
     }
 
+    override void visit(AlignDeclaration ast)
+    {
+        realdecls++;
+    }
+
     override void visit(ProtDeclaration ast)
     {
     }

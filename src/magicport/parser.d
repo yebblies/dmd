@@ -194,11 +194,26 @@ Declaration parsePreprocessor(ref bool hascomment, string comment)
         return new MacroUnDeclaration(parseIdent());
     case "pragma":
         nextToken();
-        auto line = t.line;
-        auto s = "#pragma ";
-        while(t.line == line && t.type != TOKeof)
-            s ~= nextToken();
-        return new DummyDeclaration(s);
+        if (t.text == "pack")
+        {
+            nextToken();
+            check("(");
+            Expression e;
+            if (t.text != ")")
+            {
+                e = parsePrimaryExpr();
+            }
+            check(")");
+            return new AlignDeclaration(e);
+        }
+        else
+        {
+            auto line = t.line;
+            auto s = "#pragma ";
+            while(t.line == line && t.type != TOKeof)
+                s ~= nextToken();
+            return new DummyDeclaration(s);
+        }
     case "error":
         nextToken();
         auto line = t.line;

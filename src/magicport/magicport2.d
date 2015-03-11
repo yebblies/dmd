@@ -229,7 +229,7 @@ void main(string[] args)
     {
         if (d.count == 0)
         {
-            assert(d.d, id);
+            assert(d.d, id ~ " is unreferenced and overloaded");
             writeln("unreferenced: ", d.d.getName);
             failed = true;
         }
@@ -247,7 +247,7 @@ void main(string[] args)
         }
     }
     if (failed)
-        assert(0);
+        assert(0, "failed");
 }
 
 struct D
@@ -276,7 +276,7 @@ D[string] buildLongMap(Module m)
     foreach(d; m.decls)
     {
         auto s = d.getLongName();
-        assert(s !in map, s);
+        assert(s !in map, s ~ " has multiple definitions");
         map[s] = D(d, 0);
     }
     return map;

@@ -156,9 +156,10 @@ class DPrinter : Visitor
         case "__IMPORT__": print("\"v\" ~ import(\"VERSION\")[0 .. $ - 1]"); return;
         case "operator ==": print("opEquals"); return;
         case "import", "module", "version", "ref", "scope",
-            "body", "alias", "is",
+            "body", "alias", "is", "align",
             "delegate", "cast", "mangleof",
-            "foreach", "super", "init", "tupleof":
+            "foreach", "super", "init", "tupleof",
+            "real":
             print("_");
             print(s);
             return;
@@ -827,6 +828,18 @@ class DPrinter : Visitor
             println(";");
     }
 
+    override void visit(AlignDeclaration ast)
+    {
+        if (!ast.e)
+            return;
+        indent--;
+        print("align(");
+        visitX(ast.e);
+        print(")");
+        indent++;
+        assert(E);
+    }
+
     override void visit(ProtDeclaration ast)
     {
         indent--;
@@ -1439,7 +1452,8 @@ class DPrinter : Visitor
             if (auto de = cast(DeclarationExpr)ast.e)
             {
                 if (cast(StructDeclaration)de.d ||
-                    cast(MacroDeclaration)de.d)
+                    cast(MacroDeclaration)de.d ||
+                    cast(AlignDeclaration)de.d)
                     skipsemi = true;
             }
             visitX(ast.e);

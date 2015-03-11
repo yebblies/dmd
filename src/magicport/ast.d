@@ -277,6 +277,13 @@ class ErrorDeclaration : Declaration
     mixin(visitor_str);
 }
 
+class AlignDeclaration : Declaration
+{
+    Expression e;
+    this(Expression e) { this.e = e; }
+    mixin(visitor_str);
+}
+
 class ProtDeclaration : Declaration
 {
     string id;
