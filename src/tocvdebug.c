@@ -360,10 +360,10 @@ void toDebug(StructDeclaration *sd)
 
     assert(config.fulltypes >= CV4);
     if (sd->isAnonymous())
-        return /*0*/;
+        return; /*0*/
 
     if (typidx)                 // if reference already generated
-        return /*typidx*/;      // use already existing reference
+        return; /*typidx*/      // use already existing reference
 
     targ_size_t size;
     unsigned property = 0;
@@ -439,7 +439,7 @@ void toDebug(StructDeclaration *sd)
             TOWORD(d->data + 4,0);          // field list is 0
             TOWORD(d->data + 6,property);
         }
-        return /*typidx*/;
+        return; /*typidx*/
     }
 
     // Compute the number of fields (nfields), and the length of the fieldlist record (fnamelen)
@@ -525,10 +525,10 @@ void toDebug(ClassDeclaration *cd)
 
     assert(config.fulltypes >= CV4);
     if (cd->isAnonymous())
-        return /*0*/;
+        return; /*0*/
 
     if (typidx)                 // if reference already generated
-        return /*typidx*/;      // use already existing reference
+        return; /*typidx*/      // use already existing reference
 
     targ_size_t size;
     unsigned property = 0;
@@ -617,7 +617,7 @@ void toDebug(ClassDeclaration *cd)
             TOWORD(d->data + 4,0);          // field list is 0
             TOWORD(d->data + 6,property);
         }
-        return /*typidx*/;
+        return; /*typidx*/
     }
 
     // Compute the number of fields (nfields), and the length of the fieldlist record (fnamelen)

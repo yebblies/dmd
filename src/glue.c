@@ -490,7 +490,7 @@ void genObjFile(Module *m, bool multiobj)
     /* Always generate module info, because of templates and -cov.
      * But module info needs the runtime library, so disable it for betterC.
      */
-    if (!global.params.betterC /*|| needModuleInfo()*/)
+    if (!global.params.betterC) /*|| needModuleInfo()*/
         genModuleInfo(m);
 
     genhelpers(m, false);
@@ -946,7 +946,7 @@ void FuncDeclaration_toObjFile(FuncDeclaration *fd, bool multiobj)
             s->Sclass = SCglobal;
         }
 #if TARGET_WINDOS
-        else if (fd->isWinMain() && onlyOneMain(fd->loc))
+        if (fd->isWinMain() && onlyOneMain(fd->loc))
         {
             if (global.params.mscoff)
             {
@@ -962,9 +962,7 @@ void FuncDeclaration_toObjFile(FuncDeclaration *fd, bool multiobj)
             objmod->includelib(libname);
             s->Sclass = SCglobal;
         }
-
-        // Pull in RTL startup code
-        else if (fd->isDllMain() && onlyOneMain(fd->loc))
+        else if (fd->isDllMain() && onlyOneMain(fd->loc)) // Pull in RTL startup code
         {
             if (global.params.mscoff)
             {

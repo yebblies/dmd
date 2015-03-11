@@ -464,7 +464,7 @@ public:
              * function with the name "toHash".
              * So I'm leaving this here as an experiment for the moment.
              */
-            if (!tf->isnothrow || tf->trust == TRUSTsystem /*|| tf->purity == PUREimpure*/)
+            if (!tf->isnothrow || tf->trust == TRUSTsystem) /*|| tf->purity == PUREimpure*/
                 warning(fd->loc, "toHash() must be declared as extern (D) size_t toHash() const nothrow @safe, not %s", tf->toChars());
         }
         else
@@ -487,8 +487,7 @@ public:
         else
             dtsize_t(pdt, 0);
 
-        // StructFlags m_flags;
-        StructFlags::Type m_flags = 0;
+        unsigned m_flags = 0;
         if (tc->hasPointers()) m_flags |= StructFlags::hasPointers;
         dtsize_t(pdt, m_flags);
 
@@ -618,8 +617,8 @@ static bool builtinTypeInfo(Type *t)
     if (t->ty == Tarray)
     {
         Type *next = t->nextOf();
+        // strings are so common, make them builtin
         return !t->mod && (next->isTypeBasic() != NULL && !next->mod ||
-            // strings are so common, make them builtin
             next->ty == Tchar && next->mod == MODimmutable ||
             next->ty == Tchar && next->mod == MODconst);
     }

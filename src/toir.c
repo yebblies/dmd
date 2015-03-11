@@ -97,11 +97,11 @@ elem *getEthis(Loc loc, IRState *irs, Dsymbol *fd)
     Dsymbol *fdparent = fd->toParent2();
 
     //printf("[%s] getEthis(thisfd = '%s', fd = '%s', fdparent = '%s')\n", loc.toChars(), thisfd->toPrettyChars(), fd->toPrettyChars(), fdparent->toPrettyChars());
+    /* 'require' and 'ensure' are compiler generated functions for the in and
+     * out contracts, and are called from an overriding function, not just the
+     * one they're nested inside, so this hack is so they'll pass
+     */
     if (fdparent == thisfd ||
-        /* These two are compiler generated functions for the in and out contracts,
-         * and are called from an overriding function, not just the one they're
-         * nested inside, so this hack is so they'll pass
-         */
         fd->ident == Id::require || fd->ident == Id::ensure)
     {
         /* Going down one nesting level, i.e. we're calling
@@ -284,11 +284,11 @@ int intrinsic_op(FuncDeclaration *fd)
     fd = fd->toAliasFunc();
     const char *name = mangleExact(fd);
     //printf("intrinsic_op(%s)\n", name);
+    /* The names are mangled differently because of the pure and
+     * nothrow attributes.
+     */
     static const char *std_namearray[] =
     {
-        /* The names are mangled differently because of the pure and
-         * nothrow attributes.
-         */
         "4math3cosFNaNbNiNfeZe",
         "4math3sinFNaNbNiNfeZe",
         "4math4fabsFNaNbNiNfeZe",
@@ -301,11 +301,11 @@ int intrinsic_op(FuncDeclaration *fd)
         "4math6rndtolFNaNbNiNfeZl",
         "4math6yl2xp1FNaNbNiNfeeZe",
     };
+    /* The names are mangled differently because of the pure and
+     * nothrow attributes.
+     */
     static const char *std_namearray64[] =
     {
-        /* The names are mangled differently because of the pure and
-         * nothrow attributes.
-         */
         "4math3cosFNaNbNiNfeZe",
         "4math3sinFNaNbNiNfeZe",
         "4math4fabsFNaNbNiNfeZe",

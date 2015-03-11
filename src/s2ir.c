@@ -54,9 +54,7 @@ Symbol *toSymbol(Dsymbol *s);
 #define elem_setLoc(e,loc)      srcpos_setLoc(&(e)->Esrcpos, loc)
 #define block_setLoc(b,loc)     srcpos_setLoc(&(b)->Bsrcpos, loc)
 
-#define srcpos_setLoc(s,loc)    ((s)->Sfilename = (char *)(loc).filename, \
-                                 (s)->Slinnum = (loc).linnum, \
-                                 (s)->Scharnum = (loc).charnum)
+#define srcpos_setLoc(s,loc)    ((s)->Sfilename = (char *)(loc).filename, (s)->Slinnum = (loc).linnum, (s)->Scharnum = (loc).charnum)
 
 #define SEH     (TARGET_WINDOS)
 
@@ -64,15 +62,13 @@ Symbol *toSymbol(Dsymbol *s);
  * Generate code to set index into scope table.
  */
 
-#if SEH
 void setScopeIndex(Blockx *blx, block *b, int scope_index)
 {
+#if SEH
     if (!global.params.is64bit)
         block_appendexp(b, nteh_setScopeTableIndex(blx, scope_index));
-}
-#else
-#define setScopeIndex(blx, b, scope_index) ;
 #endif
+}
 
 /****************************************
  * Allocate a new block, and set the tryblock.
@@ -742,7 +738,7 @@ public:
     void visit(ReturnStatement *s)
     {
         Blockx *blx = irs->blx;
-        enum BC bc;
+        BC bc;
 
         incUsage(irs, s->loc);
         if (s->exp)
@@ -1059,7 +1055,7 @@ public:
             block_next(blx, BCgoto, NULL);
         }
 
-        block_next(blx,(enum BC)blx->curblock->BC, breakblock);
+        block_next(blx,(BC)blx->curblock->BC, breakblock);
     }
 
     /****************************************

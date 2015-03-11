@@ -582,7 +582,9 @@ Init parseInit()
         {
             e ~= parseInit();
             if (t.text != "}")
-                check(",");
+            {
+                auto tc = trailingComment(",");
+            }
         }
         exit("}");
         return new ArrayInit(e);

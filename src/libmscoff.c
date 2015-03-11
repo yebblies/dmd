@@ -89,13 +89,6 @@ class LibMSCoff : public Library
     Loc loc;
 };
 
-#if 0 // TODO: figure out how to initialize
-Library *Library::factory()
-{
-    return new LibMSCoff();
-}
-#endif
-
 Library *LibMSCoff_factory()
 {
     return new LibMSCoff();
@@ -257,6 +250,8 @@ void LibMSCoff::addSymbol(ObjModule *om, char *name, int pickAny)
     objsymbols.push(os);
 }
 
+extern void scanMSCoffObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
+
 /************************************
  * Scan single object module for dictionary symbols.
  * Send those symbols to LibMSCoff::addSymbol().
@@ -287,7 +282,6 @@ void LibMSCoff::scanObjModule(ObjModule *om)
 
     Context ctx(this, om);
 
-    extern void scanMSCoffObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
     scanMSCoffObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
 }
 

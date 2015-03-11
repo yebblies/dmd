@@ -51,7 +51,7 @@ void scanMSCoffObjModule(void* pctx, void (*pAddSymbol)(void* pctx, char* name, 
 
     /* First do sanity checks on object file
      */
-    if (buflen < sizeof(struct filehdr))
+    if (buflen < sizeof(filehdr))
     {
         reason = __LINE__;
       Lcorrupt:
@@ -59,11 +59,11 @@ void scanMSCoffObjModule(void* pctx, void (*pAddSymbol)(void* pctx, char* name, 
         return;
     }
 
-    struct filehdr *header = (struct filehdr *)buf;
+    filehdr *header = (filehdr *)buf;
     char is_old_coff = false;
     if (header->f_sig2 != 0xFFFF && header->f_minver != 2) {
         is_old_coff = true;
-        struct filehdr_old *header_old;
+        filehdr_old *header_old;
         header_old = (filehdr_old *) malloc(sizeof(filehdr_old));
         memcpy(header_old, buf, sizeof(filehdr_old));
         
@@ -101,7 +101,7 @@ void scanMSCoffObjModule(void* pctx, void (*pAddSymbol)(void* pctx, char* name, 
         error(loc, "MS-Coff object module %s has no string table", module_name);
         return;
     }
-    off += header->f_nsyms * (is_old_coff?sizeof(struct syment_old):sizeof(struct syment));
+    off += header->f_nsyms * (is_old_coff?sizeof(syment_old):sizeof(syment));
     if (off + 4 > buflen)
     {   reason = __LINE__;
         goto Lcorrupt;
@@ -116,7 +116,7 @@ void scanMSCoffObjModule(void* pctx, void (*pAddSymbol)(void* pctx, char* name, 
 
     for (int i = 0; i < header->f_nsyms; i++)
     {   
-        struct syment *n;
+        syment *n;
         
         char s[8 + 1];
         char *p;
@@ -131,10 +131,10 @@ void scanMSCoffObjModule(void* pctx, void (*pAddSymbol)(void* pctx, char* name, 
             goto Lcorrupt;
         }
         
-        n = (struct syment *)(buf + off);
+        n = (syment *)(buf + off);
         
         if (is_old_coff) {
-            struct syment_old *n2;
+            syment_old *n2;
             n2 = (syment_old *) malloc(sizeof(syment_old));
             memcpy(n2, (buf + off), sizeof(syment_old));
             n = (syment *) malloc(sizeof(syment));

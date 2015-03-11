@@ -185,6 +185,8 @@ void LibOMF::addSymbol(ObjModule *om, const char *name, int pickAny)
     }
 }
 
+extern void scanOmfObjModule(void*, void (*pAddSymbol)(void*, const char*, int), void *, size_t, const char *, Loc loc);
+
 /************************************
  * Scan single object module for dictionary symbols.
  * Send those symbols to LibOMF::addSymbol().
@@ -215,9 +217,10 @@ void LibOMF::scanObjModule(ObjModule *om)
 
     Context ctx(this, om);
 
-    extern void scanOmfObjModule(void*, void (*pAddSymbol)(void*, const char*, int), void *, size_t, const char *, Loc loc);
     scanOmfObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
 }
+
+extern bool scanOmfLib(void*, void (*pAddObjModule)(void*, char*, void *, size_t), void *, size_t, unsigned);
 
 /***************************************
  * Add object module or library to the library.
@@ -343,7 +346,6 @@ void LibOMF::addObject(const char *module_name, void *buf, size_t buflen)
 
     Context ctx(this, pstart, g_page_size, islibrary, module_name);
 
-    extern bool scanOmfLib(void*, void (*pAddObjModule)(void*, char*, void *, size_t), void *, size_t, unsigned);
     if (scanOmfLib(&ctx, &Context::addObjModule, buf, buflen, g_page_size))
         goto Lcorrupt;
 }
@@ -351,11 +353,9 @@ void LibOMF::addObject(const char *module_name, void *buf, size_t buflen)
 /*****************************************************************************/
 /*****************************************************************************/
 
-typedef int (__cdecl * cmpfunc_t)(const void *,const void *);
-
-extern "C" int NameCompare(ObjSymbol **p1, ObjSymbol **p2)
+extern "C" int NameCompare(const void *p1, const void *p2)
 {
-    return strcmp((*p1)->name, (*p2)->name);
+    return strcmp((*(ObjSymbol **)p1)->name, (*(ObjSymbol **)p2)->name);
 }
 
 #define HASHMOD     0x25
@@ -410,9 +410,9 @@ unsigned short LibOMF::numDictPages(unsigned padding)
       337,347,349,353,359,367,373,379,383,389,
       397,401,409,419,421,431,433,439,443,449,
       457,461,463,467,479,487,491,499,503,509,
-      //521,523,541,547,
       0
     };
+    //521,523,541,547,
 
     for (size_t i = 0; 1; i++)
     {
@@ -583,7 +583,7 @@ bool LibOMF::FillDict(unsigned char *bucketsP, unsigned short ndicpages)
     }
 
     // Sort the symbols
-    qsort( objsymbols.tdata(), objsymbols.dim, sizeof(objsymbols[0]), (cmpfunc_t)NameCompare );
+    qsort( objsymbols.tdata(), objsymbols.dim, sizeof(objsymbols[0]), NameCompare );
 
     // Add each of the symbols
     for (size_t i = 0; i < objsymbols.dim; i++)

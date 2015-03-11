@@ -35,20 +35,15 @@ Configv configv;
 struct Environment;
 
 void out_config_init(
-        int model,      // 32: 32 bit code
-                        // 64: 64 bit code
-                        // Windows: bit 0 set to generate MS-COFF instead of OMF
-        bool exe,       // true: exe file
-                        // false: dll or shared library (generate PIC code)
-        bool trace,     // add profiling code
-        bool nofloat,   // do not pull in floating point code
-        bool verbose,   // verbose compile
-        bool optimize,  // optimize code
-        int symdebug,   // add symbolic debug information
-                        // 1: D
-                        // 2: fake it with C symbolic debug info
-        bool alwaysframe,       // always create standard function frame
-        bool stackstomp         // add stack stomping code
+        int model,
+        bool exe,
+        bool trace,
+        bool nofloat,
+        bool verbose,
+        bool optimize,
+        int symdebug,
+        bool alwaysframe,
+        bool stackstomp
         );
 
 void out_config_debug(
@@ -92,7 +87,7 @@ void backend_init()
     out_config_init(
         (params->is64bit ? 64 : 32) | (params->mscoff ? 1 : 0),
         exe,
-        false, //params->trace,
+        false,
         params->nofloat,
         params->verbose,
         params->optimize,

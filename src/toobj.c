@@ -392,7 +392,7 @@ void toObjFile(Dsymbol *ds, bool multiobj)
                 dtsize_t(&dt, 0);
 
             // flags
-            ClassFlags::Type flags = ClassFlags::hasOffTi;
+            unsigned flags = ClassFlags::hasOffTi;
             if (cd->isCOMclass()) flags |= ClassFlags::isCOMclass;
             if (cd->isCPPclass()) flags |= ClassFlags::isCPPclass;
             flags |= ClassFlags::hasGetMembers;
@@ -756,7 +756,7 @@ void toObjFile(Dsymbol *ds, bool multiobj)
             dtsize_t(&dt, 0);
 
             // flags
-            ClassFlags::Type flags = ClassFlags::hasOffTi | ClassFlags::hasTypeInfo;
+            unsigned flags = ClassFlags::hasOffTi | ClassFlags::hasTypeInfo;
             if (id->isCOMinterface()) flags |= ClassFlags::isCOMclass;
             dtsize_t(&dt, flags);
 

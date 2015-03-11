@@ -2853,7 +2853,8 @@ static regm_t asm_modify_regs(PTRNTAB ptb, OPND *popnd1, OPND *popnd2)
         break;
     case _modall:
         asmstate.bReturnax = true;
-        return /*mES |*/ ALLREGS;
+        /*mES |*/
+        return ALLREGS;
     case _modsiax:
         usRet |= (mSI | mAX);
         break;
@@ -3334,7 +3335,7 @@ static unsigned asm_type_size(Type * ptype)
 
     //if (ptype) printf("asm_type_size('%s') = %d\n", ptype->toChars(), (int)ptype->size());
     u = _anysize;
-    if (ptype && ptype->ty != Tfunction /*&& ptype->isscalar()*/)
+    if (ptype && ptype->ty != Tfunction) /*&& ptype->isscalar()*/
     {
         switch ((int)ptype->size())
         {
@@ -3410,7 +3411,7 @@ static code *asm_db_parse(OP *pop)
     size_t usSize;
     size_t usMaxbytes;
     size_t usBytes;
-    union DT
+    union
     {
         targ_ullong ul;
         targ_float f;
@@ -3592,7 +3593,7 @@ static code *asm_db_parse(OP *pop)
 
     c = asm_genloc(asmstate.loc, c);
 
-    asmstate.statement->regs |= /* mES| */ ALLREGS;
+    asmstate.statement->regs |= ALLREGS; /* |mES */
     asmstate.bReturnax = true;
 
     return c;
@@ -4262,10 +4263,10 @@ static OPND *asm_primary_exp()
                 }
                 break;
             }
-            // If floating point instruction and id is a floating register
             else if (asmstate.ucItype == ITfloat &&
                      asm_is_fpreg(asmtok->ident->toChars()))
             {
+                // If floating point instruction and id is a floating register
                 asm_token();
                 if (tok_value == TOKlparen)
                 {
@@ -4612,15 +4613,6 @@ Statement* asmSemantic(AsmStatement *s, Scope *sc)
 
                 ptb = asm_classify(o, o1, o2, o3, o4, &usNumops);
             }
-#if 0
-            else if (asmstate.ucItype == ITshift && (ptb.pptb2->usOp2 == 0 ||
-                    (ptb.pptb2->usOp2 & _cl)))
-            {
-                delete o2;
-                o2 = NULL;
-                usNumops = 1;
-            }
-#endif
             s->asmcode = asm_emit(s->loc, usNumops, ptb, o, o1, o2, o3, o4);
             break;
 

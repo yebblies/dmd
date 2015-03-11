@@ -230,6 +230,8 @@ void LibElf::addSymbol(ObjModule *om, char *name, int pickAny)
     }
 }
 
+extern void scanElfObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
+
 /************************************
  * Scan single object module for dictionary symbols.
  * Send those symbols to LibElf::addSymbol().
@@ -261,7 +263,6 @@ void LibElf::scanObjModule(ObjModule *om)
 
     Context ctx(this, om);
 
-    extern void scanElfObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
     scanElfObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
 }
 
@@ -366,7 +367,7 @@ void LibElf::addObject(const char *module_name, void *buf, size_t buflen)
             else
             {
                 ObjModule *om = new ObjModule();
-                om->base = (unsigned char *)buf + offset /*- sizeof(Header)*/;
+                om->base = (unsigned char *)buf + offset; /*- sizeof(Header)*/
                 om->length = size;
                 om->offset = 0;
                 if (header->object_name[0] == '/')
