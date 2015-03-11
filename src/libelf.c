@@ -168,7 +168,7 @@ struct ElfLibHeader
     char trailer[2];
 };
 
-void OmToHeader(ElfLibHeader *h, ElfObjModule *om)
+void ElfOmToHeader(ElfLibHeader *h, ElfObjModule *om)
 {
     char* buffer = (char*)h;
     // user_id and group_id are padded on 6 characters in Header struct.
@@ -599,7 +599,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
     om.file_mode = 0;
 
     ElfLibHeader h;
-    OmToHeader(&h, &om);
+    ElfOmToHeader(&h, &om);
     libbuf->write(&h, sizeof(h));
     char buf[4];
     Port::writelongBE(objsymbols.dim, buf);
@@ -661,7 +661,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
 
         assert(libbuf->offset == om->offset);
 
-        OmToHeader(&h, om);
+        ElfOmToHeader(&h, om);
         libbuf->write(&h, sizeof(h));   // module header
 
         libbuf->write(om->base, om->length);    // module contents

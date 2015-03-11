@@ -176,7 +176,7 @@ struct MachLibHeader
     char trailer[2];
 };
 
-void OmToHeader(MachLibHeader *h, MachObjModule *om)
+void MachOmToHeader(MachLibHeader *h, MachObjModule *om)
 {
     size_t slen = strlen(om->name);
     int nzeros = 8 - ((slen + 4) & 7);
@@ -564,7 +564,7 @@ void LibMach::WriteLibToBuffer(OutBuffer *libbuf)
     om.file_mode = (1 << 15) | (6 << 6) | (4 << 3) | (4 << 0); // 0100644
 
     MachLibHeader h;
-    OmToHeader(&h, &om);
+    MachOmToHeader(&h, &om);
     memcpy(h.object_name, "__.SYMDEF", 9);
     int len = sprintf(h.file_size, "%u", om.length);
     assert(len <= 10);
@@ -622,7 +622,7 @@ void LibMach::WriteLibToBuffer(OutBuffer *libbuf)
 
         if (om->scan)
         {
-            OmToHeader(&h, om);
+            MachOmToHeader(&h, om);
             libbuf->write(&h, sizeof(h));       // module header
 
             size_t len = strlen(om->name);

@@ -197,7 +197,7 @@ struct MSCoffLibHeader
     char trailer[2];
 };
 
-void OmToHeader(MSCoffLibHeader *h, MSCoffObjModule *om)
+void MSCoffOmToHeader(MSCoffLibHeader *h, MSCoffObjModule *om)
 {
     size_t len;
     if (om->name_offset == -1)
@@ -698,7 +698,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     assert(libbuf->offset == firstLinkerMemberOffset);
 
     MSCoffLibHeader h;
-    OmToHeader(&h, &om);
+    MSCoffOmToHeader(&h, &om);
     libbuf->write(&h, sizeof(h));
 
     char buf[4];
@@ -736,7 +736,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     assert(libbuf->offset == secondLinkerMemberOffset);
 
     om.length = 4 + objmodules.dim * 4 + 4 + objsymbols.dim * 2 + slength;
-    OmToHeader(&h, &om);
+    MSCoffOmToHeader(&h, &om);
     libbuf->write(&h, sizeof(h));
 
     Port::writelongLE(objmodules.dim, buf);
@@ -810,7 +810,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
 
         if (om->scan)
         {
-            OmToHeader(&h, om);
+            MSCoffOmToHeader(&h, om);
             libbuf->write(&h, sizeof(h));   // module header
 
             libbuf->write(om->base, om->length);    // module contents
