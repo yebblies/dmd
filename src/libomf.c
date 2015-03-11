@@ -27,25 +27,25 @@
 
 #define LOG 0
 
-struct ObjModule;
+struct OmfObjModule;
 
-struct ObjSymbol
+struct OmfObjSymbol
 {
     char *name;
-    ObjModule *om;
+    OmfObjModule *om;
 };
 
 #include "arraytypes.h"
 
-typedef Array<ObjModule *> ObjModules;
-typedef Array<ObjSymbol *> ObjSymbols;
+typedef Array<OmfObjModule *> OmfObjModules;
+typedef Array<OmfObjSymbol *> OmfObjSymbols;
 
 class LibOMF : public Library
 {
   public:
     File *libfile;
-    ObjModules objmodules;   // ObjModule[]
-    ObjSymbols objsymbols;   // ObjSymbol[]
+    OmfObjModules objmodules;   // OmfObjModule[]
+    OmfObjSymbols objsymbols;   // OmfObjSymbol[]
 
     StringTable tab;
 
@@ -55,9 +55,9 @@ class LibOMF : public Library
     void addLibrary(void *buf, size_t buflen);
     void write();
 
-    void addSymbol(ObjModule *om, const char *name, int pickAny = 0);
+    void addSymbol(OmfObjModule *om, const char *name, int pickAny = 0);
   private:
-    void scanObjModule(ObjModule *om);
+    void scanOmfObjModule(OmfObjModule *om);
     unsigned short numDictPages(unsigned padding);
     bool FillDict(unsigned char *bucketsP, unsigned short uNumPages);
     void WriteLibToBuffer(OutBuffer *libbuf);
@@ -147,7 +147,7 @@ void LibOMF::addLibrary(void *buf, size_t buflen)
 /*****************************************************************************/
 /*****************************************************************************/
 
-struct ObjModule
+struct OmfObjModule
 {
     unsigned char *base;        // where are we holding it in memory
     unsigned length;            // in bytes
@@ -158,7 +158,7 @@ struct ObjModule
 unsigned OMFObjSize(const void *base, unsigned length, const char *name);
 void writeOMFObj(OutBuffer *buf, const void *base, unsigned length, const char *name);
 
-void LibOMF::addSymbol(ObjModule *om, const char *name, int pickAny)
+void LibOMF::addSymbol(OmfObjModule *om, const char *name, int pickAny)
 {
 #if LOG
     printf("LibOMF::addSymbol(%s, %s, %d)\n", om->name, name, pickAny);
@@ -169,14 +169,14 @@ void LibOMF::addSymbol(ObjModule *om, const char *name, int pickAny)
         if (!pickAny)
         {   s = tab.lookup(name, strlen(name));
             assert(s);
-            ObjSymbol *os = (ObjSymbol *)s->ptrvalue;
+            OmfObjSymbol *os = (OmfObjSymbol *)s->ptrvalue;
             error("multiple definition of %s: %s and %s: %s",
                 om->name, name, os->om->name, os->name);
         }
     }
     else
     {
-        ObjSymbol *os = new ObjSymbol();
+        OmfObjSymbol *os = new OmfObjSymbol();
         os->name = strdup(name);
         os->om = om;
         s->ptrvalue = (void *)os;
@@ -185,25 +185,25 @@ void LibOMF::addSymbol(ObjModule *om, const char *name, int pickAny)
     }
 }
 
-extern void scanOmfObjModule(void*, void (*pAddSymbol)(void*, const char*, int), void *, size_t, const char *, Loc loc);
+extern void scanOmfOmfObjModule(void*, void (*pAddSymbol)(void*, const char*, int), void *, size_t, const char *, Loc loc);
 
 /************************************
  * Scan single object module for dictionary symbols.
  * Send those symbols to LibOMF::addSymbol().
  */
 
-void LibOMF::scanObjModule(ObjModule *om)
+void LibOMF::scanOmfObjModule(OmfObjModule *om)
 {
 #if LOG
-    printf("LibMSCoff::scanObjModule(%s)\n", om->name);
+    printf("LibMSCoff::scanOmfObjModule(%s)\n", om->name);
 #endif
 
     struct Context
     {
         LibOMF *lib;
-        ObjModule *om;
+        OmfObjModule *om;
 
-        Context(LibOMF *lib, ObjModule *om)
+        Context(LibOMF *lib, OmfObjModule *om)
         {
             this->lib = lib;
             this->om = om;
@@ -217,10 +217,10 @@ void LibOMF::scanObjModule(ObjModule *om)
 
     Context ctx(this, om);
 
-    scanOmfObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
+    scanOmfOmfObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
 }
 
-extern bool scanOmfLib(void*, void (*pAddObjModule)(void*, char*, void *, size_t), void *, size_t, unsigned);
+extern bool scanOmfLib(void*, void (*pAddOmfObjModule)(void*, char*, void *, size_t), void *, size_t, unsigned);
 
 /***************************************
  * Add object module or library to the library.
@@ -311,10 +311,10 @@ void LibOMF::addObject(const char *module_name, void *buf, size_t buflen)
             this->module_name = module_name;
         }
 
-        static void addObjModule(void *pctx, char *name, void *base, size_t length)
+        static void addOmfObjModule(void *pctx, char *name, void *base, size_t length)
         {
             Context *ctx = (Context *)pctx;
-            ObjModule *om = new ObjModule();
+            OmfObjModule *om = new OmfObjModule();
             om->base = (unsigned char *)base;
             om->page = om->page = (om->base - ctx->pstart) / ctx->pagesize;
             om->length = length;
@@ -346,7 +346,7 @@ void LibOMF::addObject(const char *module_name, void *buf, size_t buflen)
 
     Context ctx(this, pstart, g_page_size, islibrary, module_name);
 
-    if (scanOmfLib(&ctx, &Context::addObjModule, buf, buflen, g_page_size))
+    if (scanOmfLib(&ctx, &Context::addOmfObjModule, buf, buflen, g_page_size))
         goto Lcorrupt;
 }
 
@@ -355,7 +355,7 @@ void LibOMF::addObject(const char *module_name, void *buf, size_t buflen)
 
 extern "C" int NameCompare(const void *p1, const void *p2)
 {
-    return strcmp((*(ObjSymbol **)p1)->name, (*(ObjSymbol **)p2)->name);
+    return strcmp((*(OmfObjSymbol **)p1)->name, (*(OmfObjSymbol **)p2)->name);
 }
 
 #define HASHMOD     0x25
@@ -377,13 +377,13 @@ unsigned short LibOMF::numDictPages(unsigned padding)
     unsigned symSize = 0;
 
     for (size_t i = 0; i < objsymbols.dim; i++)
-    {   ObjSymbol *s = objsymbols[i];
+    {   OmfObjSymbol *s = objsymbols[i];
 
         symSize += ( strlen(s->name) + 4 ) & ~1;
     }
 
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   OmfObjModule *om = objmodules[i];
 
         size_t len = strlen(om->name);
         if (len > 0xFF)
@@ -560,7 +560,7 @@ bool LibOMF::FillDict(unsigned char *bucketsP, unsigned short ndicpages)
 
     // Add each of the module names
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   OmfObjModule *om = objmodules[i];
 
         unsigned short n = strlen( om->name );
         if (n > 255)
@@ -587,7 +587,7 @@ bool LibOMF::FillDict(unsigned char *bucketsP, unsigned short ndicpages)
 
     // Add each of the symbols
     for (size_t i = 0; i < objsymbols.dim; i++)
-    {   ObjSymbol *os = objsymbols[i];
+    {   OmfObjSymbol *os = objsymbols[i];
 
         unsigned short n = strlen( os->name );
         if (n > 255)
@@ -628,9 +628,9 @@ void LibOMF::WriteLibToBuffer(OutBuffer *libbuf)
      * to go into the dictionary
      */
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   OmfObjModule *om = objmodules[i];
 
-        scanObjModule(om);
+        scanOmfObjModule(om);
     }
 
     unsigned g_page_size = 16;
@@ -648,7 +648,7 @@ void LibOMF::WriteLibToBuffer(OutBuffer *libbuf)
         unsigned offset = g_page_size;
 
         for (size_t i = 0; i < objmodules.dim; i++)
-        {   ObjModule *om = objmodules[i];
+        {   OmfObjModule *om = objmodules[i];
 
             unsigned page = offset / g_page_size;
             if (page > 0xFFFF)
@@ -677,7 +677,7 @@ void LibOMF::WriteLibToBuffer(OutBuffer *libbuf)
     /* Write each object module into the library
      */
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   OmfObjModule *om = objmodules[i];
 
         unsigned page = libbuf->offset / g_page_size;
         assert(page <= 0xFFFF);

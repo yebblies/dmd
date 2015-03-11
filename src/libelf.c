@@ -26,25 +26,25 @@
 
 #define LOG 0
 
-struct ObjModule;
+struct ElfObjModule;
 
-struct ObjSymbol
+struct ElfObjSymbol
 {
     char *name;
-    ObjModule *om;
+    ElfObjModule *om;
 };
 
 #include "arraytypes.h"
 
-typedef Array<ObjModule *> ObjModules;
-typedef Array<ObjSymbol *> ObjSymbols;
+typedef Array<ElfObjModule *> ElfObjModules;
+typedef Array<ElfObjSymbol *> ElfObjSymbols;
 
 class LibElf : public Library
 {
   public:
     File *libfile;
-    ObjModules objmodules;   // ObjModule[]
-    ObjSymbols objsymbols;   // ObjSymbol[]
+    ElfObjModules objmodules;   // ElfObjModule[]
+    ElfObjSymbols objsymbols;   // ElfObjSymbol[]
 
     StringTable tab;
 
@@ -54,9 +54,9 @@ class LibElf : public Library
     void addLibrary(void *buf, size_t buflen);
     void write();
 
-    void addSymbol(ObjModule *om, char *name, int pickAny = 0);
+    void addSymbol(ElfObjModule *om, char *name, int pickAny = 0);
   private:
-    void scanObjModule(ObjModule *om);
+    void scanElfObjModule(ElfObjModule *om);
     void WriteLibToBuffer(OutBuffer *libbuf);
 
     void error(const char *format, ...)
@@ -141,7 +141,7 @@ void LibElf::addLibrary(void *buf, size_t buflen)
 /*****************************************************************************/
 /*****************************************************************************/
 
-struct ObjModule
+struct ElfObjModule
 {
     unsigned char *base;        // where are we holding it in memory
     unsigned length;            // in bytes
@@ -167,7 +167,7 @@ struct Header
     char trailer[2];
 };
 
-void OmToHeader(Header *h, ObjModule *om)
+void OmToHeader(Header *h, ElfObjModule *om)
 {
     char* buffer = (char*)h;
     // user_id and group_id are padded on 6 characters in Header struct.
@@ -203,7 +203,7 @@ void OmToHeader(Header *h, ObjModule *om)
     buffer[len] = '\n';
 }
 
-void LibElf::addSymbol(ObjModule *om, char *name, int pickAny)
+void LibElf::addSymbol(ElfObjModule *om, char *name, int pickAny)
 {
 #if LOG
     printf("LibElf::addSymbol(%s, %s, %d)\n", om->name, name, pickAny);
@@ -214,14 +214,14 @@ void LibElf::addSymbol(ObjModule *om, char *name, int pickAny)
         if (!pickAny)
         {   s = tab.lookup(name, strlen(name));
             assert(s);
-            ObjSymbol *os = (ObjSymbol *)s->ptrvalue;
+            ElfObjSymbol *os = (ElfObjSymbol *)s->ptrvalue;
             error("multiple definition of %s: %s and %s: %s",
                 om->name, name, os->om->name, os->name);
         }
     }
     else
     {
-        ObjSymbol *os = new ObjSymbol();
+        ElfObjSymbol *os = new ElfObjSymbol();
         os->name = strdup(name);
         os->om = om;
         s->ptrvalue = (void *)os;
@@ -230,26 +230,26 @@ void LibElf::addSymbol(ObjModule *om, char *name, int pickAny)
     }
 }
 
-extern void scanElfObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
+extern void scanElfElfObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
 
 /************************************
  * Scan single object module for dictionary symbols.
  * Send those symbols to LibElf::addSymbol().
  */
 
-void LibElf::scanObjModule(ObjModule *om)
+void LibElf::scanElfObjModule(ElfObjModule *om)
 {
 #if LOG
-    printf("LibElf::scanObjModule(%s)\n", om->name);
+    printf("LibElf::scanElfObjModule(%s)\n", om->name);
 #endif
 
 
     struct Context
     {
         LibElf *lib;
-        ObjModule *om;
+        ElfObjModule *om;
 
-        Context(LibElf *lib, ObjModule *om)
+        Context(LibElf *lib, ElfObjModule *om)
         {
             this->lib = lib;
             this->om = om;
@@ -263,7 +263,7 @@ void LibElf::scanObjModule(ObjModule *om)
 
     Context ctx(this, om);
 
-    scanElfObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
+    scanElfElfObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
 }
 
 /***************************************
@@ -366,7 +366,7 @@ void LibElf::addObject(const char *module_name, void *buf, size_t buflen)
             }
             else
             {
-                ObjModule *om = new ObjModule();
+                ElfObjModule *om = new ElfObjModule();
                 om->base = (unsigned char *)buf + offset; /*- sizeof(Header)*/
                 om->length = size;
                 om->offset = 0;
@@ -448,7 +448,7 @@ void LibElf::addObject(const char *module_name, void *buf, size_t buflen)
                 {   reason = __LINE__;
                     goto Lcorrupt;              // didn't find it
                 }
-                ObjModule *om = objmodules[m];
+                ElfObjModule *om = objmodules[m];
 //printf("\t%x\n", (char *)om->base - (char *)buf);
                 if (moff + sizeof(Header) == (char *)om->base - (char *)buf)
                 {
@@ -465,7 +465,7 @@ void LibElf::addObject(const char *module_name, void *buf, size_t buflen)
 
     /* It's an object module
      */
-    ObjModule *om = new ObjModule();
+    ElfObjModule *om = new ElfObjModule();
     om->base = (unsigned char *)buf;
     om->length = buflen;
     om->offset = 0;
@@ -526,10 +526,10 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
     /************* Scan Object Modules for Symbols ******************/
 
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   ElfObjModule *om = objmodules[i];
         if (om->scan)
         {
-            scanObjModule(om);
+            scanElfObjModule(om);
         }
     }
 
@@ -539,7 +539,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
      */
     unsigned noffset = 0;
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   ElfObjModule *om = objmodules[i];
         size_t len = strlen(om->name);
         if (len >= OBJECT_NAME_SIZE)
         {
@@ -559,7 +559,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
     unsigned moffset = 8 + sizeof(Header) + 4;
 
     for (size_t i = 0; i < objsymbols.dim; i++)
-    {   ObjSymbol *os = objsymbols[i];
+    {   ElfObjSymbol *os = objsymbols[i];
 
         moffset += 4 + strlen(os->name) + 1;
     }
@@ -574,7 +574,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
          moffset += sizeof(Header) + noffset;
 
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   ElfObjModule *om = objmodules[i];
 
         moffset += moffset & 1;
         om->offset = moffset;
@@ -586,7 +586,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
     /************* Write the library ******************/
     libbuf->write("!<arch>\n", 8);
 
-    ObjModule om;
+    ElfObjModule om;
     om.name_offset = -1;
     om.base = NULL;
     om.length = hoffset - (8 + sizeof(Header));
@@ -605,14 +605,14 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
     libbuf->write(buf, 4);
 
     for (size_t i = 0; i < objsymbols.dim; i++)
-    {   ObjSymbol *os = objsymbols[i];
+    {   ElfObjSymbol *os = objsymbols[i];
 
         Port::writelongBE(os->om->offset, buf);
         libbuf->write(buf, 4);
     }
 
     for (size_t i = 0; i < objsymbols.dim; i++)
-    {   ObjSymbol *os = objsymbols[i];
+    {   ElfObjSymbol *os = objsymbols[i];
 
         libbuf->writestring(os->name);
         libbuf->writeByte(0);
@@ -641,7 +641,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
         libbuf->write(&h, sizeof(h));
 
     for (size_t i = 0; i < objmodules.dim; i++)
-        {   ObjModule *om = objmodules[i];
+        {   ElfObjModule *om = objmodules[i];
             if (om->name_offset >= 0)
             {   libbuf->writestring(om->name);
                 libbuf->writeByte('/');
@@ -653,7 +653,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
     /* Write out each of the object modules
      */
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   ElfObjModule *om = objmodules[i];
 
         if (libbuf->offset & 1)
             libbuf->writeByte('\n');    // module alignment

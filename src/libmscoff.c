@@ -35,35 +35,35 @@
 
 #define LOG 0
 
-struct ObjModule;
+struct MSCoffObjModule;
 
-struct ObjSymbol
+struct MSCoffObjSymbol
 {
     char *name;
-    ObjModule *om;
+    MSCoffObjModule *om;
 };
 
 /*********
- * Do lexical comparison of ObjSymbol's for qsort()
+ * Do lexical comparison of MSCoffObjSymbol's for qsort()
  */
-int ObjSymbol_cmp(const void *p, const void *q)
+int MSCoffObjSymbol_cmp(const void *p, const void *q)
 {
-    ObjSymbol *s1 = *(ObjSymbol **)p;
-    ObjSymbol *s2 = *(ObjSymbol **)q;
+    MSCoffObjSymbol *s1 = *(MSCoffObjSymbol **)p;
+    MSCoffObjSymbol *s2 = *(MSCoffObjSymbol **)q;
     return strcmp(s1->name, s2->name);
 }
 
 #include "arraytypes.h"
 
-typedef Array<ObjModule *> ObjModules;
-typedef Array<ObjSymbol *> ObjSymbols;
+typedef Array<MSCoffObjModule *> MSCoffObjModules;
+typedef Array<MSCoffObjSymbol *> MSCoffObjSymbols;
 
 class LibMSCoff : public Library
 {
   public:
     File *libfile;
-    ObjModules objmodules;   // ObjModule[]
-    ObjSymbols objsymbols;   // ObjSymbol[]
+    MSCoffObjModules objmodules;   // MSCoffObjModule[]
+    MSCoffObjSymbols objsymbols;   // MSCoffObjSymbol[]
 
     StringTable tab;
 
@@ -73,9 +73,9 @@ class LibMSCoff : public Library
     void addLibrary(void *buf, size_t buflen);
     void write();
 
-    void addSymbol(ObjModule *om, char *name, int pickAny = 0);
+    void addSymbol(MSCoffObjModule *om, char *name, int pickAny = 0);
   private:
-    void scanObjModule(ObjModule *om);
+    void scanMSCoffObjModule(MSCoffObjModule *om);
     void WriteLibToBuffer(OutBuffer *libbuf);
 
     void error(const char *format, ...)
@@ -160,7 +160,7 @@ void LibMSCoff::addLibrary(void *buf, size_t buflen)
 /*****************************************************************************/
 /*****************************************************************************/
 
-struct ObjModule
+struct MSCoffObjModule
 {
     unsigned char *base;        // where are we holding it in memory
     unsigned length;            // in bytes
@@ -176,12 +176,12 @@ struct ObjModule
 };
 
 /*********
- * Do module offset comparison of ObjSymbol's for qsort()
+ * Do module offset comparison of MSCoffObjSymbol's for qsort()
  */
-int ObjSymbol_offset_cmp(const void *p, const void *q)
+int MSCoffObjSymbol_offset_cmp(const void *p, const void *q)
 {
-    ObjSymbol *s1 = *(ObjSymbol **)p;
-    ObjSymbol *s2 = *(ObjSymbol **)q;
+    MSCoffObjSymbol *s1 = *(MSCoffObjSymbol **)p;
+    MSCoffObjSymbol *s2 = *(MSCoffObjSymbol **)q;
     return s1->om->offset - s2->om->offset;
 }
 
@@ -197,7 +197,7 @@ struct Header
     char trailer[2];
 };
 
-void OmToHeader(Header *h, ObjModule *om)
+void OmToHeader(Header *h, MSCoffObjModule *om)
 {
     size_t len;
     if (om->name_offset == -1)
@@ -239,36 +239,36 @@ void OmToHeader(Header *h, ObjModule *om)
     h->trailer[1] = '\n';
 }
 
-void LibMSCoff::addSymbol(ObjModule *om, char *name, int pickAny)
+void LibMSCoff::addSymbol(MSCoffObjModule *om, char *name, int pickAny)
 {
 #if LOG
     printf("LibMSCoff::addSymbol(%s, %s, %d)\n", om->name, name, pickAny);
 #endif
-    ObjSymbol *os = new ObjSymbol();
+    MSCoffObjSymbol *os = new MSCoffObjSymbol();
     os->name = strdup(name);
     os->om = om;
     objsymbols.push(os);
 }
 
-extern void scanMSCoffObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
+extern void scanMSCoffMSCoffObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
 
 /************************************
  * Scan single object module for dictionary symbols.
  * Send those symbols to LibMSCoff::addSymbol().
  */
 
-void LibMSCoff::scanObjModule(ObjModule *om)
+void LibMSCoff::scanMSCoffObjModule(MSCoffObjModule *om)
 {
 #if LOG
-    printf("LibMSCoff::scanObjModule(%s)\n", om->name);
+    printf("LibMSCoff::scanMSCoffObjModule(%s)\n", om->name);
 #endif
 
     struct Context
     {
         LibMSCoff *lib;
-        ObjModule *om;
+        MSCoffObjModule *om;
 
-        Context(LibMSCoff *lib, ObjModule *om)
+        Context(LibMSCoff *lib, MSCoffObjModule *om)
         {
             this->lib = lib;
             this->om = om;
@@ -282,7 +282,7 @@ void LibMSCoff::scanObjModule(ObjModule *om)
 
     Context ctx(this, om);
 
-    scanMSCoffObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
+    scanMSCoffMSCoffObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
 }
 
 /***************************************
@@ -441,7 +441,7 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
                     goto Lcorrupt;
                 }
 #endif
-                ObjModule *om = new ObjModule();
+                MSCoffObjModule *om = new MSCoffObjModule();
                 // Include Header in base[0..length], so we don't have to repro it
                 om->base = (unsigned char *)buf + offset - sizeof(Header);
                 om->length = size + sizeof(Header);
@@ -528,7 +528,7 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
                 {   reason = __LINE__;
                     goto Lcorrupt;              // didn't find it
                 }
-                ObjModule *om = objmodules[m];
+                MSCoffObjModule *om = objmodules[m];
                 //printf("\tom offset = x%x\n", (char *)om->base - (char *)buf);
                 if (moff == (char *)om->base - (char *)buf)
                 {
@@ -545,7 +545,7 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
 
     /* It's an object module
      */
-    ObjModule *om = new ObjModule();
+    MSCoffObjModule *om = new MSCoffObjModule();
     om->base = (unsigned char *)buf;
     om->length = buflen;
     om->offset = 0;
@@ -605,10 +605,10 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     /************* Scan Object Modules for Symbols ******************/
 
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   MSCoffObjModule *om = objmodules[i];
         if (om->scan)
         {
-            scanObjModule(om);
+            scanMSCoffObjModule(om);
         }
     }
 
@@ -618,7 +618,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
      */
     unsigned noffset = 0;
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   MSCoffObjModule *om = objmodules[i];
         size_t len = strlen(om->name);
         if (len >= OBJECT_NAME_SIZE)
         {
@@ -638,7 +638,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     size_t slength = 0;
 
     for (size_t i = 0; i < objsymbols.dim; i++)
-    {   ObjSymbol *os = objsymbols[i];
+    {   MSCoffObjSymbol *os = objsymbols[i];
 
         slength += strlen(os->name) + 1;
     }
@@ -665,7 +665,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     /************* Offset of each module *************************/
 
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   MSCoffObjModule *om = objmodules[i];
 
         moffset += moffset & 1;
         om->offset = moffset;
@@ -680,7 +680,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     /************* Write the library ******************/
     libbuf->write("!<arch>\n", 8);
 
-    ObjModule om;
+    MSCoffObjModule om;
     om.name_offset = -1;
     om.base = NULL;
     om.length = 4 + objsymbols.dim * 4 + slength;
@@ -706,11 +706,11 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     libbuf->write(buf, 4);
 
     // Sort objsymbols[] in module offset order
-    qsort(objsymbols.data, objsymbols.dim, sizeof(objsymbols.data[0]), &ObjSymbol_offset_cmp);
+    qsort(objsymbols.data, objsymbols.dim, sizeof(objsymbols.data[0]), &MSCoffObjSymbol_offset_cmp);
 
     unsigned lastoffset;
     for (size_t i = 0; i < objsymbols.dim; i++)
-    {   ObjSymbol *os = objsymbols[i];
+    {   MSCoffObjSymbol *os = objsymbols[i];
 
         //printf("objsymbols[%d] = '%s', offset = %u\n", i, os->name, os->om->offset);
         if (i)
@@ -722,7 +722,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     }
 
     for (size_t i = 0; i < objsymbols.dim; i++)
-    {   ObjSymbol *os = objsymbols[i];
+    {   MSCoffObjSymbol *os = objsymbols[i];
 
         libbuf->writestring(os->name);
         libbuf->writeByte(0);
@@ -743,7 +743,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     libbuf->write(buf, 4);
 
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   MSCoffObjModule *om = objmodules[i];
 
         om->index = i;
         Port::writelongLE(om->offset, buf);
@@ -754,17 +754,17 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     libbuf->write(buf, 4);
 
     // Sort objsymbols[] in lexical order
-    qsort(objsymbols.data, objsymbols.dim, sizeof(objsymbols.data[0]), &ObjSymbol_cmp);
+    qsort(objsymbols.data, objsymbols.dim, sizeof(objsymbols.data[0]), &MSCoffObjSymbol_cmp);
 
     for (size_t i = 0; i < objsymbols.dim; i++)
-    {   ObjSymbol *os = objsymbols[i];
+    {   MSCoffObjSymbol *os = objsymbols[i];
 
         Port::writelongLE(os->om->index + 1, buf);
         libbuf->write(buf, 2);
     }
 
     for (size_t i = 0; i < objsymbols.dim; i++)
-    {   ObjSymbol *os = objsymbols[i];
+    {   MSCoffObjSymbol *os = objsymbols[i];
 
         libbuf->writestring(os->name);
         libbuf->writeByte(0);
@@ -790,7 +790,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     libbuf->write(&h, sizeof(h));
 
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   MSCoffObjModule *om = objmodules[i];
         if (om->name_offset >= 0)
         {   libbuf->writestring(om->name);
             libbuf->writeByte(0);
@@ -800,7 +800,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     /* Write out each of the object modules
      */
     for (size_t i = 0; i < objmodules.dim; i++)
-    {   ObjModule *om = objmodules[i];
+    {   MSCoffObjModule *om = objmodules[i];
 
         if (libbuf->offset & 1)
             libbuf->writeByte('\n');    // module alignment
