@@ -75,7 +75,7 @@ class LibMSCoff : public Library
 
     void addSymbol(MSCoffObjModule *om, char *name, int pickAny = 0);
   private:
-    void scanMSCoffObjModule(MSCoffObjModule *om);
+    void scanObjModule(MSCoffObjModule *om);
     void WriteLibToBuffer(OutBuffer *libbuf);
 
     void error(const char *format, ...)
@@ -250,17 +250,17 @@ void LibMSCoff::addSymbol(MSCoffObjModule *om, char *name, int pickAny)
     objsymbols.push(os);
 }
 
-extern void scanMSCoffMSCoffObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
+extern void scanMSCoffObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
 
 /************************************
  * Scan single object module for dictionary symbols.
  * Send those symbols to LibMSCoff::addSymbol().
  */
 
-void LibMSCoff::scanMSCoffObjModule(MSCoffObjModule *om)
+void LibMSCoff::scanObjModule(MSCoffObjModule *om)
 {
 #if LOG
-    printf("LibMSCoff::scanMSCoffObjModule(%s)\n", om->name);
+    printf("LibMSCoff::scanObjModule(%s)\n", om->name);
 #endif
 
     struct Context
@@ -282,7 +282,7 @@ void LibMSCoff::scanMSCoffObjModule(MSCoffObjModule *om)
 
     Context ctx(this, om);
 
-    scanMSCoffMSCoffObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
+    scanMSCoffObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
 }
 
 /***************************************
@@ -608,7 +608,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     {   MSCoffObjModule *om = objmodules[i];
         if (om->scan)
         {
-            scanMSCoffObjModule(om);
+            scanObjModule(om);
         }
     }
 

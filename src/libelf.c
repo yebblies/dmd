@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 
 #include "root.h"
+#include "port.h"
 #include "stringtable.h"
 
 #include "mars.h"
@@ -56,7 +57,7 @@ class LibElf : public Library
 
     void addSymbol(ElfObjModule *om, char *name, int pickAny = 0);
   private:
-    void scanElfObjModule(ElfObjModule *om);
+    void scanObjModule(ElfObjModule *om);
     void WriteLibToBuffer(OutBuffer *libbuf);
 
     void error(const char *format, ...)
@@ -230,17 +231,17 @@ void LibElf::addSymbol(ElfObjModule *om, char *name, int pickAny)
     }
 }
 
-extern void scanElfElfObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
+extern void scanElfObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
 
 /************************************
  * Scan single object module for dictionary symbols.
  * Send those symbols to LibElf::addSymbol().
  */
 
-void LibElf::scanElfObjModule(ElfObjModule *om)
+void LibElf::scanObjModule(ElfObjModule *om)
 {
 #if LOG
-    printf("LibElf::scanElfObjModule(%s)\n", om->name);
+    printf("LibElf::scanObjModule(%s)\n", om->name);
 #endif
 
 
@@ -263,7 +264,7 @@ void LibElf::scanElfObjModule(ElfObjModule *om)
 
     Context ctx(this, om);
 
-    scanElfElfObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
+    scanElfObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
 }
 
 /***************************************
@@ -529,7 +530,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
     {   ElfObjModule *om = objmodules[i];
         if (om->scan)
         {
-            scanElfObjModule(om);
+            scanObjModule(om);
         }
     }
 

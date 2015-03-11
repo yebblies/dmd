@@ -57,7 +57,7 @@ class LibOMF : public Library
 
     void addSymbol(OmfObjModule *om, const char *name, int pickAny = 0);
   private:
-    void scanOmfObjModule(OmfObjModule *om);
+    void scanObjModule(OmfObjModule *om);
     unsigned short numDictPages(unsigned padding);
     bool FillDict(unsigned char *bucketsP, unsigned short uNumPages);
     void WriteLibToBuffer(OutBuffer *libbuf);
@@ -185,17 +185,17 @@ void LibOMF::addSymbol(OmfObjModule *om, const char *name, int pickAny)
     }
 }
 
-extern void scanOmfOmfObjModule(void*, void (*pAddSymbol)(void*, const char*, int), void *, size_t, const char *, Loc loc);
+extern void scanOmfObjModule(void*, void (*pAddSymbol)(void*, const char*, int), void *, size_t, const char *, Loc loc);
 
 /************************************
  * Scan single object module for dictionary symbols.
  * Send those symbols to LibOMF::addSymbol().
  */
 
-void LibOMF::scanOmfObjModule(OmfObjModule *om)
+void LibOMF::scanObjModule(OmfObjModule *om)
 {
 #if LOG
-    printf("LibMSCoff::scanOmfObjModule(%s)\n", om->name);
+    printf("LibMSCoff::scanObjModule(%s)\n", om->name);
 #endif
 
     struct Context
@@ -217,7 +217,7 @@ void LibOMF::scanOmfObjModule(OmfObjModule *om)
 
     Context ctx(this, om);
 
-    scanOmfOmfObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
+    scanOmfObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
 }
 
 extern bool scanOmfLib(void*, void (*pAddOmfObjModule)(void*, char*, void *, size_t), void *, size_t, unsigned);
@@ -630,7 +630,7 @@ void LibOMF::WriteLibToBuffer(OutBuffer *libbuf)
     for (size_t i = 0; i < objmodules.dim; i++)
     {   OmfObjModule *om = objmodules[i];
 
-        scanOmfObjModule(om);
+        scanObjModule(om);
     }
 
     unsigned g_page_size = 16;

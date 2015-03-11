@@ -66,7 +66,7 @@ class LibMach : public Library
 
     void addSymbol(MachObjModule *om, char *name, int pickAny = 0);
   private:
-    void scanMachObjModule(MachObjModule *om);
+    void scanObjModule(MachObjModule *om);
     void WriteLibToBuffer(OutBuffer *libbuf);
 
     void error(const char *format, ...)
@@ -255,17 +255,17 @@ void LibMach::addSymbol(MachObjModule *om, char *name, int pickAny)
 #endif
 }
 
-extern void scanMachMachObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
+extern void scanMachObjModule(void*, void (*pAddSymbol)(void*, char*, int), void *, size_t, const char *, Loc loc);
 
 /************************************
  * Scan single object module for dictionary symbols.
  * Send those symbols to LibMach::addSymbol().
  */
 
-void LibMach::scanMachObjModule(MachObjModule *om)
+void LibMach::scanObjModule(MachObjModule *om)
 {
 #if LOG
-    printf("LibMach::scanMachObjModule(%s)\n", om->name);
+    printf("LibMach::scanObjModule(%s)\n", om->name);
 #endif
 
 
@@ -288,7 +288,7 @@ void LibMach::scanMachObjModule(MachObjModule *om)
 
     Context ctx(this, om);
 
-    scanMachMachObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
+    scanMachObjModule(&ctx, &Context::addSymbol, om->base, om->length, om->name, loc);
 }
 
 /***************************************
@@ -505,7 +505,7 @@ void LibMach::WriteLibToBuffer(OutBuffer *libbuf)
     {   MachObjModule *om = objmodules[i];
         if (om->scan)
         {
-            scanMachObjModule(om);
+            scanObjModule(om);
         }
     }
 
