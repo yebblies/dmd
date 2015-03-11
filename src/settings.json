@@ -31,8 +31,7 @@
         "glue.c", "msc.c", "s2ir.c", "todt.c", "e2ir.c", "tocsym.c",
         "toobj.c", "toctype.c", "tocvdebug.c", "toir.h", "toir.c",
         "libmscoff.c", "scanmscoff.c", "irstate.h", "irstate.c", "typinf.c", "iasm.c", 
-        "libomf.c", "scanomf.c", "libelf.c", "scanelf.c", "libmach.c", "scanmach.c",
-        "tk.c", "eh.c"
+        "libomf.c", "scanomf.c", "libelf.c", "scanelf.c", "libmach.c", "scanmach.c"
     ],
     "mapping" :
     [
@@ -3217,6 +3216,408 @@
                 "struct Narg",
                 "function addargp",
                 "function response_expand"
+            ]
+        },
+        {
+            "module" : "glue",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "typedef symbols",
+                "variable eictor",
+                "variable ictorlocalgot",
+                "variable sctors",
+                "variable ectorgates",
+                "variable sdtors",
+                "variable stests",
+                "variable ssharedctors",
+                "variable esharedctorgates",
+                "variable sshareddtors",
+                "variable lastmname",
+                "variable obj_symbols_towrite",
+                "function obj_append",
+                "function obj_write_deferred",
+                "function callFuncsAndGates",
+                "variable objbuf",
+                "function obj_start",
+                "function obj_end",
+                "function obj_includelib",
+                "function obj_startaddress",
+                "function genObjFile",
+                "function genhelpers",
+                "function isDruntimeArrayOp",
+                "function FuncDeclaration_toObjFile",
+                "function onlyOneMain",
+                "function totym",
+                "function toSymbolType*",
+                "function toEfilename"
+            ]
+        },
+        {
+            "module" : "msc",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "variable config",
+                "variable configv",
+                "function backend_init",
+                "function align",
+                "function size",
+                "function symboldata"
+            ]
+        },
+        {
+            "module" : "s2ir",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "macro elem_setLoc",
+                "macro block_setLoc",
+                "macro srcpos_setLoc",
+                "variable SEH",
+                "function setScopeIndex",
+                "function block_calloc",
+                "function labelToBlock",
+                "function incUsage",
+                "struct S2irVisitor",
+                "function Statement_toIR"
+            ]
+        },
+        {
+            "module" : "todt",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "typedef Dts",
+                "function Initializer_toDt",
+                "function Expression_toDt",
+                "function ClassDeclaration_toDt",
+                "function membersToDtClassDeclaration*dt_t**ClassDeclaration*",
+                "function StructDeclaration_toDt",
+                "function Type_toDt",
+                "function toDtElem",
+                "function ClassReferenceExp_toDt",
+                "function ClassReferenceExp_toInstanceDt",
+                "function membersToDtClassReferenceExp*dt_t**ClassDeclaration*Dts*"
+            ]
+        },
+        {
+            "module" : "e2ir",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "typedef Elems",
+                "macro el_setLoc",
+                "function ISREF",
+                "function ISWIN64REF",
+                "function useOPstrpar",
+                "function callfunc",
+                "function addressElem",
+                "function array_toPtr",
+                "function array_toDarray",
+                "function sarray_toDarray",
+                "function needsPostblit",
+                "function setArray",
+                "variable stringTab",
+                "function clearStringTab",
+                "function toElem",
+                "function appendDtors",
+                "function toElemDtor",
+                "function toStringSymbol",
+                "function toStringDarraySymbol"
+            ]
+        },
+        {
+            "module" : "tocsym",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "function toSymbolX",
+                "variable scc",
+                "function toSymbolDsymbol*",
+                "function toImportSymbol*",
+                "function toImportDsymbol*",
+                "function toThunkSymbol",
+                "function fake_classsym",
+                "function toVtblSymbol",
+                "function toInitializerAggregateDeclaration*",
+                "function toInitializerEnumDeclaration*",
+                "function toModuleAssert",
+                "function toModuleUnittest",
+                "function toModuleArray",
+                "function aaGetSymbol",
+                "function toSymbolStructLiteralExp*",
+                "function toSymbolClassReferenceExp*"
+            ]
+        },
+        {
+            "module" : "toobj",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "function genModuleInfo",
+                "function toObjFile",
+                "function baseVtblOffset"
+            ]
+        },
+        {
+            "module" : "toctype",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "struct ToCtypeVisitor",
+                "function Type_toCtype"
+            ]
+        },
+        {
+            "module" : "tocvdebug",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "function PROTtoATTR",
+                "function cv4_memfunctypidx",
+                "variable CV4_NAMELENMAX",
+                "function cv4_Denum",
+                "function cv_align",
+                "function toDebugEnumDeclaration*",
+                "struct CvMemberCount",
+                "function cv_mem_count",
+                "function cv_mem_p",
+                "function toDebugStructDeclaration*",
+                "function toDebugClassDeclaration*",
+                "function cvMember"
+            ]
+        },
+        {
+            "module" : "toir",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "function incUsageElem",
+                "function getEthis",
+                "function setEthis",
+                "function intrinsic_op",
+                "function resolveLengthVar",
+                "function buildClosure",
+                "function retStyle"
+            ]
+        },
+        {
+            "module" : "libmscoff",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "struct MSCoffObjSymbol",
+                "function MSCoffObjSymbol_cmp",
+                "typedef MSCoffObjModules",
+                "typedef MSCoffObjSymbols",
+                "struct LibMSCoff",
+                "function LibMSCoff_factory",
+                "struct MSCoffObjModule",
+                "function MSCoffObjSymbol_offset_cmp",
+                "struct MSCoffLibHeader",
+                "function MSCoffOmToHeader"
+            ]
+        },
+        {
+            "module" : "scanmscoff",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "function scanMSCoffObjModule"
+            ]
+        },
+        {
+            "module" : "irstate",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "struct IRState"
+            ]
+        },
+        {
+            "module" : "typinf",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "function genTypeInfo",
+                "function getTypeInfo",
+                "function getTypeInfoDeclaration",
+                "struct TypeInfoDtVisitor",
+                "function TypeInfo_toDt",
+                "function builtinTypeInfo"
+            ]
+        },
+        {
+            "module" : "iasm",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "version enum ASMTK"
+            ]
+        },
+        {
+            "module" : "libomf",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "struct OmfObjSymbol",
+                "typedef OmfObjModules",
+                "typedef OmfObjSymbols",
+                "struct LibOMF",
+                "function LibOMF_factory",
+                "struct OmfObjModule",
+                "externc function NameCompare",
+                "variable HASHMOD",
+                "variable BUCKETPAGE",
+                "variable BUCKETSIZE",
+                "function EnterDict"
+            ]
+        },
+        {
+            "module" : "scanomf",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "variable RHEADR",
+                "variable REGINT",
+                "variable REDATA",
+                "variable RIDATA",
+                "variable OVLDEF",
+                "variable ENDREC",
+                "variable BLKDEF",
+                "variable BLKEND",
+                "variable DEBSYM",
+                "variable THEADR",
+                "variable LHEADR",
+                "variable PEDATA",
+                "variable PIDATA",
+                "variable COMENT",
+                "variable MODEND",
+                "variable M386END",
+                "variable EXTDEF",
+                "variable TYPDEF",
+                "variable PUBDEF",
+                "variable PUB386",
+                "variable LOCSYM",
+                "variable LINNUM",
+                "variable LNAMES",
+                "variable SEGDEF",
+                "variable GRPDEF",
+                "variable FIXUPP",
+                "variable LEDATA",
+                "variable LIDATA",
+                "variable LIBHED",
+                "variable LIBNAM",
+                "variable LIBLOC",
+                "variable LIBDIC",
+                "variable COMDEF",
+                "variable LEXTDEF",
+                "variable LPUBDEF",
+                "variable LCOMDEF",
+                "variable CEXTDEF",
+                "variable COMDAT",
+                "variable LINSYM",
+                "variable ALIAS",
+                "variable LLNAMES",
+                "variable LIBIDMAX",
+                "function parseName",
+                "function parseIdx",
+                "function skipNumericField",
+                "function skipDataType",
+                "function scanOmfObjModule",
+                "function scanOmfLib",
+                "function OMFObjSize",
+                "function writeOMFObj"
+            ]
+        },
+        {
+            "module" : "libelf",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "struct ElfObjSymbol",
+                "typedef ElfObjModules",
+                "typedef ElfObjSymbols",
+                "struct LibElf",
+                "function LibElf_factory",
+                "struct ElfObjModule",
+                "struct ElfLibHeader",
+                "function ElfOmToHeader"
+            ]
+        },
+        {
+            "module" : "scanelf",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "variable elf",
+                "function scanElfObjModule"
+            ]
+        },
+        {
+            "module" : "libmach",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "struct MachObjSymbol",
+                "typedef MachObjModules",
+                "typedef MachObjSymbols",
+                "struct LibMach",
+                "function LibMach_factory",
+                "struct MachObjModule",
+                "struct MachLibHeader",
+                "function MachOmToHeader"
+            ]
+        },
+        {
+            "module" : "scanmach",
+            "package" : "",
+            "imports" : [
+            ],
+            "members" :
+            [
+                "function scanMachObjModule"
             ]
         }
     ],
