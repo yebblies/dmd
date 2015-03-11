@@ -448,7 +448,7 @@ MANUALSRC= \
 	$(ROOT)\rootobject.d $(ROOT)\port.d \
 	$(ROOT)\rmem.d
 
-$(GENSRC) : $(SRCS) $(ROOTSRC) settings.json $(MAGICPORT) id.c impcnvtab.c
+$(GENSRC) : $(SRCS) $(ROOTSRC) $(GLUESRC) settings.json $(MAGICPORT) id.c impcnvtab.c
 	$(MAGICPORT) . .
 
 DSRC= $(GENSRC) $(MANUALSRC)
