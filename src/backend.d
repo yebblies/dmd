@@ -21,6 +21,8 @@ struct Outbuffer {}
 struct Blockx;
 struct dt_t;
 struct Classsym;
+struct PTRNTAB {}
+struct OP;
 
 extern extern (C++) void backend_init();
 extern extern (C++) void backend_term();
@@ -40,3 +42,4 @@ extern extern (C++) Symbol* toModuleUnittest(Module m);
 
 alias opflag_t = uint;
 alias targ_llong = long;
+alias regm_t = uint;
