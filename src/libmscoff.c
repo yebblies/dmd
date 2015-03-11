@@ -185,7 +185,7 @@ int MSCoffObjSymbol_offset_cmp(const void *p, const void *q)
     return s1->om->offset - s2->om->offset;
 }
 
-struct Header
+struct MSCoffLibHeader
 {
     #define OBJECT_NAME_SIZE 16
     char object_name[OBJECT_NAME_SIZE];
@@ -197,7 +197,7 @@ struct Header
     char trailer[2];
 };
 
-void OmToHeader(Header *h, MSCoffObjModule *om)
+void OmToHeader(MSCoffLibHeader *h, MSCoffObjModule *om)
 {
     size_t len;
     if (om->name_offset == -1)
@@ -329,9 +329,9 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
 #if LOG
         printf("archive, buf = %p, buflen = %d\n", buf, buflen);
 #endif
-        Header *flm = NULL;     // first linker member
+        MSCoffLibHeader *flm = NULL;     // first linker member
 
-        Header *slm = NULL;     // second linker member
+        MSCoffLibHeader *slm = NULL;     // second linker member
         unsigned number_of_members = 0;
         unsigned *member_file_offsets = NULL;
         unsigned number_of_symbols = 0;
@@ -339,7 +339,7 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
         char *string_table = NULL;
         size_t string_table_length = 0;
 
-        Header *lnm = NULL;     // longname member
+        MSCoffLibHeader *lnm = NULL;     // longname member
         char *longnames = NULL;
         size_t longnames_length = 0;
 
@@ -352,12 +352,12 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
             offset = (offset + 1) & ~1;         // round to even boundary
             if (offset >= buflen)
                 break;
-            if (offset + sizeof(Header) >= buflen)
+            if (offset + sizeof(MSCoffLibHeader) >= buflen)
             {   reason = __LINE__;
                 goto Lcorrupt;
             }
-            Header *header = (Header *)((unsigned char *)buf + offset);
-            offset += sizeof(Header);
+            MSCoffLibHeader *header = (MSCoffLibHeader *)((unsigned char *)buf + offset);
+            offset += sizeof(MSCoffLibHeader);
             char *endptr = NULL;
             unsigned long size = strtoul(header->file_size, &endptr, 10);
             if (endptr >= &header->file_size[10] || *endptr != ' ')
@@ -443,8 +443,8 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
 #endif
                 MSCoffObjModule *om = new MSCoffObjModule();
                 // Include Header in base[0..length], so we don't have to repro it
-                om->base = (unsigned char *)buf + offset - sizeof(Header);
-                om->length = size + sizeof(Header);
+                om->base = (unsigned char *)buf + offset - sizeof(MSCoffLibHeader);
+                om->length = size + sizeof(MSCoffLibHeader);
                 om->offset = 0;
                 if (header->object_name[0] == '/')
                 {   /* Pick long name out of longnames[]
@@ -600,7 +600,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     printf("LibElf::WriteLibToBuffer()\n");
 #endif
 
-    assert(sizeof(Header) == 60);
+    assert(sizeof(MSCoffLibHeader) == 60);
 
     /************* Scan Object Modules for Symbols ******************/
 
@@ -648,15 +648,15 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     size_t moffset = 8;       // signature
 
     size_t firstLinkerMemberOffset = moffset;
-    moffset += sizeof(Header) + 4 + objsymbols.dim * 4 + slength;       // 1st Linker Member
+    moffset += sizeof(MSCoffLibHeader) + 4 + objsymbols.dim * 4 + slength;       // 1st Linker Member
     moffset += moffset & 1;
 
     size_t secondLinkerMemberOffset = moffset;
-    moffset += sizeof(Header) + 4 + objmodules.dim * 4 + 4 + objsymbols.dim * 2 + slength;
+    moffset += sizeof(MSCoffLibHeader) + 4 + objmodules.dim * 4 + 4 + objsymbols.dim * 2 + slength;
     moffset += moffset & 1;
 
     size_t LongnamesMemberOffset = moffset;
-    moffset += sizeof(Header) + noffset;                        // Longnames Member size
+    moffset += sizeof(MSCoffLibHeader) + noffset;                        // Longnames Member size
 
 #if LOG
     printf("\tmoffset = x%x\n", moffset);
@@ -670,7 +670,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
         moffset += moffset & 1;
         om->offset = moffset;
         if (om->scan)
-            moffset += sizeof(Header) + om->length;
+            moffset += sizeof(MSCoffLibHeader) + om->length;
         else
             moffset += om->length;
     }
@@ -697,7 +697,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
 
     assert(libbuf->offset == firstLinkerMemberOffset);
 
-    Header h;
+    MSCoffLibHeader h;
     OmToHeader(&h, &om);
     libbuf->write(&h, sizeof(h));
 
@@ -779,7 +779,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     assert(libbuf->offset == LongnamesMemberOffset);
 
     // header
-    memset(&h, ' ', sizeof(Header));
+    memset(&h, ' ', sizeof(MSCoffLibHeader));
     h.object_name[0] = '/';
     h.object_name[1] = '/';
     size_t len = sprintf(h.file_size, "%u", noffset);

@@ -164,7 +164,7 @@ struct MachObjModule
     int scan;                   // 1 means scan for symbols
 };
 
-struct Header
+struct MachLibHeader
 {
     #define OBJECT_NAME_SIZE 16
     char object_name[OBJECT_NAME_SIZE];
@@ -176,7 +176,7 @@ struct Header
     char trailer[2];
 };
 
-void OmToHeader(Header *h, MachObjModule *om)
+void OmToHeader(MachLibHeader *h, MachObjModule *om)
 {
     size_t slen = strlen(om->name);
     int nzeros = 8 - ((slen + 4) & 7);
@@ -341,12 +341,12 @@ void LibMach::addObject(const char *module_name, void *buf, size_t buflen)
         unsigned mstart = objmodules.dim;
         while (offset < buflen)
         {
-            if (offset + sizeof(Header) >= buflen)
+            if (offset + sizeof(MachLibHeader) >= buflen)
             {   reason = __LINE__;
                 goto Lcorrupt;
             }
-            Header *header = (Header *)((unsigned char *)buf + offset);
-            offset += sizeof(Header);
+            MachLibHeader *header = (MachLibHeader *)((unsigned char *)buf + offset);
+            offset += sizeof(MachLibHeader);
             char *endptr = NULL;
             unsigned long size = strtoul(header->file_size, &endptr, 10);
             if (endptr >= &header->file_size[10] || *endptr != ' ')
@@ -378,10 +378,10 @@ void LibMach::addObject(const char *module_name, void *buf, size_t buflen)
             else
             {
                 MachObjModule *om = new MachObjModule();
-                om->base = (unsigned char *)buf + offset - sizeof(Header);
-                om->length = size + sizeof(Header);
+                om->base = (unsigned char *)buf + offset - sizeof(MachLibHeader);
+                om->length = size + sizeof(MachLibHeader);
                 om->offset = 0;
-                om->name = (char *)(om->base + sizeof(Header));
+                om->name = (char *)(om->base + sizeof(MachLibHeader));
                 om->file_time = strtoul(header->file_time, &endptr, 10);
                 om->user_id   = strtoul(header->user_id, &endptr, 10);
                 om->group_id  = strtoul(header->group_id, &endptr, 10);
@@ -511,7 +511,7 @@ void LibMach::WriteLibToBuffer(OutBuffer *libbuf)
 
     /************* Determine module offsets ******************/
 
-    unsigned moffset = 8 + sizeof(Header) + 4 + 4;
+    unsigned moffset = 8 + sizeof(MachLibHeader) + 4 + 4;
 
     for (size_t i = 0; i < objsymbols.dim; i++)
     {   MachObjSymbol *os = objsymbols[i];
@@ -540,7 +540,7 @@ void LibMach::WriteLibToBuffer(OutBuffer *libbuf)
                 nzeros += 8;            // emulate mysterious behavior of ar
             int filesize = om->length;
             filesize = (filesize + 7) & ~7;
-            moffset += sizeof(Header) + slen + nzeros + filesize;
+            moffset += sizeof(MachLibHeader) + slen + nzeros + filesize;
         }
         else
         {
@@ -555,7 +555,7 @@ void LibMach::WriteLibToBuffer(OutBuffer *libbuf)
 
     MachObjModule om;
     om.base = NULL;
-    om.length = hoffset - (8 + sizeof(Header));
+    om.length = hoffset - (8 + sizeof(MachLibHeader));
     om.offset = 8;
     om.name = (char*)"";
     ::time(&om.file_time);
@@ -563,7 +563,7 @@ void LibMach::WriteLibToBuffer(OutBuffer *libbuf)
     om.group_id = getgid();
     om.file_mode = (1 << 15) | (6 << 6) | (4 << 3) | (4 << 0); // 0100644
 
-    Header h;
+    MachLibHeader h;
     OmToHeader(&h, &om);
     memcpy(h.object_name, "__.SYMDEF", 9);
     int len = sprintf(h.file_size, "%u", om.length);

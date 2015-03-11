@@ -156,7 +156,7 @@ struct ElfObjModule
     int scan;                   // 1 means scan for symbols
 };
 
-struct Header
+struct ElfLibHeader
 {
     #define OBJECT_NAME_SIZE 16
     char object_name[OBJECT_NAME_SIZE];
@@ -168,7 +168,7 @@ struct Header
     char trailer[2];
 };
 
-void OmToHeader(Header *h, ElfObjModule *om)
+void OmToHeader(ElfLibHeader *h, ElfObjModule *om)
 {
     char* buffer = (char*)h;
     // user_id and group_id are padded on 6 characters in Header struct.
@@ -182,7 +182,7 @@ void OmToHeader(Header *h, ElfObjModule *om)
     {   // "name/           1423563789  5000  5000  100640  3068      `\n"
         //  |^^^^^^^^^^^^^^^|^^^^^^^^^^^|^^^^^|^^^^^|^^^^^^^|^^^^^^^^^|^^
         //        name       file_time   u_id gr_id  fmode    fsize   trailer
-        len = snprintf(buffer, sizeof(Header), "%-16s%-12llu%-6u%-6u%-8o%-10u`",
+        len = snprintf(buffer, sizeof(ElfLibHeader), "%-16s%-12llu%-6u%-6u%-8o%-10u`",
                 om->name, (longlong) om->file_time, om->user_id, om->group_id,
                 om->file_mode, om->length);
         // adding '/' after the name field
@@ -194,12 +194,12 @@ void OmToHeader(Header *h, ElfObjModule *om)
     {   // "/162007         1423563789  5000  5000  100640  3068      `\n"
         //  |^^^^^^^^^^^^^^^|^^^^^^^^^^^|^^^^^|^^^^^|^^^^^^^|^^^^^^^^^|^^
         //     name_offset   file_time   u_id gr_id  fmode    fsize   trailer
-        len = snprintf(buffer, sizeof(Header),
+        len = snprintf(buffer, sizeof(ElfLibHeader),
                 "/%-15d%-12llu%-6u%-6u%-8o%-10u`", om->name_offset,
                 (longlong) om->file_time, om->user_id, om->group_id,
                 om->file_mode, om->length);
     }
-    assert(sizeof(Header) > 0 && len == sizeof(Header) - 1);
+    assert(sizeof(ElfLibHeader) > 0 && len == sizeof(ElfLibHeader) - 1);
     // replace trailing \0 with \n
     buffer[len] = '\n';
 }
@@ -319,12 +319,12 @@ void LibElf::addObject(const char *module_name, void *buf, size_t buflen)
         unsigned mstart = objmodules.dim;
         while (offset < buflen)
         {
-            if (offset + sizeof(Header) >= buflen)
+            if (offset + sizeof(ElfLibHeader) >= buflen)
             {   reason = __LINE__;
                 goto Lcorrupt;
             }
-            Header *header = (Header *)((unsigned char *)buf + offset);
-            offset += sizeof(Header);
+            ElfLibHeader *header = (ElfLibHeader *)((unsigned char *)buf + offset);
+            offset += sizeof(ElfLibHeader);
             char *endptr = NULL;
             unsigned long size = strtoul(header->file_size, &endptr, 10);
             if (endptr >= &header->file_size[10] || *endptr != ' ')
@@ -368,7 +368,7 @@ void LibElf::addObject(const char *module_name, void *buf, size_t buflen)
             else
             {
                 ElfObjModule *om = new ElfObjModule();
-                om->base = (unsigned char *)buf + offset; /*- sizeof(Header)*/
+                om->base = (unsigned char *)buf + offset; /*- sizeof(ElfLibHeader)*/
                 om->length = size;
                 om->offset = 0;
                 if (header->object_name[0] == '/')
@@ -451,7 +451,7 @@ void LibElf::addObject(const char *module_name, void *buf, size_t buflen)
                 }
                 ElfObjModule *om = objmodules[m];
 //printf("\t%x\n", (char *)om->base - (char *)buf);
-                if (moff + sizeof(Header) == (char *)om->base - (char *)buf)
+                if (moff + sizeof(ElfLibHeader) == (char *)om->base - (char *)buf)
                 {
                     addSymbol(om, name, 1);
 //                  if (mstart == m)
@@ -557,7 +557,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
 
     /************* Determine module offsets ******************/
 
-    unsigned moffset = 8 + sizeof(Header) + 4;
+    unsigned moffset = 8 + sizeof(ElfLibHeader) + 4;
 
     for (size_t i = 0; i < objsymbols.dim; i++)
     {   ElfObjSymbol *os = objsymbols[i];
@@ -572,14 +572,14 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
 
     moffset += moffset & 1;
     if (noffset)
-         moffset += sizeof(Header) + noffset;
+         moffset += sizeof(ElfLibHeader) + noffset;
 
     for (size_t i = 0; i < objmodules.dim; i++)
     {   ElfObjModule *om = objmodules[i];
 
         moffset += moffset & 1;
         om->offset = moffset;
-        moffset += sizeof(Header) + om->length;
+        moffset += sizeof(ElfLibHeader) + om->length;
     }
 
     libbuf->reserve(moffset);
@@ -590,7 +590,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
     ElfObjModule om;
     om.name_offset = -1;
     om.base = NULL;
-    om.length = hoffset - (8 + sizeof(Header));
+    om.length = hoffset - (8 + sizeof(ElfLibHeader));
     om.offset = 8;
     om.name = (char*)"";
     ::time(&om.file_time);
@@ -598,7 +598,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
     om.group_id = 0;
     om.file_mode = 0;
 
-    Header h;
+    ElfLibHeader h;
     OmToHeader(&h, &om);
     libbuf->write(&h, sizeof(h));
     char buf[4];
@@ -631,7 +631,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
             libbuf->writeByte('\n');
 
         // header
-        memset(&h, ' ', sizeof(Header));
+        memset(&h, ' ', sizeof(ElfLibHeader));
         h.object_name[0] = '/';
         h.object_name[1] = '/';
         size_t len = sprintf(h.file_size, "%u", noffset);
