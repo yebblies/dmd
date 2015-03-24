@@ -117,7 +117,7 @@ void *spellerY(const char *seed, size_t seedlen, fp_speller_t fp, void *fparg,
 }
 
 void *spellerX(const char *seed, size_t seedlen, fp_speller_t fp, void *fparg,
-        const char *charset, int flag)
+        const char *charset, bool flag)
 {
     if (!seedlen)
         return NULL;
@@ -230,8 +230,8 @@ void *speller(const char *seed, fp_speller_t fp, void *fparg, const char *charse
 {
     size_t seedlen = strlen(seed);
     size_t maxdist = seedlen < 4 ? seedlen / 2 : 2;
-    for (int distance = 0; distance < maxdist; distance++)
-    {   void *p = spellerX(seed, seedlen, fp, fparg, charset, distance);
+    for (size_t distance = 0; distance < maxdist; distance++)
+    {   void *p = spellerX(seed, seedlen, fp, fparg, charset, distance != 0);
         if (p)
             return p;
 //      if (seedlen > 10)
