@@ -30,7 +30,7 @@
         "root/man.c", "root/response.c",
         "glue.c", "s2ir.c", "todt.c", "e2ir.c", "tocsym.c",
         "toobj.c", "toctype.c", "tocvdebug.c", "toir.h", "toir.c",
-        "libmscoff.c", "scanmscoff.c", "irstate.h", "irstate.c", "typinf.c", "iasm.c", 
+        "libmscoff.c", "scanmscoff.c", "irstate.h", "irstate.c", "typinf.c",
         "libomf.c", "scanomf.c", "libelf.c", "scanelf.c", "libmach.c", "scanmach.c"
     ],
     "mapping" :
@@ -3546,27 +3546,6 @@
                 "struct TypeInfoDtVisitor",
                 "function TypeInfo_toDt",
                 "function builtinTypeInfo"
-            ]
-        },
-        {
-            "module" : "iasm",
-            "package" : "",
-            "imports" : [
-                "tokens",
-                "globals",
-                "dsymbol",
-                "statement",
-                "dscope",
-                "backend",
-                "mtype"
-            ],
-            "members" :
-            [
-                "version enum ASMTK"
-            ],
-            "extra" :
-            [
-                "enum TX86 = true;"
             ]
         },
         {
