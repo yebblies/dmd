@@ -28,9 +28,7 @@
         "root/outbuffer.h", "root/outbuffer.c",
         "root/stringtable.h", "root/stringtable.c",
         "root/man.c", "root/response.c",
-        "glue.c", "s2ir.c", "todt.c", "e2ir.c", "tocsym.c",
-        "toobj.c", "toctype.c", "tocvdebug.c", "toir.h", "toir.c",
-        "libmscoff.c", "scanmscoff.c", "irstate.h", "irstate.c", "typinf.c",
+        "libmscoff.c", "scanmscoff.c",
         "libomf.c", "scanomf.c", "libelf.c", "scanelf.c", "libmach.c", "scanmach.c"
     ],
     "mapping" :
@@ -3219,261 +3217,6 @@
             ]
         },
         {
-            "module" : "glue",
-            "package" : "",
-            "imports" : [
-                "root.array",
-                "backend",
-                "arraytypes",
-                "dsymbol",
-                "lib",
-                "dmodule",
-                "identifier",
-                "func",
-                "globals",
-                "mtype",
-                "root.file"
-            ],
-            "members" :
-            [
-                "typedef symbols",
-                "variable eictor",
-                "variable ictorlocalgot",
-                "variable sctors",
-                "variable ectorgates",
-                "variable sdtors",
-                "variable stests",
-                "variable ssharedctors",
-                "variable esharedctorgates",
-                "variable sshareddtors",
-                "variable lastmname",
-                "variable obj_symbols_towrite",
-                "function obj_append",
-                "function obj_write_deferred",
-                "function callFuncsAndGates",
-                "variable objbuf",
-                "function obj_start",
-                "function obj_end",
-                "function obj_includelib",
-                "function obj_startaddress",
-                "function genObjFile",
-                "function genhelpers",
-                "function isDruntimeArrayOp",
-                "function FuncDeclaration_toObjFile",
-                "function onlyOneMain",
-                "function totym",
-                "function toSymbolType*",
-                "function toEfilename"
-            ]
-        },
-        {
-            "module" : "s2ir",
-            "package" : "",
-            "imports" : [
-                "globals",
-                "backend",
-                "statement",
-                "irstate",
-                "visitor",
-                "root.array"
-            ],
-            "members" :
-            [
-                "macro elem_setLoc",
-                "macro block_setLoc",
-                "macro srcpos_setLoc",
-                "variable SEH",
-                "function setScopeIndex",
-                "function block_calloc",
-                "function labelToBlock",
-                "function incUsage",
-                "struct S2irVisitor",
-                "function Statement_toIR"
-            ]
-        },
-        {
-            "module" : "todt",
-            "package" : "",
-            "imports" : [
-                "root.array",
-                "backend",
-                "init",
-                "expression",
-                "dclass",
-                "mtype",
-                "dstruct",
-                "ctfeexpr"
-            ],
-            "members" :
-            [
-                "typedef Dts",
-                "function Initializer_toDt",
-                "function Expression_toDt",
-                "function ClassDeclaration_toDt",
-                "function membersToDtClassDeclaration*dt_t**ClassDeclaration*",
-                "function StructDeclaration_toDt",
-                "function Type_toDt",
-                "function toDtElem",
-                "function ClassReferenceExp_toDt",
-                "function ClassReferenceExp_toInstanceDt",
-                "function membersToDtClassReferenceExp*dt_t**ClassDeclaration*Dts*"
-            ]
-        },
-        {
-            "module" : "e2ir",
-            "package" : "",
-            "imports" : [
-                "root.array",
-                "declaration",
-                "mtype",
-                "backend",
-                "globals",
-                "irstate",
-                "func",
-                "arraytypes",
-                "dstruct",
-                "root.stringtable",
-                "expression"
-            ],
-            "members" :
-            [
-                "typedef Elems",
-                "macro el_setLoc",
-                "function ISREF",
-                "function ISWIN64REF",
-                "function useOPstrpar",
-                "function callfunc",
-                "function addressElem",
-                "function array_toPtr",
-                "function array_toDarray",
-                "function sarray_toDarray",
-                "function needsPostblit",
-                "function setArray",
-                "variable stringTab",
-                "function clearStringTab",
-                "function toElem",
-                "function appendDtors",
-                "function toElemDtor",
-                "function toStringSymbol",
-                "function toStringDarraySymbol"
-            ]
-        },
-        {
-            "module" : "tocsym",
-            "package" : "",
-            "imports" : [
-                "backend",
-                "dsymbol",
-                "func",
-                "identifier",
-                "dclass",
-                "aggregate",
-                "denum",
-                "dmodule",
-                "mtype",
-                "ctfeexpr",
-                "expression"
-            ],
-            "members" :
-            [
-                "function toSymbolX",
-                "variable scc",
-                "function toSymbolDsymbol*",
-                "function toImportSymbol*",
-                "function toImportDsymbol*",
-                "function toThunkSymbol",
-                "function fake_classsym",
-                "function toVtblSymbol",
-                "function toInitializerAggregateDeclaration*",
-                "function toInitializerEnumDeclaration*",
-                "function toModuleAssert",
-                "function toModuleUnittest",
-                "function toModuleArray",
-                "function aaGetSymbol",
-                "function toSymbolStructLiteralExp*",
-                "function toSymbolClassReferenceExp*"
-            ]
-        },
-        {
-            "module" : "toobj",
-            "package" : "",
-            "imports" : [
-                "dmodule",
-                "dsymbol",
-                "dclass"
-            ],
-            "members" :
-            [
-                "function genModuleInfo",
-                "function toObjFile",
-                "function baseVtblOffset"
-            ]
-        },
-        {
-            "module" : "toctype",
-            "package" : "",
-            "imports" : [
-                "visitor",
-                "mtype",
-                "backend"
-            ],
-            "members" :
-            [
-                "struct ToCtypeVisitor",
-                "function Type_toCtype"
-            ]
-        },
-        {
-            "module" : "tocvdebug",
-            "package" : "",
-            "imports" : [
-                "dsymbol",
-                "func",
-                "dstruct",
-                "dclass",
-                "denum"
-            ],
-            "members" :
-            [
-                "function PROTtoATTR",
-                "function cv4_memfunctypidx",
-                "variable CV4_NAMELENMAX",
-                "function cv4_Denum",
-                "function cv_align",
-                "function toDebugEnumDeclaration*",
-                "struct CvMemberCount",
-                "function cv_mem_count",
-                "function cv_mem_p",
-                "function toDebugStructDeclaration*",
-                "function toDebugClassDeclaration*",
-                "function cvMember"
-            ]
-        },
-        {
-            "module" : "toir",
-            "package" : "",
-            "imports" : [
-                "backend",
-                "irstate",
-                "globals",
-                "dsymbol",
-                "aggregate",
-                "func",
-                "declaration",
-                "mtype"
-            ],
-            "members" :
-            [
-                "function incUsageElem",
-                "function getEthis",
-                "function setEthis",
-                "function intrinsic_op",
-                "function resolveLengthVar",
-                "function buildClosure",
-                "function retStyle"
-            ]
-        },
-        {
             "module" : "libmscoff",
             "package" : "",
             "imports" : [
@@ -3482,7 +3225,14 @@
                 "root.file",
                 "root.stringtable",
                 "root.outbuffer",
-                "globals"
+                "globals",
+                "core.stdc.string",
+                "core.stdc.stdlib",
+                "root.filename",
+                "mars",
+                "root.port",
+                "core.sys.windows.windows",
+                "core.sys.posix.sys.stat"
             ],
             "members" :
             [
@@ -3494,8 +3244,13 @@
                 "function LibMSCoff_factory",
                 "struct MSCoffObjModule",
                 "function MSCoffObjSymbol_offset_cmp",
+                "variable MSCOFF_OBJECT_NAME_SIZE",
                 "struct MSCoffLibHeader",
                 "function MSCoffOmToHeader"
+            ],
+            "extra" :
+            [
+                "enum LOG = false;"
             ]
         },
         {
@@ -3507,45 +3262,6 @@
             "members" :
             [
                 "function scanMSCoffObjModule"
-            ]
-        },
-        {
-            "module" : "irstate",
-            "package" : "",
-            "imports" : [
-                "statement",
-                "dmodule",
-                "dsymbol",
-                "identifier",
-                "backend",
-                "arraytypes",
-                "func"
-            ],
-            "members" :
-            [
-                "struct IRState"
-            ]
-        },
-        {
-            "module" : "typinf",
-            "package" : "",
-            "imports" : [
-                "mtype",
-                "dscope",
-                "expression",
-                "declaration",
-                "visitor",
-                "backend",
-                "dclass"
-            ],
-            "members" :
-            [
-                "function genTypeInfo",
-                "function getTypeInfo",
-                "function getTypeInfoDeclaration",
-                "struct TypeInfoDtVisitor",
-                "function TypeInfo_toDt",
-                "function builtinTypeInfo"
             ]
         },
         {
@@ -3655,6 +3371,7 @@
                 "struct LibElf",
                 "function LibElf_factory",
                 "struct ElfObjModule",
+                "variable ELF_OBJECT_NAME_SIZE",
                 "struct ElfLibHeader",
                 "function ElfOmToHeader"
             ]
@@ -3690,6 +3407,7 @@
                 "struct LibMach",
                 "function LibMach_factory",
                 "struct MachObjModule",
+                "variable MACH_OBJECT_NAME_SIZE",
                 "struct MachLibHeader",
                 "function MachOmToHeader"
             ]

@@ -164,10 +164,10 @@ struct MachObjModule
     int scan;                   // 1 means scan for symbols
 };
 
+#define MACH_OBJECT_NAME_SIZE 16
 struct MachLibHeader
 {
-    #define OBJECT_NAME_SIZE 16
-    char object_name[OBJECT_NAME_SIZE];
+    char object_name[MACH_OBJECT_NAME_SIZE];
     char file_time[12];
     char user_id[6];
     char group_id[6];
@@ -184,7 +184,7 @@ void MachOmToHeader(MachLibHeader *h, MachObjModule *om)
         nzeros += 8;            // emulate mysterious behavior of ar
 
     size_t len = sprintf(h->object_name, "#1/%ld", slen + nzeros);
-    memset(h->object_name + len, ' ', OBJECT_NAME_SIZE - len);
+    memset(h->object_name + len, ' ', MACH_OBJECT_NAME_SIZE - len);
 
     /* In the following sprintf's, don't worry if the trailing 0
      * that sprintf writes goes off the end of the field. It will

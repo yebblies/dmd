@@ -185,10 +185,10 @@ int MSCoffObjSymbol_offset_cmp(const void *p, const void *q)
     return s1->om->offset - s2->om->offset;
 }
 
+#define MSCOFF_OBJECT_NAME_SIZE 16
 struct MSCoffLibHeader
 {
-    #define OBJECT_NAME_SIZE 16
-    char object_name[OBJECT_NAME_SIZE];
+    char object_name[MSCOFF_OBJECT_NAME_SIZE];
     char file_time[12];
     char user_id[6];
     char group_id[6];
@@ -211,8 +211,8 @@ void MSCoffOmToHeader(MSCoffLibHeader *h, MSCoffObjModule *om)
         len = sprintf(h->object_name, "/%d", om->name_offset);
         h->object_name[len] = ' ';
     }
-    assert(len < OBJECT_NAME_SIZE);
-    memset(h->object_name + len + 1, ' ', OBJECT_NAME_SIZE - (len + 1));
+    assert(len < MSCOFF_OBJECT_NAME_SIZE);
+    memset(h->object_name + len + 1, ' ', MSCOFF_OBJECT_NAME_SIZE - (len + 1));
 
     /* In the following sprintf's, don't worry if the trailing 0
      * that sprintf writes goes off the end of the field. It will
@@ -359,7 +359,7 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
             MSCoffLibHeader *header = (MSCoffLibHeader *)((unsigned char *)buf + offset);
             offset += sizeof(MSCoffLibHeader);
             char *endptr = NULL;
-            unsigned long size = strtoul(header->file_size, &endptr, 10);
+            unsigned long size = strtoul((char*)header->file_size, &endptr, 10);
             if (endptr >= &header->file_size[10] || *endptr != ' ')
             {   reason = __LINE__;
                 goto Lcorrupt;
@@ -369,9 +369,9 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
                 goto Lcorrupt;
             }
 
-            //printf("header->object_name = '%.*s'\n", OBJECT_NAME_SIZE, header->object_name);
+            //printf("header->object_name = '%.*s'\n", MSCOFF_OBJECT_NAME_SIZE, header->object_name);
 
-            if (memcmp(header->object_name, "/               ", OBJECT_NAME_SIZE) == 0)
+            if (memcmp((char*)header->object_name, "/               ", MSCOFF_OBJECT_NAME_SIZE) == 0)
             {
                 if (!flm)
                 {   // First Linker Member, which is ignored
@@ -421,7 +421,7 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
                     }
                 }
             }
-            else if (memcmp(header->object_name, "//              ", OBJECT_NAME_SIZE) == 0)
+            else if (memcmp((char*)header->object_name, "//              ", MSCOFF_OBJECT_NAME_SIZE) == 0)
             {
                 if (!lnm)
                 {   lnm = header;
@@ -449,7 +449,7 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
                 if (header->object_name[0] == '/')
                 {   /* Pick long name out of longnames[]
                      */
-                    unsigned foff = strtoul(header->object_name + 1, &endptr, 10);
+                    unsigned foff = strtoul((char*)header->object_name + 1, &endptr, 10);
                     unsigned i;
                     for (i = 0; 1; i++)
                     {   if (foff + i >= longnames_length)
@@ -470,10 +470,10 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
                 else
                 {   /* Pick short name out of header
                      */
-                    char* oname = (char *)malloc(OBJECT_NAME_SIZE);
+                    char* oname = (char *)malloc(MSCOFF_OBJECT_NAME_SIZE);
                     assert(oname);
                     for (int i = 0; 1; i++)
-                    {   if (i == OBJECT_NAME_SIZE)
+                    {   if (i == MSCOFF_OBJECT_NAME_SIZE)
                         {   reason = __LINE__;
                             goto Lcorrupt;
                         }
@@ -486,10 +486,10 @@ void LibMSCoff::addObject(const char *module_name, void *buf, size_t buflen)
                     }
                     om->name = oname;
                 }
-                om->file_time = strtoul(header->file_time, &endptr, 10);
-                om->user_id   = strtoul(header->user_id, &endptr, 10);
-                om->group_id  = strtoul(header->group_id, &endptr, 10);
-                om->file_mode = strtoul(header->file_mode, &endptr, 8);
+                om->file_time = strtoul((char*)header->file_time, &endptr, 10);
+                om->user_id   = strtoul((char*)header->user_id, &endptr, 10);
+                om->group_id  = strtoul((char*)header->group_id, &endptr, 10);
+                om->file_mode = strtoul((char*)header->file_mode, &endptr, 8);
                 om->scan = 0;                   // don't scan object module for symbols
                 objmodules.push(om);
             }
@@ -620,7 +620,7 @@ void LibMSCoff::WriteLibToBuffer(OutBuffer *libbuf)
     for (size_t i = 0; i < objmodules.dim; i++)
     {   MSCoffObjModule *om = objmodules[i];
         size_t len = strlen(om->name);
-        if (len >= OBJECT_NAME_SIZE)
+        if (len >= MSCOFF_OBJECT_NAME_SIZE)
         {
             om->name_offset = noffset;
             noffset += len + 1;

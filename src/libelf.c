@@ -156,10 +156,11 @@ struct ElfObjModule
     int scan;                   // 1 means scan for symbols
 };
 
+#define ELF_OBJECT_NAME_SIZE 16
+
 struct ElfLibHeader
 {
-    #define OBJECT_NAME_SIZE 16
-    char object_name[OBJECT_NAME_SIZE];
+    char object_name[ELF_OBJECT_NAME_SIZE];
     char file_time[12];
     char user_id[6];
     char group_id[6];
@@ -187,7 +188,7 @@ void ElfOmToHeader(ElfLibHeader *h, ElfObjModule *om)
                 om->file_mode, om->length);
         // adding '/' after the name field
         const size_t name_length = strlen(om->name);
-        assert(name_length < OBJECT_NAME_SIZE);
+        assert(name_length < ELF_OBJECT_NAME_SIZE);
         buffer[name_length] = '/';
     }
     else
@@ -393,10 +394,10 @@ void LibElf::addObject(const char *module_name, void *buf, size_t buflen)
                 else
                 {   /* Pick short name out of header
                      */
-                    om->name = (char *)malloc(OBJECT_NAME_SIZE);
+                    om->name = (char *)malloc(ELF_OBJECT_NAME_SIZE);
                     assert(om->name);
                     for (int i = 0; 1; i++)
-                    {   if (i == OBJECT_NAME_SIZE)
+                    {   if (i == ELF_OBJECT_NAME_SIZE)
                         {   reason = __LINE__;
                             goto Lcorrupt;
                         }
@@ -542,7 +543,7 @@ void LibElf::WriteLibToBuffer(OutBuffer *libbuf)
     for (size_t i = 0; i < objmodules.dim; i++)
     {   ElfObjModule *om = objmodules[i];
         size_t len = strlen(om->name);
-        if (len >= OBJECT_NAME_SIZE)
+        if (len >= ELF_OBJECT_NAME_SIZE)
         {
             om->name_offset = noffset;
             noffset += len + 2;
