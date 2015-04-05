@@ -262,7 +262,7 @@ MAKEFILES=win32.mak posix.mak osmodel.mak
 
 defaulttarget: debdmd
 
-auto-tester-build: dmd
+auto-tester-build: dmd checkwhitespace
 
 dmd: reldmd
 
