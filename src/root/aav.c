@@ -27,28 +27,28 @@ inline size_t hash(size_t a)
     return a ^ (a >> 7) ^ (a >> 4);
 }
 
-struct aaA
+struct Entry
 {
-    aaA *next;
-    Key key;
-    Value value;
+    Entry *next;
+    void *key;
+    void *value;
 };
 
 struct AA
 {
-    aaA* *b;
+    Entry **buckets;
     size_t b_length;
-    size_t nodes;       // total number of aaA nodes
-    aaA* binit[4];      // initial value of b[]
+    size_t nodes;       // total number of Entry nodes
+    Entry *binit[4];      // initial value of buckets[]
 
-    aaA aafirst;        // a lot of these AA's have only one entry
+    Entry aafirst;        // a lot of these AA's have only one entry
 };
 
 /****************************************************
  * Determine number of entries in associative array.
  */
 
-size_t dmd_aaLen(AA* aa)
+size_t dmd_aaLen(AA *aa)
 {
     return aa ? aa->nodes : 0;
 }
@@ -60,13 +60,13 @@ size_t dmd_aaLen(AA* aa)
  * Create the associative array if it does not already exist.
  */
 
-Value* dmd_aaGet(AA** paa, Key key)
+void **dmd_aaGet(AA **paa, void *key)
 {
     //printf("paa = %p\n", paa);
-
     if (!*paa)
-    {   AA *a = (AA *)mem.xmalloc(sizeof(AA));
-        a->b = (aaA**)a->binit;
+    {
+        AA *a = (AA *)mem.xmalloc(sizeof(AA));
+        a->buckets = (Entry **)a->binit;
         a->b_length = 4;
         a->nodes = 0;
         a->binit[0] = NULL;
@@ -78,10 +78,11 @@ Value* dmd_aaGet(AA** paa, Key key)
     }
     //printf("paa = %p, *paa = %p\n", paa, *paa);
 
-    assert((*paa)->b_length);
-    size_t i = hash((size_t)key) & ((*paa)->b_length - 1);
-    aaA** pe = &(*paa)->b[i];
-    aaA *e;
+    AA *aa = *paa;
+    assert(aa->b_length);
+    size_t i = hash((size_t)key) & (aa->b_length - 1);
+    Entry** pe = &aa->buckets[i];
+    Entry *e;
     while ((e = *pe) != NULL)
     {
         if (key == e->key)
@@ -92,16 +93,16 @@ Value* dmd_aaGet(AA** paa, Key key)
     // Not found, create new elem
     //printf("create new one\n");
 
-    size_t nodes = ++(*paa)->nodes;
-    e = (nodes != 1) ? (aaA *)mem.xmalloc(sizeof(aaA)) : &(*paa)->aafirst;
-    //e = new aaA();
+    size_t nodes = ++aa->nodes;
+    e = (nodes != 1) ? (Entry *)mem.xmalloc(sizeof(Entry)) : &aa->aafirst;
+    //e = new Entry();
     e->next = NULL;
     e->key = key;
     e->value = NULL;
     *pe = e;
 
-    //printf("length = %d, nodes = %d\n", (*paa)->b_length, nodes);
-    if (nodes > (*paa)->b_length * 2)
+    //printf("length = %d, nodes = %d\n", aa->b_length, nodes);
+    if (nodes > aa->b_length * 2)
     {
         //printf("rehash\n");
         dmd_aaRehash(paa);
@@ -116,15 +117,14 @@ Value* dmd_aaGet(AA** paa, Key key)
  * Returns NULL if it is not already there.
  */
 
-Value dmd_aaGetRvalue(AA* aa, Key key)
+void *dmd_aaGetRvalue(AA* aa, void *key)
 {
     //printf("_aaGetRvalue(key = %p)\n", key);
     if (aa)
     {
-        size_t i;
         size_t len = aa->b_length;
-        i = hash((size_t)key) & (len-1);
-        aaA* e = aa->b[i];
+        size_t i = hash((size_t)key) & (len - 1);
+        Entry* e = aa->buckets[i];
         while (e)
         {
             if (key == e->key)
@@ -143,35 +143,37 @@ Value dmd_aaGetRvalue(AA* aa, Key key)
 void dmd_aaRehash(AA** paa)
 {
     //printf("Rehash\n");
-    if (*paa)
+    if (!*paa)
+        return;
+
+    AA *aa = *paa;
+    if (aa)
     {
-        AA *aa = *paa;
-        if (aa)
+        size_t len = aa->b_length;
+        if (len == 4)
+            len = 32;
+        else
+            len *= 4;
+        Entry **newb = (Entry **)mem.xmalloc(sizeof(Entry) * len);
+        memset(newb, 0, len * sizeof(Entry *));
+
+        for (size_t k = 0; k < aa->b_length; k++)
         {
-            size_t len = aa->b_length;
-            if (len == 4)
-                len = 32;
-            else
-                len *= 4;
-            aaA** newb = (aaA**)mem.xmalloc(sizeof(aaA)*len);
-            memset(newb, 0, len * sizeof(aaA*));
-
-            for (size_t k = 0; k < aa->b_length; k++)
-            {   aaA *e = aa->b[k];
-                while (e)
-                {   aaA* enext = e->next;
-                    size_t j = hash((size_t)e->key) & (len-1);
-                    e->next = newb[j];
-                    newb[j] = e;
-                    e = enext;
-                }
+            Entry *e = aa->buckets[k];
+            while (e)
+            {
+                Entry *enext = e->next;
+                size_t j = hash((size_t)e->key) & (len - 1);
+                e->next = newb[j];
+                newb[j] = e;
+                e = enext;
             }
-            if (aa->b != (aaA**)aa->binit)
-                mem.xfree(aa->b);
-
-            aa->b = newb;
-            aa->b_length = len;
         }
+        if (aa->buckets != (Entry **)aa->binit)
+            mem.xfree(aa->buckets);
+
+        aa->buckets = newb;
+        aa->b_length = len;
     }
 }
 
@@ -180,10 +182,10 @@ void dmd_aaRehash(AA** paa)
 
 void unittest_aa()
 {
-    AA* aa = NULL;
-    Value v = dmd_aaGetRvalue(aa, NULL);
+    AA *aa = NULL;
+    void *v = dmd_aaGetRvalue(aa, NULL);
     assert(!v);
-    Value *pv = dmd_aaGet(&aa, NULL);
+    void **pv = dmd_aaGet(&aa, NULL);
     assert(pv);
     *pv = (void *)3;
     v = dmd_aaGetRvalue(aa, NULL);
