@@ -29,7 +29,6 @@ inline size_t hash(size_t a)
 
 struct Entry
 {
-    Entry *next;
     void *key;
     void *value;
 };
@@ -81,28 +80,26 @@ void **dmd_aaGet(AA **paa, void *key)
     AA *aa = *paa;
     assert(aa->b_length);
     size_t i = hash((size_t)key) & (aa->b_length - 1);
-    Entry** pe = &aa->buckets[i];
-    Entry *e;
-    while ((e = *pe) != NULL)
+    while (aa->buckets[i] != NULL)
     {
+        Entry *e = aa->buckets[i];
         if (key == e->key)
             return &e->value;
-        pe = &e->next;
+        i++;
+        i &= aa->b_length - 1;
     }
 
     // Not found, create new elem
     //printf("create new one\n");
 
     size_t nodes = ++aa->nodes;
-    e = (nodes != 1) ? (Entry *)mem.xmalloc(sizeof(Entry)) : &aa->aafirst;
-    //e = new Entry();
-    e->next = NULL;
+    Entry *e = (nodes != 1) ? (Entry *)mem.xmalloc(sizeof(Entry)) : &aa->aafirst;
     e->key = key;
     e->value = NULL;
-    *pe = e;
+    aa->buckets[i] = e;
 
     //printf("length = %d, nodes = %d\n", aa->b_length, nodes);
-    if (nodes > aa->b_length * 2)
+    if (nodes * 2 > aa->b_length)
     {
         //printf("rehash\n");
         dmd_aaRehash(paa);
@@ -124,12 +121,13 @@ void *dmd_aaGetRvalue(AA* aa, void *key)
     {
         size_t len = aa->b_length;
         size_t i = hash((size_t)key) & (len - 1);
-        Entry* e = aa->buckets[i];
-        while (e)
+        while (aa->buckets[i] != NULL)
         {
+            Entry *e = aa->buckets[i];
             if (key == e->key)
                 return e->value;
-            e = e->next;
+            i++;
+            i &= len - 1;
         }
     }
     return NULL;    // not found
@@ -160,14 +158,16 @@ void dmd_aaRehash(AA** paa)
         for (size_t k = 0; k < aa->b_length; k++)
         {
             Entry *e = aa->buckets[k];
-            while (e)
+            if (!e)
+                continue;
+
+            size_t i = hash((size_t)e->key) & (len - 1);
+            while (newb[i] != NULL)
             {
-                Entry *enext = e->next;
-                size_t j = hash((size_t)e->key) & (len - 1);
-                e->next = newb[j];
-                newb[j] = e;
-                e = enext;
+                i++;
+                i &= len - 1;
             }
+            newb[i] = e;
         }
         if (aa->buckets != (Entry **)aa->binit)
             mem.xfree(aa->buckets);
