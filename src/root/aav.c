@@ -76,12 +76,14 @@ lookup:
     AA *aa = *paa;
     assert(aa->b_length);
     size_t i = hash((size_t)key) & (aa->b_length - 1);
+    size_t inc = 1;
     while (aa->buckets[i].key != NULL)
     {
         Entry *e = &aa->buckets[i];
         if (key == e->key)
             return &e->value;
-        i++;
+        i += inc;
+        inc++;
         i &= aa->b_length - 1;
     }
 
@@ -117,12 +119,14 @@ void *dmd_aaGetRvalue(AA* aa, void *key)
     {
         size_t len = aa->b_length;
         size_t i = hash((size_t)key) & (len - 1);
+        size_t inc = 1;
         while (aa->buckets[i].key != NULL)
         {
             Entry *e = &aa->buckets[i];
             if (key == e->key)
                 return e->value;
-            i++;
+            i += inc;
+            inc++;
             i &= len - 1;
         }
     }
@@ -164,9 +168,11 @@ void dmd_aaRehash(AA** paa)
                 continue;
 
             size_t i = hash((size_t)e->key) & (len - 1);
+            size_t inc = 1;
             while (newb[i].key != NULL)
             {
-                i++;
+                i += inc;
+                inc++;
                 i &= len - 1;
             }
             newb[i].key = e->key;
