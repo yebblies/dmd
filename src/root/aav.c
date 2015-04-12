@@ -94,7 +94,7 @@ lookup:
     e->value = NULL;
 
     //printf("length = %d, nodes = %d\n", aa->b_length, nodes);
-    if (nodes * 2 > aa->b_length)
+    if (nodes * 4 > aa->b_length)
     {
         //printf("rehash\n");
         dmd_aaRehash(paa);
