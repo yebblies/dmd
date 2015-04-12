@@ -38,7 +38,7 @@ struct AA
     Entry *buckets;
     size_t b_length;
     size_t nodes;       // total number of Entry nodes
-    Entry binit[4];      // initial value of buckets[]
+    Entry binit[8];      // initial value of buckets[]
 };
 
 /****************************************************
@@ -64,18 +64,11 @@ void **dmd_aaGet(AA **paa, void *key)
     {
         AA *a = (AA *)mem.xmalloc(sizeof(AA));
         a->buckets = (Entry *)a->binit;
-        a->b_length = 4;
+        a->b_length = 8;
         a->nodes = 0;
-        a->binit[0].key = NULL;
-        a->binit[0].value = NULL;
-        a->binit[1].key = NULL;
-        a->binit[1].value = NULL;
-        a->binit[2].key = NULL;
-        a->binit[2].value = NULL;
-        a->binit[3].key = NULL;
-        a->binit[3].value = NULL;
+        memset(&a->binit[0], 0, sizeof(Entry) * 8);
         *paa = a;
-        assert((*paa)->b_length == 4);
+        assert((*paa)->b_length == 8);
     }
     //printf("paa = %p, *paa = %p\n", paa, *paa);
 
@@ -157,7 +150,7 @@ void dmd_aaRehash(AA** paa)
         // }
 
         size_t len = aa->b_length;
-        if (len == 4)
+        if (len == 8)
             len = 32;
         else
             len *= 4;
