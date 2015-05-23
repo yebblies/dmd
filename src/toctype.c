@@ -109,43 +109,8 @@ public:
     void visit(TypeStruct *t)
     {
         //printf("TypeStruct::toCtype() '%s'\n", t->sym->toChars());
-        Type *tm = t->mutableOf();
-        if (tm->ctype)
-        {
-            t->ctype = type_alloc(tybasic(tm->ctype->Tty));
-            t->ctype->Tcount++;
-            if (t->ctype->Tty == TYstruct)
-            {
-                Symbol *s = tm->ctype->Ttag;
-                t->ctype->Ttag = (Classsym *)s;            // structure tag name
-            }
-            // Add modifiers
-            switch (t->mod)
-            {
-                case 0:
-                    assert(0);
-                    break;
-                case MODconst:
-                case MODwild:
-                case MODwildconst:
-                    t->ctype->Tty |= mTYconst;
-                    break;
-                case MODshared:
-                    t->ctype->Tty |= mTYshared;
-                    break;
-                case MODshared | MODconst:
-                case MODshared | MODwild:
-                case MODshared | MODwildconst:
-                    t->ctype->Tty |= mTYshared | mTYconst;
-                    break;
-                case MODimmutable:
-                    t->ctype->Tty |= mTYimmutable;
-                    break;
-                default:
-                    assert(0);
-            }
-        }
-        else
+        // Generate a new struct type from scratch for types with no modifiers
+        if (t->mod == 0)
         {
             StructDeclaration *sym = t->sym;
             if (sym->ident == Id::__c_long_double)
@@ -161,8 +126,6 @@ public:
                     false,
                     sym->isPOD() != 0);
 
-            tm->ctype = t->ctype;
-
             /* Add in fields of the struct
              * (after setting ctype to avoid infinite recursion)
              */
@@ -174,6 +137,43 @@ public:
                     symbol_struct_addField(t->ctype->Ttag, v->ident->toChars(), Type_toCtype(v->type), v->offset);
                 }
             }
+            return;
+        }
+
+        // Copy the ctype from the mutable version and add mods
+        type *mctype = Type_toCtype(t->mutableOf()->unSharedOf());
+
+        t->ctype = type_alloc(tybasic(mctype->Tty));
+        t->ctype->Tcount++;
+        if (t->ctype->Tty == TYstruct)
+        {
+            Symbol *s = mctype->Ttag;
+            t->ctype->Ttag = (Classsym *)s;            // structure tag name
+        }
+        // Add modifiers
+        switch (t->mod)
+        {
+            case 0:
+                assert(0);
+                break;
+            case MODconst:
+            case MODwild:
+            case MODwildconst:
+                t->ctype->Tty |= mTYconst;
+                break;
+            case MODshared:
+                t->ctype->Tty |= mTYshared;
+                break;
+            case MODshared | MODconst:
+            case MODshared | MODwild:
+            case MODshared | MODwildconst:
+                t->ctype->Tty |= mTYshared | mTYconst;
+                break;
+            case MODimmutable:
+                t->ctype->Tty |= mTYimmutable;
+                break;
+            default:
+                assert(0);
         }
 
         //printf("t = %p, Tflags = x%x\n", ctype, ctype->Tflags);
