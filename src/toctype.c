@@ -182,15 +182,21 @@ public:
     void visit(TypeEnum *t)
     {
         //printf("TypeEnum::toCtype() '%s'\n", t->sym->toChars());
-        Type *tm = t->mutableOf();
-        if (tm->ctype && tybasic(tm->ctype->Tty) == TYenum)
+        if (t->sym->memtype->toBasetype()->ty == Tint32)
         {
-            Symbol *s = tm->ctype->Ttag;
+            if (t->mod == 0)
+            {
+                t->ctype = type_enum(t->sym->toPrettyChars(true), Type_toCtype(t->sym->memtype));
+                return;
+            }
+
+            type *mctype = Type_toCtype(t->mutableOf()->unSharedOf());
+            Symbol *s = mctype->Ttag;
             assert(s);
             t->ctype = type_alloc(TYenum);
             t->ctype->Ttag = (Classsym *)s;            // enum tag name
             t->ctype->Tcount++;
-            t->ctype->Tnext = tm->ctype->Tnext;
+            t->ctype->Tnext = mctype->Tnext;
             t->ctype->Tnext->Tcount++;
             // Add modifiers
             switch (t->mod)
@@ -217,16 +223,9 @@ public:
                 default:
                     assert(0);
             }
+            return;
         }
-        else if (t->sym->memtype->toBasetype()->ty == Tint32)
-        {
-            t->ctype = type_enum(t->sym->toPrettyChars(true), Type_toCtype(t->sym->memtype));
-            tm->ctype = t->ctype;
-        }
-        else
-        {
-            t->ctype = Type_toCtype(t->sym->memtype);
-        }
+        t->ctype = Type_toCtype(t->sym->memtype);
 
         //printf("t = %p, Tflags = x%x\n", t, t->Tflags);
     }
