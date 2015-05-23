@@ -22,6 +22,7 @@
 #include "enum.h"
 #include "aggregate.h"
 #include "id.h"
+#include "aav.h"
 
 #include "cc.h"
 #include "global.h"
@@ -41,34 +42,38 @@ type *Type_toCtype(Type *t);
 class ToCtypeVisitor : public Visitor
 {
 public:
-    ToCtypeVisitor() {}
+    type *result;
+    ToCtypeVisitor()
+    {
+        result = NULL;
+    }
 
     void visit(Type *t)
     {
-        t->ctype = type_fake(totym(t));
-        t->ctype->Tcount++;
+        result = type_fake(totym(t));
+        result->Tcount++;
     }
 
     void visit(TypeSArray *t)
     {
-        t->ctype = type_static_array(t->dim->toInteger(), Type_toCtype(t->next));
+        result = type_static_array(t->dim->toInteger(), Type_toCtype(t->next));
     }
 
     void visit(TypeDArray *t)
     {
-        t->ctype = type_dyn_array(Type_toCtype(t->next));
-        t->ctype->Tident = t->toPrettyChars(true);
+        result = type_dyn_array(Type_toCtype(t->next));
+        result->Tident = t->toPrettyChars(true);
     }
 
     void visit(TypeAArray *t)
     {
-        t->ctype = type_assoc_array(Type_toCtype(t->index), Type_toCtype(t->next));
+        result = type_assoc_array(Type_toCtype(t->index), Type_toCtype(t->next));
     }
 
     void visit(TypePointer *t)
     {
         //printf("TypePointer::toCtype() %s\n", t->toChars());
-        t->ctype = type_pointer(Type_toCtype(t->next));
+        result = type_pointer(Type_toCtype(t->next));
     }
 
     void visit(TypeFunction *t)
@@ -95,7 +100,7 @@ public:
             ptypes[i] = tp;
         }
 
-        t->ctype = type_function(totym(t), ptypes, nparams, t->varargs == 1, Type_toCtype(t->next));
+        result = type_function(totym(t), ptypes, nparams, t->varargs == 1, Type_toCtype(t->next));
 
         if (nparams > 10)
             free(ptypes);
@@ -103,7 +108,7 @@ public:
 
     void visit(TypeDelegate *t)
     {
-        t->ctype = type_delegate(Type_toCtype(t->next));
+        result = type_delegate(Type_toCtype(t->next));
     }
 
     void visit(TypeStruct *t)
@@ -115,16 +120,17 @@ public:
             StructDeclaration *sym = t->sym;
             if (sym->ident == Id::__c_long_double)
             {
-                t->ctype = type_fake(TYdouble);
-                t->ctype->Tcount++;
+                result = type_fake(TYdouble);
+                result->Tcount++;
                 return;
             }
-            t->ctype = type_struct_class(sym->toPrettyChars(true), sym->alignsize, sym->structsize,
+            result = type_struct_class(sym->toPrettyChars(true), sym->alignsize, sym->structsize,
                     sym->arg1type ? Type_toCtype(sym->arg1type) : NULL,
                     sym->arg2type ? Type_toCtype(sym->arg2type) : NULL,
                     sym->isUnionDeclaration() != 0,
                     false,
                     sym->isPOD() != 0);
+            setCtype(t, result);
 
             /* Add in fields of the struct
              * (after setting ctype to avoid infinite recursion)
@@ -134,7 +140,7 @@ public:
                 for (size_t i = 0; i < sym->fields.dim; i++)
                 {
                     VarDeclaration *v = sym->fields[i];
-                    symbol_struct_addField(t->ctype->Ttag, v->ident->toChars(), Type_toCtype(v->type), v->offset);
+                    symbol_struct_addField(result->Ttag, v->ident->toChars(), Type_toCtype(v->type), v->offset);
                 }
             }
             return;
@@ -143,12 +149,12 @@ public:
         // Copy the ctype from the mutable version and add mods
         type *mctype = Type_toCtype(t->mutableOf()->unSharedOf());
 
-        t->ctype = type_alloc(tybasic(mctype->Tty));
-        t->ctype->Tcount++;
-        if (t->ctype->Tty == TYstruct)
+        result = type_alloc(tybasic(mctype->Tty));
+        result->Tcount++;
+        if (result->Tty == TYstruct)
         {
             Symbol *s = mctype->Ttag;
-            t->ctype->Ttag = (Classsym *)s;            // structure tag name
+            result->Ttag = (Classsym *)s;            // structure tag name
         }
         // Add modifiers
         switch (t->mod)
@@ -159,18 +165,18 @@ public:
             case MODconst:
             case MODwild:
             case MODwildconst:
-                t->ctype->Tty |= mTYconst;
+                result->Tty |= mTYconst;
                 break;
             case MODshared:
-                t->ctype->Tty |= mTYshared;
+                result->Tty |= mTYshared;
                 break;
             case MODshared | MODconst:
             case MODshared | MODwild:
             case MODshared | MODwildconst:
-                t->ctype->Tty |= mTYshared | mTYconst;
+                result->Tty |= mTYshared | mTYconst;
                 break;
             case MODimmutable:
-                t->ctype->Tty |= mTYimmutable;
+                result->Tty |= mTYimmutable;
                 break;
             default:
                 assert(0);
@@ -186,18 +192,18 @@ public:
         {
             if (t->mod == 0)
             {
-                t->ctype = type_enum(t->sym->toPrettyChars(true), Type_toCtype(t->sym->memtype));
+                result = type_enum(t->sym->toPrettyChars(true), Type_toCtype(t->sym->memtype));
                 return;
             }
 
             type *mctype = Type_toCtype(t->mutableOf()->unSharedOf());
             Symbol *s = mctype->Ttag;
             assert(s);
-            t->ctype = type_alloc(TYenum);
-            t->ctype->Ttag = (Classsym *)s;            // enum tag name
-            t->ctype->Tcount++;
-            t->ctype->Tnext = mctype->Tnext;
-            t->ctype->Tnext->Tcount++;
+            result = type_alloc(TYenum);
+            result->Ttag = (Classsym *)s;            // enum tag name
+            result->Tcount++;
+            result->Tnext = mctype->Tnext;
+            result->Tnext->Tcount++;
             // Add modifiers
             switch (t->mod)
             {
@@ -207,25 +213,25 @@ public:
                 case MODconst:
                 case MODwild:
                 case MODwildconst:
-                    t->ctype->Tty |= mTYconst;
+                    result->Tty |= mTYconst;
                     break;
                 case MODshared:
-                    t->ctype->Tty |= mTYshared;
+                    result->Tty |= mTYshared;
                     break;
                 case MODshared | MODconst:
                 case MODshared | MODwild:
                 case MODshared | MODwildconst:
-                    t->ctype->Tty |= mTYshared | mTYconst;
+                    result->Tty |= mTYshared | mTYconst;
                     break;
                 case MODimmutable:
-                    t->ctype->Tty |= mTYimmutable;
+                    result->Tty |= mTYimmutable;
                     break;
                 default:
                     assert(0);
             }
             return;
         }
-        t->ctype = Type_toCtype(t->sym->memtype);
+        result = Type_toCtype(t->sym->memtype);
 
         //printf("t = %p, Tflags = x%x\n", t, t->Tflags);
     }
@@ -240,7 +246,8 @@ public:
                 true,
                 true);
 
-        t->ctype = type_pointer(tc);
+        result = type_pointer(tc);
+        setCtype(t, result);
 
         /* Add in fields of the class
          * (after setting ctype to avoid infinite recursion)
@@ -254,14 +261,28 @@ public:
             }
         }
     }
+
+    static AA *ctypeMap;
+
+    static void setCtype(Type *t, type *ctype)
+    {
+        *(type **)dmd_aaGet(&ctypeMap, t) = ctype;
+    }
+
+    static type *toCtype(Type *t)
+    {
+        if (type *ctype = (type *)dmd_aaGetRvalue(ctypeMap, t))
+            return ctype;
+        ToCtypeVisitor v;
+        t->accept(&v);
+        setCtype(t, v.result);
+        return v.result;
+    }
 };
+
+AA *ToCtypeVisitor::ctypeMap = NULL;
 
 type *Type_toCtype(Type *t)
 {
-    if (!t->ctype)
-    {
-        ToCtypeVisitor v;
-        t->accept(&v);
-    }
-    return t->ctype;
+    return ToCtypeVisitor::toCtype(t);
 }
