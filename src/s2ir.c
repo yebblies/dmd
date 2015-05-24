@@ -1030,8 +1030,7 @@ public:
         for (size_t i = 0 ; i < s->catches->dim; i++)
         {
             Catch *cs = (*s->catches)[i];
-            if (cs->var)
-                cs->var->csym = tryblock->jcatchvar;
+            Symbol *csym = tryblock->jcatchvar;
             block *bcatch = blx->curblock;
             if (cs->type)
                 bcatch->Bcatchtype = toSymbol(cs->type->toBasetype());
@@ -1050,7 +1049,7 @@ public:
                     elem *ex = el_var(irs->sclosure);
                     ex = el_bin(OPadd, TYnptr, ex, el_long(TYsize_t, cs->var->offset));
                     ex = el_una(OPind, tym, ex);
-                    ex = el_bin(OPeq, tym, ex, el_var(toSymbol(cs->var)));
+                    ex = el_bin(OPeq, tym, ex, el_var(csym));
                     block_appendexp(catchState.blx->curblock, ex);
                 }
                 Statement_toIR(cs->handler, &catchState);

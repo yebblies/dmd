@@ -80,8 +80,8 @@ void genModuleInfo(Module *m)
 
     //////////////////////////////////////////////
 
-    m->csym->Sclass = SCglobal;
-    m->csym->Sfl = FLdata;
+    msym->Sclass = SCglobal;
+    msym->Sfl = FLdata;
 
     dt_t *dt = NULL;
     ClassDeclarations aclasses;
@@ -198,9 +198,9 @@ void genModuleInfo(Module *m)
         //printf("nameoffset = x%x\n", nameoffset);
     }
 
-    m->csym->Sdt = dt;
-    out_readonly(m->csym);
-    outdata(m->csym);
+    msym->Sdt = dt;
+    out_readonly(msym);
+    outdata(msym);
 
     //////////////////////////////////////////////
 
@@ -280,7 +280,7 @@ void toObjFile(Dsymbol *ds, bool multiobj)
             }
 
             // Generate C symbols
-            toSymbol(cd);
+            Symbol *csym = toSymbol(cd);
             toVtblSymbol(cd);
             Symbol *sinit = toInitializer(cd);
 
@@ -302,8 +302,8 @@ void toObjFile(Dsymbol *ds, bool multiobj)
             //////////////////////////////////////////////
 
             // Put out the ClassInfo
-            cd->csym->Sclass = scclass;
-            cd->csym->Sfl = FLdata;
+            csym->Sclass = scclass;
+            csym->Sfl = FLdata;
 
             /* The layout is:
                {
@@ -368,7 +368,7 @@ void toObjFile(Dsymbol *ds, bool multiobj)
             // interfaces[]
             dtsize_t(&dt, cd->vtblInterfaces->dim);
             if (cd->vtblInterfaces->dim)
-                dtxoff(&dt, cd->csym, offset, TYnptr);      // (*)
+                dtxoff(&dt, csym, offset, TYnptr);      // (*)
             else
                 dtsize_t(&dt, 0);
 
@@ -479,7 +479,7 @@ void toObjFile(Dsymbol *ds, bool multiobj)
 
                 // vtbl[]
                 dtsize_t(&dt, id->vtbl.dim);
-                dtxoff(&dt, cd->csym, offset, TYnptr);
+                dtxoff(&dt, csym, offset, TYnptr);
 
                 dtsize_t(&dt, b->offset);                        // this offset
 
@@ -502,7 +502,7 @@ void toObjFile(Dsymbol *ds, bool multiobj)
                     //dtxoff(&dt, toSymbol(id), 0, TYnptr);
 
                     // First entry is struct Interface reference
-                    dtxoff(&dt, cd->csym, Target::classinfosize + i * (4 * Target::ptrsize), TYnptr);
+                    dtxoff(&dt, csym, Target::classinfosize + i * (4 * Target::ptrsize), TYnptr);
                     j = 1;
                 }
                 assert(id->vtbl.dim == b->vtbl.dim);
@@ -566,11 +566,11 @@ void toObjFile(Dsymbol *ds, bool multiobj)
                 }
             }
 
-            cd->csym->Sdt = dt;
+            csym->Sdt = dt;
             // ClassInfo cannot be const data, because we use the monitor on it
-            outdata(cd->csym);
+            outdata(csym);
             if (cd->isExport())
-                objmod->export_symbol(cd->csym, 0);
+                objmod->export_symbol(csym, 0);
 
             //////////////////////////////////////////////
 
@@ -578,7 +578,7 @@ void toObjFile(Dsymbol *ds, bool multiobj)
             //printf("putting out %s.vtbl[]\n", toChars());
             dt = NULL;
             if (cd->vtblOffset())
-                dtxoff(&dt, cd->csym, 0, TYnptr);           // first entry is ClassInfo reference
+                dtxoff(&dt, csym, 0, TYnptr);           // first entry is ClassInfo reference
             for (size_t i = cd->vtblOffset(); i < cd->vtbl.dim; i++)
             {
                 FuncDeclaration *fd = cd->vtbl[i]->isFuncDeclaration();
@@ -665,7 +665,7 @@ void toObjFile(Dsymbol *ds, bool multiobj)
             }
 
             // Generate C symbols
-            toSymbol(id);
+            Symbol *csym = toSymbol(id);
 
             //////////////////////////////////////////////
 
@@ -676,8 +676,8 @@ void toObjFile(Dsymbol *ds, bool multiobj)
             //////////////////////////////////////////////
 
             // Put out the ClassInfo
-            id->csym->Sclass = scclass;
-            id->csym->Sfl = FLdata;
+            csym->Sclass = scclass;
+            csym->Sfl = FLdata;
 
             /* The layout is:
                {
@@ -735,7 +735,7 @@ void toObjFile(Dsymbol *ds, bool multiobj)
                         fatal();
                     }
                 }
-                dtxoff(&dt, id->csym, offset, TYnptr);      // (*)
+                dtxoff(&dt, csym, offset, TYnptr);      // (*)
             }
             else
             {
@@ -802,11 +802,11 @@ void toObjFile(Dsymbol *ds, bool multiobj)
                 dtsize_t(&dt, b->offset);
             }
 
-            id->csym->Sdt = dt;
-            out_readonly(id->csym);
-            outdata(id->csym);
+            csym->Sdt = dt;
+            out_readonly(csym);
+            outdata(csym);
             if (id->isExport())
-                objmod->export_symbol(id->csym, 0);
+                objmod->export_symbol(csym, 0);
         }
 
         void visit(StructDeclaration *sd)

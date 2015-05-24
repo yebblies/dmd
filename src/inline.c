@@ -864,7 +864,6 @@ Expression *doInline(Expression *e, InlineDoState *ids)
                     VarDeclaration *vto = new VarDeclaration(vd->loc, vd->type, vd->ident, vd->init);
                     memcpy((void *)vto, (void *)vd, sizeof(VarDeclaration));
                     vto->parent = ids->parent;
-                    vto->csym = NULL;
                     vto->isym = NULL;
 
                     ids->from.push(vd);
@@ -970,7 +969,6 @@ Expression *doInline(Expression *e, InlineDoState *ids)
                 VarDeclaration *vto = new VarDeclaration(vd->loc, vd->type, vd->ident, vd->init);
                 memcpy((void*)vto, (void*)vd, sizeof(VarDeclaration));
                 vto->parent = ids->parent;
-                vto->csym = NULL;
                 vto->isym = NULL;
 
                 ids->from.push(vd);
@@ -1003,7 +1001,6 @@ Expression *doInline(Expression *e, InlineDoState *ids)
                 VarDeclaration *vto = new VarDeclaration(vd->loc, vd->type, vd->ident, vd->init);
                 memcpy((void*)vto, (void*)vd, sizeof(VarDeclaration));
                 vto->parent = ids->parent;
-                vto->csym = NULL;
                 vto->isym = NULL;
 
                 ids->from.push(vd);

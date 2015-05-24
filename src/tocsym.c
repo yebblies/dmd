@@ -31,6 +31,7 @@
 #include "id.h"
 #include "ctfe.h"
 #include "rmem.h"
+#include "aav.h"
 
 // Back end
 #include "cc.h"
@@ -409,14 +410,17 @@ Symbol *toSymbol(Dsymbol *s)
             result = s;
             slist_add(s);
         }
+
     };
 
-    if (s->csym)
-        return s->csym;
+    static AA *csymMap = NULL;
+    Symbol *csym = (Symbol *)dmd_aaGetRvalue(csymMap, s);
+    if (csym)
+        return csym;
 
     ToSymbol v;
     s->accept(&v);
-    s->csym = v.result;
+    *(Symbol **)dmd_aaGet(&csymMap, s) = v.result;
     return v.result;
 }
 
@@ -464,9 +468,7 @@ Symbol *toImport(Dsymbol *ds)
 {
     if (!ds->isym)
     {
-        if (!ds->csym)
-            ds->csym = toSymbol(ds);
-        ds->isym = toImport(ds->csym);
+        ds->isym = toImport(toSymbol(ds));
     }
     return ds->isym;
 }
@@ -476,11 +478,11 @@ Symbol *toImport(Dsymbol *ds)
 
 Symbol *toThunkSymbol(FuncDeclaration *fd, int offset)
 {
-    toSymbol(fd);
+    Symbol *csym = toSymbol(fd);
 
-    Symbol *sthunk = symbol_generate(SCstatic, fd->csym->Stype);
+    Symbol *sthunk = symbol_generate(SCstatic, csym->Stype);
     sthunk->Sflags |= SFLimplem;
-    cod3_thunk(sthunk, fd->csym, 0, TYnptr, -offset, -1, 0);
+    cod3_thunk(sthunk, csym, 0, TYnptr, -offset, -1, 0);
     return sthunk;
 }
 
@@ -511,8 +513,7 @@ Symbol *toVtblSymbol(ClassDeclaration *cd)
 {
     if (!cd->vtblsym)
     {
-        if (!cd->csym)
-            toSymbol(cd);
+        toSymbol(cd);
 
         TYPE *t = type_allocn(TYnptr | mTYconst, tsvoid);
         t->Tmangle = mTYman_d;
