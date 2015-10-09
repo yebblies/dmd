@@ -14,22 +14,10 @@
 #include <time.h>
 #include <assert.h>
 
-#include "mars.h"
-#include "module.h"
-#include "mtype.h"
-#include "declaration.h"
-#include "statement.h"
-#include "enum.h"
-#include "aggregate.h"
-#include "init.h"
-#include "attrib.h"
-#include "id.h"
-#include "import.h"
-#include "template.h"
-#include "lib.h"
-#include "target.h"
+#include "root.h"
+#include "stringtable.h"
+#include "frontend.h"
 
-#include "rmem.h"
 #include "cc.h"
 #include "global.h"
 #include "oper.h"
@@ -42,6 +30,8 @@
 
 void clearStringTab();
 RET retStyle(TypeFunction *tf);
+void obj_start(char *srcfile);
+void obj_end(Library *library, File *objfile);
 
 elem *addressElem(elem *e, Type *t, bool alwaysCopy = false);
 void Statement_toIR(Statement *s, IRState *irs);
