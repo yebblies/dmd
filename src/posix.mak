@@ -255,13 +255,9 @@ else
 	BACK_OBJS += elfobj.o
 endif
 
-SRC = win32.mak posix.mak osmodel.mak aggregate.h aliasthis.h arraytypes.h	\
-	attrib.h complex_t.h cond.h ctfe.h ctfe.h declaration.h dsymbol.h	\
-	enum.h errors.h expression.h globals.h hdrgen.h identifier.h idgen.d	\
-	import.h init.h intrange.h json.h lexer.h lib.h macro.h	\
-	mars.h module.h mtype.h nspace.h objc.h parse.h                         \
-	scope.h statement.h staticassert.h target.h template.h tokens.h	\
-	version.h visitor.h libomf.d scanomf.d libmscoff.d scanmscoff.d         \
+SRC = win32.mak posix.mak osmodel.mak arraytypes.h	\
+	idgen.d	\
+	libomf.d scanomf.d libmscoff.d scanmscoff.d         \
 	$(DMD_SRCS)
 
 ROOT_SRC = $(addprefix $(ROOT)/, array.h file.h filename.h		\
@@ -318,6 +314,9 @@ backend.a: $(BACK_OBJS)
 
 dmd_frontend: $(FRONT_SRCS) gluelayer.d $(ROOT_SRCS) newdelete.o $(STRING_IMPORT_FILES) $(HOST_DMD_PATH)
 	CC=$(HOST_CXX) $(HOST_DMD_RUN) -of$@ $(MODEL_FLAG) -vtls -J. -L-lstdc++ $(DFLAGS) $(filter-out $(STRING_IMPORT_FILES) $(HOST_DMD_PATH),$^) -version=NoBackend
+
+frontend.h: dmd_frontend $(FRONT_SRCS) gluelayer.d $(ROOT_SRCS) $(STRING_IMPORT_FILES) $(HOST_DMD_PATH)
+	CC=$(HOST_CXX) ./dmd_frontend -C -Cffrontend.h -o- $(MODEL_FLAG) -vtls -J. -L-lstdc++ $(DFLAGS) $(filter-out $(STRING_IMPORT_FILES) $(HOST_DMD_PATH) dmd_frontend,$^) -version=NoBackend
 
 ifdef ENABLE_LTO
 dmd: $(DMD_SRCS) $(ROOT_SRCS) newdelete.o $(GLUE_OBJS) $(BACK_OBJS) $(STRING_IMPORT_FILES) $(HOST_DMD_PATH)
